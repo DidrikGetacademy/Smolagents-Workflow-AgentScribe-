@@ -8,6 +8,6 @@ Transcribe the audio into text using Whisper
 
 Save the transcript to a .txt file
 
-The manager agent then feeds chunks of the transcript to the reasoning agent, which analyzes the content and identifies potential moments of wisdom, quotes, or inspirational messages—saving them with timestamps—until the entire transcript has been processed.
+The manager agent then feeds chunks of the transcript to the reasoning agent, which analyzes the content and identifies potential moments of wisdom, quotes, or inspirational messages—saving them with timestamps—until the entire transcript has been processed. This saves alot of time. now i can just look at the saved file where the reasoning agent saved text with timestamps and just copy and paste them into my short video maker. This is a huge time saver
 
 This repo also includes logic for fine-tuning the reasoning process, helping the agent better understand which segments to keep and which to skip.
