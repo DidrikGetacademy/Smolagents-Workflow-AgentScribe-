@@ -20,3 +20,5 @@ pip install smolagents[transformers]
 pip install smolagents[whisper]
 
 you have too change current class/add class in smolagents.model, check out Smolagents_libary_Changes.txt file.
+changes that has been made in smolagents.model is workarounds too make it work with loading local models, loading in c2translate models and  speectotexttool in smolagents.tools for the whisper model.
+soon i will add logic for loading onnx models with genai  in smolagents.model but you know its a reason smolagents have not added class sutch model loading, but i will figure it out, just need some ibux and time
