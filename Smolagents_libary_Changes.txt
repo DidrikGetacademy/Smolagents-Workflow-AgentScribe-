@@ -335,6 +335,7 @@ class TransformersModel(Model):
 
         prompt_tensor = prompt_tensor.to(self.model.device)
         count_prompt_tokens = prompt_tensor["input_ids"].shape[1]
+        print(f"prompt tokens: {count_prompt_tokens}")
         with open(self.token_log_path, "a", encoding="utf-8") as f:
              f.write(f"[Tokens] Prompt: {count_prompt_tokens} tokens | Max new tokens: {completion_kwargs.get('max_new_tokens', 'unknown')}\n")
         if stop_sequences:

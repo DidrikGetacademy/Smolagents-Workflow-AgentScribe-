@@ -1,4 +1,4 @@
-from smolagents import tool,Tool
+from smolagents import tool,Tool,SpeechToTextTool
 from tkinter.scrolledtext import ScrolledText
 import os
 from googleapiclient.discovery import build
@@ -10,9 +10,6 @@ import wave
 import contextlib
 
 ####FETCH MORE DETAILS TOO PROVIDE AGENT WITH MORE INFORMATION####
-
-
-
 
 @tool
 def Fetch_top_trending_youtube_videos(Search_Query: str) -> dict:
@@ -126,8 +123,6 @@ def Fetch_top_trending_youtube_videos(Search_Query: str) -> dict:
            })
         return {"items": enriched}
 
-    
-
 
 
 
@@ -144,7 +139,7 @@ class ChunkLimiterTool(Tool):
     inputs = {
         "file_path": {
             "type": "string",
-            "description": "Path to the transcript .txt file",
+            "description": "Path to the transcript.txt file",
         },
         "max_chars": {
             "type": "integer",
@@ -196,26 +191,16 @@ class ChunkLimiterTool(Tool):
 
 
 
-
-
-
-
-
-
-
 @tool
 def SaveMotivationalQuote(text: str, text_file: str) -> None:
-    """
-    Appends a motivational quote or summary with timestamp to the output text file.
+    """Appends a motivational quote or summary with timestamp to the output text file.
 
     Args:
-        text (str): The quote or message to save.
-        text_file (str): Path to the file where results are stored.
+        text: The quote or message to save.
+        text_file: Path to the file where results are stored.
     """
     with open(text_file, "a", encoding="utf-8") as f:
         f.write(text.strip() + "\n\n")
-
-
 
 
 
@@ -253,15 +238,9 @@ def ExtractAudioFromVideo(video_path: str) -> str:
 
 
 
-
-
-
-    
-
 @tool
 def Log_Agent_Progress(chat_display: ScrolledText, stage: str, message: str) -> str:
-    """
-        A tool for logging agent thoughts, actions, and reflections during task execution.
+    """A tool for logging agent thoughts, actions, and reflections during task execution.
         Args:
             chat_display(str):  you have access too the chat_display variable just do chat_display=chat_display when you call this function.
             stage (str): One of "info", "action", "reflection".
@@ -330,3 +309,44 @@ def Log_Agent_Progress(chat_display: ScrolledText, stage: str, message: str) -> 
                 
 #                 """
 #                 return 
+
+
+def transcribe_audio_to_txt(video_paths):
+    tool = SpeechToTextTool()
+    tool.setup()
+
+    for video_path in video_paths:
+        if not os.path.isfile(video_path):
+            print(f"File not found: {video_path}")
+            continue
+
+        base_name = os.path.splitext(os.path.basename(video_path))[0]
+        folder = os.path.dirname(video_path)
+        audio_path = os.path.join(folder, f"{base_name}.wav")
+        txt_output_path = os.path.join(folder, f"{base_name}.txt")
+
+        # Extract audio using ffmpeg
+        try:
+            ffmpeg_cmd = [
+                "ffmpeg",
+                "-y",  # Overwrite output if exists
+                "-i", video_path,
+                "-vn",  # No video
+                "-acodec", "pcm_s16le",  # WAV format
+                audio_path
+            ]
+            subprocess.run(ffmpeg_cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            print(f"Extracted audio to: {audio_path}")
+        except subprocess.CalledProcessError:
+            print(f"Failed to extract audio from {video_path}")
+            continue
+
+        # Transcribe the audio
+        try:
+            result_txt_path = tool.forward({"audio": audio_path})
+            # Optionally rename the transcript to desired name
+            if result_txt_path != txt_output_path:
+                os.rename(result_txt_path, txt_output_path)
+            print(f"Transcript saved to: {txt_output_path}")
+        except Exception as e:
+            print(f"Transcription failed for {audio_path}: {e}")
