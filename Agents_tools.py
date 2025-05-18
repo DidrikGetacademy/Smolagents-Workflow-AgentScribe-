@@ -192,15 +192,15 @@ class ChunkLimiterTool(Tool):
 
 
 @tool
-def SaveMotivationalQuote(text: str, text_file: str) -> None:
-    """Appends a motivational quote or summary with timestamp to the output text file.
+def SaveMotivationalQuote(text: str) -> None:
+    """Appends a motivational quote, wisdom or text that with timestamp to the output text file.
 
     Args:
-        text: The quote or message to save.
-        text_file: Path to the file where results are stored.
+        text: The quote or message that meets criteria to save.
     """
+    text_file = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing_save_time_project\saved_transcript_storage.txt"
     with open(text_file, "a", encoding="utf-8") as f:
-        f.write(text.strip() + "\n\n")
+        f.write("New text saved:" + text.strip() +"\n\n")
 
 
 
