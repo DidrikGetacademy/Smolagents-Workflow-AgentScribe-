@@ -8,6 +8,10 @@ from rich.console import Console
 import subprocess
 from smolagents import SpeechToTextTool
 from moviepy import VideoFileClip
+from ultralytics import YOLO
+
+
+
 Chunk_saving_text_file = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\saved_transcript_storage.txt"
 def debugging_managed_agent(transcripts_path):
     transcripts = transcripts_path
@@ -162,17 +166,47 @@ def Reasoning_saved_trancript_storage():
 
 
 
+
 def creater_short_video(video_path, start_time, end_time, video_name):
-    Video_clip_start = start_time
-    video_clip_end = end_time
+    model = YOLO("yolov8s.pt") 
 
     full_video = VideoFileClip(video_path)
+    clipped_segment = full_video.subclipped(start_time, end_time)
 
-    clipped_segment = full_video.subclipped(Video_clip_start, video_clip_end, video_name)
+    def detect_and_crop_phone_format(frame):
+        results = model(frame)[0]
+        person_boxes = [box.xyxy.cpu().numpy().astype(int) for box, cls in zip(results.boxes, results.boxes.cls) if int(cls) == 0]
 
-    clipped_segment.write_videofile(f"./Video_clips/_{video_name}")
+        h,w,_=frame.shape
+        crop_width,crop_height = 1080,1920
+
+        
 
 
+
+
+    output_dir = "./Video_clips"
+    os.makedirs(output_dir, exist_ok=True)
+    new_clip_output_path = os.path.join(output_dir, f"{video_name}.mp4")
+  
+
+    clipped_segment.write_videofile(
+        new_clip_output_path,
+          codec="libx264",
+          audio_codec="aac",
+          bitrate="2500k",  
+          audio_bitrate="192k",
+          preset="slow",
+          threads=4,
+          ffmpeg_params=[
+            "-crf", "18",      
+            "-pix_fmt", "yuv420p", 
+            "-color_primaries", "bt709",
+            "-color_trc", "bt709",
+            "-colorspace", "bt709"
+          ])
+    full_video.close()
+    clipped_segment.close()
 
 
 
@@ -231,12 +265,19 @@ if __name__ == "__main__":
     gc.collect()
     torch.cuda.empty_cache()
     try:
-     video_paths = [
-         "",
-         "",
-         "",
-     ]
-     transcribe_audio_to_txt(video_paths)
+    #  video_paths = [
+    #      "",
+    #      "",
+    #      "",
+    #  ]
+    #  transcribe_audio_to_txt(video_paths)
+     creater_short_video(
+         video_path=r"c:\Users\didri\Documents\Ny mappe\The Path To Power： How To Gain Respect & Influence - Robert Greene (4K).mp4",
+         start_time=3017.01,
+         end_time = 3027.22,
+         video_name = "didrik"
+         ) 
+
 
     except Exception as e: 
         print(f"Error: {e}")
