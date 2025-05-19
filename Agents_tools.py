@@ -198,7 +198,7 @@ def SaveMotivationalQuote(text: str) -> None:
     Args:
         text: The quote or message that meets criteria to save.
     """
-    text_file = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing_save_time_project\saved_transcript_storage.txt"
+    text_file = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\saved_transcript_storage.txt"
     with open(text_file, "a", encoding="utf-8") as f:
         f.write("New text saved:" + text.strip() +"\n\n")
 

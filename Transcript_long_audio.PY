@@ -5,12 +5,12 @@ import os
 import gc
 import yaml
 from rich.console import Console
+import subprocess
+from smolagents import SpeechToTextTool
 
 
-
-video_path = r""
-Chunk_saving_text_file = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing_save_time_project\saved_transcript_storage.txt"
-
+Chunk_saving_text_file = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\saved_transcript_storage.txt"
+                   
 
 
 # prompt_template = r"C:\Users\didri\Desktop\Programmering\VideoEnchancer program\Assets\agent_prompts\videotext_Manger_agent_prompt.yaml"
@@ -18,18 +18,16 @@ Chunk_saving_text_file = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_
 #         loaded_Manager_prompt_templates = yaml.safe_load(f)
 
 
-loaded_reasoning_agent_prompts = r'C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing_save_time_project\loaded_reasoning_agent_prompts.yaml'
+loaded_reasoning_agent_prompts = r'C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\loaded_reasoning_agent_prompts.yaml'
 with open(loaded_reasoning_agent_prompts, 'r', encoding='utf-8') as f:
         Prompt_template = yaml.safe_load(f)
 
 
 
 
-def debugging_managed_agent():
- 
-
+def debugging_managed_agent(transcripts_path):
     global Model
-
+    transcripts = transcripts_path
     Model = TransformersModel(
             model_id=r'C:\Users\didri\Desktop\LLM-models\Qwen\Qwen2.5-7B-Instruct',
             device_map="auto",
@@ -50,12 +48,6 @@ def debugging_managed_agent():
 
 
 
-    transcripts = [
-        r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing_save_time_project\transcripts_wisdom\Mel Robbins： The ‘Let Them Theory’ (A Life-Changing Hack That 15M People Can’t Stop Talking About).txt",
-        r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing_save_time_project\transcripts_wisdom\The Business Expert： The SECRET FORMULA That Launches Billion-Dollar Companies!.txt",
-        r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing_save_time_project\transcripts_wisdom\The Motivation Expert： Why You're FAILING To Achieve Your Goals (& What To Do About It!).txt",
-        r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing_save_time_project\transcripts_wisdom\Will Smith's LIFE ADVICE On Manifesting Success Will CHANGE YOUR LIFE  ｜ Jay Shetty.txt",
-    ]
 
     for transcript_path in transcripts:
         transcript_title = os.path.basename(transcript_path)
@@ -78,7 +70,13 @@ def debugging_managed_agent():
 
           
             task = f"""
-            Read the chunk and decide if it contains motivational, inspirational, wisdom-based, or life-changing content.
+            You are a human-like reader analyzing & Reading the chunk and decide if it contains motivational, inspirational, wisdom-based,  or life-changing quotes or advice.
+            Look specifically for quotes or advice that:
+            - Inspire action or courage
+            - Share deep life lessons or universal truths
+            - Teach about discipline, power, respect, or success
+            - Offer practical wisdom or mindset shifts that can change how someone lives
+            - Are emotionally uplifting or provoke reflection
             If you find such a quote & advice, use the `SaveMotivationalQuote` tool and include the timestamp of the quote,  here is an exsample:  SaveMotivationalQuote(quote="[3567.33s - 3569.65s] - The magic you are looking for is in the work you are avoiding.")
             then procceed with the next chunk by using `final_answer` tool if no more text is worth saving in the chunk.
             you don't need or are allowed to use any other tools then `SaveMotivationalQuote`and `final_answer`
@@ -106,9 +104,6 @@ def debugging_managed_agent():
 
 
 
-import os
-import subprocess
-from smolagents import SpeechToTextTool
 def transcribe_audio_to_txt(video_paths):
     tool = SpeechToTextTool()
     tool.setup()
@@ -122,6 +117,7 @@ def transcribe_audio_to_txt(video_paths):
         folder = os.path.dirname(video_path)
         audio_path = os.path.join(folder, f"{base_name}.wav")
         txt_output_path = os.path.join(folder, f"{base_name}.txt")
+        transcript_text_path = []
 
         # Extract audio using ffmpeg
         try:
@@ -140,12 +136,16 @@ def transcribe_audio_to_txt(video_paths):
             continue
 
         # Transcribe the audio
+        text_path = os.path.join(folder,f"{base_name}.txt")
         try:
-            result_txt_path = tool.forward({"audio": audio_path})
+            result_txt_path = tool.forward({"audio": audio_path,"text_path":text_path})
             # Optionally rename the transcript to desired name
             if result_txt_path != txt_output_path:
                 os.rename(result_txt_path, txt_output_path)
             print(f"Transcript saved to: {txt_output_path}")
+            transcript_text_path.append(txt_output_path)
+            debugging_managed_agent(transcript_text_path)
+            
         except Exception as e:
             print(f"Transcription failed for {audio_path}: {e}")
 
@@ -153,14 +153,14 @@ def transcribe_audio_to_txt(video_paths):
 if __name__ == "__main__":
     gc.collect()
     torch.cuda.empty_cache()
-
-  
-    #test_agent_Wisdom_finder
-    global Model
     try:
-       debugging_managed_agent()
-    
-       del Model
+       video_paths = [
+           r"c:\Users\didri\Documents\The Brutal Truth About Comfort & Success - Jocko Willink (4K).mp4",
+           r"c:\Users\didri\Documents\The Path To Power： How To Gain Respect & Influence - Robert Greene (4K).mp4",
+           r"c:\Users\didri\Documents\The Science Of Emotional Intelligence & Self-Understanding - Dr Julie Smith.mp4",
+       ]
+       transcribe_audio_to_txt(video_paths)
+ 
     except Exception as e: 
         print(f"Error: {e}")
 
