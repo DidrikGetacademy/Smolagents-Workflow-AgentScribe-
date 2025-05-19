@@ -7,28 +7,16 @@ import yaml
 from rich.console import Console
 import subprocess
 from smolagents import SpeechToTextTool
-
-
-
-
+from moviepy import VideoFileClip
 Chunk_saving_text_file = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\saved_transcript_storage.txt"
-
 def debugging_managed_agent(transcripts_path):
-                    
-
-
-    global Model
     transcripts = transcripts_path
     Model = TransformersModel(
             model_id=r'C:\Users\didri\Desktop\LLM-models\Qwen\Qwen2.5-7B-Instruct',
             device_map="auto",
             load_in_8bit=True,
             torch_dtype=torch.float16,
-            
         )
-    
-
-
     loaded_reasoning_agent_prompts = r'C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Prompt_templates\loaded_reasoning_agent_prompts.yaml'
     with open(loaded_reasoning_agent_prompts, 'r', encoding='utf-8') as f:
             Prompt_template = yaml.safe_load(f)
@@ -40,12 +28,7 @@ def debugging_managed_agent(transcripts_path):
         verbosity_level=1,
         prompt_templates=Prompt_template, 
     )
-
     chunk_limiter = ChunkLimiterTool()
-
-
-
-
 
     for transcript_path in transcripts:
         transcript_title = os.path.basename(transcript_path)
@@ -66,7 +49,6 @@ def debugging_managed_agent(transcripts_path):
                 print("Finished processing current transcript.")
                 break
 
-          
             task = f"""
             You are a human-like reader analyzing & Reading the chunk and decide if it contains motivational, inspirational, wisdom-based,  or life-changing quotes or advice.
             Look specifically for quotes or advice that:
@@ -81,9 +63,6 @@ def debugging_managed_agent(transcripts_path):
             Here is the chunk you will analyze using only reasoning like a human: \n
             [chunk start]{chunk}[chunk end]
             """
-
-
-        
             result = Reasoning_Text_Agent.run(
                 task=task,
                 additional_args={"text_file": Chunk_saving_text_file}
@@ -99,54 +78,6 @@ def debugging_managed_agent(transcripts_path):
 
 
 
-
-
-
-def transcribe_audio_to_txt(video_paths):
-    tool = SpeechToTextTool()
-    tool.setup()
-
-    for video_path in video_paths:
-        if not os.path.isfile(video_path):
-            print(f"File not found: {video_path}")
-            continue
-
-        base_name = os.path.splitext(os.path.basename(video_path))[0]
-        folder = os.path.dirname(video_path)
-        audio_path = os.path.join(folder, f"{base_name}.wav")
-        txt_output_path = os.path.join(folder, f"{base_name}.txt")
-        transcript_text_path = []
-
-        # Extract audio using ffmpeg
-        try:
-            ffmpeg_cmd = [
-                "ffmpeg",
-                "-y",  # Overwrite output if exists
-                "-i", video_path,
-                "-vn",  # No video
-                "-acodec", "pcm_s16le",  # WAV format
-                audio_path
-            ]
-            subprocess.run(ffmpeg_cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            print(f"Extracted audio to: {audio_path}")
-        except subprocess.CalledProcessError:
-            print(f"Failed to extract audio from {video_path}")
-            continue
-
-        # Transcribe the audio
-        text_path = os.path.join(folder,f"{base_name}.txt")
-        try:
-            result_txt_path = tool.forward({"audio": audio_path,"text_path":text_path})
-            # Optionally rename the transcript to desired name
-            if result_txt_path != txt_output_path:
-                os.rename(result_txt_path, txt_output_path)
-            print(f"Transcript saved to: {txt_output_path}")
-            transcript_text_path.append(txt_output_path)
-            debugging_managed_agent(transcript_text_path)
-            Reasoning_saved_trancript_storage()
-            
-        except Exception as e:
-            print(f"Transcription failed for {audio_path}: {e}")
 
 
 
@@ -228,6 +159,70 @@ def Reasoning_saved_trancript_storage():
     with open(r"C:\Users\didri\Desktop\Programmering\VideoEnchancer program\Agent_logging.txt", "w") as f:
         Reasoning_Text_Agent.logger.console = Console(file=f, force_terminal=True)
         Reasoning_Text_Agent.visualize()
+
+
+
+def creater_short_video(video_path, start_time, end_time, video_name):
+    Video_clip_start = start_time
+    video_clip_end = end_time
+
+    full_video = VideoFileClip(video_path)
+
+    clipped_segment = full_video.subclipped(Video_clip_start, video_clip_end, video_name)
+
+    clipped_segment.write_videofile(f"./Video_clips/_{video_name}")
+
+
+
+
+
+def transcribe_audio_to_txt(video_paths):
+    tool = SpeechToTextTool()
+    tool.setup()
+
+    for video_path in video_paths:
+        if not os.path.isfile(video_path):
+            print(f"File not found: {video_path}")
+            continue
+
+        base_name = os.path.splitext(os.path.basename(video_path))[0]
+        folder = os.path.dirname(video_path)
+        audio_path = os.path.join(folder, f"{base_name}.wav")
+        txt_output_path = os.path.join(folder, f"{base_name}.txt")
+        transcript_text_path = []
+
+        # Extract audio using ffmpeg
+        try:
+            ffmpeg_cmd = [
+                "ffmpeg",
+                "-y",  # Overwrite output if exists
+                "-i", video_path,
+                "-vn",  # No video
+                "-acodec", "pcm_s16le",  # WAV format
+                audio_path
+            ]
+            subprocess.run(ffmpeg_cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            print(f"Extracted audio to: {audio_path}")
+        except subprocess.CalledProcessError:
+            print(f"Failed to extract audio from {video_path}")
+            continue
+
+        # Transcribe the audio
+        text_path = os.path.join(folder,f"{base_name}.txt")
+        try:
+            result_txt_path = tool.forward({"audio": audio_path,"text_path":text_path})
+            # Optionally rename the transcript to desired name
+            if result_txt_path != txt_output_path:
+                os.rename(result_txt_path, txt_output_path)
+            print(f"Transcript saved to: {txt_output_path}")
+            transcript_text_path.append(txt_output_path)
+            debugging_managed_agent(transcript_text_path)
+            Reasoning_saved_trancript_storage()
+            
+        except Exception as e:
+            print(f"Transcription failed for {audio_path}: {e}")
+
+
 
 
 
