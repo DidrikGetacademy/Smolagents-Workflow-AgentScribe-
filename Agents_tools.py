@@ -189,16 +189,88 @@ class ChunkLimiterTool(Tool):
 
 
 
+class Chunk_line_LimiterTool(Tool):
+    name = "chunk_limiter_by_line"
+    description = (
+        "Call this tool as a function using: chunk = chunk_limiter(file_path=..., max_chars=...) "
+        "It returns one chunk of transcript text per call. You must only call it once per reasoning step, if you have run this function before, you must call `chunk_limiter.reset()` in the code block."
+        "This tool keeps track of remaining transcript content internally, and will return the next chunk each time it's called. "
+        "When it returns an empty string, the full transcript has been processed. "
+        "If 'file_path' is omitted in future calls, it will reuse the last known value automatically."
+    )
+    inputs = {
+        "file_path": {
+            "type": "string",
+            "description": "Path to the transcript.txt file",
+           "nullable": True,
+        },
+       "until_phrase": {
+           "type": "string",
+           "description": "Optional: only return a line containing this phrase",
+           "nullable": True,
+        },
+    }
+    output_type = "string"
+
+    def __init__(self):
+        super().__init__()
+        self.called = False
+        self.saved_file_path = None
+
+    def reset(self):
+        self.called = False
+
+    def forward(self, file_path: str = None, until_phrase: str = None) -> str:
+        if self.called:
+            raise Exception("ChunkLimiterTool was already called this reasoning step.")
+        self.called = True
+
+        if file_path:
+            self.saved_file_path = file_path
+        elif not self.saved_file_path:
+            raise ValueError("file_path must be provided the first time.")
+
+        with open(self.saved_file_path, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+
+        if not lines:
+            return ""
+
+        if until_phrase is None:
+            # Return the first line regardless
+            chunk = lines[0].strip()
+            remaining = lines[1:]
+        else:
+            # Find the first line containing until_phrase
+            chunk = None
+            remaining = []
+            found = False
+            for line in lines:
+                if not found and until_phrase in line:
+                    chunk = line.strip()
+                    found = True
+                else:
+                    remaining.append(line)
+            if chunk is None:
+                # No line contains until_phrase, return empty string or handle as you want
+                return ""
+
+        with open(self.saved_file_path, "w", encoding="utf-8") as f:
+            f.writelines(remaining)
+
+        return f"[CHUNK_OUTPUT]\n{chunk}"
+
 
 
 @tool
 def SaveMotivationalQuote(text: str) -> None:
-    """Appends a motivational quote, wisdom or text that with timestamp to the output text file.
+    """Appends a motivational quote, wisdom or text with timestamp to the output text file.
 
     Args:
         text: The quote or message that meets criteria to save.
     """
-    text_file = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\saved_transcript_storage.txt"
+    #text_file = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\saved_transcript_storage.txt"
+    text_file = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\final_saving_motivational.txt"
     with open(text_file, "a", encoding="utf-8") as f:
         f.write("New text saved:" + text.strip() +"\n\n")
 
