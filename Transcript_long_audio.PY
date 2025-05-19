@@ -178,10 +178,30 @@ def creater_short_video(video_path, start_time, end_time, video_name):
         person_boxes = [box.xyxy.cpu().numpy().astype(int) for box, cls in zip(results.boxes, results.boxes.cls) if int(cls) == 0]
 
         h,w,_=frame.shape
-        crop_width,crop_height = 1080,1920
+        crop_width, crop_height = 1080,1920
 
-        
+        if person_boxes:
+            x1,y1,x2,y2 = person_boxes[0][0]
+            center_x = (x1 + x2) // 2
+            center_y = (y1 + y2) // 2
 
+            x_start= max(min(center_x - crop_width // 2, w - crop_width),0)
+            y_start = max(min(center_y - crop_height // 2, h - crop_height),0)
+                          
+
+            cropped_frame = frame[y_start:y_start + crop_height, x_start:x_start + crop_width]
+            return cropped_frame
+        else:
+            x_start = (w - crop_width) // 2
+            y_start = (h - crop_height) // 2
+            return frame[y_start:y_start + crop_height, x_start:x_start + crop_width]
+
+
+    processed_clip = clipped_segment.fl_image(detect_and_crop_phone_format)
+
+    
+
+    ##maybe add a upscaling inference here to
 
 
 
@@ -190,7 +210,7 @@ def creater_short_video(video_path, start_time, end_time, video_name):
     new_clip_output_path = os.path.join(output_dir, f"{video_name}.mp4")
   
 
-    clipped_segment.write_videofile(
+    processed_clip.write_videofile(
         new_clip_output_path,
           codec="libx264",
           audio_codec="aac",
