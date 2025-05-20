@@ -3,3 +3,4 @@ venv/
 /venv/
 /yolov8x/
 yolov8x/
+yolov8x.pt
