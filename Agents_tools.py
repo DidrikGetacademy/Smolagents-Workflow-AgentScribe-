@@ -8,7 +8,7 @@ import tkinter as tk
 from dotenv import load_dotenv
 import wave
 import contextlib
-
+import threading
 ####FETCH MORE DETAILS TOO PROVIDE AGENT WITH MORE INFORMATION####
 
 @tool
@@ -259,20 +259,6 @@ class Chunk_line_LimiterTool(Tool):
             f.writelines(remaining)
 
         return f"[CHUNK_OUTPUT]\n{chunk}"
-
-
-
-@tool
-def SaveMotivationalQuote(text: str) -> None:
-    """Appends a motivational quote, wisdom or text with timestamp to the output text file.
-
-    Args:
-        text: The quote or message that meets criteria to save.
-    """
-    #text_file = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\saved_transcript_storage.txt"
-    text_file = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\final_saving_motivational.txt"
-    with open(text_file, "a", encoding="utf-8") as f:
-        f.write("New text saved:" + text.strip() +"\n\n")
 
 
 

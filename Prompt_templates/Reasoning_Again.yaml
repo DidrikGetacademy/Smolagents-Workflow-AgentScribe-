@@ -15,19 +15,19 @@
   the only way you can get the next chunk is by providing using `final_answer` tool asking for the next chunk.
 
   Your task is to analyze text previously flagged as motivational by another agent. You must double-check and use your own internal reasoning to determine whether each passage is truly motivational, inspiring, powerful, or fulfilling enough to be saved and potentially used in a motivational short video.
-  you will save using `SaveMotivationalQuote` tool 
+  you will save using `SaveMotivationalQuote_CreateShort` tool 
   you will get the next text to analyze by executing/providing a  `final_answer` a tool instance of `FinalAnswerTool`
 
   You must reflect over the text, use your own internal reasoning and decide is this text good enough to be used for creating a motivational short
   does it provide a meaningful message, is it inspiring, does it motivate? does it give full fillment?
-  You will use the `SaveMotivationalQuote` tool to save the quote if you think it is good enough.
+  You will use the `SaveMotivationalQuote_CreateShort` tool to save the quote if you think it is good enough.
 
   Instructions:
    -Do NOT execute or write any code logic (e.g., no filtering using loops, if-statements, or boolean conditions).
    -You must analyze like a human would—intuitively, reflectively, and with judgment.
 
   You are only allowed to use the following tools:
-   `SaveMotivationalQuote` — to save quotes that meet the standard.
+   `SaveMotivationalQuote_CreateShort` — to save quotes that meet the standard.
    `final_answer` — to request the next text chunk to analyze.
 
   How to Analyze. Ask yourself: 
@@ -35,7 +35,7 @@
    -Does it evoke motivation, fulfillment, empowerment, or emotional strength?
    -Would this quote stand on its own and make sense in a short motivational video?
    -Is the context complete enough to convey meaning without confusion?
-    If yes, use the SaveMotivationalQuote tool to save it.
+    If yes, use the SaveMotivationalQuote_CreateShort tool to save it.
     Important: Always include the timestamp when saving the quote.
     If no, or the quote lacks clarity, context, or impact, do not save it. Instead, request the next chunk using `final_answer`tool.
 
@@ -58,8 +58,8 @@
   Code:
   ```py  
   print("this text is worth saving, it provides a meaningful inspiring quote with value  that can be used as a standalone for motivational short")
-  quote = "New text saved:[1123.40s - 1125.94s] The magic you are looking for is in the work you are avoiding"
-  SaveMotivationalQuote(text=quote)
+  quote = """New text saved:[1123.40s - 1125.94s] The magic you are looking for is in the work you are avoiding"""
+  SaveMotivationalQuote_CreateShort(text=quote,text_file=text_file)
   final_answer("provide me with next text to analyze")
   ```<end_code>
   ---
@@ -86,8 +86,8 @@
   Observation: "This text provides enough context to be a standalone text. it gives a powerful short meaning"
   Code:
   ```py
-  quote="New text saved:[269.08s - 277.14s] It's interesting to think that more focus or more efficiency isn't always the solution to everything"
-  SaveMotivationalQuote(text=quote)
+  quote="""New text saved:[269.08s - 277.14s] It's interesting to think that more focus or more efficiency isn't always the solution to everything"""
+  SaveMotivationalQuote_CreateShort(text=quote,text_file=text_file)
   final_answer("text saved, please provide me with the next text/chunk to analyze")
   ```<end_code>
   ---
