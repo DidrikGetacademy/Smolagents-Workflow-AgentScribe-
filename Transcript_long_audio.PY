@@ -85,7 +85,26 @@ def debugging_managed_agent(transcripts_path):
 
 
 
+# video_task_queue = queue.Queue()
 
+# def video_worker():
+#     while True:
+#         video_url, start_time, end_time = video_task_queue.get()  # blocks until task available
+#         video_name = os.path.basename(video_url)
+#         video_title = f"{video_name} - {start_time} - {end_time}"
+
+#         # Call your video creation function (blocking)
+#         create_short_video(
+#             video_path=video_url,
+#             start_time=start_time,
+#             end_time=end_time,
+#             video_name=video_title,
+#         )
+#         video_task_queue.task_done()
+
+# # Start the worker thread once
+# worker_thread = threading.Thread(target=video_worker, daemon=True)
+# worker_thread.start()
 
 
 
@@ -159,8 +178,18 @@ def Reasoning_saved_trancript_storage(video_url):
 
             print(f"Agent response: {result}\n")
             if "SaveMotivationalQuote" in str(result):
+                  import re
+                  match = re.search(r"\[(\d+\.\d+)s\s*-\s*(\d+\.\d+)s\]", result)
+                  if match:
+                     start_time = float(match.group(1))
+                     end_time= float(match.group(2))
                   thread = threading.Thread(target=run_video_short_creation_thread, args=(video_url,start_time,end_time))## can add this logic inside savemotivationalquote func or i can run it from here, think about this tomorrow
                   thread.start()
+                  start_time = None,
+                  end_time=None,
+                  result=None
+                #video_task_queue.put((video_url, start_time, end_time))
+    
 
             chunk_limiter.called = False 
 
@@ -169,12 +198,13 @@ def Reasoning_saved_trancript_storage(video_url):
         Reasoning_Text_Agent.logger.console = Console(file=f, force_terminal=True)
         Reasoning_Text_Agent.visualize()
 
-def run_video_short_creation_thread(video_url):
+def run_video_short_creation_thread(video_url,start_time,end_time):
         text_video_path = video_url
-        text_video_start_time = 
-        text_video_endtime =
-        text_video_title =
-        create_short_video(video_path=text_video_path, start_time=text_video_start_time, end_time = text_video_endtime,video_name = text_video_title ) 
+        text_video_start_time = start_time
+        text_video_endtime = end_time
+        text_video_title = video_url.name + " - " + str(start_time) + " - " + str(end_time)
+        create_short_video(video_path=text_video_path, start_time=text_video_start_time, end_time = text_video_endtime,video_name = text_video_title)
+
 
 from ultralytics import YOLO
 import numpy as np
@@ -338,6 +368,22 @@ def transcribe_audio_to_txt(video_paths):
 
 
 
+
+
+
+
+if __name__ == "__main__":
+    gc.collect()
+    torch.cuda.empty_cache()
+    try:
+     video_path = [
+         r"c:\Users\didri\Documents\Original\The Path To Power： How To Gain Respect & Influence - Robert Greene (4K).mp4",
+     ]
+     transcribe_audio_to_txt(video_path)
+
+
+    except Exception as e: 
+        print(f"Error: {e}")
 
 
 
