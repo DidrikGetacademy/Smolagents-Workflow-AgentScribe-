@@ -7,9 +7,9 @@ import yaml
 from rich.console import Console
 import subprocess
 from smolagents import SpeechToTextTool
-from moviepy import VideoFileClip
+from moviepy import VideoFileClip, ImageSequenceClip
 from ultralytics import YOLO
-
+import threading
 
 
 Chunk_saving_text_file = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\saved_transcript_storage.txt"
@@ -91,7 +91,7 @@ def debugging_managed_agent(transcripts_path):
 
 
 
-def Reasoning_saved_trancript_storage():
+def Reasoning_saved_trancript_storage(video_url):
     Final_saving_text_file=r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\final_saving_motivational.txt"
     loaded_reasoning_agent_prompts = r'C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Prompt_templates\Reasoning_Again.yaml'
     with open(loaded_reasoning_agent_prompts, 'r', encoding='utf-8') as f:
@@ -122,6 +122,7 @@ def Reasoning_saved_trancript_storage():
         while True:
             try:
                 chunk = chunk_limiter.forward(file_path=transcript_path, until_phrase="New text saved")
+
                
             except Exception as e:
                 print(f"Error during chunking from file {transcript_path}: {e}")
@@ -157,6 +158,10 @@ def Reasoning_saved_trancript_storage():
             )
 
             print(f"Agent response: {result}\n")
+            if "SaveMotivationalQuote" in str(result):
+                  thread = threading.Thread(target=run_video_short_creation_thread, args=(video_url,start_time,end_time))## can add this logic inside savemotivationalquote func or i can run it from here, think about this tomorrow
+                  thread.start()
+
             chunk_limiter.called = False 
 
     # Optional logging/visualization
@@ -164,69 +169,123 @@ def Reasoning_saved_trancript_storage():
         Reasoning_Text_Agent.logger.console = Console(file=f, force_terminal=True)
         Reasoning_Text_Agent.visualize()
 
+def run_video_short_creation_thread(video_url):
+        text_video_path = video_url
+        text_video_start_time = 
+        text_video_endtime =
+        text_video_title =
+        create_short_video(video_path=text_video_path, start_time=text_video_start_time, end_time = text_video_endtime,video_name = text_video_title ) 
 
+from ultralytics import YOLO
+import numpy as np
+import mediapipe as mp
+from moviepy import VideoFileClip, ImageSequenceClip
+import os
 
+def create_short_video(video_path, start_time, end_time, video_name):
+    model = YOLO("yolov8x.pt") 
+    face_detector = mp.solutions.face_detection.FaceDetection(min_detection_confidence=0.7)
 
-def creater_short_video(video_path, start_time, end_time, video_name):
-    model = YOLO("yolov8s.pt") 
 
     full_video = VideoFileClip(video_path)
-    clipped_segment = full_video.subclipped(start_time, end_time)
+    clip = full_video.subclipped(start_time, end_time)
 
-    def detect_and_crop_phone_format(frame):
-        results = model(frame)[0]
-        person_boxes = [box.xyxy.cpu().numpy().astype(int) for box, cls in zip(results.boxes, results.boxes.cls) if int(cls) == 0]
 
-        h,w,_=frame.shape
-        crop_width, crop_height = 1080,1920
+    TARGET_W, TARGET_H = 1080, 1920
+    alpha = 0.2  
 
+  
+    prev_cx, prev_cy = None, None
+
+    def detect_and_crop_frame(frame):
+        nonlocal prev_cx, prev_cy
+
+        img = np.ascontiguousarray(frame)
+
+     
+        results = model(img, imgsz=640)[0]
+        person_boxes = [
+            b.xyxy.cpu().numpy().astype(int)[0]
+            for b, cls in zip(results.boxes, results.boxes.cls)
+            if int(cls) == 0  
+        ]
+
+
+        results_face = face_detector.process(frame)
+        face_boxes = []
+        if results_face.detections:
+            for detection in results_face.detections:
+                bboxC = detection.location_data.relative_bounding_box
+                ih, iw, _ = frame.shape
+                x = int(bboxC.xmin * iw)
+                y = int(bboxC.ymin * ih)
+                w = int(bboxC.width * iw)
+                h = int(bboxC.height * ih)
+                face_boxes.append((x, y, x + w, y + h))
+
+        h, w, _ = frame.shape
+
+ 
+        person_box = None
         if person_boxes:
-            x1,y1,x2,y2 = person_boxes[0][0]
-            center_x = (x1 + x2) // 2
-            center_y = (y1 + y2) // 2
+            person_areas = [(x2 - x1) * (y2 - y1) for (x1, y1, x2, y2) in person_boxes]
+            max_person_idx = np.argmax(person_areas)
+            person_box = person_boxes[max_person_idx]
 
-            x_start= max(min(center_x - crop_width // 2, w - crop_width),0)
-            y_start = max(min(center_y - crop_height // 2, h - crop_height),0)
-                          
+     
+        face_box = None
+        if face_boxes:
+            face_areas = [(x2 - x1) * (y2 - y1) for (x1, y1, x2, y2) in face_boxes]
+            max_face_idx = np.argmax(face_areas)
+            face_box = face_boxes[max_face_idx]
 
-            cropped_frame = frame[y_start:y_start + crop_height, x_start:x_start + crop_width]
-            return cropped_frame
+        if face_box:
+            fx1, fy1, fx2, fy2 = face_box
+            cx, cy = (fx1 + fx2) // 2, (fy1 + fy2) // 2
+        elif person_box:
+            x1, y1, x2, y2 = person_box
+            cx, cy = (x1 + x2) // 2, (y1 + y2) // 2
         else:
-            x_start = (w - crop_width) // 2
-            y_start = (h - crop_height) // 2
-            return frame[y_start:y_start + crop_height, x_start:x_start + crop_width]
-
-
-    processed_clip = clipped_segment.fl_image(detect_and_crop_phone_format)
+            cx, cy = w // 2, h // 2
 
     
+        if prev_cx is None or prev_cy is None:
+            sx, sy = cx, cy
+        else:
+            sx = int(alpha * cx + (1 - alpha) * prev_cx)
+            sy = int(alpha * cy + (1 - alpha) * prev_cy)
+        prev_cx, prev_cy = sx, sy
 
-    ##maybe add a upscaling inference here to
+       
+        x0 = max(0, min(sx - TARGET_W // 2, w - TARGET_W))
+        y0 = max(0, min(sy - TARGET_H // 2, h - TARGET_H))
 
+        return frame[y0:y0+TARGET_H, x0:x0+TARGET_W]
+
+ 
+    frames = list(clip.iter_frames())
+    processed_frames = [detect_and_crop_frame(f) for f in frames]
+
+    processed_clip = ImageSequenceClip(processed_frames, fps=clip.fps)
+    processed_clip = processed_clip.with_audio(clip.audio)
 
 
     output_dir = "./Video_clips"
     os.makedirs(output_dir, exist_ok=True)
-    new_clip_output_path = os.path.join(output_dir, f"{video_name}.mp4")
-  
-
+    out_path = os.path.join(output_dir, f"{video_name}.mp4")
     processed_clip.write_videofile(
-        new_clip_output_path,
-          codec="libx264",
-          audio_codec="aac",
-          bitrate="2500k",  
-          audio_bitrate="192k",
-          preset="slow",
-          threads=4,
-          ffmpeg_params=[
-            "-crf", "18",      
-            "-pix_fmt", "yuv420p", 
-            "-color_primaries", "bt709",
-            "-color_trc", "bt709",
-            "-colorspace", "bt709"
-          ])
+        out_path,
+        codec="libx264",
+        audio_codec="aac",
+        bitrate="2500k",
+        preset="slow"
+    )
+
+
     full_video.close()
-    clipped_segment.close()
+    clip.close()
+    face_detector.close()
+
 
 
 
@@ -238,6 +297,8 @@ def transcribe_audio_to_txt(video_paths):
         if not os.path.isfile(video_path):
             print(f"File not found: {video_path}")
             continue
+        video_url = video_paths[0]
+
 
         base_name = os.path.splitext(os.path.basename(video_path))[0]
         folder = os.path.dirname(video_path)
@@ -245,14 +306,14 @@ def transcribe_audio_to_txt(video_paths):
         txt_output_path = os.path.join(folder, f"{base_name}.txt")
         transcript_text_path = []
 
-        # Extract audio using ffmpeg
+   
         try:
             ffmpeg_cmd = [
                 "ffmpeg",
-                "-y",  # Overwrite output if exists
+                "-y",  
                 "-i", video_path,
-                "-vn",  # No video
-                "-acodec", "pcm_s16le",  # WAV format
+                "-vn", 
+                "-acodec", "pcm_s16le", 
                 audio_path
             ]
             subprocess.run(ffmpeg_cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -261,20 +322,20 @@ def transcribe_audio_to_txt(video_paths):
             print(f"Failed to extract audio from {video_path}")
             continue
 
-        # Transcribe the audio
         text_path = os.path.join(folder,f"{base_name}.txt")
         try:
             result_txt_path = tool.forward({"audio": audio_path,"text_path":text_path})
-            # Optionally rename the transcript to desired name
             if result_txt_path != txt_output_path:
                 os.rename(result_txt_path, txt_output_path)
             print(f"Transcript saved to: {txt_output_path}")
             transcript_text_path.append(txt_output_path)
             debugging_managed_agent(transcript_text_path)
-            Reasoning_saved_trancript_storage()
+            Reasoning_saved_trancript_storage(video_url)
             
         except Exception as e:
             print(f"Transcription failed for {audio_path}: {e}")
+        
+
 
 
 
@@ -285,18 +346,12 @@ if __name__ == "__main__":
     gc.collect()
     torch.cuda.empty_cache()
     try:
-    #  video_paths = [
-    #      "",
-    #      "",
-    #      "",
-    #  ]
-    #  transcribe_audio_to_txt(video_paths)
-     creater_short_video(
-         video_path=r"c:\Users\didri\Documents\Ny mappe\The Path To Power： How To Gain Respect & Influence - Robert Greene (4K).mp4",
-         start_time=3017.01,
-         end_time = 3027.22,
-         video_name = "didrik"
-         ) 
+     video_path = [
+         r"",
+         r"",
+         r"",
+     ]
+     transcribe_audio_to_txt(video_path)
 
 
     except Exception as e: 
