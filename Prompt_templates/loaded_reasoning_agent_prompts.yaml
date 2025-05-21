@@ -73,16 +73,16 @@
   Thought: I will read the chunk carefully, line by line, and also as a whole. I will reason like a human would — looking for emotionally powerful, uplifting, or insightful moments. I understand that individual lines may be incomplete, so I must combine adjacent lines when needed to uncover deeper meaning. If I find content that reflects hope, growth, clarity, or life wisdom — and it aligns with the criteria from the system prompt — I will save it along with its timestamp in the correct format if its a valid text too save , i will also use 'print()' on why I am saving the quote and the quote itself.
   Code:
   ```py
-  quote = "[2134.23s - 2135.87s] The magic you are looking for \n
+  quote = """[2134.23s - 2135.87s] The magic you are looking for \n
             [2135.87s - 2138.59s] is in the work you are \n
             [2138.59s - 2141.07s] avoding" #must be the quote to save from chunk\n
-            "
+            """
   print("i will save this quote because it provide motivational & emotional weight and uplifts the listener. and checks of on all the criterias")
   SaveMotivationalQuote(text=quote,text_file=text_file)
   ```<end_code>
   ---
   Example 1 - No valid quote found:
-  Task: Analyze the following chunk of transcript text with timestamps (~1500 characters). Determine if there is any motivational, inspirational, or wisdom-based quote worth saving. If yes, save the quote with `SaveMotivationalQuote` and provide a final answer requesting the next chunk. If not, just provide a final answer requesting the next chunk.
+  Task:"Analyze the following chunk of transcript text with timestamps (~1500 characters). Determine if there is any motivational, inspirational, or wisdom-based quote worth saving. If yes, save the quote with `SaveMotivationalQuote` and provide a final answer requesting the next chunk. If not, just provide a final answer requesting the next chunk."
         Chunk:  
         [0.00s - 15.00s] Today we discussed the challenges people face when pursuing their dreams. Many obstacles arise, like fear, doubt, and external pressures.
         [15.00s - 30.00s] The conversation went on about the importance of community support and having a clear vision. 
@@ -113,8 +113,8 @@
   Thought: There are two powerful quotes in this chunk: one at [150.00s - 165.00s] and one at   [165.00s- 210.00s] . Both should be saved.
   Code:
   ```py
-  quote1 = "[165.00s - 180.00s] the only reason you are not living the life that you want \n [180.00s - 195.00s] is because you day by day keep feeding the life that you \n[195.00s - 210.00s] don't want to live."
-  quote2 = "[150.00s - 165.00s] "Success is not final, failure is not fatal: It is the courage to continue that counts."
+  quote1 = """[165.00s - 180.00s] the only reason you are not living the life that you want \n [180.00s - 195.00s] is because you day by day keep feeding the life that you \n[195.00s - 210.00s] don't want to live."""
+  quote2 = """[150.00s - 165.00s] "Success is not final, failure is not fatal: It is the courage to continue that counts."""
 
   print("Saving first quote because it reframes failure as an integral part of success.")
   SaveMotivationalQuote(text=quote1,text_file=text_file)
@@ -155,7 +155,7 @@
   Thought: This contains an actionable 3-step strategy for emotional regulation that meets wisdom criteria.
   Code:
   ```py
-  quote = "[45.21s - 59.99s] 3-Step Emotional Control System: 1) Pause and breathe 2) Ask "Will this matter in 6 months?" 3) Choose response consciously"
+  quote = """[45.21s - 59.99s] 3-Step Emotional Control System: 1) Pause and breathe 2) Ask "Will this matter in 6 months?" 3) Choose response consciously"""
   SaveMotivationalQuote(text=quote,text_file=text_file)
   ```<end_code>
   ---
@@ -168,7 +168,7 @@
   Thought: The first line is generic, but last two lines form powerful advice about growth mindset.
   Code:
   ```py
-  quote = "[326.50s - 333.33s] "True growth happens when you stop justifying limitations and start embracing potential."
+  quote = """[326.50s - 333.33s] "True growth happens when you stop justifying limitations and start embracing potential."""
   SaveMotivationalQuote(text=quote,text_file=text_file)
   ```<end_code>
   ---

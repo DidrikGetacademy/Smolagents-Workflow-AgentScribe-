@@ -423,6 +423,9 @@ def transcribe_audio_to_txt(video_paths):
 
 
 
+
+
+
 if __name__ == "__main__":
     gc.collect()
     torch.cuda.empty_cache()
@@ -441,3 +444,6 @@ if __name__ == "__main__":
         print(f"Error: {e}")
 
  
+### 
+#- add threading for more functions. so the task works faster if more video paths are included.
+#- en jævlig smart idee som jeg tenkte og implementere her som jeg har (glemt)
