@@ -80,9 +80,42 @@ def formatting_prompts_func(exsamples):
 # -----------------------------
 # Load and Preprocess the Dataset
 # -----------------------------
+from datasets import load_dataset
+dataset = load_dataset("yahma/alpaca-cleaned", split="train")
+dataset = dataset.map(formatting_prompts_func, batched=True,)
+# -----------------------------
+# Set up the Training Configuration
+# -----------------------------
+from trl import SFTTrainer
+from transformers import TrainingArguments
+from unsloth import is_bfloat16_supported
 
-
-
+trainer = SFTTrainer(
+    model=model,
+    tokenizer=tokenizer,
+    train_dataset=dataset,
+    max_seq_length=max_seq_length,
+    dataset_num_proc=2,
+    args=TrainingArguments(
+        per_device_train_batch_size = 1,
+        gradient_accumulation_steps = 4,
+        # Use num_train_epochs = 1, warmup_ratio for full training runs!
+        warmup_steps = 20,
+        max_steps = 120,
+        learning_rate = 5e-5,
+        fp16 = not is_bfloat16_supported(),
+        bf16 = is_bfloat16_supported(),
+        logging_steps = 1,
+        optim = "adamw_8bit",
+        weight_decay = 0.01,
+        lr_scheduler_type = "linear",
+        seed = 3407,
+        output_dir = "outputs",
+    ),
+)
 
 #https://medium.com/@danushidk507/qwen2-finetuning-qwen2-f89c5c9d15da
 
+if __name__ == "__main__":
+    trainer_stats = trainer.train()
+    print("Done with training. Stats: ", trainer_stats)

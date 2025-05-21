@@ -1,4 +1,4 @@
-from smolagents import  CodeAgent,TransformersModel,FinalAnswerTool
+from smolagents import  CodeAgent,TransformersModel,FinalAnswerTool,CTranslate2Model
 import torch
 import yaml
 ####################################################################################################################################################################################################################################
@@ -149,16 +149,27 @@ The text chunk to analyze is:
 {chunk_test1_should_extract_quotes}
 """
 
-
+ct_model =r"C:\Users\didri\Desktop\LLM-models\Phi3_mini_8int_ct2" 
 Model = r"C:\Users\didri\Desktop\LLM-models\Qwen\Qwen_3B"
-def test_model_reasoning_ability_on_Chunk(Model):
-    Transformer_model = TransformersModel(
+Transformer_model = TransformersModel(
         model_id=Model,
         device_map="cuda",
         torch_dtype=torch.float16,
         load_in_8bit=True,
         trust_remote_code=True
     )
+
+c2translatemodel = CTranslate2Model(
+        model_id=ct_model,
+        device_map="cuda",
+        torch_dtype="auto",
+         #load_in_8bit=True,
+        trust_remote_code=True
+)
+
+
+def test_model_reasoning_ability_on_Chunk():
+
 
     with open(r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Prompt_templates\Test_prompt_template.yaml",  "r", encoding="utf-8") as file:
         Agent_prompt_template = yaml.safe_load(file)
@@ -177,7 +188,7 @@ def test_model_reasoning_ability_on_Chunk(Model):
   
 
 if __name__ == "__main__":
-     test_model_reasoning_ability_on_Chunk(Model)
+     test_model_reasoning_ability_on_Chunk()
 
 
 
