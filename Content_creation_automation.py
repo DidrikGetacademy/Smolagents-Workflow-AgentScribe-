@@ -10,10 +10,11 @@ from smolagents import SpeechToTextTool
 from ultralytics import YOLO
 import numpy as np
 import mediapipe as mp
-from moviepy import VideoFileClip, ImageSequenceClip
+from moviepy import VideoFileClip, ImageSequenceClip, TextClip, CompositeVideoClip,vfx 
 import os
 import threading
-
+import time
+from typing import List
 
 _current_video_url: str = None
 def set_current_videourl(url: str):
@@ -22,8 +23,8 @@ def set_current_videourl(url: str):
 def get_current_videourl() -> str:
     global _current_video_url
     return _current_video_url
-Chunk_saving_text_file = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\saved_transcript_storage.txt"
-Final_saving_text_file=r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\final_saving_motivational.txt"
+Chunk_saving_text_file = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Logging_and_filepaths\saved_transcript_storage.txt"
+Final_saving_text_file=r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Logging_and_filepaths\final_saving_motivational.txt"
 
 Global_model =  TransformersModel(
             model_id=r'C:\Users\didri\Desktop\LLM-models\Qwen\Qwen2.5-7B-Instruct',
@@ -74,10 +75,31 @@ def SaveMotivationalQuote(text: str, text_file: str) -> None:
     """
     with open(text_file, "a", encoding="utf-8") as f:
         f.write("New text saved:" + text.strip() +"\n\n")
+
+
         
  
 
+# from moviepy.editor import VideoFileClip, vfx
+
+# clip = VideoFileClip("input.mp4")
+
+# # boost contrast, slightly increase brightness
+# clip = clip.fx(vfx.lum_contrast, lum=10, contrast=1.3)
+
+# # multiply RGB channels (makes colors more vivid)
+# clip = clip.fx(vfx.colorx, 1.2)
+
+# # fade in/out as a finishing touch
+# clip = clip.fx(vfx.fadein, 1.0).fx(vfx.fadeout, 1.0)
+
+# clip.write_videofile("color_graded.mp4", codec="libx264")
+
+
+
 def create_short_video(video_path, start_time, end_time, video_name):
+
+
     model = YOLO("yolov8x.pt") 
     face_detector = mp.solutions.face_detection.FaceDetection(min_detection_confidence=0.7)
 
@@ -85,6 +107,31 @@ def create_short_video(video_path, start_time, end_time, video_name):
     full_video = VideoFileClip(video_path)
     clip = full_video.subclipped(start_time, end_time)
 
+    def create_subtitles(txt,start,end):
+        txt_clip = (
+            TextClip(
+            txt,
+            font="Copperplate CC Bold", #fullpath to the font
+            fontsize=48,
+            color='white',
+            stroke_color="black",
+            stroke_width=1,
+            method="label",
+            size=(1000, None)
+        )
+        .set_position(("center", "bottom"))
+        .set_start(start)
+        .set_duration(end - start)
+        .margin(bottom=30, opacity=0)
+        )
+        return txt_clip
+    
+
+    subtitles = [
+        (0.5, 3.0, "This is the first subtitle line."),
+  
+    ]
+    
 
     TARGET_W, TARGET_H = 1080, 1920
     alpha = 0.2  
@@ -164,22 +211,48 @@ def create_short_video(video_path, start_time, end_time, video_name):
     processed_clip = ImageSequenceClip(processed_frames, fps=clip.fps)
     processed_clip = processed_clip.with_audio(clip.audio)
 
+    subtitle_clips = [
+        create_subtitles(text,start,end)
+        for start,end, text in subtitles
+    ]
 
-    output_dir = "./Video_clips"
+    final_clip = CompositeVideoClip([processed_clip] + subtitle_clips)
+    final_clip = final_clip.set_audio(processed_clip.audio)
+
+    final_clip = (
+        final_clip
+        .fx(vfx.lum_contrast, lum=10, contrast=1.3)
+        .fx(vfx.colorx,1.2)
+        .fx(vfx.fadein, 1.0)
+        .fx(vfx.fadeout, 1.0)
+
+    )
+
+
+    output_dir = "./Logging_and_filepaths/Video_clips"
     os.makedirs(output_dir, exist_ok=True)
     out_path = os.path.join(output_dir, f"{video_name}.mp4")
-    processed_clip.write_videofile(
+    final_clip.write_videofile(
         out_path,
         codec="libx264",
         audio_codec="aac",
         bitrate="2500k",
-        preset="slow"
+        preset="slow",
+        ffmpeg_params=[
+        "-vf",
+        "hue=h=45:s=1.3,eq=contrast=0.5:brightness=0.05"
+        ]
     )
 
+    ##optionaly add logic for upscaling videos... lets see later...
     print(f"video is completed: output path : {out_path}")
     full_video.close()
     clip.close()
     face_detector.close()
+
+
+
+
 
 count_lock = threading.Lock()
 global count
@@ -209,6 +282,20 @@ def run_video_short_creation_thread(video_url,start_time,end_time):
           import traceback
           print("[ERROR] in run_video_short_creation_thread:")
           traceback.print_exc()
+
+
+
+
+
+#auto upload and schedule video on social media.
+def AutoUpload_AND_Schedule():
+    return 
+
+
+#- en idee er at man har en ekstra agent som kan gå igjennom alle lagde videoclips til slutt og ser om det går ann og lage noe montage, en shorts video som innholder motivational quotes/advices fra videoklips (resultat blir da at agenten  velger rekkefølge  på videoen som skal slå sammen til 1. video, med tanke at (det skal være motiverende og det må passe sammen)
+def create_motivational_montage_agent(clips: List[str], output_path: str):
+    return 
+
 
 
 
@@ -357,36 +444,77 @@ def Verify_Agent(saved_text_storage):
 
 
 
+import threading
+import queue
+gpu_lock = threading.Lock()
+transcript_queue = queue.Queue()
+
+def log(msg):
+    now = time.strftime("%H:%M:%S")
+    thread = threading.current_thread().name
+    print(f"[{now}][{thread}] {msg}")
+
+def gpu_worker():
+    log("GPU worker started")
+    while True:
+        item = transcript_queue.get()
+        if item is None:
+            log("shutdown signal received exiting GPU worker")
+            break
+
+        video_path_url, transcript_text_path = item
+
+        set_current_videourl(video_path_url)
+        log(f"Dequeued {transcript_text_path!r}, queue size now {transcript_queue.qsize()}")
+        if transcript_text_path is None:
+            log("Shutdown signal received, exiting GPU worker")
+            break
+        with gpu_lock:
+            log(f"▶️ Running Transcript_Reasoning_AGENT on {transcript_text_path}") 
+            Transcript_Reasoning_AGENT(transcript_text_path)
+            log(f"▶️ Running Verify_Agent on {transcript_text_path}")
+            Verify_Agent(Chunk_saving_text_file)
+        transcript_queue.task_done()
+
+def get_device():
+    if gpu_lock.acquire(blocking=False):
+        log("Acquired GPU lock — using CUDA")
+        return "cuda"
+    else:
+        log("GPU busy — falling back to CPU")
+        return "cpu"
+
 
 
 
 ###Transkriber audio til til tekst fra video (video -->  audio ---> text)
-def transcribe_audio_to_txt(video_paths):
-    tool = SpeechToTextTool()
-    tool.setup()
-    print(f"[transcribe_audio_to_txt]: {video_paths}")
-  
-    for video_path in video_paths:
-        if not os.path.isfile(video_path):
-            print(f"File not found: {video_path}")
-            continue
-        video_url = video_paths[0]
-        print(f"video_url=video_paths ---> {video_url} ---->[set_current_videourl(video_url)]")
-        set_current_videourl(video_url)
+def transcribe_single_video(video_path):
+        log(f"Starting transcription for {video_path}")
 
+        if not os.path.isfile(video_path):
+          log(f"❌ File not found: {video_path}")
+          return
+
+        set_current_videourl(video_path)
         base_name = os.path.splitext(os.path.basename(video_path))[0]
         folder = os.path.dirname(video_path)
         audio_path = os.path.join(folder, f"{base_name}.wav")
         txt_output_path = os.path.join(folder, f"{base_name}.txt")
         transcript_text_path = []
+
+        device = get_device()
+        tool = SpeechToTextTool()
+        tool.device=device
+        tool.setup()
+    
+
         if os.path.isfile(audio_path) and os.path.isfile(txt_output_path):
-            transcript_text_path.append(txt_output_path)
-            transcript_path = txt_output_path
-            print(f"[Textfile and audio already exist: now running [Transcript_Reasoning_AGENT] with input --->]: {transcript_path}")
-            Transcript_Reasoning_AGENT(transcript_text_path)
-            print(f"[now running [verify_agent] with input  {Chunk_saving_text_file}]")
-            Verify_Agent(Chunk_saving_text_file)
-            continue
+            log(f"Transcript already exists: {txt_output_path}, audio exists: {audio_path}")
+            transcript_queue.put((video_path, txt))
+            log(f"Enqueued existing transcript for GPU processing: {txt_output_path}")
+            return
+
+
         try:
             ffmpeg_cmd = [
                 "ffmpeg",
@@ -397,40 +525,47 @@ def transcribe_audio_to_txt(video_paths):
                 audio_path
             ]
             subprocess.run(ffmpeg_cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            print(f"Extracted audio to: {audio_path}")
+            log(f"Extracted audio → {audio_path}")
         except subprocess.CalledProcessError:
-            print(f"Failed to extract audio from {video_path}")
-            continue
+            log(f"❌ Audio extraction failed for {video_path}")
+            return
 
-        text_path = os.path.join(folder,f"{base_name}.txt")
+        
         try:
-            result_txt_path = tool.forward({"audio": audio_path,"text_path":text_path})
+            result_txt_path = tool.forward({"audio": audio_path,"text_path":txt_output_path})
             if result_txt_path != txt_output_path:
                 os.rename(result_txt_path, txt_output_path)
-            print(f"Transcript saved to: {txt_output_path}")
-            transcript_text_path.append(txt_output_path)
-            import time
+            log(f"🔊 Transcription saved → {txt_output_path}")
+
+
+
+ 
+            transcript_queue.put((video_path, txt_output_path))
             time.sleep(2)
-            print(f"Running [Transcript_Reasoning_AGENT] passing: {transcript_text_path}")
-            Transcript_Reasoning_AGENT(transcript_text_path)
-            print(f"")
-            print(f"Running [verify_agent] passing : {Chunk_saving_text_file}")
-            Verify_Agent(Chunk_saving_text_file)
-            
+
+
+            if device == "cuda":
+                with gpu_lock:
+                    print(f"Running [Transcript_Reasoning_AGENT] passing: {transcript_text_path}")
+                    Transcript_Reasoning_AGENT(txt_output_path)
+                    print(f"Running [verify_agent] passing : {Chunk_saving_text_file}")
+                    Verify_Agent(Chunk_saving_text_file)
+            else:
+                print("Skipping reasoning agents - not on GPU")
+
         except Exception as e:
             print(f"Transcription failed for {audio_path}: {e}")
-        
 
 
 
 
 
-
+from concurrent.futures import ThreadPoolExecutor
 if __name__ == "__main__":
     gc.collect()
     torch.cuda.empty_cache()
     try:
-      video_path = [
+      video_paths = [
           r"c:\Users\didri\Documents\Finding Freedom From Ego & Subconscious Limiting Beliefs ｜ Peter Crone.mp4",
           r"c:\Users\didri\Documents\Former Monk： “Stop Missing Your Life!” Here’s the Key To Lasting Happiness ｜ Cory Muscara.mp4",
           r"c:\Users\didri\Documents\How to Best Guide Your Life Decisions & Path ｜ Dr. Jordan Peterson.mp4",
@@ -438,12 +573,21 @@ if __name__ == "__main__":
           r"c:\Users\didri\Documents\How To Break The Habit Of Being You - Dr Joe Dispenza (4K).mp4",
           r"c:\Users\didri\Documents\Robert Greene： A Process for Finding & Achieving Your Unique Purpose.mp4",
       ]
-      transcribe_audio_to_txt(video_path)
+      gpu_thread = threading.Thread(target=gpu_worker, name="GPU-Worker")
+      gpu_thread.start()
+
+
+      max_threads = 4
+      with ThreadPoolExecutor(max_workers=max_threads) as executor:
+          executor.map(transcribe_single_video, video_paths)
+       
+      transcript_queue.join()
+      
+
+      transcript_queue.put(None)
+      gpu_thread.join()
 
     except Exception as e: 
         print(f"Error: {e}")
 
  
-### 
-#- add threading for more functions. so the task works faster if more video paths are included.
-#- en jævlig smart idee som jeg tenkte og implementere her som jeg har (glemt)
