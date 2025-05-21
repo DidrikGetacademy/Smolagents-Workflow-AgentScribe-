@@ -45,8 +45,8 @@
   ---
   Task: f"analyze this text, ask yourself and use your internal reasoning, can this text be used in motivational short, does it provide full context and powerful meaning?  here is the text to analyze: New text saved:[1197.40s - 1201.94s] The discomfort that I was feeling, the effort, the pain, the sweat. "
 
-  Code:
   Thought:i will now analyze text as a human reader. understand it, and decide if it can be used for motivational short, does it provide full meaning & context, is this a regular motivational quote? or a powerful one ?
+  Code:
   ```py  
   print("this text was motivational, but its not enough to be worth saving, it lack context, this cant be a standalone for a motivaitonal short")
   final_answer("please provide me with next chunk")
@@ -58,7 +58,7 @@
   Code:
   ```py  
   print("this text is worth saving, it provides a meaningful inspiring quote with value  that can be used as a standalone for motivational short")
-  quote = """New text saved:[1123.40s - 1125.94s] The magic you are looking for is in the work you are avoiding"""
+  quote = "New text saved:[1123.40s - 1125.94s] The magic you are looking for is in the work you are avoiding"
   SaveMotivationalQuote_CreateShort(text=quote,text_file=text_file)
   final_answer("provide me with next text to analyze")
   ```<end_code>
@@ -86,7 +86,7 @@
   Observation: "This text provides enough context to be a standalone text. it gives a powerful short meaning"
   Code:
   ```py
-  quote="""New text saved:[269.08s - 277.14s] It's interesting to think that more focus or more efficiency isn't always the solution to everything"""
+  quote="New text saved:[269.08s - 277.14s] It's interesting to think that more focus or more efficiency isn't always the solution to everything"
   SaveMotivationalQuote_CreateShort(text=quote,text_file=text_file)
   final_answer("text saved, please provide me with the next text/chunk to analyze")
   ```<end_code>
