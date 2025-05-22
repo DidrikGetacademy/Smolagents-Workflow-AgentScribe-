@@ -27,6 +27,49 @@ Final_saving_text_file=r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_Vi
 
 
 
+def parse_multiline_block(block_text):
+    lines = [line.strip() for line in block_text.strip().splitlines() if line.strip()]
+    if not lines:
+        return None, None, ""
+    
+    start_time, _ = parse_timestamp_line(lines[0])
+
+    _, end_time = parse_timestamp_line(lines[-1])
+
+    
+    return start_time, end_time
+
+def parse_timestamp_line(line):
+    import re
+    pattern = r"\[(\d+\.?\d*)s\s*-\s*(\d+\.?\d*)s\]"
+    match = re.search(pattern, line)
+    if match: 
+        return float(match.group(1)), float(match.group(2))
+    else:
+        return None, 
+
+
+def parse_subtitle_text_block(text_block):
+    """
+    Parses multiline subtitle text block like: 
+    [2315.28s - 2319.84s] you need to descend if you want to transcend
+    [2319.84s - 2322.00s] you have to let yourself go down
+    ..
+    returns list of (text, start_time, end_time)  tuples 
+    """
+    import re 
+    subtitles = []
+    pattern = re.compile(r"\[(\d+\.\d+)s\s*-\s*(\d+\.\d+)s\]\s*(.+)")
+    lines = text_block.strip().splitlines()
+    for line in lines:
+        match = pattern.match(line.strip())
+        if match:
+            start = float(match.group(1))
+            end = float(match.group(2))
+            text=match.group(3)
+            subtitles.append((text, start, end))
+    return subtitles 
+    
 @tool
 def SaveMotivationalQuote_CreateShort(text: str, text_file: str) -> None:
     """Appends a motivational quote, wisdom or text with timestamp to the output text file.
@@ -39,20 +82,18 @@ def SaveMotivationalQuote_CreateShort(text: str, text_file: str) -> None:
     """
     with open(text_file, "a", encoding="utf-8") as f:
         f.write("New text saved:" + text.strip() +"\n\n")
-    import re
-    match = re.search(r"\[(\d+\.\d+)s\s*-\s*(\d+\.\d+)s\]", text)
-    print(f"text: {text}")
-    if match:
-        start_time = float(match.group(1))
-        end_time= float(match.group(2))
+        start_time, end_time = parse_multiline_block(text)
         print(f"start_time: {start_time}, end_time: {end_time}")
+    
+    if start_time is None or end_time is None:
+        raise ValueError(f"Start_time or end_time is None, start_time: {start_time}, end_time: {end_time}")
   
 
     video_url = get_current_videourl()
     print(f"Video Url to be used for video short creation from [get_current_videourl]: {video_url}")
     try:
         print("running thread now")
-        thread = threading.Thread(target=run_video_short_creation_thread, args=(video_url,start_time,end_time))
+        thread = threading.Thread(target=run_video_short_creation_thread, args=(video_url,start_time,end_time, text))
         thread.start()
     except Exception as e:
         print(f"error: {str(e)}")
@@ -75,8 +116,11 @@ def SaveMotivationalQuote(text: str, text_file: str) -> None:
  
 
 
-def create_short_video(video_path, start_time, end_time, video_name):
 
+
+def create_short_video(video_path, start_time, end_time, video_name, subtitle_text):
+    subtitles = subtitle_text
+    print("subtitles: ",subtitles)
     torch.cuda.set_device(1)
     model = YOLO("yolov8x.pt") 
     face_detector = mp.solutions.face_detection.FaceDetection(min_detection_confidence=0.7)
@@ -85,30 +129,27 @@ def create_short_video(video_path, start_time, end_time, video_name):
     full_video = VideoFileClip(video_path)
     clip = full_video.subclipped(start_time, end_time)
 
-    def create_subtitles(txt,start,end):
-        txt_clip = (
-            TextClip(
-            txt,
-            font="Copperplate CC Bold", #fullpath to the font
-            fontsize=48,
+    def create_subtitles(txt,duration):
+        duration = end - start
+        txt_clip = TextClip(
+            text=txt,
+            font=r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Logging_and_filepaths\Video_clips\Cardo-Bold.ttf", 
+            font_size=48,
+            margin=(20, 10), 
+            text_align="center" ,
+            vertical_align="center",
+            horizontal_align="center",
             color='white',
             stroke_color="black",
             stroke_width=1,
-            method="label",
-            size=(1000, None)
-        )
-        .set_position(("center", "bottom"))
-        .set_start(start)
-        .set_duration(end - start)
-        .margin(bottom=30, opacity=0)
-        )
+            size=(1000, None),
+            method="caption",
+            duration=duration
+        ).with_position(('center', 0.65), relative=True)
         return txt_clip
     
 
-    subtitles = [
-        (0.5, 3.0, "This is the first subtitle line."),
-  
-    ]
+
     
 
     TARGET_W, TARGET_H = 1080, 1920
@@ -185,16 +226,31 @@ def create_short_video(video_path, start_time, end_time, video_name):
     frames = list(clip.iter_frames())
     processed_frames = [detect_and_crop_frame(f) for f in frames]
 
-    processed_clip = ImageSequenceClip(processed_frames, fps=clip.fps)
-    processed_clip = processed_clip.with_audio(clip.audio)
+    processed_clip = ImageSequenceClip(processed_frames, fps=clip.fps).with_duration(clip.duration)
+ 
 
-    subtitle_clips = [
-        create_subtitles(text,start,end)
-        for start,end, text in subtitles
-    ]
 
-    final_clip = CompositeVideoClip([processed_clip] + subtitle_clips)
-    final_clip = final_clip.set_audio(processed_clip.audio)
+
+
+    subtitle_clips = []
+    for text, start, end in subtitles:
+        clip_relative_start = start - start_time
+        clip_relative_end = end - start_time
+        duration = clip_relative_end - clip_relative_start
+        
+        if duration <= 0:
+            continue
+
+        text_clip = create_subtitles(text, duration).with_start(clip_relative_start)
+        subtitle_clips.append(text_clip)
+        print(f"subtitle_clips: {subtitle_clips}")
+
+    final_clip = CompositeVideoClip(
+                [processed_clip.with_position('center')] + subtitle_clips,
+                size=processed_clip.size
+            )
+                
+    final_clip.audio = processed_clip.audio
 
     final_clip = (
         final_clip
@@ -231,11 +287,10 @@ def create_short_video(video_path, start_time, end_time, video_name):
 
 
 
-
 count_lock = threading.Lock()
 global count
 count = 0
-def run_video_short_creation_thread(video_url,start_time,end_time):
+def run_video_short_creation_thread(video_url,start_time,end_time,text):
         global count
         with count_lock:
             current_count = count
@@ -248,19 +303,23 @@ def run_video_short_creation_thread(video_url,start_time,end_time):
             text_video_endtime = end_time
             text_video_title = "short1" + str(current_count)
             try:
-               create_short_video(video_path=text_video_path, start_time=text_video_start_time, end_time = text_video_endtime,video_name = text_video_title)
+               subtitles = parse_subtitle_text_block(text)
+               print("Subtitles: ",subtitles)
+   
+               print(f"Subtitle passed to the [create_short_video] --> subtitle_text_tuple: {subtitles}")
+               create_short_video(video_path=text_video_path, start_time=text_video_start_time, end_time = text_video_endtime, video_name = text_video_title,subtitle_text=subtitles)
                print(f"finnished creating video")
                text_video_path = ""
                text_video_start_time = None
                text_video_endtime = None
                text_video_title = ""
+               subtitles = []
             except Exception as e:
                 print(f"error during [create_short_video] {str(e)}")
         except Exception as e:
           import traceback
           print("[ERROR] in run_video_short_creation_thread:")
           traceback.print_exc()
-
 
 
 
@@ -558,36 +617,50 @@ from concurrent.futures import ThreadPoolExecutor
 if __name__ == "__main__":
     gc.collect()
     torch.cuda.empty_cache()
-    import torch
-    print_gpu_stats() 
-    print(torch.cuda.get_device_name(0))  # Should show "RTX 3060 Ti"
-    print(torch.cuda.get_device_name(1))  # Should show "RTX 3060 Ti"
-    print(torch.cuda.is_available())      # Should return True
-    try:
-      video_paths = [
-          r"c:\Users\didri\Documents\Finding Freedom From Ego & Subconscious Limiting Beliefs ｜ Peter Crone.mp4",
-          r"c:\Users\didri\Documents\Former Monk： “Stop Missing Your Life!” Here’s the Key To Lasting Happiness ｜ Cory Muscara.mp4",
-          r"c:\Users\didri\Documents\How to Best Guide Your Life Decisions & Path ｜ Dr. Jordan Peterson.mp4",
-          r"c:\Users\didri\Documents\Jordan Peterson： STOP LYING TO YOURSELF! How To Turn Your Life Around In 2024!.mp4",
-          r"c:\Users\didri\Documents\How To Break The Habit Of Being You - Dr Joe Dispenza (4K).mp4",
-          r"c:\Users\didri\Documents\Robert Greene： A Process for Finding & Achieving Your Unique Purpose.mp4",
-      ]
-      gpu_thread = threading.Thread(target=gpu_worker, name="GPU-Worker")
-      gpu_thread.start()
+    # import torch
+    # print_gpu_stats() 
+    # print(torch.cuda.get_device_name(0))  # Should show "RTX 3060 Ti"
+    # print(torch.cuda.get_device_name(1))  # Should show "RTX 3060 Ti"
+    # print(torch.cuda.is_available())      # Should return True
+    # try:
+    #   video_paths = [
+    #       r"c:\Users\didri\Documents\Finding Freedom From Ego & Subconscious Limiting Beliefs ｜ Peter Crone.mp4",
+    #       r"c:\Users\didri\Documents\Former Monk： “Stop Missing Your Life!” Here’s the Key To Lasting Happiness ｜ Cory Muscara.mp4",
+    #       r"c:\Users\didri\Documents\How to Best Guide Your Life Decisions & Path ｜ Dr. Jordan Peterson.mp4",
+    #       r"c:\Users\didri\Documents\Jordan Peterson： STOP LYING TO YOURSELF! How To Turn Your Life Around In 2024!.mp4",
+    #       r"c:\Users\didri\Documents\How To Break The Habit Of Being You - Dr Joe Dispenza (4K).mp4",
+    #       r"c:\Users\didri\Documents\Robert Greene： A Process for Finding & Achieving Your Unique Purpose.mp4",
+    #   ]
+    #   gpu_thread = threading.Thread(target=gpu_worker, name="GPU-Worker")
+    #   gpu_thread.start()
 
 
-      max_threads = 2
+    #   max_threads = 2
 
-      with ThreadPoolExecutor(max_workers=max_threads) as executor:
-          executor.map(transcribe_single_video, video_paths)
+    #   with ThreadPoolExecutor(max_workers=max_threads) as executor:
+    #       executor.map(transcribe_single_video, video_paths)
        
-      transcript_queue.join()
+    #   transcript_queue.join()
       
 
-      transcript_queue.put(None)
-      gpu_thread.join()
+    #   transcript_queue.put(None)
+    #   gpu_thread.join()
 
-    except Exception as e: 
-        print(f"Error: {e}")
-
- 
+    # except Exception as e: 
+    #     print(f"Error: {e}")
+    set_current_videourl(r"c:\Users\didri\Documents\Former Monk： “Stop Missing Your Life!” Here’s the Key To Lasting Happiness ｜ Cory Muscara.mp4")
+    text="""
+[2315.28s - 2319.84s] you need to descend if you want to transcend
+[2319.84s - 2322.00s] you have to let yourself go down
+[2322.00s - 2324.32s] the self-energy true self-energy
+[2324.32s - 2326.88s] has a gravitational pull to it
+[2326.88s - 2329.68s] but we keep ourselves from going through the layers
+[2329.68s - 2331.76s] that it wants to bring us back through
+[2331.84s - 2335.20s] because of our ideas of how we're supposed to practice
+[2335.20s - 2336.32s] how we're supposed to behave
+[2336.32s - 2337.28s] how we're supposed to think
+[2337.28s - 2341.20s] and it prevents us from letting ourselves be
+[2341.20s - 2343.04s] in the messiness of our experience
+"""
+    text_file =r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Logging_and_filepaths\final_saving_motivational.txt"
+    SaveMotivationalQuote_CreateShort(text, text_file)
