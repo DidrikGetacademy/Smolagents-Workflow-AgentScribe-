@@ -73,10 +73,7 @@
   Thought: I will read the chunk carefully, line by line, and also as a whole. I will reason like a human would — looking for emotionally powerful, uplifting, or insightful moments. I understand that individual lines may be incomplete, so I must combine adjacent lines when needed to uncover deeper meaning. If I find content that reflects hope, growth, clarity, or life wisdom — and it aligns with the criteria from the system prompt — I will save it along with its timestamp in the correct format if its a valid text too save , i will also use 'print()' on why I am saving the quote and the quote itself.
   Code:
   ```py
-  quote = """[2134.23s - 2135.87s] The magic you are looking for \n
-            [2135.87s - 2138.59s] is in the work you are \n
-            [2138.59s - 2141.07s] avoding" #must be the quote to save from chunk\n
-            """
+  quote = "[2134.23s - 2135.87s] The magic you are looking for \n [2135.87s - 2138.59s] is in the work you are \n[2138.59s - 2141.07s] avoding" #must be the quote to save from chunk\n "
   print("i will save this quote because it provide motivational & emotional weight and uplifts the listener. and checks of on all the criterias")
   SaveMotivationalQuote(text=quote,text_file=text_file)
   ```<end_code>
@@ -113,8 +110,8 @@
   Thought: There are two powerful quotes in this chunk: one at [150.00s - 165.00s] and one at   [165.00s- 210.00s] . Both should be saved.
   Code:
   ```py
-  quote1 = """[165.00s - 180.00s] the only reason you are not living the life that you want \n [180.00s - 195.00s] is because you day by day keep feeding the life that you \n[195.00s - 210.00s] don't want to live."""
-  quote2 = """[150.00s - 165.00s] "Success is not final, failure is not fatal: It is the courage to continue that counts."""
+  quote1 = "[165.00s - 180.00s] the only reason you are not living the life that you want \n [180.00s - 195.00s] is because you day by day keep feeding the life that you \n[195.00s - 210.00s] don't want to live."
+  quote2 = "[150.00s - 165.00s] "Success is not final, failure is not fatal: It is the courage to continue that counts."
 
   print("Saving first quote because it reframes failure as an integral part of success.")
   SaveMotivationalQuote(text=quote1,text_file=text_file)
@@ -155,7 +152,7 @@
   Thought: This contains an actionable 3-step strategy for emotional regulation that meets wisdom criteria.
   Code:
   ```py
-  quote = """[45.21s - 59.99s] 3-Step Emotional Control System: 1) Pause and breathe 2) Ask "Will this matter in 6 months?" 3) Choose response consciously"""
+  quote = "[45.21s - 59.99s] 3-Step Emotional Control System: 1) Pause and breathe 2) Ask "Will this matter in 6 months?" 3) Choose response consciously"
   SaveMotivationalQuote(text=quote,text_file=text_file)
   ```<end_code>
   ---
@@ -168,7 +165,7 @@
   Thought: The first line is generic, but last two lines form powerful advice about growth mindset.
   Code:
   ```py
-  quote = """[326.50s - 333.33s] "True growth happens when you stop justifying limitations and start embracing potential."""
+  quote = "[326.50s - 333.33s] "True growth happens when you stop justifying limitations and start embracing potential."
   SaveMotivationalQuote(text=quote,text_file=text_file)
   ```<end_code>
   ---
@@ -348,11 +345,8 @@
     Here is the final answer from your managed agent '{{name}}':
     {{final_answer}}
 "final_answer":
-  "pre_messages": |-
-    does the chunk/text im analyzing contain more i should save ?
-
-  "final_answer": |-
-    To get the next chunk i will provide final answer  
-    {{final_answer}}  
-  "post_messages": |-
-    Great job! If you're ready, your manager will send the next transcript chunk.
+  pre_messages: |-
+    An agent tried to answer a user query but it got stuck and failed to do so. You are tasked with providing an answer instead. Here is the agent's memory:
+  post_messages: |-
+    Based on the above, please provide an answer to the following user task:
+    {{task}}

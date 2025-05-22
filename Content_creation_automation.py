@@ -1,10 +1,9 @@
-from smolagents import TransformersModel,FinalAnswerTool,SpeechToTextTool,CodeAgent,tool
+from smolagents import TransformersModel, FinalAnswerTool, SpeechToTextTool, CodeAgent, tool
 from Agents_tools import ChunkLimiterTool,Chunk_line_LimiterTool
 import torch
 import os
 import gc
 import yaml
-from rich.console import Console
 import subprocess
 from smolagents import SpeechToTextTool
 from ultralytics import YOLO
@@ -15,7 +14,7 @@ import os
 import threading
 import time
 from typing import List
-
+from pynvml import nvmlInit, nvmlDeviceGetHandleByIndex, nvmlDeviceGetMemoryInfo, nvmlShutdown
 _current_video_url: str = None
 def set_current_videourl(url: str):
     global _current_video_url
@@ -26,12 +25,7 @@ def get_current_videourl() -> str:
 Chunk_saving_text_file = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Logging_and_filepaths\saved_transcript_storage.txt"
 Final_saving_text_file=r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Logging_and_filepaths\final_saving_motivational.txt"
 
-Global_model =  TransformersModel(
-            model_id=r'C:\Users\didri\Desktop\LLM-models\Qwen\Qwen2.5-7B-Instruct',
-            device_map="auto",
-            load_in_8bit=True,
-            torch_dtype=torch.float16,
-        )
+
 
 @tool
 def SaveMotivationalQuote_CreateShort(text: str, text_file: str) -> None:
@@ -40,7 +34,7 @@ def SaveMotivationalQuote_CreateShort(text: str, text_file: str) -> None:
         text: The quote or message to save. To avoid syntax errors, wrap the string in triple quotes 
               when calling this function, especially if the text contains commas, quotes, or line breaks.
               Example:
-              text = \"\"\"This is a quote, with commas, 'apostrophes', and line breaks.\nStill safe.\"\"\"
+              text = "This is a quote,advice to be saved.
         text_file: The path to the file where the quote will be saved.
     """
     with open(text_file, "a", encoding="utf-8") as f:
@@ -80,26 +74,10 @@ def SaveMotivationalQuote(text: str, text_file: str) -> None:
         
  
 
-# from moviepy.editor import VideoFileClip, vfx
-
-# clip = VideoFileClip("input.mp4")
-
-# # boost contrast, slightly increase brightness
-# clip = clip.fx(vfx.lum_contrast, lum=10, contrast=1.3)
-
-# # multiply RGB channels (makes colors more vivid)
-# clip = clip.fx(vfx.colorx, 1.2)
-
-# # fade in/out as a finishing touch
-# clip = clip.fx(vfx.fadein, 1.0).fx(vfx.fadeout, 1.0)
-
-# clip.write_videofile("color_graded.mp4", codec="libx264")
-
-
 
 def create_short_video(video_path, start_time, end_time, video_name):
 
-
+    torch.cuda.set_device(1)
     model = YOLO("yolov8x.pt") 
     face_detector = mp.solutions.face_detection.FaceDetection(min_detection_confidence=0.7)
 
@@ -136,7 +114,6 @@ def create_short_video(video_path, start_time, end_time, video_name):
     TARGET_W, TARGET_H = 1080, 1920
     alpha = 0.2  
 
-  
     prev_cx, prev_cy = None, None
 
     def detect_and_crop_frame(frame):
@@ -246,6 +223,7 @@ def create_short_video(video_path, start_time, end_time, video_name):
 
     ##optionaly add logic for upscaling videos... lets see later...
     print(f"video is completed: output path : {out_path}")
+    del full_video, clip, processed_clip , model
     full_video.close()
     clip.close()
     face_detector.close()
@@ -312,38 +290,42 @@ def Transcript_Reasoning_AGENT(transcripts_path):
     with open(loaded_reasoning_agent_prompts, 'r', encoding='utf-8') as f:
             Prompt_template = yaml.safe_load(f)
 
+    tools = [FinalAnswerTool(),SaveMotivationalQuote]
+
     Reasoning_Text_Agent = CodeAgent(
         model=Global_model,
-        tools=[SaveMotivationalQuote, FinalAnswerTool()],
-        max_steps=100,
+        tools=tools,
+        max_steps=3,
         verbosity_level=1,
         prompt_templates=Prompt_template, 
+
     )
     chunk_limiter = ChunkLimiterTool()
 
 
-    for transcript_path in transcripts_path:
-        print(f"transcript_path [transcript_path in transcripts]: {transcript_path}")
-        transcript_title = os.path.basename(transcript_path)
-        print(f"transcript title: {transcript_title}")
-        print(f"\nProcessing new transcript: {transcript_path}")
-        chunk_limiter.reset()
-        with open(Chunk_saving_text_file, "a", encoding="utf-8") as out:
-            out.write(f"\n--- Transcript Title: {transcript_title} ---\n")
 
-        while True:
-            try:
-                chunk = chunk_limiter.forward(file_path=transcript_path, max_chars=2000)
+    print(f"transcript_path that is being proccessed inside func[Transcript_Reasoning_Agent]: {transcripts_path}")
+    transcript_title = os.path.basename(transcripts_path)
+    print(f"transcript title: {transcript_title}")
+    print(f"\nProcessing new transcript: {transcripts_path}")
+    chunk_limiter.reset()
+    with open(Chunk_saving_text_file, "a", encoding="utf-8") as out:
+        out.write(f"\n--- Transcript Title: {transcript_title} ---\n")
+
+    while True:
+        try:
+            chunk = chunk_limiter.forward(file_path=transcripts_path, max_chars=5000)
                
-            except Exception as e:
-                print(f"Error during chunking from file {transcript_path}: {e}")
+        except Exception as e:
+                print(f"Error during chunking from file {transcripts_path}: {e}")
                 break
 
-            if not chunk.strip():
-                print("Finished processing current transcript.")
+        if not chunk.strip():
+                print("Finished processing current transcript. Now exiting func [Transcript Reasoning Agent]")
+                Verify_Agent(Chunk_saving_text_file)
                 break
 
-            task = f"""
+        task = f"""
             You are a human-like reader analyzing & Reading the chunk and decide if it contains motivational, inspirational, wisdom-based,  or life-changing quotes or advice.
             Look specifically for quotes or advice that:
             - Inspire action or courage
@@ -359,13 +341,13 @@ def Transcript_Reasoning_AGENT(transcripts_path):
             Here is the chunk you will analyze using only reasoning like a human: \n
             [chunk start]{chunk}[chunk end]
             """
-            result = Reasoning_Text_Agent.run(
+        result = Reasoning_Text_Agent.run(
                 task=task,
                 additional_args={"text_file": Chunk_saving_text_file}
             )
-            print(f"[Path to where the [1. reasoning agent ] saves the motivational quotes  ]: {Chunk_saving_text_file}")
-            print(f"Agent response: {result}\n")
-            chunk_limiter.called = False 
+        print(f"[Path to where the [1. reasoning agent ] saves the motivational quotes  ]: {Chunk_saving_text_file}")
+        print(f"Agent response: {result}\n")
+        chunk_limiter.called = False 
 
 
 
@@ -378,11 +360,8 @@ def Transcript_Reasoning_AGENT(transcripts_path):
 
 #Agent som verifiserer tekst som er lagret, (dobbel sjekk lagret text)
 def Verify_Agent(saved_text_storage):
-    print(f"expects the text file [1. reasoning agent] saved the motivational quotes to, so it can verify the saved quotes: path:{saved_text_storage}")
-    transcript_path = []
-    transcript_path.append(saved_text_storage)
-    print(f"Transcript_path (LIST): {transcript_path}")
-    print(f"transcript _path (STRING): that got sent in parameter: {saved_text_storage}")
+    print(f"The text file [verify agent] will reason over, is the same txt path that [transcript_reasoning_agent] saved to, text file path:{saved_text_storage}")
+
     loaded_reasoning_agent_prompts = r'C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Prompt_templates\Reasoning_Again.yaml'
     with open(loaded_reasoning_agent_prompts, 'r', encoding='utf-8') as f:
             Prompt_template = yaml.safe_load(f)
@@ -392,19 +371,20 @@ def Verify_Agent(saved_text_storage):
     Reasoning_Text_Agent = CodeAgent(
         model=Global_model,
         tools=[SaveMotivationalQuote_CreateShort, FinalAnswerTool()],
-        max_steps=100,
-        verbosity_level=2,
+        max_steps=5,
+        verbosity_level=1,
         prompt_templates=Prompt_template, 
     )
-
+     
     chunk_limiter = Chunk_line_LimiterTool()
 
-    for transcript_path in transcript_path:
-        chunk_limiter.reset()
+    transcript_path = saved_text_storage
+    chunk_limiter.reset()
 
-        while True:
+    while True:
             try:
                 chunk = chunk_limiter.forward(file_path=transcript_path, until_phrase="New text saved")
+                print(f"chunk for verify agent: {chunk} from {transcript_path}")
             except Exception as e:
                 print(f"Error during chunking from file {transcript_path}: {e}")
                 break
@@ -448,40 +428,70 @@ import threading
 import queue
 gpu_lock = threading.Lock()
 transcript_queue = queue.Queue()
-
+global Global_model
 def log(msg):
     now = time.strftime("%H:%M:%S")
     thread = threading.current_thread().name
     print(f"[{now}][{thread}] {msg}")
 
+
+def print_gpu_stats():
+    nvmlInit()
+    for i in range(2):
+        handle = nvmlDeviceGetHandleByIndex(i)
+        info = nvmlDeviceGetMemoryInfo(handle)
+        print(f"GPU {i}: {info.used/1024**3:.1f}GB used / {info.total/1024**3:.1f}GB total")
+
+
 def gpu_worker():
     log("GPU worker started")
+    torch.backends.cudnn.benchmark = True
+    torch.set_float32_matmul_precision('medium')
     while True:
         item = transcript_queue.get()
         if item is None:
-            log("shutdown signal received exiting GPU worker")
+            print("shutdown signal received exiting GPU worker")
             break
+        print_gpu_stats()
+
+        torch.cuda.empty_cache()
+        gc.collect()
 
         video_path_url, transcript_text_path = item
-
+        print(f"video_path: {video_path_url} & Transcript_text_path: {transcript_text_path} is being proccessed now in [GPU_WORKER]")
         set_current_videourl(video_path_url)
-        log(f"Dequeued {transcript_text_path!r}, queue size now {transcript_queue.qsize()}")
+        print(f"Current video_url being processed is: {video_path_url}")
+
+
+        print(f"Dequeued {transcript_text_path!r}, queue size now {transcript_queue.qsize()}")
         if transcript_text_path is None:
-            log("Shutdown signal received, exiting GPU worker")
+            print(f"transcript_text_path is: {transcript_text_path}")
+            print("Stopped...")
             break
         with gpu_lock:
-            log(f"▶️ Running Transcript_Reasoning_AGENT on {transcript_text_path}") 
+            global Global_model
+            Global_model =  TransformersModel(
+            model_id=r'C:\Users\didri\Desktop\LLM-models\Qwen\Qwen2.5-7B-Instruct',
+            device_map="auto",
+            load_in_4bit=True,
+            torch_dtype=torch.float16,
+            max_new_tokens=1024,
+            trust_remote_code=True,
+        )
+            print_gpu_stats()
+            print(f"Global model device: {Global_model}")
+            print(f"▶️ Running Transcript_Reasoning_AGENT on {transcript_text_path}") 
+            
             Transcript_Reasoning_AGENT(transcript_text_path)
-            log(f"▶️ Running Verify_Agent on {transcript_text_path}")
-            Verify_Agent(Chunk_saving_text_file)
         transcript_queue.task_done()
 
 def get_device():
     if gpu_lock.acquire(blocking=False):
-        log("Acquired GPU lock — using CUDA")
+        gpu_lock.release()
+        print("cuda available for transcription")
         return "cuda"
     else:
-        log("GPU busy — falling back to CPU")
+        print("GPU busy — falling back to CPU")
         return "cpu"
 
 
@@ -500,7 +510,6 @@ def transcribe_single_video(video_path):
         folder = os.path.dirname(video_path)
         audio_path = os.path.join(folder, f"{base_name}.wav")
         txt_output_path = os.path.join(folder, f"{base_name}.txt")
-        transcript_text_path = []
 
         device = get_device()
         tool = SpeechToTextTool()
@@ -510,11 +519,9 @@ def transcribe_single_video(video_path):
 
         if os.path.isfile(audio_path) and os.path.isfile(txt_output_path):
             log(f"Transcript already exists: {txt_output_path}, audio exists: {audio_path}")
-            transcript_queue.put((video_path, txt))
+            transcript_queue.put((video_path, txt_output_path ))
             log(f"Enqueued existing transcript for GPU processing: {txt_output_path}")
             return
-
-
         try:
             ffmpeg_cmd = [
                 "ffmpeg",
@@ -529,7 +536,6 @@ def transcribe_single_video(video_path):
         except subprocess.CalledProcessError:
             log(f"❌ Audio extraction failed for {video_path}")
             return
-
         
         try:
             result_txt_path = tool.forward({"audio": audio_path,"text_path":txt_output_path})
@@ -538,20 +544,8 @@ def transcribe_single_video(video_path):
             log(f"🔊 Transcription saved → {txt_output_path}")
 
 
-
- 
             transcript_queue.put((video_path, txt_output_path))
-            time.sleep(2)
-
-
-            if device == "cuda":
-                with gpu_lock:
-                    print(f"Running [Transcript_Reasoning_AGENT] passing: {transcript_text_path}")
-                    Transcript_Reasoning_AGENT(txt_output_path)
-                    print(f"Running [verify_agent] passing : {Chunk_saving_text_file}")
-                    Verify_Agent(Chunk_saving_text_file)
-            else:
-                print("Skipping reasoning agents - not on GPU")
+            log(f"Successfully added [video_path: {video_path} & txt_output_path: {txt_output_path}] to the queue for GPU processing")
 
         except Exception as e:
             print(f"Transcription failed for {audio_path}: {e}")
@@ -564,6 +558,11 @@ from concurrent.futures import ThreadPoolExecutor
 if __name__ == "__main__":
     gc.collect()
     torch.cuda.empty_cache()
+    import torch
+    print_gpu_stats() 
+    print(torch.cuda.get_device_name(0))  # Should show "RTX 3060 Ti"
+    print(torch.cuda.get_device_name(1))  # Should show "RTX 3060 Ti"
+    print(torch.cuda.is_available())      # Should return True
     try:
       video_paths = [
           r"c:\Users\didri\Documents\Finding Freedom From Ego & Subconscious Limiting Beliefs ｜ Peter Crone.mp4",
@@ -577,7 +576,8 @@ if __name__ == "__main__":
       gpu_thread.start()
 
 
-      max_threads = 4
+      max_threads = 2
+
       with ThreadPoolExecutor(max_workers=max_threads) as executor:
           executor.map(transcribe_single_video, video_paths)
        
