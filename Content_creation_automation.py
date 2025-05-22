@@ -121,7 +121,7 @@ def SaveMotivationalQuote(text: str, text_file: str) -> None:
 def create_short_video(video_path, start_time, end_time, video_name, subtitle_text):
     subtitles = subtitle_text
     print("subtitles: ",subtitles)
-    torch.cuda.set_device(1)
+    torch.cuda.set_device(0 )
     model = YOLO("yolov8x.pt") 
     face_detector = mp.solutions.face_detection.FaceDetection(min_detection_confidence=0.7)
 
@@ -135,17 +135,17 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
             text=txt,
             font=r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Logging_and_filepaths\Video_clips\Cardo-Bold.ttf", 
             font_size=48,
-            margin=(20, 10), 
+            margin=(5, 5), 
             text_align="center" ,
             vertical_align="center",
             horizontal_align="center",
             color='white',
             stroke_color="black",
-            stroke_width=1,
+            stroke_width=0.5,
             size=(1000, None),
             method="caption",
             duration=duration
-        ).with_position(('center', 0.65), relative=True)
+        ).with_position(('center', 0.5), relative=True)
         return txt_clip
     
 
@@ -250,16 +250,20 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
                 size=processed_clip.size
             )
                 
-    final_clip.audio = processed_clip.audio
+    final_clip.audio = clip.audio
+    # Import effects from their dedicated submodules
+    from moviepy.video.fx.LumContrast import LumContrast 
+    from moviepy.video.fx.MultiplyColor import MultiplyColor  
+    from moviepy.video.fx.FadeIn import FadeIn
+    from moviepy.video.fx.FadeOut import FadeOut
+ 
+    # Apply effects like this (NO METHOD CHAINING!)
+    lum_contrast_effect = LumContrast(lum=0.5, contrast=0.2)
+    final_clip = lum_contrast_effect.apply(final_clip)
+    final_clip = MultiplyColor(factor=0.3).apply(final_clip) 
+    final_clip = FadeIn(duration=1.0).apply(final_clip)
+    final_clip = FadeOut(duration=1.0).apply(final_clip)
 
-    final_clip = (
-        final_clip
-        .fx(vfx.lum_contrast, lum=10, contrast=1.3)
-        .fx(vfx.colorx,1.2)
-        .fx(vfx.fadein, 1.0)
-        .fx(vfx.fadeout, 1.0)
-
-    )
 
 
     output_dir = "./Logging_and_filepaths/Video_clips"
@@ -272,14 +276,16 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
         bitrate="2500k",
         preset="slow",
         ffmpeg_params=[
-        "-vf",
-        "hue=h=45:s=1.3,eq=contrast=0.5:brightness=0.05"
+        # "-vf",
+        # "hue=h=45:s=1.3,eq=contrast=0.5:brightness=0.05"
         ]
     )
 
     ##optionaly add logic for upscaling videos... lets see later...
     print(f"video is completed: output path : {out_path}")
-    del full_video, clip, processed_clip , model
+    print(subtitle_clips) 
+    print(subtitles) 
+    del  model
     full_video.close()
     clip.close()
     face_detector.close()
@@ -320,8 +326,6 @@ def run_video_short_creation_thread(video_url,start_time,end_time,text):
           import traceback
           print("[ERROR] in run_video_short_creation_thread:")
           traceback.print_exc()
-
-
 
 
 #auto upload and schedule video on social media.
