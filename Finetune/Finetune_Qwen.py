@@ -10,9 +10,7 @@ torch.cuda.empty_cache()
 # -----------------------------
 # Paths
 # -----------------------------
-model_path = r""
-train_file = os.path.join(model_path, "train.jsonl")
-test_file = os.path.join(model_path, "test.jsonl")
+model_path = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-7B-Instruct"
 output_dir = os.path.join(model_path, "")
 os.makedirs(output_dir, exist_ok=True)
 
@@ -28,10 +26,10 @@ fourbit_models = [
 ]
 
 model,tokenizer = FastLanguageModel.from_pretrained(
-    model_name="",
+    model_name=r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-7B-Instruct",
     max_seq_length=max_seq_length,
     dtype=dtype,
-    load_in_4bit=Load_in_4bit,
+    load_in_4bit=Load_in_4bit
     )
 
 # -----------------------------
@@ -64,25 +62,25 @@ alpaca_prompt  = """
                 ### Response:
                 {}"""
 EOS_TOKEN = tokenizer.eos_token 
-def formatting_prompts_func(exsamples):
-    instructions = exsamples["instruction"]
-    inputs = exsamples["input"]
-    outputs = exsamples["output"]
-    texts = []
-
-    for instruction, input, output in zip(instructions, inputs, outputs):
-        text= alpaca_prompt.format(instruction,input,output) + EOS_TOKEN
-        text.append(text)
-    return {"text": texts,}
-
-
-
-# -----------------------------
-# Load and Preprocess the Dataset
-# -----------------------------
 from datasets import load_dataset
-dataset = load_dataset("yahma/alpaca-cleaned", split="train")
-dataset = dataset.map(formatting_prompts_func, batched=True,)
+
+train_file = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\train.jsonl"
+
+dataset = load_dataset("json", data_files={"train": train_file}, split="train")
+
+EOS_TOKEN = tokenizer.eos_token
+
+def formatting_prompts_func(examples):
+    texts = []
+    for instruction, input_text, output in zip(examples["instruction"], examples["input"], examples["output"]):
+        text = alpaca_prompt.format(instruction, input_text, output) + EOS_TOKEN
+        texts.append(text)
+    return {"text": texts}
+
+dataset = dataset.map(formatting_prompts_func, batched=True)
+
+
+
 # -----------------------------
 # Set up the Training Configuration
 # -----------------------------
@@ -96,10 +94,11 @@ trainer = SFTTrainer(
     train_dataset=dataset,
     max_seq_length=max_seq_length,
     dataset_num_proc=2,
+    dataset_text_field="text",
     args=TrainingArguments(
         per_device_train_batch_size = 1,
         gradient_accumulation_steps = 4,
-        # Use num_train_epochs = 1, warmup_ratio for full training runs!
+        num_train_epochs = 1, 
         warmup_steps = 20,
         max_steps = 120,
         learning_rate = 5e-5,

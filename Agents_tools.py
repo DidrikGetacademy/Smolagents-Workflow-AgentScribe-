@@ -204,11 +204,6 @@ class Chunk_line_LimiterTool(Tool):
             "description": "Path to the transcript.txt file",
            "nullable": True,
         },
-       "until_phrase": {
-           "type": "string",
-           "description": "Optional: only return a line containing this phrase",
-           "nullable": True,
-        },
     }
     output_type = "string"
 
@@ -216,49 +211,29 @@ class Chunk_line_LimiterTool(Tool):
         super().__init__()
         self.called = False
         self.saved_file_path = None
+        self.current_line = 0
 
     def reset(self):
         self.called = False
+        self.current_line = 0
 
-    def forward(self, file_path: str = None, until_phrase: str = None) -> str:
-        if self.called:
-            raise Exception("ChunkLimiterTool was already called this reasoning step.")
-        self.called = True
-
-        if file_path:
-            self.saved_file_path = file_path
-        elif not self.saved_file_path:
-            raise ValueError("file_path must be provided the first time.")
-
-        with open(self.saved_file_path, "r", encoding="utf-8") as f:
+    def forward(self, file_path: str = None):
+        with open(file_path, "r", encoding="utf-8") as f:
             lines = f.readlines()
 
-        if not lines:
-            return ""
-
-        if until_phrase is None:
-            # Return the first line regardless
-            chunk = lines[0].strip()
-            remaining = lines[1:]
-        else:
-            # Find the first line containing until_phrase
-            chunk = None
-            remaining = []
-            found = False
-            for line in lines:
-                if not found and until_phrase in line:
-                    chunk = line.strip()
-                    found = True
-                else:
-                    remaining.append(line)
-            if chunk is None:
-                # No line contains until_phrase, return empty string or handle as you want
-                return ""
-
-        with open(self.saved_file_path, "w", encoding="utf-8") as f:
-            f.writelines(remaining)
-
-        return f"[CHUNK_OUTPUT]\n{chunk}"
+        block = []
+        in_block = False
+        for line in lines[self.current_line:]:
+            self.current_line += 1
+            if "===START_QUOTE===" in line:
+                in_block = True
+                block = []
+            elif "===END_QUOTE===" in line and in_block:
+                in_block = False
+                return ''.join(block).strip()
+            elif in_block:
+                block.append(line)
+        return ""
 
 
 

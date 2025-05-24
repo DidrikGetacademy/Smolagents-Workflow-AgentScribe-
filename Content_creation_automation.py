@@ -12,9 +12,14 @@ import mediapipe as mp
 from moviepy import VideoFileClip, ImageSequenceClip, TextClip, CompositeVideoClip,vfx 
 import os
 import threading
+import cv2
+import ffmpeg
 import time
 from typing import List
 from pynvml import nvmlInit, nvmlDeviceGetHandleByIndex, nvmlDeviceGetMemoryInfo, nvmlShutdown
+from basicsr.archs.rrdbnet_arch import RRDBNet
+from realesrgan import RealESRGANer
+
 _current_video_url: str = None
 def set_current_videourl(url: str):
     global _current_video_url
@@ -27,17 +32,26 @@ Final_saving_text_file=r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_Vi
 
 
 
+
 def parse_multiline_block(block_text):
     lines = [line.strip() for line in block_text.strip().splitlines() if line.strip()]
+    line = [line for line in lines if line.startswith('[')]
+    print(f"[parse_multiline_block] lines={lines}")
+    print(f"[parse_multiline_block] line=[{line}]")
     if not lines:
-        return None, None, ""
+        return None, None, 
     
-    start_time, _ = parse_timestamp_line(lines[0])
+    start_time, _ = parse_timestamp_line(line[0])
+    print(f"start_time: {start_time}")
 
-    _, end_time = parse_timestamp_line(lines[-1])
+    _, end_time = parse_timestamp_line(line[-1])
 
-    
+    print(f"end_time: {end_time}")
+        
     return start_time, end_time
+
+
+
 
 def parse_timestamp_line(line):
     import re
@@ -47,6 +61,8 @@ def parse_timestamp_line(line):
         return float(match.group(1)), float(match.group(2))
     else:
         return None, 
+
+
 
 
 def parse_subtitle_text_block(text_block):
@@ -70,26 +86,30 @@ def parse_subtitle_text_block(text_block):
             subtitles.append((text, start, end))
     return subtitles 
     
+
+
 @tool
 def SaveMotivationalQuote_CreateShort(text: str, text_file: str) -> None:
     """Appends a motivational quote, wisdom or text with timestamp to the output text file.
     Args:
-        text: The quote or message to save. To avoid syntax errors, wrap the string in triple quotes 
+        text: The quote or message to save, include all timestamp if [start - end]. To avoid syntax errors, wrap the string in triple quotes 
               when calling this function, especially if the text contains commas, quotes, or line breaks.
               Example:
-              text = "This is a quote,advice to be saved.
+              text = "This is a quote, advice to be saved.
         text_file: The path to the file where the quote will be saved.
     """
     with open(text_file, "a", encoding="utf-8") as f:
         f.write("New text saved:" + text.strip() +"\n\n")
+        print(f"text: {text}")
         start_time, end_time = parse_multiline_block(text)
-        print(f"start_time: {start_time}, end_time: {end_time}")
+        print(f"[start_time: {start_time}, end_time: {end_time}]   FROM : SaveMotivationalQuote_CreateShort")
     
     if start_time is None or end_time is None:
         raise ValueError(f"Start_time or end_time is None, start_time: {start_time}, end_time: {end_time}")
   
 
     video_url = get_current_videourl()
+    print("[VIDEO URL IN: SaveMotivationalQuote_CreateShort]", video_url)
     print(f"Video Url to be used for video short creation from [get_current_videourl]: {video_url}")
     try:
         print("running thread now")
@@ -98,6 +118,8 @@ def SaveMotivationalQuote_CreateShort(text: str, text_file: str) -> None:
     except Exception as e:
         print(f"error: {str(e)}")
 
+
+
 @tool
 def SaveMotivationalQuote(text: str, text_file: str) -> None:
     """Appends a motivational quote, wisdom or text with timestamp to the output text file.
@@ -105,131 +127,294 @@ def SaveMotivationalQuote(text: str, text_file: str) -> None:
         text: The quote or message to save. To avoid syntax errors, wrap the string in triple quotes 
               when calling this function, especially if the text contains commas, quotes, or line breaks.
               Example:
-              text = \"\"\"This is a quote, with commas, 'apostrophes', and line breaks.\nStill safe.\"\"\"
+              text = \"This is a quote, with commas, 'apostrophes', and line breaks. Still safe."
         text_file: The path to the file where the quote will be saved.
     """
     with open(text_file, "a", encoding="utf-8") as f:
-        f.write("New text saved:" + text.strip() +"\n\n")
+            f.write("===START_QUOTE===\n")
+            f.write(text.strip() + "\n")
+            f.write("===END_QUOTE===\n\n")
 
 
+
+
+
+
+
+
+# # Load ONNX model
+# onnx_model_path = r"c:\Users\didri\Desktop\LLM-models\Video-upscale-models\realesrgan_x2plus.onnx"
+# # List available providers on your machine
+# print("Available providers:", ort.get_available_providers())
+
+# # Pick best provider automatically (prefers GPU if available)
+# providers = ['CUDAExecutionProvider', 'CPUExecutionProvider']  # add more if you want
+# available_providers = [p for p in providers if p in ort.get_available_providers()]
+# print("Using providers:", available_providers)
+# session = ort.InferenceSession(onnx_model_path,provider=available_providers)
+
+# input_name = session.get_inputs()[0].name
+# input_meta = session.get_inputs()[0]
+# input_name = input_meta.name
+# input_type = input_meta.type
+# input_shape = input_meta.shape
+
+# print(f"Model expects input '{input_name}' with type '{input_type}' and shape {input_shape}")
+
+# # Based on input type, decide dtype for numpy array:
+# if 'float16' in input_type:
+#     np_dtype = np.float16
+# elif 'float32' in input_type:
+#     np_dtype = np.float32
+# else:
+#     raise TypeError(f"Unexpected model input type: {input_type}")
+
+# # Load your input image
+# img_path = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\test.png"
+# img = Image.open(img_path).convert('RGB')
+# w, h = img.size
+# new_w = (w // 4) * 4
+# new_h = (h // 4) * 4
+
+# # Pad or crop image to new size (ImageOps.pad adds padding if smaller)
+# img = ImageOps.pad(img, (new_w, new_h), method=Image.BICUBIC, color=(0, 0, 0))
+
+
+# img_np = np.array(img).astype(np.dtype) / 255.0
+
+# # Change to CHW and add batch dimension
+# img_np = np.transpose(img_np, (2, 0, 1))[None, :, :, :]  # shape (1, 3, H, W)
+
+# # Run inference
+# outputs = session.run(None, {input_name: img_np})
+
+# # Get output and convert to image
+# output_np = outputs[0]
+# output_img = np.clip(output_np[0].transpose(1, 2, 0), 0, 1) * 255
+# output_img = output_img.astype(np.uint8)
+
+# output_pil = Image.fromarray(output_img)
+# output_pil.save("output_upscaled.png")
+
+# 1) Velg enhet
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+# 2) Definer modellarkitekturen (RRDBNet for RealESRGAN_x2plus)
+model = RRDBNet(
+    num_in_ch=3, 
+    num_out_ch=3, 
+    num_feat=64, 
+    num_block=23, 
+    num_grow_ch=32, 
+    scale=2
+)
+
+# 3) Last inn pre-trent modellvektorer
+model_path = r"c:\Users\didri\Desktop\LLM-models\Video-upscale-models\RealESRGAN_x2plus.pth"
+checkpoint = torch.load(model_path, map_location=device)
+
+# Bruk 'params_ema' hvis tilgjengelig, ellers 'params'
+if 'params_ema' in checkpoint:
+    model.load_state_dict(checkpoint['params_ema'], strict=True)
+else:
+    model.load_state_dict(checkpoint['params'], strict=True)
+model.to(device)
+
+# 4) Konfigurer RealESRGANer
+real_esrgan = RealESRGANer(
+    scale=2,                 
+    model_path=model_path,
+    model=model,
+    tile=0,                    
+    tile_pad=10,
+    pre_pad=0,
+    half=True,              
+    device=device
+)
+
+def sharpen_frame_naturally(frame_bgr):
+    from PIL import ImageFilter,Image
+    img_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
+    pil_img = Image.fromarray(img_rgb)
+
+    sharpned_pil = pil_img.filter(ImageFilter.UnsharpMask(radius=1.2, percent=113,threshold=2))
+    sharpned_rgb = np.array(sharpned_pil)
+    sharpened_bgr = cv2.cvtColor(sharpned_rgb, cv2.COLOR_RGB2BGR)
+
+    return sharpened_bgr
+
+
+def upscale_frames(frames):
+    upscaled = []
+    for frame in frames:
+        count += 1
+   
+        img_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+  
+        sharpened_frame = sharpen_frame_naturally(img_rgb)
+
+        output, _ = real_esrgan.enhance(sharpened_frame, outscale=2)
         
- 
 
+        out_bgr = cv2.cvtColor(output, cv2.COLOR_RGB2BGR)
+        print(f"appending upscaled frame: {out_bgr.shape} [COUNT]: {count}/{len(frames)} ")
+
+        upscaled.append(out_bgr)
+    return upscaled
 
 
 
 def create_short_video(video_path, start_time, end_time, video_name, subtitle_text):
+    probe = ffmpeg.probe(video_path)
+    print(probe)
+
+    format_info = probe.get('format', {})
+    bitrate = int(format_info.get('bit_rate', 0))
+    video_streams = [s for s in probe['streams'] if s['codec_type'] == 'video']
+    video_codec = video_streams[0]['codec_name'] if video_streams else None
+    audio_streams = [s for s in probe['streams'] if s['codec_type'] == 'audio']
+    audio_codec = audio_streams[0]['codec_name'] if audio_streams else None
+
+
+
     subtitles = subtitle_text
     print("subtitles: ",subtitles)
-    torch.cuda.set_device(0 )
-    model = YOLO("yolov8x.pt") 
-    face_detector = mp.solutions.face_detection.FaceDetection(min_detection_confidence=0.7)
+    torch.cuda.set_device(0)
+    Face_Detection_Yolov8x = r"c:\Users\didri\Desktop\LLM-models\Face-Detection-Models\yolov8x-face-lindevs.pt"
+    model = YOLO(Face_Detection_Yolov8x) 
 
 
     full_video = VideoFileClip(video_path)
     clip = full_video.subclipped(start_time, end_time)
 
-    def create_subtitles(txt,duration):
-        duration = end - start
-        txt_clip = TextClip(
-            text=txt,
-            font=r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Logging_and_filepaths\Video_clips\Cardo-Bold.ttf", 
-            font_size=48,
-            margin=(5, 5), 
-            text_align="center" ,
-            vertical_align="center",
-            horizontal_align="center",
-            color='white',
-            stroke_color="black",
-            stroke_width=0.5,
-            size=(1000, None),
-            method="caption",
-            duration=duration
-        ).with_position(('center', 0.5), relative=True)
-        return txt_clip
+
+    def split_subtitles_into_chunks(text, max_words=3):
+        words = text.split()
+        return [' '.join(words[i:i + max_words]) for i in range(0, len(words), max_words)]
+    
     
 
+    def create_subtitles(txt,duration,clip_relative_start):
+        chunks = split_subtitles_into_chunks(txt)
+        chunk_duration = duration / len(chunks)
+        text_clips = []
+        for i, chunk in  enumerate(chunks):
+            start = clip_relative_start + i * chunk_duration
 
+            print(duration)
+            txt_clip = TextClip(
+                text=chunk,
+                font=r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Logging_and_filepaths\Video_clips\Cardo-Bold.ttf", 
+                font_size=80,
+                margin=(10, 10), 
+                text_align="center" ,
+                vertical_align="center",
+                horizontal_align="center",
+                color='white',
+                stroke_color="black",
+                stroke_width=2,
+                size=(1000, None),
+                method="label",
+                duration=chunk_duration
+            ).with_position(('center', 0.65), relative=True
+            ).with_start(start
+            )
+            text_clips.append(txt_clip)
+            
+        return text_clips
+    
     
 
-    TARGET_W, TARGET_H = 1080, 1920
-    alpha = 0.2  
+    def detect_and_crop_frames_batch(frames,batch_size=8):
+        TARGET_W, TARGET_H = 1080, 1920
+        alpha = 0.1
+        prev_cx, prev_cy = None, None
+        cropped_frames = []
 
-    prev_cx, prev_cy = None, None
+        for i in range (0, len(frames), batch_size):
+            batch = frames[i:i+batch_size]
+            batch_imgs = [np.ascontiguousarray(f) for f in batch]
 
-    def detect_and_crop_frame(frame):
-        nonlocal prev_cx, prev_cy
+            results_batch = model(batch_imgs, imgsz=960)
+            for frame, results in zip(batch, results_batch):
+                face_boxes = [ box.xyxy.cpu().numpy().astype(int)[0] for box in results.boxes]
+                h, w, _ = frame.shape
+                aspect_ratio = TARGET_W / TARGET_H  
+                if w / h > aspect_ratio:
+                
+                    crop_h = h
+                    crop_w = int(h * aspect_ratio)
+                else:
+            
+                    crop_w = w
+                    crop_h = int(w / aspect_ratio)
 
-        img = np.ascontiguousarray(frame)
 
-     
-        results = model(img, imgsz=640)[0]
-        person_boxes = [
-            b.xyxy.cpu().numpy().astype(int)[0]
-            for b, cls in zip(results.boxes, results.boxes.cls)
-            if int(cls) == 0  
-        ]
+                face_box = None
+                if face_boxes:
+            
+                    face_areas = [(x2 - x1) * (y2 - y1) for (x1, y1, x2, y2) in face_boxes]
+                    max_face_idx = np.argmax(face_areas)
+                    face_box = face_boxes[max_face_idx]
+
+                if face_box is not None:
+                    fx1, fy1, fx2, fy2 = face_box
+                    cx, cy = (fx1 + fx2) // 2, (fy1 + fy2) // 2
+                    print(f"Detected face at ({cx}, {cy}), cropping around that.")
+
+                else:
+                    cx, cy = w // 2, h // 2  
+                    print(f" no face found defaulting to center")
+
+            
+
+                if prev_cx is None or prev_cy is None:
+                    sx, sy = cx, cy
+                else:
+                    sx = int(alpha * cx + (1 - alpha) * prev_cx)
+                    sy = int(alpha * cy + (1 - alpha) * prev_cy)
+
+                prev_cx, prev_cy = sx, sy
+
+                x0 = max(0, min(cx - crop_w // 2, w - crop_w))
+                y0 = max(0, min(cy - crop_h // 2, h - crop_h))
+
+                cropped_frame = frame[y0:y0+crop_h, x0:x0+crop_w]
+
+        
+                if cropped_frame.shape[0] != TARGET_H or cropped_frame.shape[1] != TARGET_W:
+                    cropped_frame = cv2.resize(cropped_frame, (TARGET_W, TARGET_H))
+
+                cropped_frames.append(cropped_frame)
+                print(f"appending {len(cropped_frames)} frames to list")
 
 
-        results_face = face_detector.process(frame)
-        face_boxes = []
-        if results_face.detections:
-            for detection in results_face.detections:
-                bboxC = detection.location_data.relative_bounding_box
-                ih, iw, _ = frame.shape
-                x = int(bboxC.xmin * iw)
-                y = int(bboxC.ymin * ih)
-                w = int(bboxC.width * iw)
-                h = int(bboxC.height * ih)
-                face_boxes.append((x, y, x + w, y + h))
-
-        h, w, _ = frame.shape
-
- 
-        person_box = None
-        if person_boxes:
-            person_areas = [(x2 - x1) * (y2 - y1) for (x1, y1, x2, y2) in person_boxes]
-            max_person_idx = np.argmax(person_areas)
-            person_box = person_boxes[max_person_idx]
-
-     
-        face_box = None
-        if face_boxes:
-            face_areas = [(x2 - x1) * (y2 - y1) for (x1, y1, x2, y2) in face_boxes]
-            max_face_idx = np.argmax(face_areas)
-            face_box = face_boxes[max_face_idx]
-
-        if face_box:
-            fx1, fy1, fx2, fy2 = face_box
-            cx, cy = (fx1 + fx2) // 2, (fy1 + fy2) // 2
-        elif person_box:
-            x1, y1, x2, y2 = person_box
-            cx, cy = (x1 + x2) // 2, (y1 + y2) // 2
-        else:
-            cx, cy = w // 2, h // 2
-
+        return cropped_frames
     
-        if prev_cx is None or prev_cy is None:
-            sx, sy = cx, cy
-        else:
-            sx = int(alpha * cx + (1 - alpha) * prev_cx)
-            sy = int(alpha * cy + (1 - alpha) * prev_cy)
-        prev_cx, prev_cy = sx, sy
 
-       
-        x0 = max(0, min(sx - TARGET_W // 2, w - TARGET_W))
-        y0 = max(0, min(sy - TARGET_H // 2, h - TARGET_H))
-
-        return frame[y0:y0+TARGET_H, x0:x0+TARGET_W]
 
  
     frames = list(clip.iter_frames())
-    processed_frames = [detect_and_crop_frame(f) for f in frames]
+    processed_frames = detect_and_crop_frames_batch(frames, batch_size=8)
+    torch.cuda.empty_cache()
+    gc.collect()
+    print("emptied cache and collected garbage")
+    print("Starting realesrgan upscale...")
+    print(f"Number of cropped frames to upscale: {len(processed_frames)}") 
+
+
+
+
+
+    #upscaled_frames = upscale_frames(processed_frames)
+    torch.cuda.empty_cache()
+    gc.collect()
+    print("emptied cache and collected garbage")
+    print("creating video now....")
 
     processed_clip = ImageSequenceClip(processed_frames, fps=clip.fps).with_duration(clip.duration)
  
-
-
 
 
     subtitle_clips = []
@@ -241,8 +426,8 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
         if duration <= 0:
             continue
 
-        text_clip = create_subtitles(text, duration).with_start(clip_relative_start)
-        subtitle_clips.append(text_clip)
+        subtitle_chunk_clips = create_subtitles(text, duration, clip_relative_start)
+        subtitle_clips.extend(subtitle_chunk_clips)
         print(f"subtitle_clips: {subtitle_clips}")
 
     final_clip = CompositeVideoClip(
@@ -251,33 +436,33 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
             )
                 
     final_clip.audio = clip.audio
-    # Import effects from their dedicated submodules
-    from moviepy.video.fx.LumContrast import LumContrast 
-    from moviepy.video.fx.MultiplyColor import MultiplyColor  
-    from moviepy.video.fx.FadeIn import FadeIn
-    from moviepy.video.fx.FadeOut import FadeOut
  
-    # Apply effects like this (NO METHOD CHAINING!)
-    lum_contrast_effect = LumContrast(lum=0.5, contrast=0.2)
-    final_clip = lum_contrast_effect.apply(final_clip)
-    final_clip = MultiplyColor(factor=0.3).apply(final_clip) 
-    final_clip = FadeIn(duration=1.0).apply(final_clip)
-    final_clip = FadeOut(duration=1.0).apply(final_clip)
+    # from moviepy.video.fx.LumContrast import LumContrast 
+    # from moviepy.video.fx.MultiplyColor import MultiplyColor  
+    # from moviepy.video.fx.FadeIn import FadeIn
+    # from moviepy.video.fx.FadeOut import FadeOut
+ 
 
+    # lum_contrast_effect = LumContrast(lum=0.5, contrast=0.2)
+    # final_clip = lum_contrast_effect.apply(final_clip)
+    # final_clip = MultiplyColor(factor=0.3).apply(final_clip) 
+    # final_clip = FadeIn(duration=1.0).apply(final_clip)
+    # final_clip = FadeOut(duration=1.0).apply(final_clip)
 
-
+    print(f"video original fps: {clip.fps}")
     output_dir = "./Logging_and_filepaths/Video_clips"
     os.makedirs(output_dir, exist_ok=True)
     out_path = os.path.join(output_dir, f"{video_name}.mp4")
     final_clip.write_videofile(
         out_path,
-        codec="libx264",
-        audio_codec="aac",
-        bitrate="2500k",
+        codec=video_codec or "libx264",
+        audio_codec=audio_codec or "aac",
+        bitrate=str(bitrate) or "4000k",
         preset="slow",
+        threads=6,
+        fps=clip.fps,
         ffmpeg_params=[
-        # "-vf",
-        # "hue=h=45:s=1.3,eq=contrast=0.5:brightness=0.05"
+        '-vf', 'eq=brightness=0.1:saturation=0.5'
         ]
     )
 
@@ -288,7 +473,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
     del  model
     full_video.close()
     clip.close()
-    face_detector.close()
+
 
 
 
@@ -377,7 +562,7 @@ def Transcript_Reasoning_AGENT(transcripts_path):
 
     while True:
         try:
-            chunk = chunk_limiter.forward(file_path=transcripts_path, max_chars=5000)
+            chunk = chunk_limiter.forward(file_path=transcripts_path, max_chars=2500)
                
         except Exception as e:
                 print(f"Error during chunking from file {transcripts_path}: {e}")
@@ -389,20 +574,44 @@ def Transcript_Reasoning_AGENT(transcripts_path):
                 break
 
         task = f"""
-            You are a human-like reader analyzing & Reading the chunk and decide if it contains motivational, inspirational, wisdom-based,  or life-changing quotes or advice.
+           You are a human-like reader analyzing & reading the chunk to decide if it contains motivational, inspirational, wisdom-based, or life-changing quotes or advice.
+            You may find multiple motivational or inspirational quotes within the text chunk. Your task is to carefully analyze the entire chunk and:
+
+            - Identify all separate quotes or pieces of wisdom worth saving.
+            - Ignore non-motivational or normal talk that doesn’t meet the criteria.
+            - For each valid quote, call SaveMotivationalQuote separately with the full timestamp and text.
+            - Continue scanning the chunk to find additional quotes, even if normal talk appears between quotes.
+            - Do NOT stop after finding the first quote.
+
+            Example usage for saving multiple quotes in one chunk:
+
+            SaveMotivationalQuote(text="[10.00s - 15.00s] Quote one text here.", text_file=text_file)
+            SaveMotivationalQuote(text="[16.00s - 20.00s] Quote two text here.", text_file=text_file)
+
+            Once all quotes are identified and saved, call final_answer("please provide me with next text to analyze").
+
             Look specifically for quotes or advice that:
             - Inspire action or courage
             - Share deep life lessons or universal truths
             - Teach about discipline, power, respect, or success
             - Offer practical wisdom or mindset shifts that can change how someone lives
             - Are emotionally uplifting or provoke reflection
-            NOTE: 1 line in the chunk might not provide full context, but  multiple lines in a chunk can provide full context & valuable quote to be saved, so consider reasoning and think over the entire chunk when answering.
-            If you find such a quote & advice, use the `SaveMotivationalQuote` tool and include the timestamp of the quote,  
-            here is an exsample:  SaveMotivationalQuote(quote="[3567.33s - 3569.65s] - The magic you are looking for is in the work you are avoiding.",text_file=text_file)
-            then procceed with the next chunk by using `final_answer` tool if no more text is worth saving in the chunk.
-            you don't need or are allowed to use any other tools then `SaveMotivationalQuote`and `final_answer`
-            Here is the chunk you will analyze using only reasoning like a human: \n
+
+            NOTE: One line in the chunk might not provide full context, but multiple lines in a chunk can provide full context & valuable quote to be saved, so consider reasoning over the entire chunk when answering.
+            Often, several consecutive lines together (2 or 3 lines) may form a meaningful and powerful quote or insight worth saving, even if a single line alone does not.
+
+
+            If you find such a quote & advice, use the `SaveMotivationalQuote` tool and include the timestamp of the quote.
+            Here is an example: SaveMotivationalQuote(text="[3567.33s - 3569.65s] - The magic you are looking for is in the work you are avoiding.", text_file=text_file)
+
+            Then proceed with the next chunk by using the `final_answer` tool if no more text is worth saving in the chunk.
+
+            You don't need or are allowed to use any other tools than `SaveMotivationalQuote` and `final_answer`.
+
+            Here is the chunk you will analyze using only reasoning like a human:
+
             [chunk start]{chunk}[chunk end]
+
             """
         result = Reasoning_Text_Agent.run(
                 task=task,
@@ -446,7 +655,7 @@ def Verify_Agent(saved_text_storage):
 
     while True:
             try:
-                chunk = chunk_limiter.forward(file_path=transcript_path, until_phrase="New text saved")
+                chunk = chunk_limiter.forward(file_path=transcript_path)
                 print(f"chunk for verify agent: {chunk} from {transcript_path}")
             except Exception as e:
                 print(f"Error during chunking from file {transcript_path}: {e}")
@@ -458,23 +667,43 @@ def Verify_Agent(saved_text_storage):
                 break
 
             task = f"""
-            You are a human-like reader analyzing & Reading the chunk  that is already considered motivational by another agent, but you will make sure it is, and that it is containg  sutch text to be used for a standalone motivational short video so you must decide if it contains motivational, inspirational, wisdom-based,  or life-changing quotes or advice.
-            Look specifically for quotes or advice that:
-            - Inspire action or courage
-            - Share deep life lessons or universal truths
-            - Teach about discipline, power, respect, or success
-            - Offer practical wisdom or mindset shifts that can change how someone lives
-            - Are emotionally uplifting or provoke reflection
-            -provides full context and understanding
-             If you find such a quote & advice, use the `SaveMotivationalQuote_CreateShort` tool and include the timestamp of the quote,  here is an exsample:  SaveMotivationalQuote_CreateShort(quote="[3567.33s - 3569.65s] - The magic you are looking for is in the work you are avoiding.",text_file=text_file)
-             then procceed with the next chunk/text to analyze by using `final_answer` too
-             you don't need or are allowed to use any other tools then `SaveMotivationalQuote_CreateShort` and `final_answer`
-             this is how to use the tools: 
-              -SaveMotivationalQuote_CreateShort(text="New text saved:[858.98s - 866.98s] the magic you are looking for is in the work you are avoiding",text_file=text_file) # exsample
-              -final_answer("please provide me with next text to analyze")
-            Important: the text you are analyzing is already a little motivation, but you must decide if this is good enough to be used in a motivational short or not.
-            Here is the text/chunk you will analyze using only reasoning like a human: \n
+            You are a human-like reader analyzing **one saved quote at a time** from another agent, who already deemed it motivational. Your task is to carefully verify whether this quote contains truly motivational, inspirational, wisdom-based, or life-changing advice suitable for a standalone motivational short video.
+
+            Look specifically for quotes or advice that:  
+            - Inspire action or courage  
+            - Share deep life lessons or universal truths  
+            - Teach about discipline, power, respect, or success  
+            - Offer practical wisdom or mindset shifts that can change how someone lives  
+            - Are emotionally uplifting or provoke reflection  
+            - Provide full context and understanding  
+            - can be used as a standalone motivational short video because it provide sutch motivational quote
+
+            If you find the quote meets these criteria, use the `SaveMotivationalQuote_CreateShort` tool **including the original timestamp(s) exactly as they appear**.
+
+            **Note:**  
+            - If the quote spans multiple lines or segments, and each segment has its own timestamp, **include all timestamps exactly as saved by the first agent** when saving the quote.
+
+            For example:  
+            SaveMotivationalQuote_CreateShort(quote="[2323.0s - 2325.0s] Every great achievement begins with the decision to try. [2325.0s - 2327.0s] Courage doesn't always roar; sometimes it's the quiet voice at day's end saying 'I will try again tomorrow.'", text_file=text_file)
+
+            Then proceed with the next quote/chunk by using `final_answer`.
+
+            You may only use these tools:  
+            - `SaveMotivationalQuote_CreateShort`  
+            - `final_answer`
+
+            Here is how to use them:  
+            - SaveMotivationalQuote_CreateShort(text="New text saved:[858.98s - 866.98s] The magic you are looking for is in the work you are avoiding [866.98s - 875.00s] the only reason you are not living the life you want to live is because you [875.00s - 900.00s] day by day keep feeding the life you dont want to live", text_file=text_file)  
+            - final_answer("please provide me with next text to analyze")
+
+            Important:  
+            - The quote you analyze is already somewhat motivational, but you must decide if it’s **good enough for a motivational short video**.  
+            - **Preserve all timestamps exactly as saved by the first agent.**
+
+            Here is the quote/chunk you will analyze using human-like reasoning:  
+
             [chunk start]{chunk}[chunk end]
+
             """
             result = Reasoning_Text_Agent.run(
                 task=task,
@@ -538,7 +767,7 @@ def gpu_worker():
             device_map="auto",
             load_in_4bit=True,
             torch_dtype=torch.float16,
-            max_new_tokens=1024,
+            max_new_tokens=1500,
             trust_remote_code=True,
         )
             print_gpu_stats()
@@ -619,21 +848,16 @@ def transcribe_single_video(video_path):
 
 from concurrent.futures import ThreadPoolExecutor
 if __name__ == "__main__":
-    gc.collect()
-    torch.cuda.empty_cache()
+    # gc.collect()
+    # torch.cuda.empty_cache()
     # import torch
     # print_gpu_stats() 
-    # print(torch.cuda.get_device_name(0))  # Should show "RTX 3060 Ti"
-    # print(torch.cuda.get_device_name(1))  # Should show "RTX 3060 Ti"
-    # print(torch.cuda.is_available())      # Should return True
+    # print(torch.cuda.get_device_name(0)) 
+    # print(torch.cuda.get_device_name(1)) 
+    # print(torch.cuda.is_available())    
     # try:
     #   video_paths = [
-    #       r"c:\Users\didri\Documents\Finding Freedom From Ego & Subconscious Limiting Beliefs ｜ Peter Crone.mp4",
-    #       r"c:\Users\didri\Documents\Former Monk： “Stop Missing Your Life!” Here’s the Key To Lasting Happiness ｜ Cory Muscara.mp4",
-    #       r"c:\Users\didri\Documents\How to Best Guide Your Life Decisions & Path ｜ Dr. Jordan Peterson.mp4",
-    #       r"c:\Users\didri\Documents\Jordan Peterson： STOP LYING TO YOURSELF! How To Turn Your Life Around In 2024!.mp4",
-    #       r"c:\Users\didri\Documents\How To Break The Habit Of Being You - Dr Joe Dispenza (4K).mp4",
-    #       r"c:\Users\didri\Documents\Robert Greene： A Process for Finding & Achieving Your Unique Purpose.mp4",
+    #       r"c:\Users\didri\AppData\Local\CapCut\Videos\0523 (1).mp4"
     #   ]
     #   gpu_thread = threading.Thread(target=gpu_worker, name="GPU-Worker")
     #   gpu_thread.start()
@@ -652,19 +876,12 @@ if __name__ == "__main__":
 
     # except Exception as e: 
     #     print(f"Error: {e}")
-    set_current_videourl(r"c:\Users\didri\Documents\Former Monk： “Stop Missing Your Life!” Here’s the Key To Lasting Happiness ｜ Cory Muscara.mp4")
-    text="""
-[2315.28s - 2319.84s] you need to descend if you want to transcend
-[2319.84s - 2322.00s] you have to let yourself go down
-[2322.00s - 2324.32s] the self-energy true self-energy
-[2324.32s - 2326.88s] has a gravitational pull to it
-[2326.88s - 2329.68s] but we keep ourselves from going through the layers
-[2329.68s - 2331.76s] that it wants to bring us back through
-[2331.84s - 2335.20s] because of our ideas of how we're supposed to practice
-[2335.20s - 2336.32s] how we're supposed to behave
-[2336.32s - 2337.28s] how we're supposed to think
-[2337.28s - 2341.20s] and it prevents us from letting ourselves be
-[2341.20s - 2343.04s] in the messiness of our experience
-"""
-    text_file =r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Logging_and_filepaths\final_saving_motivational.txt"
-    SaveMotivationalQuote_CreateShort(text, text_file)
+
+
+    text = """"
+    [0.00s - 4.58s] Sometimes it can feel like men and women in relationships want entirely different things.
+
+    """
+    set_current_videourl(r"c:\Users\didri\AppData\Local\CapCut\Videos\0523 (1).mp4")
+
+    SaveMotivationalQuote_CreateShort(text,Final_saving_text_file)

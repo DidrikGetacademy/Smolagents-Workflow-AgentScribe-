@@ -1,1 +1,1 @@
-Input tokens: 7159, Output tokens: 200, Max context length: 32768
+Input tokens: 4902, Output tokens: 45, Max context length: 32768

@@ -8,6 +8,8 @@
   These print outputs will then appear in the 'Observation:' field, which will be available as input for the next step.
   In the end you have to return a final answer using the `final_answer` tool.
 
+  REMEMBER YOU MUST ONLY ANSWER IN JSON TO THE FOLLOWING TASKS.
+
   CRITICAL: DO NOT USE CODE LOOPS, CONDITIONALS, OR STRING OPERATIONS TO FILTER QUOTES. 
     You MUST analyze the text manually like a human reader, line by line, and directly list quotes in `final_answer`.
     Any code blocks containing loops/if statements for filtering will be rejected.
