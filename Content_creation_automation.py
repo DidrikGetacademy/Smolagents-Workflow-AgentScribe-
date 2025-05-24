@@ -20,6 +20,8 @@ from pynvml import nvmlInit, nvmlDeviceGetHandleByIndex, nvmlDeviceGetMemoryInfo
 from basicsr.archs.rrdbnet_arch import RRDBNet
 from realesrgan import RealESRGANer
 
+
+
 _current_video_url: str = None
 def set_current_videourl(url: str):
     global _current_video_url
@@ -29,7 +31,6 @@ def get_current_videourl() -> str:
     return _current_video_url
 Chunk_saving_text_file = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Logging_and_filepaths\saved_transcript_storage.txt"
 Final_saving_text_file=r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Logging_and_filepaths\final_saving_motivational.txt"
-
 
 
 
@@ -51,8 +52,6 @@ def parse_multiline_block(block_text):
     return start_time, end_time
 
 
-
-
 def parse_timestamp_line(line):
     import re
     pattern = r"\[(\d+\.?\d*)s\s*-\s*(\d+\.?\d*)s\]"
@@ -61,8 +60,6 @@ def parse_timestamp_line(line):
         return float(match.group(1)), float(match.group(2))
     else:
         return None, 
-
-
 
 
 def parse_subtitle_text_block(text_block):
@@ -142,95 +139,163 @@ def SaveMotivationalQuote(text: str, text_file: str) -> None:
 
 
 
-# # Load ONNX model
-# onnx_model_path = r"c:\Users\didri\Desktop\LLM-models\Video-upscale-models\realesrgan_x2plus.onnx"
-# # List available providers on your machine
-# print("Available providers:", ort.get_available_providers())
-
-# # Pick best provider automatically (prefers GPU if available)
-# providers = ['CUDAExecutionProvider', 'CPUExecutionProvider']  # add more if you want
-# available_providers = [p for p in providers if p in ort.get_available_providers()]
-# print("Using providers:", available_providers)
-# session = ort.InferenceSession(onnx_model_path,provider=available_providers)
-
-# input_name = session.get_inputs()[0].name
-# input_meta = session.get_inputs()[0]
-# input_name = input_meta.name
-# input_type = input_meta.type
-# input_shape = input_meta.shape
-
-# print(f"Model expects input '{input_name}' with type '{input_type}' and shape {input_shape}")
-
-# # Based on input type, decide dtype for numpy array:
-# if 'float16' in input_type:
-#     np_dtype = np.float16
-# elif 'float32' in input_type:
-#     np_dtype = np.float32
-# else:
-#     raise TypeError(f"Unexpected model input type: {input_type}")
-
-# # Load your input image
-# img_path = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\test.png"
-# img = Image.open(img_path).convert('RGB')
-# w, h = img.size
-# new_w = (w // 4) * 4
-# new_h = (h // 4) * 4
-
-# # Pad or crop image to new size (ImageOps.pad adds padding if smaller)
-# img = ImageOps.pad(img, (new_w, new_h), method=Image.BICUBIC, color=(0, 0, 0))
 
 
-# img_np = np.array(img).astype(np.dtype) / 255.0
+model_path_SwinIR_color_denoise15 = r"c:\Users\didri\Desktop\LLM-models\Video-upscale-models\SwinIR-M_noise15.pth"
+model_path_Swin_BSRGAN_X4 = r"c:\Users\didri\Desktop\LLM-models\Video-upscale-models\BSRGAN_DFOWMFC_s64w8_SwinIR-L_x4_GAN.pth"
 
-# # Change to CHW and add batch dimension
-# img_np = np.transpose(img_np, (2, 0, 1))[None, :, :, :]  # shape (1, 3, H, W)
 
-# # Run inference
-# outputs = session.run(None, {input_name: img_np})
 
-# # Get output and convert to image
-# output_np = outputs[0]
-# output_img = np.clip(output_np[0].transpose(1, 2, 0), 0, 1) * 255
-# output_img = output_img.astype(np.uint8)
+class swinir_processor:
+    def __init__(self ,model_name,processed_frames, device):
+        self.model_path =  model_path_Swin_BSRGAN_X4 if model_name == "SwinIR-L_x4_GAN" else model_path_SwinIR_color_denoise15
+        self.model_name = model_name
+        self.device = device
+        self.model = None
+        self.border = 0
+        self.window_size = 8
+        self.scale = 0
+        self.processed_frames = processed_frames
 
-# output_pil = Image.fromarray(output_img)
-# output_pil.save("output_upscaled.png")
 
-# 1) Velg enhet
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-# 2) Definer modellarkitekturen (RRDBNet for RealESRGAN_x2plus)
-model = RRDBNet(
-    num_in_ch=3, 
-    num_out_ch=3, 
-    num_feat=64, 
-    num_block=23, 
-    num_grow_ch=32, 
-    scale=2
-)
+    def test(self, img_lq, model, args, window_size):
+        if args.tile is None:
+            # test the image as a whole
+            output = model(img_lq)
+        else:
+            # test the image tile by tile
+            b, c, h, w = img_lq.size()
+            tile = min(args.tile, h, w)
+            assert tile % window_size == 0, "tile size should be a multiple of window_size"
+            tile_overlap = args.tile_overlap
+            sf = args.scale
 
-# 3) Last inn pre-trent modellvektorer
-model_path = r"c:\Users\didri\Desktop\LLM-models\Video-upscale-models\RealESRGAN_x2plus.pth"
-checkpoint = torch.load(model_path, map_location=device)
+            stride = tile - tile_overlap
+            h_idx_list = list(range(0, h-tile, stride)) + [h-tile]
+            w_idx_list = list(range(0, w-tile, stride)) + [w-tile]
+            E = torch.zeros(b, c, h*sf, w*sf).type_as(img_lq)
+            W = torch.zeros_like(E)
 
-# Bruk 'params_ema' hvis tilgjengelig, ellers 'params'
-if 'params_ema' in checkpoint:
-    model.load_state_dict(checkpoint['params_ema'], strict=True)
-else:
-    model.load_state_dict(checkpoint['params'], strict=True)
-model.to(device)
+            for h_idx in h_idx_list:
+                for w_idx in w_idx_list:
+                    in_patch = img_lq[..., h_idx:h_idx+tile, w_idx:w_idx+tile]
+                    out_patch = model(in_patch)
+                    out_patch_mask = torch.ones_like(out_patch)
 
-# 4) Konfigurer RealESRGANer
-real_esrgan = RealESRGANer(
-    scale=2,                 
-    model_path=model_path,
-    model=model,
-    tile=0,                    
-    tile_pad=10,
-    pre_pad=0,
-    half=True,              
-    device=device
-)
+                    E[..., h_idx*sf:(h_idx+tile)*sf, w_idx*sf:(w_idx+tile)*sf].add_(out_patch)
+                    W[..., h_idx*sf:(h_idx+tile)*sf, w_idx*sf:(w_idx+tile)*sf].add_(out_patch_mask)
+            output = E.div_(W)
+
+        return output
+
+    def return_model(self,model_path: str):
+        from .SwinIR.models.network_swinir import SwinIR as net
+
+        if model_name_SwinIR__x4_GA in model_path:
+            model = net(upscale=self.scale, in_chans=3, img_size=64, window_size=8,
+                                    img_range=1., depths=[6, 6, 6, 6, 6, 6, 6, 6, 6], embed_dim=240,
+                                    num_heads=[8, 8, 8, 8, 8, 8, 8, 8, 8],
+                                    mlp_ratio=2, upsampler='nearest+conv', resi_connection='3conv')
+            param_key_g = 'params_ema'
+
+        elif model_name_SwinIR_M_noise15 in model_path:
+            model = net(upscale=1, in_chans=3, img_size=128, window_size=8,
+                        img_range=1., depths=[6, 6, 6, 6, 6, 6], embed_dim=180, num_heads=[6, 6, 6, 6, 6, 6],
+                        mlp_ratio=2, upsampler='', resi_connection='1conv')
+            param_key_g = 'params'
+
+        pretrained_model = torch.load(model_path)
+        model.load_state_dict(pretrained_model[param_key_g] if param_key_g in pretrained_model.keys() else pretrained_model, strict=True)
+        
+        return model
+
+    def load_image(self, model_name, image_path, noise_level=0):
+        if model_name == "SwinIR-L_x4_GAN":
+            img_gt = None
+            img_lq = cv2.imread(image_path, cv2.IMREAD_COLOR0).astype(np.float32) / 255.
+        
+        elif model_name == "SwinIR-M_noise15":
+            img_gt = cv2.imread(image_path, cv2.IMREAD_COLOR).astype(np.float32) / 255.
+            np.random.seed(seed=0)
+            img_lq = img_gt + np.random.normal(0, noise_level / 255., img_gt.shape)
+
+        return image_path, img_lq, img_gt
+    
+
+
+        
+    def downscale_to_size(self, img: np.ndarray, width: int, height: int) -> np.ndarray:
+        """
+        Downscale an image to a specific width and height using Lanczos interpolation.
+        """
+        new_size = (width, height)
+        return cv2.resize(img, new_size, interpolation=cv2.INTER_LANCZOS4)
+
+    
+    
+    def run_inference(self):
+        self.model = self.return_model(model_name_SwinIR_M_noise15)
+        self.model.eval()
+        self.model = self.model.to(self.device)
+
+        test_results = OrderedDict()
+        test_results['psnr'] = []
+        test_results['ssim'] = []
+        test_results['psnr_y'] = []
+        test_results['ssim_y'] = []
+        test_results['psnrb'] = []
+        test_results['psnrb_y'] = []
+        psnr, ssim, psnr_y, ssim_y, psnrb, psnrb_y = 0, 0, 0, 0, 0, 0
+
+        for idx, frame in enumerate(frames):
+
+        sharpened_frame = sharpen_frame_naturally(img_rgb)
+
+
+        return
+
+        
+
+        
+
+
+def realesgran_inference():
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model = RRDBNet(
+        num_in_ch=3, 
+        num_out_ch=3, 
+        num_feat=64, 
+        num_block=23, 
+        num_grow_ch=32, 
+        scale=2
+    )
+
+    model_path= r"c:\Users\didri\Desktop\LLM-models\Video-upscale-models\RealESRGAN_x2plus.pth"
+
+    checkpoint = torch.load(model_path, map_location=device)
+
+    if 'params_ema' in checkpoint:
+        model.load_state_dict(checkpoint['params_ema'], strict=True)
+    else:
+        model.load_state_dict(checkpoint['params'], strict=True)
+    model.to(device)
+
+    real_esrgan = RealESRGANer(
+        scale=2,                 
+        model_path=model_path,
+        model=model,
+        tile=0,                    
+        tile_pad=10,
+        pre_pad=0,
+        half=True,              
+        device=device
+    )
+    return real_esrgan
+
+
+
+
 
 def sharpen_frame_naturally(frame_bgr):
     from PIL import ImageFilter,Image
@@ -251,10 +316,9 @@ def upscale_frames(frames):
    
         img_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-  
-        sharpened_frame = sharpen_frame_naturally(img_rgb)
-
-        output, _ = real_esrgan.enhance(sharpened_frame, outscale=2)
+        
+        real_esrgan =  realesgran_inference()
+        output, _ = real_esrgan.enhance(img_rgb, outscale=2)
         
 
         out_bgr = cv2.cvtColor(output, cv2.COLOR_RGB2BGR)
@@ -406,8 +470,19 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 
 
 
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    swinir_processor(processed_frames, model_name="SwinIR-M_noise15",device=device)
+
+
+
 
     #upscaled_frames = upscale_frames(processed_frames)
+
+
+
+    #swinir_processor(processed_frames, model_name="SwinIR-L_x4_GAN",device=device)
+
+
     torch.cuda.empty_cache()
     gc.collect()
     print("emptied cache and collected garbage")
