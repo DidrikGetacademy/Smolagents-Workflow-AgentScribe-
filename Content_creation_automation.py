@@ -224,7 +224,19 @@ class swinir_processor:
     
 
 
+    def sharpen_frame_naturally(frame_bgr):
+        from PIL import ImageFilter,Image
+        img_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
+        pil_img = Image.fromarray(img_rgb)
+
+        sharpned_pil = pil_img.filter(ImageFilter.UnsharpMask(radius=1.2, percent=113,threshold=2))
+        sharpned_rgb = np.array(sharpned_pil)
+        sharpened_bgr = cv2.cvtColor(sharpned_rgb, cv2.COLOR_RGB2BGR)
+
+        return sharpened_bgr
         
+
+
     def downscale_to_size(self, img: np.ndarray, width: int, height: int) -> np.ndarray:
         """
         Downscale an image to a specific width and height using Lanczos interpolation.
@@ -258,74 +270,67 @@ class swinir_processor:
         
 
         
-
-
-def realesgran_inference():
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = RRDBNet(
-        num_in_ch=3, 
-        num_out_ch=3, 
-        num_feat=64, 
-        num_block=23, 
-        num_grow_ch=32, 
-        scale=2
-    )
-
-    model_path= r"c:\Users\didri\Desktop\LLM-models\Video-upscale-models\RealESRGAN_x2plus.pth"
-
-    checkpoint = torch.load(model_path, map_location=device)
-
-    if 'params_ema' in checkpoint:
-        model.load_state_dict(checkpoint['params_ema'], strict=True)
-    else:
-        model.load_state_dict(checkpoint['params'], strict=True)
-    model.to(device)
-
-    real_esrgan = RealESRGANer(
-        scale=2,                 
-        model_path=model_path,
-        model=model,
-        tile=0,                    
-        tile_pad=10,
-        pre_pad=0,
-        half=True,              
-        device=device
-    )
-    return real_esrgan
-
-
-
-
-
-def sharpen_frame_naturally(frame_bgr):
-    from PIL import ImageFilter,Image
-    img_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
-    pil_img = Image.fromarray(img_rgb)
-
-    sharpned_pil = pil_img.filter(ImageFilter.UnsharpMask(radius=1.2, percent=113,threshold=2))
-    sharpned_rgb = np.array(sharpned_pil)
-    sharpened_bgr = cv2.cvtColor(sharpned_rgb, cv2.COLOR_RGB2BGR)
-
-    return sharpened_bgr
-
-
-def upscale_frames(frames):
-    upscaled = []
-    for frame in frames:
-        count += 1
-   
-        img_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-
-        
-        real_esrgan =  realesgran_inference()
-        output, _ = real_esrgan.enhance(img_rgb, outscale=2)
+class realesgran:
+    def __init__(self, frames, device):
+        self.model_path= r"c:\Users\didri\Desktop\LLM-models\Video-upscale-models\RealESRGAN_x2plus.pth"
+        self.device = device
+        self.frame_to_upscale = frames
+        self.model =  RRDBNet(
+            num_in_ch=3, 
+            num_out_ch=3, 
+            num_feat=64, 
+            num_block=23, 
+            num_grow_ch=32, 
+            scale=2
+        )
+        self.realreal_esrgan = None
         
 
-        out_bgr = cv2.cvtColor(output, cv2.COLOR_RGB2BGR)
-        print(f"appending upscaled frame: {out_bgr.shape} [COUNT]: {count}/{len(frames)} ")
+    def load_model(self):
+        checkpoint = torch.load(self.model_path, map_location=self.device)
+        if 'params_ema' in checkpoint:
+            self.model.load_state_dict(checkpoint['params_ema'], strict=True)
+        else:
+            self.model.load_state_dict(checkpoint['params'], strict=True)
+        self.model.to(self.device)
 
-        upscaled.append(out_bgr)
-    return upscaled
+        checkpoint = torch.load(self.model_path, map_location=self.device)
+        real_esrgan = RealESRGANer(
+            scale=2,                 
+            model_path=self.model_path,
+            model=self.model,
+            tile=0,                    
+            tile_pad=10,
+            pre_pad=0,
+            half=True,              
+            device=self.device
+        )
+      
+
+      
+    def upscale_frames(self):
+        if self.real_esrgan is None:
+            self.load_model()
+        upscaled = []
+        count = 0
+        for frame in self.frame_to_upscale:
+            count += 1
+            img_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            output, _ = self.realreal_esrgan.enhance(img_rgb, outscale=2)
+            out_bgr = cv2.cvtColor(output, cv2.COLOR_RGB2BGR)
+            print(f"appending upscaled frame: {out_bgr.shape} [COUNT]: {count}/{len(self.frames_to_upscale)}")
+            upscaled.append(out_bgr)
+
+        return upscaled
+
+
+
+    
+
+
+
+
+
 
 
 
@@ -471,16 +476,19 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    swinir_processor(processed_frames, model_name="SwinIR-M_noise15",device=device)
+    denoised_frames_noise15 = swinir_processor(processed_frames, model_name="SwinIR-M_noise15",device=device)
+    torch.cuda.empty_cache()
+    gc.collect()
 
 
 
 
-    #upscaled_frames = upscale_frames(processed_frames)
+    # realesgran_instance = realesgran(denoised_frames,device)
+    # upscaled_frames = realesgran_instance.upscale_frames(denoised_frames_noise15)
 
 
 
-    #swinir_processor(processed_frames, model_name="SwinIR-L_x4_GAN",device=device)
+    upscaled_frames_x4_GAN = swinir_processor(denoised_frames_noise15, model_name="SwinIR-L_x4_GAN",device=device)
 
 
     torch.cuda.empty_cache()
@@ -488,7 +496,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
     print("emptied cache and collected garbage")
     print("creating video now....")
 
-    processed_clip = ImageSequenceClip(processed_frames, fps=clip.fps).with_duration(clip.duration)
+    processed_clip = ImageSequenceClip(upscaled_frames_x4_GAN, fps=clip.fps).with_duration(clip.duration)
  
 
 
