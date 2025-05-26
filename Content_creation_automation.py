@@ -38,9 +38,9 @@ def get_current_videourl() -> str:
 
 Chunk_saving_text_file = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Logging_and_filepaths\saved_transcript_storage.txt"
 Final_saving_text_file=r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Logging_and_filepaths\final_saving_motivational.txt"
-#model_path_SwinIR_color_denoise15_pth = r"c:\Users\didri\Desktop\LLM-models\Video-upscale-models\SwinIR-M_noise15.pth"
-model_path_SwinIR_color_denoise15_onnx = r"c:\Users\didri\Desktop\LLM-models\Video-upscale-models\SwinIR_color_denoise15.onnx"
-#model_path_Swin_BSRGAN_X4_pth = r"c:\Users\didri\Desktop\LLM-models\Video-upscale-models\BSRGAN_DFOWMFC_s64w8_SwinIR-L_x4_GAN.pth"
+model_path_SwinIR_color_denoise15_pth = r"c:\Users\didri\Desktop\LLM-models\Video-upscale-models\SwinIR-M_noise15.pth"
+model_path_SwinIR_color_denoise15_onnx = r"c:\Users\didri\Desktop\LLM-models\Video-upscale-models\SwinIR-M_noise15.onnx"
+model_path_Swin_BSRGAN_X4_pth = r"c:\Users\didri\Desktop\LLM-models\Video-upscale-models\BSRGAN_DFOWMFC_s64w8_SwinIR-L_x4_GAN.pth"
 model_path_Swin_BSRGAN_X4_onnx = r"c:\Users\didri\Desktop\LLM-models\Video-upscale-models\BSRGAN_DFOWMFC_s64w8_SwinIR-L_x4_GAN.onnx"
 
 def parse_multiline_block(block_text):
@@ -209,13 +209,14 @@ from tqdm import tqdm
 import onnxruntime as ort
 
 class swinir_processor:
-    def __init__(self, processed_frames, model_name):
+    def __init__(self, processed_frames, model_name,batch_size=4):
         try:
             self.model_path = model_path_Swin_BSRGAN_X4_onnx if "x4_GAN" in model_name else model_path_SwinIR_color_denoise15_onnx
             self.model_name = model_name
             self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             self.model = None
             self.session = None
+            self.batch_size = batch_size
             self.use_onnx = self.model_path.endswith(".onnx")
             self.window_size = 8 if "noise15" in model_name else 7
             self.scale = 4 if "x4_GAN" in model_name else 1
