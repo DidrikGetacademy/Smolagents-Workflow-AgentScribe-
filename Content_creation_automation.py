@@ -19,16 +19,19 @@ from typing import List
 from pynvml import nvmlInit, nvmlDeviceGetHandleByIndex, nvmlDeviceGetMemoryInfo, nvmlShutdown
 from basicsr.archs.rrdbnet_arch import RRDBNet
 from realesrgan import RealESRGANer
-
-
-
+import argparse
+from concurrent.futures import ThreadPoolExecutor
 _current_video_url: str = None
 def set_current_videourl(url: str):
     global _current_video_url
     _current_video_url = url
+
+
 def get_current_videourl() -> str:
     global _current_video_url
     return _current_video_url
+
+
 Chunk_saving_text_file = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Logging_and_filepaths\saved_transcript_storage.txt"
 Final_saving_text_file=r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Logging_and_filepaths\final_saving_motivational.txt"
 
@@ -147,15 +150,21 @@ model_path_Swin_BSRGAN_X4 = r"c:\Users\didri\Desktop\LLM-models\Video-upscale-mo
 
 
 class swinir_processor:
-    def __init__(self ,model_name,processed_frames, device):
-        self.model_path =  model_path_Swin_BSRGAN_X4 if model_name == "SwinIR-L_x4_GAN" else model_path_SwinIR_color_denoise15
+    def __init__(self ,processed_frames, model_name, device,downscale_size=None):
+        self.model_path =  model_path_Swin_BSRGAN_X4 if "x4_GAN" in model_name else model_path_SwinIR_color_denoise15
         self.model_name = model_name
         self.device = device
+        self.downscale_size = downscale_size
         self.model = None
         self.border = 0
-        self.window_size = 8
-        self.scale = 0
+        self.window_size = 8 if "noise15" in model_name else 7
+        self.scale = 4 if "x4_GAN" in model_name else 1
         self.processed_frames = processed_frames
+        self.args = argparse.Namespace(
+            tile=256,
+            tile_overlap=32,
+            scale=self.scale
+        )
 
 
 
@@ -189,23 +198,23 @@ class swinir_processor:
 
         return output
 
-    def return_model(self,model_path: str):
+    def return_model(self):
         from .SwinIR.models.network_swinir import SwinIR as net
 
-        if model_name_SwinIR__x4_GA in model_path:
+        if "x4_GAN" in self.model_path:
             model = net(upscale=self.scale, in_chans=3, img_size=64, window_size=8,
                                     img_range=1., depths=[6, 6, 6, 6, 6, 6, 6, 6, 6], embed_dim=240,
                                     num_heads=[8, 8, 8, 8, 8, 8, 8, 8, 8],
                                     mlp_ratio=2, upsampler='nearest+conv', resi_connection='3conv')
             param_key_g = 'params_ema'
 
-        elif model_name_SwinIR_M_noise15 in model_path:
+        elif "M_noise15" in self.model_path:
             model = net(upscale=1, in_chans=3, img_size=128, window_size=8,
                         img_range=1., depths=[6, 6, 6, 6, 6, 6], embed_dim=180, num_heads=[6, 6, 6, 6, 6, 6],
                         mlp_ratio=2, upsampler='', resi_connection='1conv')
             param_key_g = 'params'
 
-        pretrained_model = torch.load(model_path)
+        pretrained_model = torch.load(self.model_path)
         model.load_state_dict(pretrained_model[param_key_g] if param_key_g in pretrained_model.keys() else pretrained_model, strict=True)
         
         return model
@@ -234,7 +243,7 @@ class swinir_processor:
         sharpened_bgr = cv2.cvtColor(sharpned_rgb, cv2.COLOR_RGB2BGR)
 
         return sharpened_bgr
-        
+    
 
 
     def downscale_to_size(self, img: np.ndarray, width: int, height: int) -> np.ndarray:
@@ -247,25 +256,47 @@ class swinir_processor:
     
     
     def run_inference(self):
-        self.model = self.return_model(model_name_SwinIR_M_noise15)
+        self.model = self.return_model()
         self.model.eval()
         self.model = self.model.to(self.device)
 
-        test_results = OrderedDict()
-        test_results['psnr'] = []
-        test_results['ssim'] = []
-        test_results['psnr_y'] = []
-        test_results['ssim_y'] = []
-        test_results['psnrb'] = []
-        test_results['psnrb_y'] = []
-        psnr, ssim, psnr_y, ssim_y, psnrb, psnrb_y = 0, 0, 0, 0, 0, 0
+        upscaled_frames = []
+        for frame in self.processed_frames:
+            upscaled_frame = self.process_frame(frame)
+            upscaled_frames.append(upscaled_frame)
+            print(f"Frame type: {type(upscaled_frame)}") 
+            print(f"Frame shape: {upscaled_frame.shape}") 
+            print(f"Frame dtype: {upscaled_frame.dtype}")  
 
-        for idx, frame in enumerate(frames):
+        return upscaled_frames
+        
+    def process_frame(self, frame):
+        print(f"Input frame shape: {frame.shape}")
+        img_lq = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        img_lq = img_lq.astype(np.float32) / 255.0
+        img_lq = np.transpose(img_lq, (2, 0, 1))  
+        img_lq = torch.from_numpy(img_lq).float().unsqueeze(0).to(self.device)
+        if self.downscale_size:
+            print(f"Downscaled shape: {img_rgb.shape}")
+        
+        _, _, h_old, w_old = img_lq.shape
+        h_pad = (h_old // self.window_size + 1) * self.window_size - h_old
+        w_pad = (w_old // self.window_size + 1) * self.window_size - w_old
+        img_lq = torch.cat([img_lq, torch.flip(img_lq, [2])], 2)[:, :, :h_old + h_pad, :]
+        img_lq = torch.cat([img_lq, torch.flip(img_lq, [3])], 3)[:, :, :, :w_old + w_pad]
 
-        sharpened_frame = sharpen_frame_naturally(img_rgb)
+     
+        with torch.no_grad():
+            
+            output = self.test(img_lq, self.model, self.args, self.window_size)
+            output = output[..., :h_old * self.scale, :w_old * self.scale]
 
-
-        return
+  
+        print(f"Output shape: {output.shape}") 
+        output = output.squeeze().float().cpu().clamp_(0, 1).numpy()
+        output = np.transpose(output[[2, 1, 0], (1, 2, 0)])  
+        print(f"Output shape: {output.shape}") 
+        return (output * 255).astype(np.uint8)
 
         
 
@@ -283,7 +314,7 @@ class realesgran:
             num_grow_ch=32, 
             scale=2
         )
-        self.realreal_esrgan = None
+        self.real_esrgan = None
         
 
     def load_model(self):
@@ -337,7 +368,6 @@ class realesgran:
 def create_short_video(video_path, start_time, end_time, video_name, subtitle_text):
     probe = ffmpeg.probe(video_path)
     print(probe)
-
     format_info = probe.get('format', {})
     bitrate = int(format_info.get('bit_rate', 0))
     video_streams = [s for s in probe['streams'] if s['codec_type'] == 'video']
@@ -345,25 +375,29 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
     audio_streams = [s for s in probe['streams'] if s['codec_type'] == 'audio']
     audio_codec = audio_streams[0]['codec_name'] if audio_streams else None
 
-
+    
 
     subtitles = subtitle_text
     print("subtitles: ",subtitles)
     torch.cuda.set_device(0)
     Face_Detection_Yolov8x = r"c:\Users\didri\Desktop\LLM-models\Face-Detection-Models\yolov8x-face-lindevs.pt"
-    model = YOLO(Face_Detection_Yolov8x) 
-
-
-    full_video = VideoFileClip(video_path)
-    clip = full_video.subclipped(start_time, end_time)
-
+    print("Before loading YOLO model")
+    try:
+      model = YOLO(Face_Detection_Yolov8x) 
+    except Exception as e:
+        print(f"error loading model: {str(e)}")
+    
+    try:
+        full_video = VideoFileClip(video_path)
+        clip = full_video.subclipped(start_time, end_time)
+        print(f"clip duration: {clip.duration}, clip fps: {clip.fps}, clip width: {clip.w}, clip height: {clip.h}, start_time: {start_time}, end_time: {end_time}, video_path: {video_path}")
+    except Exception as e:
+        print(f"full_video and clip  _video functions failed: {str(e)}")
 
     def split_subtitles_into_chunks(text, max_words=3):
         words = text.split()
         return [' '.join(words[i:i + max_words]) for i in range(0, len(words), max_words)]
     
-    
-
     def create_subtitles(txt,duration,clip_relative_start):
         chunks = split_subtitles_into_chunks(txt)
         chunk_duration = duration / len(chunks)
@@ -386,15 +420,14 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
                 size=(1000, None),
                 method="label",
                 duration=chunk_duration
-            ).with_position(('center', 0.65), relative=True
-            ).with_start(start
-            )
+            ).with_position(('center', 0.50), relative=True
+            ).with_start(start)
             text_clips.append(txt_clip)
+            print(f"appending: {txt_clip}")
             
         return text_clips
     
     
-
     def detect_and_crop_frames_batch(frames,batch_size=8):
         TARGET_W, TARGET_H = 1080, 1920
         alpha = 0.1
@@ -405,7 +438,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
             batch = frames[i:i+batch_size]
             batch_imgs = [np.ascontiguousarray(f) for f in batch]
 
-            results_batch = model(batch_imgs, imgsz=960)
+            results_batch = model(batch_imgs, imgsz=1080)
             for frame, results in zip(batch, results_batch):
                 face_boxes = [ box.xyxy.cpu().numpy().astype(int)[0] for box in results.boxes]
                 h, w, _ = frame.shape
@@ -458,53 +491,48 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
                 cropped_frames.append(cropped_frame)
                 print(f"appending {len(cropped_frames)} frames to list")
 
-
         return cropped_frames
+
+
+
+
+
+
+    try:
+            print("Starting to extract frames...")
+            frames = []
+            for frame in clip.iter_frames():
+                frames.append(frame)
+            print(f"Extracted {len(frames)} frames.")
+            processed_frames = detect_and_crop_frames_batch(frames, batch_size=8)
+            del model 
+            print("Cleared model from gpu")
+            print(f"Processed frames = {len(processed_frames)}VIDEO PATH: {video_path}, START TIME: {start_time}, END TIME: {end_time}, VIDEONAME: {video_name}")
+ 
+    except Exception as e:  
+            print(f"Error during frame extraction or processing: {str(e)}")
+            return 
+
+
+
+    try:
+        print(f"Extracted {len(frames)} frames.")
+        processed_frames = detect_and_crop_frames_batch(frames, batch_size=8)
+        print(f"proccessed frames = {len(processed_frames)}")
+    except Exception as e:  
+        print(f"error during frame extraction: {str(e)}")
+
+
+    processed_clip = ImageSequenceClip(processed_frames, fps=clip.fps).with_duration(clip.duration)
+
+
     
-
-
- 
-    frames = list(clip.iter_frames())
-    processed_frames = detect_and_crop_frames_batch(frames, batch_size=8)
-    torch.cuda.empty_cache()
-    gc.collect()
-    print("emptied cache and collected garbage")
-    print("Starting realesrgan upscale...")
-    print(f"Number of cropped frames to upscale: {len(processed_frames)}") 
-
-
-
-
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    denoised_frames_noise15 = swinir_processor(processed_frames, model_name="SwinIR-M_noise15",device=device)
-    torch.cuda.empty_cache()
-    gc.collect()
-
-
-
-
-    # realesgran_instance = realesgran(denoised_frames,device)
-    # upscaled_frames = realesgran_instance.upscale_frames(denoised_frames_noise15)
-
-
-
-    upscaled_frames_x4_GAN = swinir_processor(denoised_frames_noise15, model_name="SwinIR-L_x4_GAN",device=device)
-
-
-    torch.cuda.empty_cache()
-    gc.collect()
-    print("emptied cache and collected garbage")
-    print("creating video now....")
-
-    processed_clip = ImageSequenceClip(upscaled_frames_x4_GAN, fps=clip.fps).with_duration(clip.duration)
- 
-
-
     subtitle_clips = []
     for text, start, end in subtitles:
         clip_relative_start = start - start_time
         clip_relative_end = end - start_time
         duration = clip_relative_end - clip_relative_start
+        print(f"subtitle_clips: {subtitle_clips}")
         
         if duration <= 0:
             continue
@@ -520,17 +548,13 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
                 
     final_clip.audio = clip.audio
  
-    # from moviepy.video.fx.LumContrast import LumContrast 
-    # from moviepy.video.fx.MultiplyColor import MultiplyColor  
-    # from moviepy.video.fx.FadeIn import FadeIn
-    # from moviepy.video.fx.FadeOut import FadeOut
- 
 
-    # lum_contrast_effect = LumContrast(lum=0.5, contrast=0.2)
-    # final_clip = lum_contrast_effect.apply(final_clip)
-    # final_clip = MultiplyColor(factor=0.3).apply(final_clip) 
-    # final_clip = FadeIn(duration=1.0).apply(final_clip)
-    # final_clip = FadeOut(duration=1.0).apply(final_clip)
+    from moviepy.video.fx.MultiplyColor import MultiplyColor  
+    from moviepy.video.fx.FadeIn import FadeIn
+    from moviepy.video.fx.FadeOut import FadeOut
+    final_clip = MultiplyColor(factor=0.3).apply(final_clip) 
+    final_clip = FadeIn(duration=1.0).apply(final_clip)
+    final_clip = FadeOut(duration=1.0).apply(final_clip)
 
     print(f"video original fps: {clip.fps}")
     output_dir = "./Logging_and_filepaths/Video_clips"
@@ -544,18 +568,12 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
         preset="slow",
         threads=6,
         fps=clip.fps,
-        ffmpeg_params=[
-        '-vf', 'eq=brightness=0.1:saturation=0.5'
-        ]
     )
 
-    ##optionaly add logic for upscaling videos... lets see later...
-    print(f"video is completed: output path : {out_path}")
-    print(subtitle_clips) 
-    print(subtitles) 
-    del  model
+    print(f"video is completed: output path : {out_path}, video name: {video_name} video_fps: {clip.fps}, codec: {video_codec}, bitrate: {bitrate}, audio_codec: {audio_codec}, subtitles: {subtitles}")
     full_video.close()
     clip.close()
+
 
 
 
@@ -581,8 +599,13 @@ def run_video_short_creation_thread(video_url,start_time,end_time,text):
                print("Subtitles: ",subtitles)
    
                print(f"Subtitle passed to the [create_short_video] --> subtitle_text_tuple: {subtitles}")
-               create_short_video(video_path=text_video_path, start_time=text_video_start_time, end_time = text_video_endtime, video_name = text_video_title,subtitle_text=subtitles)
-               print(f"finnished creating video")
+    
+               try:
+                  print("creating video now")
+    
+                  create_short_video(video_path=text_video_path, start_time=text_video_start_time, end_time = text_video_endtime, video_name = text_video_title,subtitle_text=subtitles)
+               except Exception as e:
+                  print(f"error during creation of video : {str(e)}")
                text_video_path = ""
                text_video_start_time = None
                text_video_endtime = None
@@ -829,9 +852,7 @@ def gpu_worker():
             break
         print_gpu_stats()
 
-        torch.cuda.empty_cache()
-        gc.collect()
-
+   
         video_path_url, transcript_text_path = item
         print(f"video_path: {video_path_url} & Transcript_text_path: {transcript_text_path} is being proccessed now in [GPU_WORKER]")
         set_current_videourl(video_path_url)
@@ -846,7 +867,7 @@ def gpu_worker():
         with gpu_lock:
             global Global_model
             Global_model =  TransformersModel(
-            model_id=r'C:\Users\didri\Desktop\LLM-models\Qwen\Qwen2.5-7B-Instruct',
+            model_id=r'c:\Users\didri\Desktop\LLM-models\Qwen2.5-7B-Instruct',
             device_map="auto",
             load_in_4bit=True,
             torch_dtype=torch.float16,
@@ -929,18 +950,17 @@ def transcribe_single_video(video_path):
 
 
 
-from concurrent.futures import ThreadPoolExecutor
+
 if __name__ == "__main__":
-    # gc.collect()
-    # torch.cuda.empty_cache()
-    # import torch
+
+
     # print_gpu_stats() 
     # print(torch.cuda.get_device_name(0)) 
     # print(torch.cuda.get_device_name(1)) 
     # print(torch.cuda.is_available())    
     # try:
     #   video_paths = [
-    #       r"c:\Users\didri\AppData\Local\CapCut\Videos\0523 (1).mp4"
+    #      r"c:\Users\didri\AppData\Local\CapCut\Videos\LOVE.mov"
     #   ]
     #   gpu_thread = threading.Thread(target=gpu_worker, name="GPU-Worker")
     #   gpu_thread.start()
@@ -962,9 +982,8 @@ if __name__ == "__main__":
 
 
     text = """"
-    [0.00s - 4.58s] Sometimes it can feel like men and women in relationships want entirely different things.
-
+[0.00s - 2.12s] How can people better learn to love themselves?
     """
-    set_current_videourl(r"c:\Users\didri\AppData\Local\CapCut\Videos\0523 (1).mp4")
+    set_current_videourl(r"c:\Users\didri\AppData\Local\CapCut\Videos\LOVE.mov")
 
     SaveMotivationalQuote_CreateShort(text,Final_saving_text_file)
