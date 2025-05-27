@@ -6,7 +6,6 @@ import gc
 import yaml
 import subprocess
 from smolagents import SpeechToTextTool
-from ultralytics import YOLO
 import numpy as np
 import mediapipe as mp
 from moviepy import VideoFileClip, ImageSequenceClip, TextClip, CompositeVideoClip,vfx 
@@ -23,8 +22,17 @@ import argparse
 from concurrent.futures import ThreadPoolExecutor
 from SwinIR.models.network_swinir import SwinIR as net
 from tqdm import tqdm
-
-
+import argparse
+import numpy as np
+import cv2
+from tqdm import tqdm
+import onnxruntime as ort
+from ultralytics.utils.ops import non_max_suppression, xywh2xyxy
+import pynvml
+pynvml.nvmlInit()
+handle = pynvml.nvmlDeviceGetHandleByIndex(0)
+mem_info = pynvml.nvmlDeviceGetMemoryInfo(handle)
+print(f"Total Used: {mem_info.used/1e9:.1f}GB")
 _current_video_url: str = None
 def set_current_videourl(url: str):
     global _current_video_url
@@ -200,23 +208,16 @@ class realesgran:
         return upscaled
 
 
-import os
-import argparse
-import numpy as np
-import cv2
-import torch
-from tqdm import tqdm
-import onnxruntime as ort
+
 
 class swinir_processor:
-    def __init__(self, processed_frames, model_name,batch_size=4):
+    def __init__(self, processed_frames, model_name):
         try:
             self.model_path = model_path_Swin_BSRGAN_X4_onnx if "x4_GAN" in model_name else model_path_SwinIR_color_denoise15_onnx
             self.model_name = model_name
             self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             self.model = None
             self.session = None
-            self.batch_size = batch_size
             self.use_onnx = self.model_path.endswith(".onnx")
             self.window_size = 8 if "noise15" in model_name else 7
             self.scale = 4 if "x4_GAN" in model_name else 1
@@ -274,7 +275,10 @@ class swinir_processor:
     def return_model(self):
         try:
             if self.use_onnx:
-                providers = ['CUDAExecutionProvider'] if torch.cuda.is_available() else ['CPUExecutionProvider']
+                    #    'TensorrtExecutionProvider',
+                    #     'CUDAExecutionProvider',
+                    #     'CPUExecutionProvider'
+                providers = ['CUDAExecutionProvider'] 
                 sess_options = ort.SessionOptions()
                 sess_options.log_severity_level = 0  
                 self.session = ort.InferenceSession(self.model_path, sess_options, providers=providers)
@@ -332,11 +336,11 @@ class swinir_processor:
                 raise
         print("Inference completed successfully.")
         
-        downscaled_frames = downscale_to_size(upscaled_frames)
+
         
-        sharpened_frames = sharpen_frame_naturally(downscaled_frames)
+     
     
-        return sharpened_frames
+        return upscaled_frames
 
     def process_frame(self, frame):
         try:
@@ -405,12 +409,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
     subtitles = subtitle_text
     print("subtitles: ",subtitles)
     torch.cuda.set_device(0)
-    Face_Detection_Yolov8x = r"c:\Users\didri\Desktop\LLM-models\Face-Detection-Models\yolov8x-face-lindevs.pt"
     print("Before loading YOLO model")
-    try:
-      model = YOLO(Face_Detection_Yolov8x) 
-    except Exception as e:
-        print(f"error loading model: {str(e)}")
     
     try:
         full_video = VideoFileClip(video_path)
@@ -418,6 +417,172 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
         print(f"clip duration: {clip.duration}, clip fps: {clip.fps}, clip width: {clip.w}, clip height: {clip.h}, start_time: {start_time}, end_time: {end_time}, video_path: {video_path}")
     except Exception as e:
         print(f"full_video and clip  _video functions failed: {str(e)}")
+
+        
+    try:
+        print("Starting to extract frames...")
+        frames = []
+        for frame in clip.iter_frames():
+            frames.append(frame)
+        print(f"Extracted {len(frames)} frames.")
+    except Exception as e:
+        print(f"error during itering over frames: {e}")
+
+
+    def detect_and_crop_frames_batch(frames, batch_size=8):
+        TARGET_W, TARGET_H = 1080, 1920
+        alpha = 0.1
+        prev_cx, prev_cy = None, None
+        cropped_frames = []
+
+        # Load ONNX model
+        onnx_path_cpu = r"c:\Users\didri\Desktop\LLM-models\Face-Detection-Models\yolov8x-face-lindevs_cpu.onnx"
+        onnx_path_gpu = r"c:\Users\didri\Desktop\LLM-models\Face-Detection-Models\yolov8x-face-lindevs_cuda.onnx"
+        providers = ['CUDAExecutionProvider', 'CPUExecutionProvider']
+        sess_options = ort.SessionOptions()
+        sess_options.log_severity_level = 3  # Suppress warnings
+        session = ort.InferenceSession(onnx_path_gpu, sess_options, providers=providers)
+        input_name = session.get_inputs()[0].name
+        total_batches = (len(frames) + batch_size - 1) // batch_size
+        progress_bar = tqdm(total=len(frames), desc="Processing frames", unit="frame", dynamic_ncols=True)
+        try:
+            for i in range(0, len(frames), batch_size):
+                print(f"batch: {i} - {i + batch_size}")
+                batch = frames[i:i+batch_size]
+                original_count = len(batch)
+                
+                # Handle partial batches by padding with blank frames
+                if len(batch) < batch_size:
+                    pad_count = batch_size - len(batch)
+                    batch += [np.zeros_like(batch[0])] * pad_count
+
+                # Preprocess batch
+                processed_batch = []
+                for frame in batch:
+                    img = cv2.resize(frame, (928, 928))
+                    img = img.astype(np.float32) / 255.0
+                    processed_batch.append(img.transpose(2, 0, 1))
+                    progress_bar.set_postfix({
+                                            "GPU Mem": f"{torch.cuda.memory_allocated()/1e9:.1f}GB",
+                                            "Batch Size": f"{len(batch[:original_count])}/{batch_size}"
+                                        })
+                    progress_bar.update(1)
+
+                if len(processed_batch) < batch_size:
+                    processed_batch += [np.zeros((3, 928, 928), dtype=np.float32)] * (batch_size - len(processed_batch))
+                # Create input tensor
+                input_tensor = np.stack(processed_batch).astype(np.float32)
+
+                # Run inference
+                outputs = session.run(None, {input_name: input_tensor})[0]
+                
+                # Process results (only real frames, ignore padding)
+                predictions = torch.tensor(outputs[:original_count])
+                detections = non_max_suppression(predictions, conf_thres=0.25, iou_thres=0.45)
+
+                # Process original frames
+                for idx, (frame, det) in enumerate(zip(batch[:original_count], detections)):
+                    h, w = frame.shape[:2]
+                    
+                    if det is not None and len(det):
+                        # Get largest face
+                        areas = (det[:, 2] - det[:, 0]) * (det[:, 3] - det[:, 1])
+                        max_idx = torch.argmax(areas)
+                        x1, y1, x2, y2 = det[max_idx, :4].cpu().numpy().astype(int)
+                        
+                        # Scale coordinates from 928x928 to original size
+                        x1 = int(x1 * w / 928)
+                        y1 = int(y1 * h / 928)
+                        x2 = int(x2 * w / 928)
+                        y2 = int(y2 * h / 928)
+                        cx, cy = (x1 + x2) // 2, (y1 + y2) // 2
+                    else:
+                        cx, cy = w // 2, h // 2
+
+                    # Smoothing logic
+                    if prev_cx is None or prev_cy is None:
+                        sx, sy = cx, cy
+                    else:
+                        sx = int(alpha * cx + (1 - alpha) * prev_cx)
+                        sy = int(alpha * cy + (1 - alpha) * prev_cy)
+                    prev_cx, prev_cy = sx, sy
+
+                    # Calculate crop
+                    aspect_ratio = TARGET_W / TARGET_H
+                    if w / h > aspect_ratio:
+                        crop_h = h
+                        crop_w = int(h * aspect_ratio)
+                    else:
+                        crop_w = w
+                        crop_h = int(w / aspect_ratio)
+
+                    x0 = max(0, min(sx - crop_w // 2, w - crop_w))
+                    y0 = max(0, min(sy - crop_h // 2, h - crop_h))
+
+                    cropped_frame = frame[y0:y0+crop_h, x0:x0+crop_w]
+                    if cropped_frame.shape[:2] != (TARGET_H, TARGET_W):
+                        cropped_frame = cv2.resize(cropped_frame, (TARGET_W, TARGET_H))
+                    print(f"appending frame: {cropped_frame}")
+                    cropped_frames.append(cropped_frame)
+
+        finally:
+            progress_bar.close() 
+
+        return cropped_frames
+    try:
+        import time
+        start = time.time()
+
+        processed_frames = detect_and_crop_frames_batch(
+            frames=frames,
+            batch_size=8
+        )
+        print(f"Processing time: {time.time()-start:.2f}s")
+        print("Cleared model from GPU\n")
+        print(f"Processed frames = {len(processed_frames)}\n")
+    except Exception as e:  
+        print(f"Error during frame extraction or processing: {str(e)}")
+        return
+    
+
+
+    # try:
+    #     swinir_denoise = swinir_processor(processed_frames, model_name="SwinIR-M_noise15")
+    #     print("swinir_processor for denoising instantiated successfully")
+    #     denoised_frames = swinir_denoise.run_inference()
+    #     print("frames for denoising finished successfully")
+    #     del swinir_denoise
+    # except Exception as e:
+    #       print(f"error during swinir inference with model denoise15: {str(e)}")
+
+
+
+    # try:
+    #     print("Starting downscaling & sharpening")
+    #     if denoised_frames:
+    #        h,w =  denoised_frames[0].shape[:2]
+            #  if h != 1920 or w != 1080:
+    #           downscaled_frames = downscale_to_size(denoised_frames,1080,1920)
+    #     print(f"Frames: [{len(downscaled_frames)}] downscaled from Denoised/upscaled frame size: {h}x{w} ----> [1080x1920]")
+    #     print(f"sharpening frames : {len(downscaled_frames)}")  
+    #     sharpened_frames = sharpen_frame_naturally(downscaled_frames)
+    #     print(f"Downscaling and sharpening successfully done!")
+    # except Exception as e:
+    #     print(f"error during downscaling and sharpening: {downscaled_frames, sharpened_frames, str(e)}")
+
+
+    # try:
+    #     swinir_upscaler = swinir_processor(denoised_frames, model_name="x4_GAN")
+    #     print("swinir_processor for upscaling instantiated successfully")
+    #     upscaled_frames = swinir_upscaler.run_inference()
+    #     print("frames for upscaling finished successfully")
+    #     del swinir_upscaler
+    # except Exception as e:
+    #     print(f"error during swinir inference with model X4: {str(e)}")
+    #     return
+
+    
+    processed_clip = ImageSequenceClip(processed_frames, fps=clip.fps).with_duration(clip.duration)
 
     def split_subtitles_into_chunks(text, max_words=3):
         words = text.split()
@@ -452,111 +617,6 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
             
         return text_clips
     
-    
-    def detect_and_crop_frames_batch(frames,batch_size=8):
-        TARGET_W, TARGET_H = 1080, 1920
-        alpha = 0.1
-        prev_cx, prev_cy = None, None
-        cropped_frames = []
-
-        for i in range (0, len(frames), batch_size):
-            batch = frames[i:i+batch_size]
-            batch_imgs = [np.ascontiguousarray(f) for f in batch]
-
-            results_batch = model(batch_imgs, imgsz=928)
-            for frame, results in zip(batch, results_batch):
-                face_boxes = [ box.xyxy.cpu().numpy().astype(int)[0] for box in results.boxes]
-                h, w, _ = frame.shape
-                aspect_ratio = TARGET_W / TARGET_H  
-                if w / h > aspect_ratio:
-                
-                    crop_h = h
-                    crop_w = int(h * aspect_ratio)
-                else:
-            
-                    crop_w = w
-                    crop_h = int(w / aspect_ratio)
-
-
-                face_box = None
-                if face_boxes:
-            
-                    face_areas = [(x2 - x1) * (y2 - y1) for (x1, y1, x2, y2) in face_boxes]
-                    max_face_idx = np.argmax(face_areas)
-                    face_box = face_boxes[max_face_idx]
-
-                if face_box is not None:
-                    fx1, fy1, fx2, fy2 = face_box
-                    cx, cy = (fx1 + fx2) // 2, (fy1 + fy2) // 2
-                    print(f"Detected face at ({cx}, {cy}), cropping around that.")
-
-                else:
-                    cx, cy = w // 2, h // 2  
-                    print(f" no face found defaulting to center")
-
-            
-
-                if prev_cx is None or prev_cy is None:
-                    sx, sy = cx, cy
-                else:
-                    sx = int(alpha * cx + (1 - alpha) * prev_cx)
-                    sy = int(alpha * cy + (1 - alpha) * prev_cy)
-
-                prev_cx, prev_cy = sx, sy
-
-                x0 = max(0, min(cx - crop_w // 2, w - crop_w))
-                y0 = max(0, min(cy - crop_h // 2, h - crop_h))
-
-                cropped_frame = frame[y0:y0+crop_h, x0:x0+crop_w]
-
-        
-                if cropped_frame.shape[0] != TARGET_H or cropped_frame.shape[1] != TARGET_W:
-                    cropped_frame = cv2.resize(cropped_frame, (TARGET_W, TARGET_H))
-
-                cropped_frames.append(cropped_frame)
-                print(f"appending {len(cropped_frames)} frames to list")
-
-        return cropped_frames
-
-    try:
-        print("Starting to extract frames...")
-        frames = []
-        for frame in clip.iter_frames():
-            frames.append(frame)
-        print(f"Extracted {len(frames)} frames.")
-        processed_frames = detect_and_crop_frames_batch(frames, batch_size=8)
-        print("Cleared model from gpu")
-        print(f"Processed frames = {len(processed_frames)}VIDEO PATH: {video_path}, START TIME: {start_time}, END TIME: {end_time}, VIDEONAME: {video_name}")
-    except Exception as e:  
-            print(f"Error during frame extraction or processing: {str(e)}")
-            return 
-    
-
-
-
-
-    del model 
-    try:
-        swinir_denoise = swinir_processor(processed_frames, model_name="SwinIR-M_noise15")
-        print("swinir_processor for denoising instantiated successfully")
-        denoised_frames = swinir_denoise.run_inference()
-        print("frames for denoising finished successfully")
-        del swinir_denoise
-    except Exception as e:
-          print(f"error during swinir inference with model denoise15: {str(e)}")
-
-    try:
-        swinir_upscaler = swinir_processor(denoised_frames, model_name="x4_GAN")
-        print("swinir_processor for upscaling instantiated successfully")
-        upscaled_frames = swinir_upscaler.run_inference()
-        print("frames for upscaling finished successfully")
-        del swinir_upscaler
-    except Exception as e:
-        print(f"error during swinir inference with model X4: {str(e)}")
-
-    
-    processed_clip = ImageSequenceClip(upscaled_frames, fps=clip.fps).with_duration(clip.duration)
-    
     subtitle_clips = []
     for text, start, end in subtitles:
         clip_relative_start = start - start_time
@@ -575,6 +635,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
                 [processed_clip.with_position('center')] + subtitle_clips,
                 size=processed_clip.size
             )
+
                 
     final_clip.audio = clip.audio
 
@@ -655,10 +716,10 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
         audio_codec=audio_codec or "aac",
         bitrate=str(bitrate) or "4000k",
         preset="slow",
-        threads=6,
+        threads=8,
         fps=clip.fps,
     )
-
+    print(f"Final video resolution (width x height): {final_clip.size[0]} x {final_clip.size[1]}")  
     original_video = change_video_resolution(full_video)
 
     #test video quality
@@ -1048,13 +1109,13 @@ def transcribe_single_video(video_path):
 if __name__ == "__main__":
 
 
-    # print_gpu_stats() 
-    # print(torch.cuda.get_device_name(0)) 
-    # print(torch.cuda.get_device_name(1)) 
-    # print(torch.cuda.is_available())    
+    print_gpu_stats() 
+    print(torch.cuda.get_device_name(0)) 
+    print(torch.cuda.get_device_name(1)) 
+    print(torch.cuda.is_available())    
     # try:
     #   video_paths = [
-    #      r"c:\Users\didri\AppData\Local\CapCut\Videos\input_video.mp4"
+    #      r"c:\Users\didri\AppData\Local\CapCut\Videos\1080p.mp4"
     #   ]
     #   gpu_thread = threading.Thread(target=gpu_worker, name="GPU-Worker")
     #   gpu_thread.start()
@@ -1072,13 +1133,19 @@ if __name__ == "__main__":
     #   gpu_thread.join()
 
     # except Exception as e: 
-    #     print(f"Error: {e}")
+    #      print(f"Error: {e}")
 
     torch.cuda.empty_cache()
     gc.collect()
     text = """"
-    [0.00s - 1.02s] How can people better?
+[0.00s - 3.40s] This is the career they want, the direction they want you to go in, right?
+[4.08s - 6.58s] You start hearing that more than your own voice.
+[6.88s - 9.80s] And as you get older, it gets worse and worse and worse.
+[10.28s - 13.84s] Then when you're a teenager, it's all about what other people are doing,
+[13.92s - 16.42s] your peers, what's cool, what's not cool, you know?
+[16.78s - 20.00s] And that kind of is more, so all of these noise.
+
     """
-    set_current_videourl(r"c:\Users\didri\AppData\Local\CapCut\Videos\input_video.mp4")
+    set_current_videourl(r"c:\Users\didri\AppData\Local\CapCut\Videos\1080p.mp4")
 
     SaveMotivationalQuote_CreateShort(text,Final_saving_text_file)
