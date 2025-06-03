@@ -1,4 +1,1038 @@
 
+
+class TransformersModel(Model):
+    """A class that uses Hugging Face's Transformers library for language model interaction.
+
+    This model allows you to load and use Hugging Face's models locally using the Transformers library. It supports features like stop sequences and grammar customization.
+
+    > [!TIP]
+    > You must have `transformers` and `torch` installed on your machine. Please run `pip install smolagents[transformers]` if it's not the case.
+
+    Parameters:
+        model_id (`str`):
+            The Hugging Face model ID to be used for inference. This can be a path or model identifier from the Hugging Face model hub.
+            For example, `"Qwen/Qwen2.5-Coder-32B-Instruct"`.
+        device_map (`str`, *optional*):
+            The device_map to initialize your model with.
+        torch_dtype (`str`, *optional*):
+            The torch_dtype to initialize your model with.
+        trust_remote_code (bool, default `False`):
+            Some models on the Hub require running remote code: for this model, you would have to set this flag to True.
+        kwargs (dict, *optional*):
+            Any additional keyword arguments that you want to use in model.generate(), for instance `max_new_tokens` or `device`.
+        **kwargs:
+            Additional keyword arguments to pass to `model.generate()`, for instance `max_new_tokens` or `device`.
+    Raises:
+        ValueError:
+            If the model name is not provided.
+
+    Example:
+    ```python
+    >>> engine = TransformersModel(
+    ...     model_id="Qwen/Qwen2.5-Coder-32B-Instruct",
+    ...     device="cuda",
+    ...     max_new_tokens=5000,
+    ... )
+    >>> messages = [{"role": "user", "content": "Explain quantum mechanics in simple terms."}]
+    >>> response = engine(messages, stop_sequences=["END"])
+    >>> print(response)
+    "Quantum mechanics is the branch of physics that studies..."
+    ```
+    """
+
+    def __init__(
+        self,
+        model_id: str | None = None,
+        device_map: str | None = None,
+        torch_dtype: str | None = None,
+        trust_remote_code: bool = False,
+        use_flash_attn: bool = False, 
+        **kwargs,
+    ):
+        if use_flash_attn:
+            os.environ["XFORMERS_FLAGS"] = "flash"  # or "xformers" if you prefer
+        else:
+            # optionally clear or set default
+            os.environ.pop("XFORMERS_FLAGS", None)
+        try:
+            import torch
+            from transformers import (
+                AutoModelForCausalLM,
+                AutoModelForImageTextToText,
+                AutoProcessor,
+                AutoTokenizer,
+                TextIteratorStreamer,
+            )
+        except ModuleNotFoundError:
+            raise ModuleNotFoundError(
+                "Please install 'transformers' extra to use 'TransformersModel': `pip install 'smolagents[transformers]'`"
+            )
+
+        if not model_id:
+            warnings.warn(
+                "The 'model_id' parameter will be required in version 2.0.0. "
+                "Please update your code to pass this parameter to avoid future errors. "
+                "For now, it defaults to 'HuggingFaceTB/SmolLM2-1.7B-Instruct'.",
+                FutureWarning,
+            )
+            model_id = "HuggingFaceTB/SmolLM2-1.7B-Instruct"
+
+        default_max_tokens = 4096
+        max_new_tokens = kwargs.get("max_new_tokens") or kwargs.get("max_tokens")
+        if not max_new_tokens:
+            kwargs["max_new_tokens"] = default_max_tokens
+            logger.warning(
+                f"`max_new_tokens` not provided, using this default value for `max_new_tokens`: {default_max_tokens}"
+            )
+
+        if device_map is None:
+            device_map = "cuda" if torch.cuda.is_available() else "cpu"
+        logger.info(f"Using device: {device_map}")
+        self._is_vlm = False
+        try:
+            self.model = AutoModelForImageTextToText.from_pretrained(
+                model_id,
+                device_map=device_map,
+                torch_dtype=torch_dtype,
+                trust_remote_code=trust_remote_code,
+            )
+            self.processor = AutoProcessor.from_pretrained(model_id, trust_remote_code=trust_remote_code)
+            self._is_vlm = True
+            self.streamer = TextIteratorStreamer(self.processor.tokenizer, skip_prompt=True, skip_special_tokens=True)  # type: ignore
+
+        except ValueError as e:
+            if "Unrecognized configuration class" in str(e):
+                load_in_4bit = kwargs.pop("load_in_4bit", False)
+                if  load_in_4bit is True:
+                            from transformers import BitsAndBytesConfig
+                            import torch
+                            quantization_config  = BitsAndBytesConfig(
+                            load_in_4bit=True,                    # Use 4-bit quantization (instead of 8-bit)
+                            bnb_4bit_compute_dtype=torch.float16, # Use float16 compute for faster inference and less precision loss
+                            bnb_4bit_quant_type="nf4",            # NormalFloat4 quantization type for better accuracy
+                            bnb_4bit_use_double_quant=True,       # Double quantization for better compression and accuracy
+                                                                        )
+                            
+
+                rope_scaling = {
+                            "rope_type": "yarn",
+                            "factor": 4.0,
+                            "original_max_position_embeddings": 32768,
+                        }
+
+                if isinstance(rope_scaling, dict) and "type" in rope_scaling:
+                        rope_scaling["rope_type"] = rope_scaling.pop("type")
+
+                self.model = AutoModelForCausalLM.from_pretrained(
+                        model_id,
+                        device_map=device_map,
+                        torch_dtype=torch_dtype,
+                        rope_scaling=rope_scaling,
+                        rope_theta=1000000,
+                        trust_remote_code=trust_remote_code,
+                        quantization_config=quantization_config,
+                        max_memory={
+                            0: "8GB",   
+                            "cpu": "32GB" 
+                        },
+                        offload_folder="offload_dir",  
+                        attn_implementation="sdpa"                        
+                    )
+                self.tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=trust_remote_code)
+                self.streamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True, skip_special_tokens=True)  # type: ignore
+            else:
+                raise e
+        except Exception as e:
+            raise ValueError(f"Failed to load tokenizer and model for {model_id=}: {e}") from e
+        super().__init__(flatten_messages_as_text=not self._is_vlm, model_id=model_id, **kwargs)
+
+    def make_stopping_criteria(self, stop_sequences: list[str], tokenizer) -> "StoppingCriteriaList":
+        from transformers import StoppingCriteria, StoppingCriteriaList
+
+        class StopOnStrings(StoppingCriteria):
+            def __init__(self, stop_strings: list[str], tokenizer):
+                self.stop_strings = stop_strings
+                self.tokenizer = tokenizer
+                self.stream = ""
+
+            def reset(self):
+                self.stream = ""
+
+            def __call__(self, input_ids, scores, **kwargs):
+                generated = self.tokenizer.decode(input_ids[0][-1], skip_special_tokens=True)
+                self.stream += generated
+                if any([self.stream.endswith(stop_string) for stop_string in self.stop_strings]):
+                    return True
+                return False
+
+        return StoppingCriteriaList([StopOnStrings(stop_sequences, tokenizer)])
+
+    def _prepare_completion_args(
+        self,
+        messages: list[dict[str, str | list[dict]]],
+        stop_sequences: list[str] | None = None,
+        tools_to_call_from: list[Tool] | None = None,
+        **kwargs,
+    ) -> dict[str, Any]:
+        completion_kwargs = self._prepare_completion_kwargs(
+            messages=messages,
+            stop_sequences=stop_sequences,
+            **kwargs,
+        )
+
+        messages = completion_kwargs.pop("messages")
+        stop_sequences = completion_kwargs.pop("stop", None)
+
+        max_new_tokens = (
+            kwargs.get("max_new_tokens")
+            or kwargs.get("max_tokens")
+            or self.kwargs.get("max_new_tokens")
+            or self.kwargs.get("max_tokens")
+            or 1024
+        )
+        prompt_tensor = (self.processor if hasattr(self, "processor") else self.tokenizer).apply_chat_template(
+            messages,  # type: ignore
+            tools=[get_tool_json_schema(tool) for tool in tools_to_call_from] if tools_to_call_from else None,
+            return_tensors="pt",
+            add_generation_prompt=True if tools_to_call_from else False,
+            tokenize=True,
+            return_dict=True,
+        )
+        prompt_tensor = prompt_tensor.to(self.model.device)  # type: ignore
+        if hasattr(prompt_tensor, "input_ids"):
+            prompt_tensor = prompt_tensor["input_ids"]
+
+        model_tokenizer = self.processor.tokenizer if hasattr(self, "processor") else self.tokenizer
+        stopping_criteria = (
+            self.make_stopping_criteria(stop_sequences, tokenizer=model_tokenizer) if stop_sequences else None
+        )
+        attention_mask = (prompt_tensor != self.tokenizer.pad_token_id).long()
+        completion_kwargs["max_new_tokens"] = max_new_tokens
+        return dict(
+            inputs=prompt_tensor,
+            use_cache=True,
+            attention_mask=attention_mask,
+            stopping_criteria=stopping_criteria,
+            **completion_kwargs,
+            pad_token_id=self.tokenizer.pad_token_id,
+        )
+
+    def generate(
+        self,
+        messages: list[dict[str, str | list[dict]] | ChatMessage],
+        stop_sequences: list[str] | None = None,
+        response_format: dict[str, str] | None = None,
+        tools_to_call_from: list[Tool] | None = None,
+        **kwargs,
+    ) -> ChatMessage:
+        if response_format is not None:
+            raise ValueError("Transformers does not support structured outputs, use VLLMModel for this.")
+        generation_kwargs = self._prepare_completion_args(
+            messages=messages,
+            stop_sequences=stop_sequences,
+            tools_to_call_from=tools_to_call_from,
+            **kwargs,
+        )
+        count_prompt_tokens = generation_kwargs["inputs"].shape[1]  # type: ignore
+        out = self.model.generate(
+            **generation_kwargs,
+        )
+        generated_tokens = out[0, count_prompt_tokens:]
+        if hasattr(self, "processor"):
+            output_text = self.processor.decode(generated_tokens, skip_special_tokens=True)
+        else:
+            output_text = self.tokenizer.decode(generated_tokens, skip_special_tokens=True)
+        max_context_length=131072
+        input_token_count = count_prompt_tokens
+        output_token_count = len(generated_tokens)
+        total_tokens = input_token_count + output_token_count
+
+        log(f"Input tokens used: {input_token_count}")
+        log(f"Output tokens generated: {output_token_count}")
+        log(f"Total tokens (context + output): {total_tokens}")
+        log(f"Tokens remaining before limit: {max_context_length - total_tokens}")
+        if stop_sequences is not None:
+            output_text = remove_stop_sequences(output_text, stop_sequences)
+
+        self._last_input_token_count = count_prompt_tokens
+        self._last_output_token_count = len(generated_tokens)
+        return ChatMessage(
+            role=MessageRole.ASSISTANT,
+            content=output_text,
+            raw={
+                "out": output_text,
+                "completion_kwargs": {key: value for key, value in generation_kwargs.items() if key != "inputs"},
+            },
+            token_usage=TokenUsage(
+                input_tokens=count_prompt_tokens,
+                output_tokens=len(generated_tokens),
+            ),
+        )
+
+    def generate_stream(
+        self,
+        messages: list[dict[str, str | list[dict]]],
+        stop_sequences: list[str] | None = None,
+        response_format: dict[str, str] | None = None,
+        tools_to_call_from: list[Tool] | None = None,
+        **kwargs,
+    ) -> Generator[ChatMessageStreamDelta]:
+        if response_format is not None:
+            raise ValueError("Transformers does not support structured outputs, use VLLMModel for this.")
+        generation_kwargs = self._prepare_completion_args(
+            messages=messages,
+            stop_sequences=stop_sequences,
+            response_format=response_format,
+            tools_to_call_from=tools_to_call_from,
+            **kwargs,
+        )
+        count_prompt_tokens = generation_kwargs["inputs"].shape[1]  # type: ignore
+
+        thread = Thread(target=self.model.generate, kwargs={"streamer": self.streamer, **generation_kwargs})
+        thread.start()
+
+        # Generate with streaming
+        for new_text in self.streamer:
+            self._last_input_token_count = count_prompt_tokens
+            self._last_output_token_count = 1
+            yield ChatMessageStreamDelta(
+                content=new_text,
+                tool_calls=None,
+                token_usage=TokenUsage(input_tokens=count_prompt_tokens, output_tokens=1),
+            )
+        thread.join()
+
+        
+from faster_whisper import WhisperModel
+import torch 
+import time
+
+class SpeechToTextTool(PipelineTool):
+    default_checkpoint = r"c:\Users\didri\Desktop\LLM-models\Audio-Models\faster-whisper-large-v3-turbo-int8float16"
+    description = "Fast tool that transcribes audio into text using faster-whisper. It returns the path to the transcript file"
+    name = "transcriber"
+    inputs = {
+        "audio": {
+            "type": "audio",
+            "description": "The audio to transcribe. Can be a local path, a URL, or a tensor.",
+        },
+        "text_path": {
+            "type": "string",
+             "description": "The path to save the transcript to.",
+        },
+        "video_path": {
+            "type": "string",
+            "description": "The path to the video to transcribe. only for info logging",
+        }
+    }
+    output_type = "string"
+    def setup(self):
+
+        self.model = WhisperModel(
+                model_size_or_path=self.default_checkpoint,
+                device="cuda",
+                compute_type="int8_float16"
+                )
+           
+
+
+
+    def forward(self, inputs):
+        audio_path = inputs["audio"]
+        text_path = inputs["text_path"]
+        video_path = inputs["video_path"]
+        segments, info = self.model.transcribe(
+            audio_path,
+            vad_filter=True,
+            vad_parameters={"min_silence_duration_ms": 500}
+        )
+        print(f"\n🔊 Using Whisper on device: {self.device}, \ntranscribing video: {video_path} \n   with inputs: {self.inputs}")
+        print(f"[INFO] Detected Language: {info.language} (confidence: {info.language_probability:.2f})")
+        print(f"[INFO] Audio Duration: {info.duration:.2f} seconds")
+        
+        try:
+            with open(text_path, "w", encoding="utf-8") as f:
+                print(f"opening txt_path on: {text_path} device: {self.device}")
+                start_write_time = time.time()
+                for segment in segments:
+                        f.write(f"[{segment.start:.2f}s - {segment.end:.2f}s] {segment.text.strip()}\n")
+                end_write_time = time.time()
+        finally:
+            total_write_time = end_write_time - start_write_time
+            num_segments = len(segments)
+            avg_segment_write_time = total_write_time / num_segments if num_segments > 0 else 0
+            print(f"Finished writing {num_segments} segments.")
+            print(f"Total write time: {total_write_time:.4f} seconds")
+            print(f"Average write time per segment: {avg_segment_write_time:.6f} seconds")
+            print(f"transcription complete ! device  {self.device}")
+            del self.model 
+            if self.device == "cuda":
+                torch.cuda.empty_cache()
+
+        return text_path
+
+    def encode(self, audio):
+        return {"audio": audio}
+
+    def decode(self, outputs):
+        return outputs
+
+        
+from faster_whisper import WhisperModel
+import torch 
+import time
+
+class SpeechToTextToolCPU(PipelineTool):
+    default_checkpoint = r"c:\Users\didri\Desktop\LLM-models\Audio-Models\faster-whisper-large-int8-ct2"
+    description = "Fast tool that transcribes audio into text using faster-whisper. It returns the path to the transcript file"
+    name = "transcriber"
+    inputs = {
+        "audio": {
+            "type": "audio",
+            "description": "The audio to transcribe. Can be a local path, a URL, or a tensor.",
+        },
+        "text_path": {
+            "type": "string",
+             "description": "The path to save the transcript to.",
+        },
+        "video_path": {
+            "type": "string",
+            "description": "The path to the video to transcribe. only for info logging",
+        }
+    }
+    output_type = "string"
+    def setup(self):
+        self.model = WhisperModel(
+                model_size_or_path=self.default_checkpoint,
+                device="cpu",
+                compute_type="int8",
+                cpu_threads=4 
+                    )              
+
+
+
+    def forward(self, inputs):
+        audio_path = inputs["audio"]
+        text_path = inputs["text_path"]
+        video_path = inputs["video_path"]
+        segments, info = self.model.transcribe(
+            audio_path,
+            vad_filter=True,
+            vad_parameters={"min_silence_duration_ms": 500}
+        )
+        print(f"\n🔊 Using Whisper on device: {self.device}, \ntranscribing video: {video_path} \n   with inputs: {self.inputs}")
+        print(f"[INFO] Detected Language: {info.language} (confidence: {info.language_probability:.2f})")
+        print(f"[INFO] Audio Duration: {info.duration:.2f} seconds")
+        
+        try:
+            with open(text_path, "w", encoding="utf-8") as f:
+                print(f"opening txt_path on: {text_path} device: {self.device}")
+                start_write_time = time.time()
+                for segment in segments:
+                        f.write(f"[{segment.start:.2f}s - {segment.end:.2f}s] {segment.text.strip()}\n")
+                end_write_time = time.time()
+        finally:
+            total_write_time = end_write_time - start_write_time
+            num_segments = len(segments)
+            avg_segment_write_time = total_write_time / num_segments if num_segments > 0 else 0
+            print(f"Finished writing {num_segments} segments.")
+            print(f"Total write time: {total_write_time:.4f} seconds")
+            print(f"Average write time per segment: {avg_segment_write_time:.6f} seconds")
+            print(f"transcription complete ! device  {self.device}")
+            del self.model 
+            if self.device == "cuda":
+                torch.cuda.empty_cache()
+
+        return text_path
+
+    def encode(self, audio):
+        return {"audio": audio}
+
+    def decode(self, outputs):
+        return outputs
+
+
+        
+from faster_whisper import WhisperModel
+import torch 
+import time
+
+class SpeechToTextTool(PipelineTool):
+    default_checkpoint = r"c:\Users\didri\Desktop\LLM-models\Audio-Models\faster-whisper-large-v3-turbo-int8float16"
+    description = "Fast tool that transcribes audio into text using faster-whisper. It returns the path to the transcript file"
+    name = "transcriber"
+    inputs = {
+        "audio": {
+            "type": "audio",
+            "description": "The audio to transcribe. Can be a local path, a URL, or a tensor.",
+        },
+        "text_path": {
+            "type": "string",
+             "description": "The path to save the transcript to.",
+        },
+        "video_path": {
+            "type": "string",
+            "description": "The path to the video to transcribe. only for info logging",
+        }
+    }
+    output_type = "string"
+    def setup(self):
+
+        self.model = WhisperModel(
+                model_size_or_path=self.default_checkpoint,
+                device="cuda",
+                compute_type="int8_float16"
+                )
+           
+
+
+
+    def forward(self, inputs):
+        audio_path = inputs["audio"]
+        text_path = inputs["text_path"]
+        video_path = inputs["video_path"]
+        segments, info = self.model.transcribe(
+            audio_path,
+            vad_filter=True,
+            vad_parameters={"min_silence_duration_ms": 500}
+        )
+        print(f"\n🔊 Using Whisper on device: {self.device}, \ntranscribing video: {video_path} \n   with inputs: {self.inputs}")
+        print(f"[INFO] Detected Language: {info.language} (confidence: {info.language_probability:.2f})")
+        print(f"[INFO] Audio Duration: {info.duration:.2f} seconds")
+        
+        try:
+            with open(text_path, "w", encoding="utf-8") as f:
+                print(f"opening txt_path on: {text_path} device: {self.device}")
+                start_write_time = time.time()
+                for segment in segments:
+                        f.write(f"[{segment.start:.2f}s - {segment.end:.2f}s] {segment.text.strip()}\n")
+                end_write_time = time.time()
+        finally:
+            total_write_time = end_write_time - start_write_time
+            num_segments = len(segments)
+            avg_segment_write_time = total_write_time / num_segments if num_segments > 0 else 0
+            print(f"Finished writing {num_segments} segments.")
+            print(f"Total write time: {total_write_time:.4f} seconds")
+            print(f"Average write time per segment: {avg_segment_write_time:.6f} seconds")
+            print(f"transcription complete ! device  {self.device}")
+            del self.model 
+            if self.device == "cuda":
+                torch.cuda.empty_cache()
+
+        return text_path
+
+    def encode(self, audio):
+        return {"audio": audio}
+
+    def decode(self, outputs):
+        return outputs
+
+        
+from faster_whisper import WhisperModel
+import torch 
+import time
+
+class SpeechToTextToolCPU(PipelineTool):
+    default_checkpoint = r"c:\Users\didri\Desktop\LLM-models\Audio-Models\faster-whisper-large-int8-ct2"
+    description = "Fast tool that transcribes audio into text using faster-whisper. It returns the path to the transcript file"
+    name = "transcriber"
+    inputs = {
+        "audio": {
+            "type": "audio",
+            "description": "The audio to transcribe. Can be a local path, a URL, or a tensor.",
+        },
+        "text_path": {
+            "type": "string",
+             "description": "The path to save the transcript to.",
+        },
+        "video_path": {
+            "type": "string",
+            "description": "The path to the video to transcribe. only for info logging",
+        }
+    }
+    output_type = "string"
+    def setup(self):
+        self.model = WhisperModel(
+                model_size_or_path=self.default_checkpoint,
+                device="cpu",
+                compute_type="int8",
+                cpu_threads=4 
+                    )              
+
+
+
+    def forward(self, inputs):
+        audio_path = inputs["audio"]
+        text_path = inputs["text_path"]
+        video_path = inputs["video_path"]
+        segments, info = self.model.transcribe(
+            audio_path,
+            vad_filter=True,
+            vad_parameters={"min_silence_duration_ms": 500}
+        )
+        print(f"\n🔊 Using Whisper on device: {self.device}, \ntranscribing video: {video_path} \n   with inputs: {self.inputs}")
+        print(f"[INFO] Detected Language: {info.language} (confidence: {info.language_probability:.2f})")
+        print(f"[INFO] Audio Duration: {info.duration:.2f} seconds")
+        
+        try:
+            with open(text_path, "w", encoding="utf-8") as f:
+                print(f"opening txt_path on: {text_path} device: {self.device}")
+                start_write_time = time.time()
+                for segment in segments:
+                        f.write(f"[{segment.start:.2f}s - {segment.end:.2f}s] {segment.text.strip()}\n")
+                end_write_time = time.time()
+        finally:
+            total_write_time = end_write_time - start_write_time
+            num_segments = len(segments)
+            avg_segment_write_time = total_write_time / num_segments if num_segments > 0 else 0
+            print(f"Finished writing {num_segments} segments.")
+            print(f"Total write time: {total_write_time:.4f} seconds")
+            print(f"Average write time per segment: {avg_segment_write_time:.6f} seconds")
+            print(f"transcription complete ! device  {self.device}")
+            del self.model 
+            if self.device == "cuda":
+                torch.cuda.empty_cache()
+
+        return text_path
+
+    def encode(self, audio):
+        return {"audio": audio}
+
+    def decode(self, outputs):
+        return outputs
+
+from typing import List, Dict, Optional
+from transformers import AutoTokenizer
+
+""" Custom Class for Ctranslate2model converted model loading and made compitable with the smolagents libary."""
+class CTranslate2Model(Model):
+    def __init__(self, model_id: str, compute_type="int8", device="cuda", max_new_tokens=2048, **kwargs):
+        super().__init__(flatten_messages_as_text=True, **kwargs)
+        self.model_id = model_id
+        self.device = device
+        self.compute_type = compute_type
+        self.max_new_tokens = max_new_tokens
+        self.token_log_path = "Agent_logging.txt"
+
+        try:
+            self.generator = Generator(model_id, device=device, compute_type=compute_type)
+            self.tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
+        except Exception as e:
+            raise RuntimeError(f"❌ Failed to load CTranslate2 model/tokenizer from {model_id}: {e}") from e
+
+    def __call__(
+        self,
+        messages: List[Dict[str, str]],
+        stop_sequences: Optional[List[str]] = None,
+        grammar: Optional[str] = None,
+        tools_to_call_from: Optional[List[Tool]] = None,
+        **kwargs,
+    ) -> ChatMessage:
+        completion_kwargs = self._prepare_completion_kwargs(
+            messages=messages,
+            stop_sequences=stop_sequences,
+            grammar=grammar,
+            tools_to_call_from=tools_to_call_from,
+            **kwargs,
+        )
+
+        messages = completion_kwargs.pop("messages")
+        stop_sequences = completion_kwargs.pop("stop", None)
+        _ = completion_kwargs.pop("grammar", None)
+        completion_kwargs.pop("tools", None)
+        completion_kwargs.pop("tool_choice", None)
+
+        self.max_new_tokens = (
+            kwargs.get("max_new_tokens")
+            or kwargs.get("max_tokens")
+            or self.kwargs.get("max_new_tokens")
+            or self.kwargs.get("max_tokens")
+            or self.max_new_tokens
+        )
+
+        prompt = self.tokenizer.apply_chat_template(
+            messages,
+            tools=[get_tool_json_schema(tool) for tool in tools_to_call_from] if tools_to_call_from else None,
+            add_generation_prompt=True,
+            tokenize=False,
+        )
+
+        input_ids = self.tokenizer.encode(prompt, add_special_tokens=False)
+        input_tokens = self.tokenizer.convert_ids_to_tokens(input_ids)
+
+        results = self.generator.generate_batch(
+            [input_tokens],
+            max_length=self.max_new_tokens,
+            include_prompt_in_result=False,
+            sampling_topk=40,
+            sampling_temperature=0.8,
+        )
+
+        output_tokens = results[0].sequences[0]
+        output_ids = self.tokenizer.convert_tokens_to_ids(output_tokens)
+        output_text = self.tokenizer.decode(output_ids, skip_special_tokens=True)
+
+        self.last_input_token_count = len(input_tokens)
+        self.last_output_token_count = len(output_ids)
+
+        if stop_sequences is not None:
+            output_text = remove_stop_sequences(output_text, stop_sequences)
+
+        with open(self.token_log_path, "a", encoding="utf-8") as f:
+            f.write(
+                f"[Tokens] Prompt: {self.last_input_token_count} | Generated: {self.last_output_token_count} | Total: {self.last_input_token_count + self.last_output_token_count}\n"
+            )
+
+        chat_message = ChatMessage(
+            role=MessageRole.ASSISTANT,
+            content=output_text,
+            raw={"out": output_text, "completion_kwargs": completion_kwargs},
+        )
+
+        if tools_to_call_from:
+            chat_message.tool_calls = [
+                get_tool_call_from_text(output_text, self.tool_name_key, self.tool_arguments_key)
+            ]
+
+        return chat_message
+    
+    
+class TransformersModel(Model):
+    """A class that uses Hugging Face's Transformers library for language model interaction.
+
+    This model allows you to load and use Hugging Face's models locally using the Transformers library. It supports features like stop sequences and grammar customization.
+
+    > [!TIP]
+    > You must have `transformers` and `torch` installed on your machine. Please run `pip install smolagents[transformers]` if it's not the case.
+
+    Parameters:
+        model_id (`str`):
+            The Hugging Face model ID to be used for inference. This can be a path or model identifier from the Hugging Face model hub.
+            For example, `"Qwen/Qwen2.5-Coder-32B-Instruct"`.
+        device_map (`str`, *optional*):
+            The device_map to initialize your model with.
+        torch_dtype (`str`, *optional*):
+            The torch_dtype to initialize your model with.
+        trust_remote_code (bool, default `False`):
+            Some models on the Hub require running remote code: for this model, you would have to set this flag to True.
+        kwargs (dict, *optional*):
+            Any additional keyword arguments that you want to use in model.generate(), for instance `max_new_tokens` or `device`.
+        **kwargs:
+            Additional keyword arguments to pass to `model.generate()`, for instance `max_new_tokens` or `device`.
+    Raises:
+        ValueError:
+            If the model name is not provided.
+
+    Example:
+    ```python
+    >>> engine = TransformersModel(
+    ...     model_id="Qwen/Qwen2.5-Coder-32B-Instruct",
+    ...     device="cuda",
+    ...     max_new_tokens=5000,
+    ... )
+    >>> messages = [{"role": "user", "content": "Explain quantum mechanics in simple terms."}]
+    >>> response = engine(messages, stop_sequences=["END"])
+    >>> print(response)
+    "Quantum mechanics is the branch of physics that studies..."
+    ```
+    """
+
+    def __init__(
+        self,
+        model_id: str | None = None,
+        device_map: str | None = None,
+        torch_dtype: str | None = None,
+        trust_remote_code: bool = False,
+        use_flash_attn: bool = False, 
+        **kwargs,
+    ):
+        if use_flash_attn:
+            os.environ["XFORMERS_FLAGS"] = "flash"  # or "xformers" if you prefer
+        else:
+            # optionally clear or set default
+            os.environ.pop("XFORMERS_FLAGS", None)
+        try:
+            import torch
+            from transformers import (
+                AutoModelForCausalLM,
+                AutoModelForImageTextToText,
+                AutoProcessor,
+                AutoTokenizer,
+                TextIteratorStreamer,
+            )
+        except ModuleNotFoundError:
+            raise ModuleNotFoundError(
+                "Please install 'transformers' extra to use 'TransformersModel': `pip install 'smolagents[transformers]'`"
+            )
+
+        if not model_id:
+            warnings.warn(
+                "The 'model_id' parameter will be required in version 2.0.0. "
+                "Please update your code to pass this parameter to avoid future errors. "
+                "For now, it defaults to 'HuggingFaceTB/SmolLM2-1.7B-Instruct'.",
+                FutureWarning,
+            )
+            model_id = "HuggingFaceTB/SmolLM2-1.7B-Instruct"
+
+        default_max_tokens = 4096
+        max_new_tokens = kwargs.get("max_new_tokens") or kwargs.get("max_tokens")
+        if not max_new_tokens:
+            kwargs["max_new_tokens"] = default_max_tokens
+            logger.warning(
+                f"`max_new_tokens` not provided, using this default value for `max_new_tokens`: {default_max_tokens}"
+            )
+
+        if device_map is None:
+            device_map = "cuda" if torch.cuda.is_available() else "cpu"
+        logger.info(f"Using device: {device_map}")
+        self._is_vlm = False
+        try:
+            self.model = AutoModelForImageTextToText.from_pretrained(
+                model_id,
+                device_map=device_map,
+                torch_dtype=torch_dtype,
+                trust_remote_code=trust_remote_code,
+            )
+            self.processor = AutoProcessor.from_pretrained(model_id, trust_remote_code=trust_remote_code)
+            self._is_vlm = True
+            self.streamer = TextIteratorStreamer(self.processor.tokenizer, skip_prompt=True, skip_special_tokens=True)  # type: ignore
+
+        except ValueError as e:
+            if "Unrecognized configuration class" in str(e):
+                load_in_4bit = kwargs.pop("load_in_4bit", False)
+                quantization_config = None 
+                if  load_in_4bit is True:
+                        from transformers import BitsAndBytesConfig
+                        import torch
+                        quantization_config  = BitsAndBytesConfig(
+                            load_in_4bit=True,                    # Use 4-bit quantization (instead of 8-bit)
+                            bnb_4bit_compute_dtype=torch.float16, # Use float16 compute for faster inference and less precision loss
+                            bnb_4bit_quant_type="nf4",            # NormalFloat4 quantization type for better accuracy
+                            bnb_4bit_use_double_quant=True,       # Double quantization for better compression and accuracy
+                                                                )
+                else:
+                        quantization_config = None
+
+                self.model = AutoModelForCausalLM.from_pretrained(
+                        model_id,
+                        device_map=device_map,
+                        torch_dtype=torch_dtype,
+                        trust_remote_code=trust_remote_code,
+                        quantization_config=quantization_config,
+                        max_memory={
+                            0: "11GB",    # RTX 3060 (12 GB total; leave a bit headroom)
+                            1: "7GB",     # GTX 1080 (8 GB total; leave headroom)
+                            "cpu": "60GB" # offload big layers or activations to system RAM
+                        },
+                        offload_folder="offload_dir",  # where to spill tensors
+                        attn_implementation="sdpa"                        
+                    )
+                self.tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=trust_remote_code)
+                print(f"tokenizer: {self.tokenizer}")
+            else:
+                raise e
+        except Exception as e:
+            raise ValueError(f"Failed to load tokenizer and model for {model_id=}: {e}") from e
+        super().__init__(flatten_messages_as_text=not self._is_vlm, model_id=model_id, **kwargs)
+
+    def make_stopping_criteria(self, stop_sequences: list[str], tokenizer) -> "StoppingCriteriaList":
+        from transformers import StoppingCriteria, StoppingCriteriaList
+
+        class StopOnStrings(StoppingCriteria):
+            def __init__(self, stop_strings: list[str], tokenizer):
+                self.stop_strings = stop_strings
+                self.tokenizer = tokenizer
+                self.stream = ""
+
+            def reset(self):
+                self.stream = ""
+
+            def __call__(self, input_ids, scores, **kwargs):
+                generated = self.tokenizer.decode(input_ids[0][-1], skip_special_tokens=True)
+                self.stream += generated
+                if any([self.stream.endswith(stop_string) for stop_string in self.stop_strings]):
+                    return True
+                return False
+
+        return StoppingCriteriaList([StopOnStrings(stop_sequences, tokenizer)])
+
+    def _prepare_completion_args(
+        self,
+        messages: list[dict[str, str | list[dict]]],
+        stop_sequences: list[str] | None = None,
+        grammar: str | None = None,
+        tools_to_call_from: list[Tool] | None = None,
+        **kwargs,
+    ) -> dict[str, Any]:
+        completion_kwargs = self._prepare_completion_kwargs(
+            messages=messages,
+            stop_sequences=stop_sequences,
+            grammar=grammar,
+            **kwargs,
+        )
+
+        messages = completion_kwargs.pop("messages")
+        stop_sequences = completion_kwargs.pop("stop", None)
+
+        max_new_tokens = (
+            kwargs.get("max_new_tokens")
+            or kwargs.get("max_tokens")
+            or self.kwargs.get("max_new_tokens")
+            or self.kwargs.get("max_tokens")
+            or 1024
+        )
+        if hasattr(self, "processor"):
+                    prompt_tensor = self.processor.apply_chat_template(
+                        messages,
+                        tools=[get_tool_json_schema(tool) for tool in tools_to_call_from] if tools_to_call_from else None,
+                        return_tensors="pt",
+                        tokenize=True,
+                        return_dict=True,
+                        add_generation_prompt=True 
+                    )
+        else:
+                    prompt_tensor = self.tokenizer.apply_chat_template(
+                        messages,
+                        tools=[get_tool_json_schema(tool) for tool in tools_to_call_from] if tools_to_call_from else None,
+                        return_tensors="pt",
+                        return_dict=True,
+                        add_generation_prompt=True 
+                    )
+
+        prompt_tensor = prompt_tensor.to(self.model.device)  # type: ignore
+        if hasattr(prompt_tensor, "input_ids"):
+            prompt_tensor = prompt_tensor["input_ids"]
+
+        attention_mask = (prompt_tensor != self.tokenizer.pad_token_id).long()
+        completion_kwargs["max_new_tokens"] = max_new_tokens
+        return dict(
+            inputs=prompt_tensor,
+            attention_mask=attention_mask,
+            use_cache=True,
+            **completion_kwargs,
+        
+            pad_token_id=self.tokenizer.pad_token_id,
+        )
+
+    def generate(
+        self,
+        messages: list[dict[str, str | list[dict]]],
+        stop_sequences: list[str] | None = None,
+        grammar: str | None = None,
+        tools_to_call_from: list[Tool] | None = None,
+        **kwargs,
+    ) -> ChatMessage:
+        generation_kwargs = self._prepare_completion_args(
+            messages=messages,
+            stop_sequences=stop_sequences,
+            grammar=grammar,
+            tools_to_call_from=tools_to_call_from,
+            **kwargs,
+        )
+        count_prompt_tokens = generation_kwargs["inputs"].shape[1]  # type: ignore
+        if stop_sequences:
+            stopping_criteria = self.make_stopping_criteria(
+                stop_sequences, tokenizer=self.processor if hasattr(self, "processor") else self.tokenizer
+            )
+        out = self.model.generate(
+            **generation_kwargs,
+            stopping_criteria=stopping_criteria,
+        )
+        generated_tokens = out[0, count_prompt_tokens:]
+        if hasattr(self, "processor"):
+            output_text = self.processor.decode(generated_tokens, skip_special_tokens=True)
+        else:
+            output_text = self.tokenizer.decode(generated_tokens, skip_special_tokens=True)
+        self.last_input_token_count = count_prompt_tokens
+
+        self.last_output_token_count = len(generated_tokens)
+
+        max_context_length = 32768
+        log_line = (
+            f"Input tokens: {self.last_input_token_count}, "
+            f"Output tokens: {self.last_output_token_count}, "
+            f"Max context length: {max_context_length}\n"
+                  )
+        with open(r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Token_logs.txt", "w", ) as log_file:
+                log_file.write(log_line)
+                
+        if stop_sequences is not None:
+            output_text = remove_stop_sequences(output_text, stop_sequences)
+
+        return ChatMessage(
+            role=MessageRole.ASSISTANT,
+            content=output_text,
+            raw={
+                "out": output_text,
+                "completion_kwargs": {key: value for key, value in generation_kwargs.items() if key != "inputs"},
+            },
+        )
+
+    def generate_stream(
+        self,
+        messages: list[dict[str, str | list[dict]]],
+        stop_sequences: list[str] | None = None,
+        grammar: str | None = None,
+        tools_to_call_from: list[Tool] | None = None,
+        **kwargs,
+    ) -> Generator[ChatMessageStreamDelta]:
+        generation_kwargs = self._prepare_completion_args(
+            messages=messages,
+            stop_sequences=stop_sequences,
+            grammar=grammar,
+            tools_to_call_from=tools_to_call_from,
+            **kwargs,
+        )
+        count_prompt_tokens = generation_kwargs["inputs"].shape[1]  # type: ignore
+
+        thread = Thread(target=self.model.generate, kwargs={"streamer": self.streamer, **generation_kwargs})
+        thread.start()
+
+        self.last_output_token_count = 0
+
+        # Generate with streaming
+        for new_text in self.streamer:
+            yield ChatMessageStreamDelta(content=new_text, tool_calls=None)
+            self.last_output_token_count += 1
+
+        self.last_input_token_count = count_prompt_tokens
+        thread.join()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def get_device():
     if gpu_lock.acquire(blocking=False):
         return "cuda"

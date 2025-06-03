@@ -1,16 +1,8 @@
 
-import mediapipe as mp
-from moviepy import VideoFileClip, ImageSequenceClip, TextClip, CompositeVideoClip,vfx 
-import os
-import threading
 import cv2
-import ffmpeg
-import time
-from typing import List
 from pynvml import nvmlInit, nvmlDeviceGetHandleByIndex, nvmlDeviceGetMemoryInfo, nvmlShutdown
 from basicsr.archs.rrdbnet_arch import RRDBNet
 import argparse
-from concurrent.futures import ThreadPoolExecutor
 from realesrgan import RealESRGANer
 from SwinIR.models.network_swinir import SwinIR as net
 from tqdm import tqdm
@@ -20,7 +12,6 @@ import cv2
 from tqdm import tqdm
 import onnxruntime as ort
 from ultralytics.utils.ops import non_max_suppression, xywh2xyxy
-import pynvml
 import torch.nn.functional as F  
 from SwinIR.utils import util_calculate_psnr_ssim as util
 import time
@@ -29,8 +20,7 @@ import numpy as np
 import cv2
 import torch
 import onnxruntime as ort
-from tqdm import tqdm
-from collections import OrderedDict
+
 
 
 

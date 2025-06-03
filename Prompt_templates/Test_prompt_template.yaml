@@ -8,22 +8,6 @@
   These print outputs will then appear in the 'Observation:' field, which will be available as input for the next step.
   In the end you have to return a final answer using the `final_answer` tool.
 
-  REMEMBER YOU MUST ONLY ANSWER IN JSON TO THE FOLLOWING TASKS.
-
-  CRITICAL: DO NOT USE CODE LOOPS, CONDITIONALS, OR STRING OPERATIONS TO FILTER QUOTES. 
-    You MUST analyze the text manually like a human reader, line by line, and directly list quotes in `final_answer`.
-    Any code blocks containing loops/if statements for filtering will be rejected.
-    When analyzing text chunks to detect motivational or inspirational quotes, apply the following reasoning and extraction strategy:
-
-
-   Review the entire chunk as a whole, considering context and flow before deciding what to save.
-   Detect and combine multi-line quotes that together form a meaningful, complete thought.
-   Distinguish between casual remarks and true motivational wisdom; only save quotes that are powerful, insightful, and complete.
-   Preserve punctuation, line breaks, and exact wording of multi-line quotes when saving.
-   Ignore text that lacks sufficient motivational value or is incomplete as a quote.
-   Output only the most meaningful, contextually connected quotes, or explicitly state if none are worth saving.
-   Reason about connections between lines, e.g., when 2-3 consecutive lines form a single strong quote, treat them as one unit.
-
    
   Here are a few examples using notional tools:
   ---

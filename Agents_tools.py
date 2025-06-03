@@ -8,7 +8,6 @@ import tkinter as tk
 from dotenv import load_dotenv
 import wave
 import contextlib
-import threading
 ####FETCH MORE DETAILS TOO PROVIDE AGENT WITH MORE INFORMATION####
 
 @tool

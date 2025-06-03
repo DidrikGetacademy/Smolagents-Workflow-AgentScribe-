@@ -1,41 +1,27 @@
-from smolagents import TransformersModel, FinalAnswerTool, SpeechToTextTool, CodeAgent, tool
+from smolagents import TransformersModel, FinalAnswerTool, SpeechToTextTool, CodeAgent, tool,SpeechToTextToolCPU
 from Agents_tools import ChunkLimiterTool,Chunk_line_LimiterTool
-import torch
 import os
 import gc
 import yaml
 import subprocess
 from smolagents import SpeechToTextTool
-import numpy as np
-import mediapipe as mp
-from moviepy import VideoFileClip, ImageSequenceClip, TextClip, CompositeVideoClip,vfx 
-import os
+from moviepy import VideoFileClip, ImageSequenceClip, TextClip, CompositeVideoClip,vfx,AudioFileClip,afx
 import threading
 import cv2
 import ffmpeg
-import time
 from typing import List
 from pynvml import nvmlInit, nvmlDeviceGetHandleByIndex, nvmlDeviceGetMemoryInfo, nvmlShutdown
-import argparse
 from concurrent.futures import ThreadPoolExecutor
 from tqdm import tqdm
-import argparse
-import numpy as np
 import cv2
-from tqdm import tqdm
 import onnxruntime as ort
-from ultralytics.utils.ops import non_max_suppression, xywh2xyxy
+from ultralytics.utils.ops import non_max_suppression
 import pynvml
 import torch.nn.functional as F  
 import time
-import logging
 import numpy as np
 import cv2
 import torch
-import onnxruntime as ort
-from tqdm import tqdm
-from collections import OrderedDict
-from moviepy.video.fx.MultiplyColor import MultiplyColor  
 from moviepy.video.fx.FadeIn import FadeIn
 from moviepy.video.fx.FadeOut import FadeOut
 
@@ -51,28 +37,43 @@ model_path_realesgran_x2_pth = r"c:\Users\didri\Desktop\LLM-models\Video-upscale
 
 
 
+def sharpen_frame_naturally(frame_bgr):
+            from PIL import ImageFilter,Image
+            img_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
+            pil_img = Image.fromarray(img_rgb)
+
+            sharpned_pil = pil_img.filter(ImageFilter.UnsharpMask(radius=1.2, percent=113,threshold=2))
+            sharpned_rgb = np.array(sharpned_pil)
+            sharpened_bgr = cv2.cvtColor(sharpned_rgb, cv2.COLOR_RGB2BGR)
+            print(f"sharpening completed")
+            return sharpened_bgr
+
+
+def downscale_to_size( img: np.ndarray, width: int, height: int) -> np.ndarray:
+            """
+            Downscale an image to a specific width and height using Lanczos interpolation.
+            """
+            new_size = (width, height)
+            print(f"downscale complete on img: {img},  {new_size}")
+            return cv2.resize(img, new_size, interpolation=cv2.INTER_LANCZOS4)
 
 
 
+def change_video_resolution(video_path, target_width, target_height, output_path=None):
+        if output_path is None:
+            output_path = "./converted_original_for_quality_test.mp4"
+        (
+            ffmpeg
+            .input(video_path)
+            .output(output_path, vf=f'scale={target_width}:{target_height}', preset='slow', crf=18)
+            .overwrite_output()
+            .run()
+        )
+        return output_path
+    
 
 
-
-def create_short_video(video_path, start_time, end_time, video_name, subtitle_text):
-    torch.cuda.set_device(1)
-    probe = ffmpeg.probe(video_path)
-    print(probe)
-    format_info = probe.get('format', {})
-    bitrate = int(format_info.get('bit_rate', 0))
-    video_streams = [s for s in probe['streams'] if s['codec_type'] == 'video']
-    video_codec = video_streams[0]['codec_name'] if video_streams else None
-    audio_streams = [s for s in probe['streams'] if s['codec_type'] == 'audio']
-    audio_codec = audio_streams[0]['codec_name'] if audio_streams else None
-    subtitles = subtitle_text
-    print("subtitles: ",subtitles)
-    torch.cuda.set_device(0)
-    print("Before loading YOLO model")
-
-    def get_video_resolution(video_path):
+def get_video_resolution(video_path):
         cmd = [
             "ffprove",
             "-v", "error",
@@ -84,11 +85,10 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
         if result.returncode != 0:
             raise RuntimeError(f"ffprobe failed: {result.stderr}")
         width, height = map(int, result.stdout.strip().split('x'))
-        return width,height 
-    
+        return width,height    
 
 
-    def test_videoquality_comparison(original_video_path, new_video_path):
+def test_videoquality_comparison(original_video_path, new_video_path):
         import subprocess
         try: 
             orig_width, orig_height = get_video_resolution(original_video_path)
@@ -121,18 +121,49 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
             print(f"error during testing of videoquality!!!! reason: {str(e)}")
 
 
-    def change_video_resolution(video_path, target_width, target_height, output_path=None):
-        if output_path is None:
-            output_path = "./converted_original_for_quality_test.mp4"
-        (
-            ffmpeg
-            .input(video_path)
-            .output(output_path, vf=f'scale={target_width}:{target_height}', preset='slow', crf=18)
-            .overwrite_output()
-            .run()
-        )
-        return output_path
+
+
+
+
+
+
+def create_short_video(video_path, start_time, end_time, video_name, subtitle_text):
+    torch.cuda.set_device(1)
+    probe = ffmpeg.probe(video_path)
+    print(probe)
+    format_info = probe.get('format', {})
+    bitrate = int(format_info.get('bit_rate', 0))
+    video_streams = [s for s in probe['streams'] if s['codec_type'] == 'video']
+    video_codec = video_streams[0]['codec_name'] if video_streams else None
+    audio_streams = [s for s in probe['streams'] if s['codec_type'] == 'audio']
+    audio_codec = audio_streams[0]['codec_name'] if audio_streams else None
+    subtitles = subtitle_text
+    print("subtitles: ",subtitles)
+    torch.cuda.set_device(0)
+    print("Before loading YOLO model")
+
+
+    def mix_audio(original_audio, background_music_path, bg_music_volume=0.15):
+         bg_music = AudioFileClip(background_music_path)
+
+         if bg_music.duration < original_audio.duration:
+              bg = afx.AudioLoop(bg_music,duration=original_audio.duration)
+         else:
+              bg_music = bg_music.subclipped(0,original_audio.duration)
+            
+        
+         bg_music = bg_music.volumex(bg_music_volume)
+
+         original_audio = original_audio.volumex(1.0)
+
+         mixed_audio = CompositeVideoClip([original_audio,bg_music])
+
+         return mixed_audio
     
+
+
+
+
 
     def split_subtitles_into_chunks(text, max_words=3):
         words = text.split()
@@ -271,31 +302,6 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
     
 
 
-    def sharpen_frame_naturally(frame_bgr):
-            from PIL import ImageFilter,Image
-            img_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
-            pil_img = Image.fromarray(img_rgb)
-
-            sharpned_pil = pil_img.filter(ImageFilter.UnsharpMask(radius=1.2, percent=113,threshold=2))
-            sharpned_rgb = np.array(sharpned_pil)
-            sharpened_bgr = cv2.cvtColor(sharpned_rgb, cv2.COLOR_RGB2BGR)
-            print(f"sharpening completed")
-            return sharpened_bgr
-
-
-    def downscale_to_size( img: np.ndarray, width: int, height: int) -> np.ndarray:
-            """
-            Downscale an image to a specific width and height using Lanczos interpolation.
-            """
-            new_size = (width, height)
-            print(f"downscale complete on img: {img},  {new_size}")
-            return cv2.resize(img, new_size, interpolation=cv2.INTER_LANCZOS4)
-
-
-    def AutoUpload_AND_Schedule():
-        #auto upload and schedule video on social media.
-        return 
-
 
 
 
@@ -333,16 +339,14 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
                 size=processed_clip.size
             )
 
-                
-    final_clip.audio = clip.audio
+    background_music_path = r"c:\Users\didri\AppData\Local\CapCut\Videos\Video Tools\audio\Documentary Cinematic Violin by Infraction [No Copyright Music] # Life Goes On [mp3].mp3"
+    final_clip.audio = mix_audio(clip.audio, background_music_path, bg_music_volume=0.15)
 
-
-
-
-
-    #final_clip = MultiplyColor(factor=0.3).apply(final_clip) 
+    ###FILTERS,BRIGHTNESS,CONTRAST, ANIMATION#######
     final_clip = FadeIn(duration=1.0).apply(final_clip)
     final_clip = FadeOut(duration=1.0).apply(final_clip)
+
+
 
     print(f"video original fps: {clip.fps}")
     output_dir = "./Logging_and_filepaths/Video_clips"
@@ -354,34 +358,36 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
         audio_codec=audio_codec or "aac",
         bitrate=str(bitrate) or "4000k",
         preset="slow",
-        threads=3,
+        threads=4,
         fps=clip.fps,
         ffmpeg_params=["-vf", "format=yuv420p"],
     )
     print(f"video is completed: output path : {out_path}, video name: {video_name} video_fps: {clip.fps}, codec: {video_codec}, bitrate: {bitrate}, audio_codec: {audio_codec}, subtitles: {subtitles}")
     print(f"Final video resolution (width x height): {final_clip.size[0]} x {final_clip.size[1]}")  
-
-
-    # try:
-    #     final_clip_path = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Logging_and_filepaths\Video_clips\short10.mp4"
-    #     final_width, final_height = final_clip.size
-    #     orig_width, orig_height = full_video.size  # from MoviePy VideoFileClip object
-    #     print(f"Original video resolution: {orig_width} x {orig_height}")
-    #     print(f"Final clip resolution: {final_width} x {final_height}")
-
-    #     if (orig_width, orig_height) != (final_width, final_height):
-    #         print("Resizing original video to match final clip resolution for quality comparison...")
-    #         converted_original_path = change_video_resolution(video_path, final_width, final_height)
-    #         test_videoquality_comparison(final_clip_path, converted_original_path)
-    #     else:
-    #         print("Original video and final clip have the same resolution; proceeding with comparison...")
-    #         test_videoquality_comparison(final_clip_path, video_path)
-    # except Exception as e:
-    #     print(f"error during quality check and converting original video")
     full_video.close()
     clip.close()
 
 
+def parse_subtitle_text_block(text_block):
+    """
+    Parses multiline subtitle text block like: 
+    [2315.28s - 2319.84s] you need to descend if you want to transcend
+    [2319.84s - 2322.00s] you have to let yourself go down
+    ..
+    returns list of (text, start_time, end_time)  tuples 
+    """
+    import re 
+    subtitles = []
+    pattern = re.compile(r"\[(\d+\.\d+)s\s*-\s*(\d+\.\d+)s\]\s*(.+)")
+    lines = text_block.strip().splitlines()
+    for line in lines:
+        match = pattern.match(line.strip())
+        if match:
+            start = float(match.group(1))
+            end = float(match.group(2))
+            text=match.group(3)
+            subtitles.append((text, start, end))
+    return subtitles 
 
 
 
@@ -477,26 +483,6 @@ def parse_timestamp_line(line):
 
 
 
-def parse_subtitle_text_block(text_block):
-    """
-    Parses multiline subtitle text block like: 
-    [2315.28s - 2319.84s] you need to descend if you want to transcend
-    [2319.84s - 2322.00s] you have to let yourself go down
-    ..
-    returns list of (text, start_time, end_time)  tuples 
-    """
-    import re 
-    subtitles = []
-    pattern = re.compile(r"\[(\d+\.\d+)s\s*-\s*(\d+\.\d+)s\]\s*(.+)")
-    lines = text_block.strip().splitlines()
-    for line in lines:
-        match = pattern.match(line.strip())
-        if match:
-            start = float(match.group(1))
-            end = float(match.group(2))
-            text=match.group(3)
-            subtitles.append((text, start, end))
-    return subtitles 
     
 
 
@@ -546,7 +532,12 @@ def SaveMotivationalQuote(text: str, text_file: str) -> None:
             f.write("===START_QUOTE===\n")
             f.write(text.strip() + "\n")
             f.write("===END_QUOTE===\n\n")
-
+            start_time, end_time = parse_multiline_block(text)
+            print(f"[start_time: {start_time}, end_time: {end_time}]   FROM : SaveMotivationalQuote")
+                
+    if start_time is None or end_time is None:
+                    raise ValueError(f"Start_time or end_time is None, start_time: {start_time}, end_time: {end_time}")
+            
 
 
 
@@ -567,12 +558,11 @@ def create_motivational_montage_agent(clips: List[str], output_path: str):
 
 
 #Agent som analyserer tekst  fra transkript ved og lese (chunk for chunk) --->  (lagrer teksten basert på (task)) #eksempel her er motiverende/quote/inspirerende
-def Transcript_Reasoning_AGENT(transcripts_path):
-    print(f"inside [Transcript_Reasoning_AGENT], expecting path to the transcribed text file: {transcripts_path}")
-
+def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
+    log(f"✅ Entered Transcript_Reasoning_AGENT() transcript_path: {transcripts_path}, agent_txt_saving_path: {agent_txt_saving_path}")
 
     global Global_model
-    loaded_reasoning_agent_prompts = r'C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Prompt_templates\loaded_reasoning_agent_prompts.yaml'
+    loaded_reasoning_agent_prompts = r'C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Prompt_templates\Test_prompt_template.yaml'
     with open(loaded_reasoning_agent_prompts, 'r', encoding='utf-8') as f:
             Prompt_template = yaml.safe_load(f)
 
@@ -581,8 +571,8 @@ def Transcript_Reasoning_AGENT(transcripts_path):
     Reasoning_Text_Agent = CodeAgent(
         model=Global_model,
         tools=tools,
-        max_steps=3,
-        verbosity_level=1,
+        max_steps=6,
+        verbosity_level=4,
         prompt_templates=Prompt_template, 
 
     )
@@ -594,13 +584,17 @@ def Transcript_Reasoning_AGENT(transcripts_path):
     transcript_title = os.path.basename(transcripts_path)
     print(f"transcript title: {transcript_title}")
     print(f"\nProcessing new transcript: {transcripts_path}")
-    chunk_limiter.reset()
-    with open(Chunk_saving_text_file, "a", encoding="utf-8") as out:
+    Current_working_directory = os.path.dirname(transcripts_path)
+    verify_agent_final_quotes = os.path.join(Current_working_directory, "verify_agent_final_quotes.txt")
+
+    with open(agent_txt_saving_path, "a", encoding="utf-8") as out:
         out.write(f"\n--- Transcript Title: {transcript_title} ---\n")
 
+    chunk_limiter.reset()
     while True:
         try:
-            chunk = chunk_limiter.forward(file_path=transcripts_path, max_chars=2500)
+            print(f"transcript_path for chunk tool : {transcripts_path}")
+            chunk = chunk_limiter.forward(file_path=transcripts_path, max_chars=3500)
                
         except Exception as e:
                 print(f"Error during chunking from file {transcripts_path}: {e}")
@@ -609,7 +603,7 @@ def Transcript_Reasoning_AGENT(transcripts_path):
         if not chunk.strip():
                 print("Finished processing current transcript. Now exiting func [Transcript Reasoning Agent]")
                 del Reasoning_Text_Agent
-                Verify_Agent(Chunk_saving_text_file)
+                Verify_Agent(agent_txt_saving_path,verify_agent_final_quotes)
                 break
 
         task = f"""
@@ -665,9 +659,9 @@ def Transcript_Reasoning_AGENT(transcripts_path):
             """
         result = Reasoning_Text_Agent.run(
                 task=task,
-                additional_args={"text_file": Chunk_saving_text_file}
+                additional_args={"text_file": agent_txt_saving_path}
             )
-        print(f"[Path to where the [1. reasoning agent ] saves the motivational quotes  ]: {Chunk_saving_text_file}")
+        print(f"[Path to where the [1. reasoning agent ] saves the motivational quotes  ]: {agent_txt_saving_path}")
         print(f"Agent response: {result}\n")
         chunk_limiter.called = False 
 
@@ -675,13 +669,8 @@ def Transcript_Reasoning_AGENT(transcripts_path):
 
 
 
-
-
-
-
-
 #Agent som verifiserer tekst som er lagret, (dobbel sjekk lagret text)
-def Verify_Agent(saved_text_storage):
+def Verify_Agent(saved_text_storage,verify_agent_final_quotes):
     print(f"The text file [verify agent] will reason over, is the same txt path that [transcript_reasoning_agent] saved to, text file path:{saved_text_storage}")
 
     loaded_reasoning_agent_prompts = r'C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Prompt_templates\Reasoning_Again.yaml'
@@ -693,7 +682,7 @@ def Verify_Agent(saved_text_storage):
         model=Global_model,
         tools=[SaveMotivationalQuote_CreateShort, FinalAnswerTool()],
         max_steps=3,
-        verbosity_level=0,
+        verbosity_level=4,
         prompt_templates=Prompt_template, 
     )
      
@@ -761,187 +750,198 @@ def Verify_Agent(saved_text_storage):
             """
             result = Reasoning_Text_Agent.run(
                 task=task,
-                additional_args={"text_file": Final_saving_text_file}
+                additional_args={"text_file": verify_agent_final_quotes}
             )
-            print(f"[path to where the [2.agent is saving the final text that will be used for motivational short]]: {Final_saving_text_file}")
+            print(f"[path to where the [2.agent is saving the final text that will be used for motivational short]]: {verify_agent_final_quotes}")
             print(result)
             chunk_limiter.called = False 
 
 
 
 
+
+
+from concurrent.futures import ThreadPoolExecutor
 import threading
 import queue
+import torch
+import os
+import subprocess
+import gc
+import datetime
+
 gpu_lock = threading.Lock()
 transcript_queue = queue.Queue()
-global Global_model
+
+log_file_path = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\transcription_log.txt"
+
 def log(msg):
-    now = time.strftime("%H:%M:%S")
-    thread = threading.current_thread().name
-    print(f"[{now}][{thread}] {msg}")
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    thread_name = threading.current_thread().name
+    log_message = f"[{timestamp}][{thread_name}] {msg}"
+    print(log_message)
+    with open(log_file_path, "a", encoding="utf-8") as f:
+        f.write(log_message + "\n")
 
+def transcribe_single_video(video_path, device):
+    log(f"Starting transcription for {video_path} on device {device}")
 
-def print_gpu_stats():
-    nvmlInit()
-    for i in range(2):
-        handle = nvmlDeviceGetHandleByIndex(i)
-        info = nvmlDeviceGetMemoryInfo(handle)
-        print(f"GPU {i}: {info.used/1024**3:.1f}GB used / {info.total/1024**3:.1f}GB total")
+    if not os.path.isfile(video_path):
+        log(f"❌ File not found: {video_path}")
+        return
 
+   
+    script_dir = os.path.dirname(os.path.abspath(__file__)) 
+
+   
+    parent_folder = os.path.join(script_dir, "work_queue_folder")
+    os.makedirs(parent_folder, exist_ok=True)
+
+    base_name = os.path.splitext(os.path.basename(video_path))[0]
+    folder = os.path.join(parent_folder, base_name)
+    os.makedirs(folder, exist_ok=True)
+
+    txt_output_path = os.path.join(folder, f"{base_name}.txt")
+    audio_path = os.path.join(folder, f"{base_name}.wav")
+    agent_txt = "agent_saving_path"
+    agent_text_saving_path = os.path.join(folder, f"{agent_txt}.txt")
+    with open(agent_text_saving_path, "a", encoding="utf-8") as f:
+         f.write("\nstarting again...\n")
+    if os.path.isfile(audio_path) and os.path.isfile(txt_output_path):
+        log(f"Transcript already exists: {txt_output_path}, audio exists: {audio_path}")
+        transcript_queue.put((video_path, txt_output_path,agent_text_saving_path))
+        log(f"Enqueued existing transcript for GPU processing: {txt_output_path}")
+        return
+        
+ 
+
+    try:
+        ffmpeg_cmd = [
+            "ffmpeg",
+            "-y",
+            "-i", video_path,
+            "-vn",
+            "-acodec", "pcm_s16le",
+            audio_path
+        ]
+        subprocess.run(ffmpeg_cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        log(f"Extracted audio → {audio_path}")
+    except subprocess.CalledProcessError:
+        log(f"❌ Audio extraction failed for {video_path}")
+        return
+
+    try:
+        start_time = time.time()  
+        if device == "cuda":
+                got_gpu = gpu_lock.acquire(blocking=False)
+                if not got_gpu:
+                    log(f"GPU busy, falling back to CPU for {video_path}")
+                    device = "cpu"
+                else:
+                    log(f"Acquired GPU lock for {video_path}")
+        else:
+             got_gpu = False  
+
+   
+       
+        tool = SpeechToTextTool() if device == "cuda" else SpeechToTextToolCPU()
+        tool.device = device
+        tool.setup()
+
+        
+        result_txt_path = tool.forward({"audio": audio_path, "text_path": txt_output_path, "video_path": video_path})
+        elapsed_time = time.time() - start_time 
+        log(f"⏱️ Transcription took {elapsed_time:.2f} seconds for {video_path} on device {device}")
+
+        if result_txt_path != txt_output_path:
+            os.rename(result_txt_path, txt_output_path)
+        log(f"🔊 Transcription saved → {txt_output_path}")
+
+        transcript_queue.put((video_path, txt_output_path, agent_text_saving_path))
+        gpu_lock.release()
+        del tool     
+        gc.collect()
+        torch.cuda.empty_cache()
+        log(f"Released GPU lock after transcribing {video_path}\n")
+        log(f"added video_path: {video_path}, transcript: {txt_output_path}, agent_saving_path: {agent_text_saving_path} to queue  for GPU processing")
+
+    except Exception as e:
+        log(f"Transcription failed for {audio_path}: {e}")
 
 def gpu_worker():
     log("GPU worker started")
     torch.backends.cudnn.benchmark = True
-   # torch.set_float32_matmul_precision('medium')
-    with gpu_lock:
-            global Global_model
-            Global_model =  TransformersModel(
-            model_id=r'c:\Users\didri\Desktop\LLM-models\Qwen2.5-7B-Instruct',
-            device_map="auto",
+
+ 
+    global Global_model
+    Global_model = TransformersModel(
+            model_id = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\DeepSeek-R1-0528-Qwen3-8B",
             load_in_4bit=True,
+            trust_remote_code=True,
+            device_map="auto",
             torch_dtype="auto",
             max_new_tokens=1500,
-            trust_remote_code=True,
+            temperature=0.6
         )
-            print_gpu_stats()
-            print(f"Global model device: {Global_model}")
+    log(f"Loaded Global_model on device")
+
     while True:
         item = transcript_queue.get()
+        log(f"item: {item}")
         if item is None:
-            print("shutdown signal received exiting GPU worker")
+            log("Shutdown signal received, exiting GPU worker")
+            transcript_queue.task_done()
             break
-        print_gpu_stats()
 
-   
-        video_path_url, transcript_text_path = item
-        print(f"video_path: {video_path_url} & Transcript_text_path: {transcript_text_path} is being proccessed now in [GPU_WORKER]")
+        video_path_url, transcript_text_path,agent_txt_saving_path = item
         set_current_videourl(video_path_url)
-        print(f"Current video_url being processed is: {video_path_url}")
+        log(f"Processing {video_path_url} & {transcript_text_path} in GPU worker, agent is using txt path to save: {agent_txt_saving_path}")
 
+        log(f"GPU lock acquired by gpu_worker for {video_path_url}")
 
-        print(f"Dequeued {transcript_text_path!r}, queue size now {transcript_queue.qsize()}")
-        if transcript_text_path is None:
-            print(f"transcript_text_path is: {transcript_text_path}")
-            print("Stopped...")
-            break
-
-        with gpu_lock:
-            # Just reuse the already loaded model here
-            print_gpu_stats()
-            print(f"▶️ Running Transcript_Reasoning_AGENT on {transcript_text_path}")
-            Transcript_Reasoning_AGENT(transcript_text_path)
-        transcript_queue.task_done()
-
-def get_device():
-    if gpu_lock.acquire(blocking=False):
-        gpu_lock.release()
-        print("cuda available for transcription")
-        return "cuda"
-    else:
-        print("GPU busy — falling back to CPU")
-        return "cpu"
-
-
-
-
-###Transkriber audio til til tekst fra video (video -->  audio ---> text)
-def transcribe_single_video(video_path):
-        log(f"Starting transcription for {video_path}")
-
-        if not os.path.isfile(video_path):
-          log(f"❌ File not found: {video_path}")
-          return
-
-    
-        base_name = os.path.splitext(os.path.basename(video_path))[0]
-        folder = os.path.dirname(video_path)
-        audio_path = os.path.join(folder, f"{base_name}.wav")
-        txt_output_path = os.path.join(folder, f"{base_name}.txt")
-
-        device = get_device()
-        tool = SpeechToTextTool()
-        tool.device=device
-        tool.setup()
-    
-
-        if os.path.isfile(audio_path) and os.path.isfile(txt_output_path):
-            log(f"Transcript already exists: {txt_output_path}, audio exists: {audio_path}")
-            transcript_queue.put((video_path, txt_output_path ))
-            log(f"Enqueued existing transcript for GPU processing: {txt_output_path}")
-            return
         try:
-            ffmpeg_cmd = [
-                "ffmpeg",
-                "-y",  
-                "-i", video_path,
-                "-vn", 
-                "-acodec", "pcm_s16le", 
-                audio_path
-            ]
-            subprocess.run(ffmpeg_cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            log(f"Extracted audio → {audio_path}")
-        except subprocess.CalledProcessError:
-            log(f"❌ Audio extraction failed for {video_path}")
-            return
-        
-        try:
-            result_txt_path = tool.forward({"audio": audio_path,"text_path":txt_output_path})
-            if result_txt_path != txt_output_path:
-                os.rename(result_txt_path, txt_output_path)
-            log(f"🔊 Transcription saved → {txt_output_path}")
-
-
-            transcript_queue.put((video_path, txt_output_path))
-            log(f"Successfully added [video_path: {video_path} & txt_output_path: {txt_output_path}] to the queue for GPU processing")
-
-        except Exception as e:
-            print(f"Transcription failed for {audio_path}: {e}")
-
-
+            Transcript_Reasoning_AGENT(transcript_text_path, agent_txt_saving_path)
+            log(f"Transcript_Reasoning_AGENT has exited...")
+        finally:
+            log(f"GPU lock released by gpu_worker for {video_path_url}")
+            transcript_queue.task_done()
 
 
 
 
 if __name__ == "__main__":
+    import gc
     torch.cuda.empty_cache()
     gc.collect()
 
-    print_gpu_stats() 
-    print(torch.cuda.get_device_name(0)) 
-    print(torch.cuda.get_device_name(1)) 
-    print(torch.cuda.is_available())    
-    try:
-      video_paths = [
-         r"c:\Users\didri\Documents\Finding Freedom From Ego & Subconscious Limiting Beliefs ｜ Peter Crone.mp4",
-         r"c:\Users\didri\Documents\Jordan Peterson： STOP LYING TO YOURSELF! How To Turn Your Life Around In 2024!.mp4",
-         r"c:\Users\didri\Documents\How To Break The Habit Of Being You - Dr Joe Dispenza (4K).mp4",
-         r"c:\Users\didri\Documents\Robert Greene： A Process for Finding & Achieving Your Unique Purpose.mp4",
+    video_paths = [
+        r"c:\Users\didri\Documents\Mindset Reset： Take Control of Your Mental Habits ｜ The Mel Robbins Podcast.mp4",
+    ]
+    log(f"Video_paths: {len(video_paths)}")
 
-      ]
-      log(f"Video_paths: {len(video_paths)}")
-      gpu_thread = threading.Thread(target=gpu_worker, name="GPU-Worker")
-      gpu_thread.start()
+    devices = ["cuda", "cpu"] 
+    video_device_pairs = [(video_paths[i], devices[i % len(devices)]) for i in range(len(video_paths))]
+
+    max_threads = 1
+    start_time = time.time()
+    with ThreadPoolExecutor(max_workers=max_threads) as executor:
+        futures = []
+        start_time = time.time()
+        for video_path, device in video_device_pairs:
+            futures.append(executor.submit(transcribe_single_video, video_path, device))
+
+        for future in futures:
+            future.result() 
+            end_time = time.time()
+        total_time = end_time - start_time
+        log(f"start_time of threadpool: {start_time} & endtime of threadpool = {end_time}, total: {total_time}")
 
 
-      max_threads = 2
+    gpu_thread = threading.Thread(target=gpu_worker, name="GPU-Worker")
+    gpu_thread.start()
 
-      with ThreadPoolExecutor(max_workers=max_threads) as executor:
-          executor.map(transcribe_single_video, video_paths)
-       
-      transcript_queue.join()
-      
+  
+    #transcript_queue.put(None)  # Stoppsignal til gpu_worker
+    transcript_queue.join() 
+    gpu_thread.join()
 
-      transcript_queue.put(None)
-      gpu_thread.join()
-
-    except Exception as e: 
-         print(f"Error: {e}")
-
-    # torch.cuda.empty_cache()
-    # gc.collect()
-    # text = """"
-    # [0.00s - 2.00s] This is the career they want for you, the direction.
-    # """
-    # set_current_videourl(r"c:\Users\didri\AppData\Local\CapCut\Videos\didrik.mp4")
-
-    # SaveMotivationalQuote_CreateShort(text,Final_saving_text_file)
