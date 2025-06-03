@@ -5,3 +5,5 @@ venv/
 yolov8x/
 yolov8x.pt
 *.pt
+\work_queue_folder
+/work_queue_folder
