@@ -184,7 +184,7 @@ class ChunkLimiterTool(Tool):
         with open(self.saved_file_path, "w", encoding="utf-8") as f:
                 f.write(remaing)
             
-        return f"[CHUNK_OUTPUT]\n {chunk}"
+        return f"{chunk}"
 
 
 

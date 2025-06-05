@@ -1,0 +1,28 @@
+1. initial_facts (teori og regler)
+       ↓
+2. initial_plan (hvordan jeg vil gjennomføre det)
+       ↓
+3. Analyse: les + CoT for hver linje
+       ↓
+4. <end_plan>
+       ↓
+5. Code:
+   → SaveMotivationalQuote(...) hvis aktuelt
+   → final_answer("next chunk" eller "done")
+
+
+
+
+
+
+---
+
+## ✅ Oppsummert:
+
+- `initial_facts` = **regelbok** og kontekst for agenten.
+- `initial_plan` = **egen plan** for hvordan å følge reglene.
+- `<end_plan>` = avslutter resonneringsfasen.
+- `Code:` = **handling** etter analysen (lagre sitater og be om neste chunk).
+
+Vil du at jeg skal lage en mock-analyse av en kort tekst for å vise det i praksis?
+

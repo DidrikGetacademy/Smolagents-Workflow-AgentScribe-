@@ -1,5 +1,5 @@
 from smolagents import TransformersModel, FinalAnswerTool, SpeechToTextTool, CodeAgent, tool,SpeechToTextToolCPU
-from Agents_tools import ChunkLimiterTool,Chunk_line_LimiterTool
+from Agents_tools import ChunkLimiterTool
 import os
 import gc
 import yaml
@@ -24,6 +24,11 @@ import cv2
 import torch
 from moviepy.video.fx.FadeIn import FadeIn
 from moviepy.video.fx.FadeOut import FadeOut
+from concurrent.futures import ThreadPoolExecutor
+import threading
+import queue
+import torch
+import datetime
 
 Chunk_saving_text_file = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Logging_and_filepaths\saved_transcript_storage.txt"
 Final_saving_text_file=r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Logging_and_filepaths\final_saving_motivational.txt"
@@ -532,13 +537,22 @@ def SaveMotivationalQuote(text: str, text_file: str) -> None:
             f.write("===START_QUOTE===\n")
             f.write(text.strip() + "\n")
             f.write("===END_QUOTE===\n\n")
+            print(f"text: {text}")
             start_time, end_time = parse_multiline_block(text)
             print(f"[start_time: {start_time}, end_time: {end_time}]   FROM : SaveMotivationalQuote")
                 
     if start_time is None or end_time is None:
                     raise ValueError(f"Start_time or end_time is None, start_time: {start_time}, end_time: {end_time}")
             
-
+    video_url = get_current_videourl()
+    print("[VIDEO URL IN: SaveMotivationalQuote_CreateShort]", video_url)
+    print(f"Video Url to be used for video short creation from [get_current_videourl]: {video_url}")
+    try:
+        print("running thread now")
+        thread = threading.Thread(target=run_video_short_creation_thread, args=(video_url,start_time,end_time, text))
+        thread.start()
+    except Exception as e:
+        print(f"error: {str(e)}")
 
 
 
@@ -562,31 +576,27 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
     log(f"✅ Entered Transcript_Reasoning_AGENT() transcript_path: {transcripts_path}, agent_txt_saving_path: {agent_txt_saving_path}")
 
     global Global_model
-    loaded_reasoning_agent_prompts = r'C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Prompt_templates\Test_prompt_template.yaml'
+    loaded_reasoning_agent_prompts = r'C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Prompt_templates\loaded_reasoning_agent_prompts.yaml'
     with open(loaded_reasoning_agent_prompts, 'r', encoding='utf-8') as f:
             Prompt_template = yaml.safe_load(f)
 
-    tools = [FinalAnswerTool(),SaveMotivationalQuote]
-
+    final_answer = FinalAnswerTool()
+    
     Reasoning_Text_Agent = CodeAgent(
         model=Global_model,
-        tools=tools,
-        max_steps=6,
+        tools=[SaveMotivationalQuote,final_answer],
+        max_steps=3,
         verbosity_level=4,
-        prompt_templates=Prompt_template, 
-
+        planning_interval=1,
+        prompt_templates=Prompt_template,
+        stream_outputs=True
     )
     chunk_limiter = ChunkLimiterTool()
-
-
 
     print(f"transcript_path that is being proccessed inside func[Transcript_Reasoning_Agent]: {transcripts_path}")
     transcript_title = os.path.basename(transcripts_path)
     print(f"transcript title: {transcript_title}")
     print(f"\nProcessing new transcript: {transcripts_path}")
-    Current_working_directory = os.path.dirname(transcripts_path)
-    verify_agent_final_quotes = os.path.join(Current_working_directory, "verify_agent_final_quotes.txt")
-
     with open(agent_txt_saving_path, "a", encoding="utf-8") as out:
         out.write(f"\n--- Transcript Title: {transcript_title} ---\n")
 
@@ -594,7 +604,7 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
     while True:
         try:
             print(f"transcript_path for chunk tool : {transcripts_path}")
-            chunk = chunk_limiter.forward(file_path=transcripts_path, max_chars=3500)
+            chunk = chunk_limiter.forward(file_path=transcripts_path, max_chars=1500)
                
         except Exception as e:
                 print(f"Error during chunking from file {transcripts_path}: {e}")
@@ -603,57 +613,37 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
         if not chunk.strip():
                 print("Finished processing current transcript. Now exiting func [Transcript Reasoning Agent]")
                 del Reasoning_Text_Agent
-                Verify_Agent(agent_txt_saving_path,verify_agent_final_quotes)
                 break
 
         task = f"""
            You are a human-like reader analyzing & reading the chunk to decide if it contains motivational, inspirational, wisdom-based, or life-changing quotes or advice.
             You may find multiple motivational or inspirational quotes within the text chunk. Your task is to carefully analyze the entire chunk and:
-
             - Identify all separate quotes or pieces of wisdom worth saving.
             - Ignore non-motivational or normal talk that doesn’t meet the criteria.
             - For each valid quote, call SaveMotivationalQuote separately with the full timestamp and text.
             - Continue scanning the chunk to find additional quotes, even if normal talk appears between quotes.
-            - Do NOT stop after finding the first quote.
-
+            - Do NOT stop after finding the first quote
             Example usage for saving multiple quotes in one chunk:
-
-            SaveMotivationalQuote(text="[10.00s - 15.00s] Quote one text here.", text_file=text_file)
-            SaveMotivationalQuote(text="[16.00s - 20.00s] Quote two text here.", text_file=text_file)
-
+           
             Once all quotes are identified and saved, call final_answer("please provide me with next text to analyze").
-
             Instruction for Extracting Valuable Quotes or Wisdom:
             NOTE: Look specifically for quotes or advice that:
-
             From the provided text chunk, carefully identify and save only the quotes, advice, or meaningful statements that meet the following criteria:
-
             1. Inspire action or courage: Encourage the listener to take bold steps, face challenges, or overcome fear.
-
             2. Share deep life lessons or universal truths: Reflect insights about life, human nature, or the world that resonate broadly.
-
             3. Teach about discipline, power, respect, or success: Convey principles or mindsets essential for personal growth and achievement.
-
             4. Offer practical wisdom or mindset shifts: Provide guidance or perspectives that can transform the way someone thinks or lives.
-
             5.Are emotionally uplifting or provoke reflection: Evoke positive emotions, hope, or thoughtful introspection.
-
             6. Provide full and clear context: Present each quote or piece of advice in a way that the meaning is complete and understandable without needing additional explanation.
-
             7.Are meaningful and quotable: Avoid simple statements, basic facts, or generic remarks. Save only those that stand out as powerful, memorable, and suitable for motivating or inspiring an audience in a short video format.
-
             NOTE: One line in the chunk might not provide full context, but multiple lines in a chunk can provide full context & valuable quote to be saved, so consider reasoning over the entire chunk when answering.
             Often, several consecutive lines together (2 or 3 lines) may form a meaningful and powerful quote or insight worth saving, even if a single line alone does not.
 
-            If you find such a quote & advice, use the `SaveMotivationalQuote` tool and include the timestamp of the quote.
-            Here is an example: SaveMotivationalQuote(text="[3567.33s - 3569.65s] - The magic you are looking for is in the work you are avoiding.", text_file=text_file)
 
-            Then proceed with the next chunk by using the `final_answer` tool if no more text is worth saving in the chunk.
+            your goal is to execute code to savemotivationalquote or provide final_answer for next chunk to analyze this is your priortize task
 
-            You don't need or are allowed to use any other tools than `SaveMotivationalQuote` and `final_answer`.
 
             Here is the chunk you will analyze using only reasoning like a human:
-
             [chunk start]{chunk}[chunk end]
 
             """
@@ -669,106 +659,6 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
 
 
 
-#Agent som verifiserer tekst som er lagret, (dobbel sjekk lagret text)
-def Verify_Agent(saved_text_storage,verify_agent_final_quotes):
-    print(f"The text file [verify agent] will reason over, is the same txt path that [transcript_reasoning_agent] saved to, text file path:{saved_text_storage}")
-
-    loaded_reasoning_agent_prompts = r'C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Prompt_templates\Reasoning_Again.yaml'
-    with open(loaded_reasoning_agent_prompts, 'r', encoding='utf-8') as f:
-            Prompt_template = yaml.safe_load(f)
-
-    global Global_model
-    Reasoning_Text_Agent = CodeAgent(
-        model=Global_model,
-        tools=[SaveMotivationalQuote_CreateShort, FinalAnswerTool()],
-        max_steps=3,
-        verbosity_level=4,
-        prompt_templates=Prompt_template, 
-    )
-     
-    chunk_limiter = Chunk_line_LimiterTool()
-
-    transcript_path = saved_text_storage
-    chunk_limiter.reset()
-
-    while True:
-            try:
-                chunk = chunk_limiter.forward(file_path=transcript_path)
-                print(f"chunk for verify agent: {chunk} from {transcript_path}")
-            except Exception as e:
-                print(f"Error during chunking from file {transcript_path}: {e}")
-                break
-
-            if not chunk.strip():
-                print("Finished processing current transcript.")
-                set_current_videourl("")
-                break
-
-            task = f"""
-         You are a human-like reader performing a **double-check verification** on **one saved quote at a time** from another agent, who has already deemed it motivational. Your task is to carefully verify whether this quote truly contains motivational, inspirational, wisdom-based, or life-changing advice suitable for a standalone motivational short video.
-            Look specifically for quotes or advice that:  
-            - Inspire action or courage  
-            - Share deep life lessons or universal truths  
-            - Teach about discipline, power, respect, or success  
-            - Offer practical wisdom or mindset shifts that can change how someone lives  
-            - Are emotionally uplifting or provoke reflection  
-            - Provide full context and meaning so that the quote is clear and complete on its own  
-            - Can be used as a standalone motivational short video because it delivers such motivational content
-
-            If you determine the quote meets these criteria, use the `SaveMotivationalQuote_CreateShort` tool **including the original timestamp(s) exactly as they appear**.
-
-            **Important:**  
-            - If the quote spans multiple lines or segments, each with its own timestamp, **include all timestamps exactly as saved by the first agent** when saving the quote.
-
-            For example:  
-            SaveMotivationalQuote_CreateShort(quote="[2323.0s - 2325.0s] Every great achievement begins with the decision to try. [2325.0s - 2327.0s] Courage doesn't always roar; sometimes it's the quiet voice at day's end saying 'I will try again tomorrow.'", text_file=text_file)
-
-            Then proceed with the next quote/chunk by using `final_answer`.
-
-            You may only use these tools:  
-            - `SaveMotivationalQuote_CreateShort`  
-            - `final_answer`
-
-            Here is how to use them:  
-            - SaveMotivationalQuote_CreateShort(text="New text saved:[858.98s - 866.98s] The magic you are looking for is in the work you are avoiding [866.98s - 875.00s] the only reason you are not living the life you want to live is because you [875.00s - 900.00s] day by day keep feeding the life you don't want to live", text_file=text_file)  
-            - final_answer("please provide me with next text to analyze")
-
-            **Note:**  
-            - The quote you analyze is already somewhat motivational, but you must decide if it’s **strong and impactful enough for a motivational short video**.  
-            - **Preserve all timestamps exactly as saved by the first agent.**
-
-            NOTE: remember to execute code you must do it in this format:
-            Code:
-            ```py  
-             #Code goes here..
-            ```<end_code>
-
-            Here is the quote/chunk you will analyze using human-like reasoning:
-
-            [chunk start]{chunk}[chunk end]
-
-            """
-            result = Reasoning_Text_Agent.run(
-                task=task,
-                additional_args={"text_file": verify_agent_final_quotes}
-            )
-            print(f"[path to where the [2.agent is saving the final text that will be used for motivational short]]: {verify_agent_final_quotes}")
-            print(result)
-            chunk_limiter.called = False 
-
-
-
-
-
-
-from concurrent.futures import ThreadPoolExecutor
-import threading
-import queue
-import torch
-import os
-import subprocess
-import gc
-import datetime
 
 gpu_lock = threading.Lock()
 transcript_queue = queue.Queue()
@@ -875,13 +765,12 @@ def gpu_worker():
  
     global Global_model
     Global_model = TransformersModel(
-            model_id = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\DeepSeek-R1-0528-Qwen3-8B",
+            model_id = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Mistral-7B-Instruct-v0.2",
             load_in_4bit=True,
             trust_remote_code=True,
             device_map="auto",
             torch_dtype="auto",
-            max_new_tokens=1500,
-            temperature=0.6
+            #max_new_tokens=8000,
         )
     log(f"Loaded Global_model on device")
 

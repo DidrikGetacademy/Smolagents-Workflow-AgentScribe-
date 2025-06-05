@@ -1,0 +1,121 @@
+[2025-06-05 19:04:40] max_new_tokens: 7000
+[2025-06-05 19:04:40] System prompt tokens: 0
+[2025-06-05 19:04:40] Task prompt tokens: 1737
+[2025-06-05 19:04:40] max_new_tokens: 7000
+[2025-06-05 19:04:40] count_prompt_tokens (stream): 1745
+[2025-06-05 19:06:23] _last_input_token_count: 1745
+[2025-06-05 19:06:23] Final output token count (streamed): 2390
+[2025-06-05 19:06:23] Total token usage (stream): 4135 / 32768 (12.62%)
+[2025-06-05 19:06:23] max_new_tokens: 7000
+[2025-06-05 19:06:23] System prompt tokens: 2619
+[2025-06-05 19:06:23] Task prompt tokens: 1922
+[2025-06-05 19:06:23] max_new_tokens: 7000
+[2025-06-05 19:06:23] count_prompt_tokens (stream): 4559
+[2025-06-05 19:06:32] _last_input_token_count: 4559
+[2025-06-05 19:06:32] Final output token count (streamed): 121
+[2025-06-05 19:06:32] Total token usage (stream): 4680 / 32768 (14.28%)
+[2025-06-05 19:18:24] max_new_tokens: 7000
+[2025-06-05 19:18:24] System prompt tokens: 0
+[2025-06-05 19:18:24] Task prompt tokens: 2003
+[2025-06-05 19:18:24] max_new_tokens: 7000
+[2025-06-05 19:18:24] count_prompt_tokens (stream): 2011
+[2025-06-05 19:19:21] _last_input_token_count: 2011
+[2025-06-05 19:19:21] Final output token count (streamed): 1243
+[2025-06-05 19:19:21] Total token usage (stream): 3254 / 32768 (9.93%)
+[2025-06-05 19:19:21] max_new_tokens: 7000
+[2025-06-05 19:19:21] System prompt tokens: 2619
+[2025-06-05 19:19:21] Task prompt tokens: 1296
+[2025-06-05 19:19:21] max_new_tokens: 7000
+[2025-06-05 19:19:21] count_prompt_tokens (stream): 3933
+[2025-06-05 19:25:49] max_new_tokens: 7000
+[2025-06-05 19:25:49] System prompt tokens: 0
+[2025-06-05 19:25:49] Task prompt tokens: 2058
+[2025-06-05 19:25:49] max_new_tokens: 7000
+[2025-06-05 19:25:49] count_prompt_tokens (stream): 2066
+[2025-06-05 19:26:44] _last_input_token_count: 2066
+[2025-06-05 19:26:44] Final output token count (streamed): 1194
+[2025-06-05 19:26:44] Total token usage (stream): 3260 / 32768 (9.95%)
+[2025-06-05 19:26:44] max_new_tokens: 7000
+[2025-06-05 19:26:44] System prompt tokens: 2619
+[2025-06-05 19:26:44] Task prompt tokens: 1263
+[2025-06-05 19:26:44] max_new_tokens: 7000
+[2025-06-05 19:26:44] count_prompt_tokens (stream): 3900
+[2025-06-05 19:26:59] _last_input_token_count: 3900
+[2025-06-05 19:26:59] Final output token count (streamed): 283
+[2025-06-05 19:26:59] Total token usage (stream): 4183 / 32768 (12.77%)
+[2025-06-05 19:36:05] max_new_tokens: 7000
+[2025-06-05 19:36:05] System prompt tokens: 0
+[2025-06-05 19:36:05] Task prompt tokens: 2209
+[2025-06-05 19:36:05] max_new_tokens: 7000
+[2025-06-05 19:36:05] count_prompt_tokens (stream): 2217
+[2025-06-05 19:38:32] max_new_tokens: 7000
+[2025-06-05 19:38:32] System prompt tokens: 0
+[2025-06-05 19:38:32] Task prompt tokens: 2215
+[2025-06-05 19:38:32] max_new_tokens: 7000
+[2025-06-05 19:38:32] count_prompt_tokens (stream): 2223
+[2025-06-05 19:40:24] _last_input_token_count: 2223
+[2025-06-05 19:40:24] Final output token count (streamed): 2411
+[2025-06-05 19:40:24] Total token usage (stream): 4634 / 32768 (14.14%)
+[2025-06-05 19:40:24] max_new_tokens: 7000
+[2025-06-05 19:40:24] System prompt tokens: 2619
+[2025-06-05 19:40:24] Task prompt tokens: 2059
+[2025-06-05 19:40:24] max_new_tokens: 7000
+[2025-06-05 19:40:24] count_prompt_tokens (stream): 4696
+[2025-06-05 19:40:31] _last_input_token_count: 4696
+[2025-06-05 19:40:31] Final output token count (streamed): 91
+[2025-06-05 19:40:31] Total token usage (stream): 4787 / 32768 (14.61%)
+[2025-06-05 19:45:39] max_new_tokens: 7000
+[2025-06-05 19:45:39] System prompt tokens: 0
+[2025-06-05 19:45:39] Task prompt tokens: 2284
+[2025-06-05 19:45:39] max_new_tokens: 7000
+[2025-06-05 19:45:39] count_prompt_tokens (stream): 2292
+[2025-06-05 19:56:43] max_new_tokens: 7000
+[2025-06-05 19:56:43] System prompt tokens: 0
+[2025-06-05 19:56:43] Task prompt tokens: 2313
+[2025-06-05 19:56:43] max_new_tokens: 7000
+[2025-06-05 19:56:43] count_prompt_tokens (stream): 2321
+[2025-06-05 19:57:36] _last_input_token_count: 2321
+[2025-06-05 19:57:36] Final output token count (streamed): 1178
+[2025-06-05 19:57:36] Total token usage (stream): 3499 / 32768 (10.68%)
+[2025-06-05 19:57:36] max_new_tokens: 7000
+[2025-06-05 19:57:36] System prompt tokens: 2619
+[2025-06-05 19:57:36] Task prompt tokens: 1253
+[2025-06-05 19:57:36] max_new_tokens: 7000
+[2025-06-05 19:57:36] count_prompt_tokens (stream): 3890
+[2025-06-05 19:57:49] _last_input_token_count: 3890
+[2025-06-05 19:57:49] Final output token count (streamed): 221
+[2025-06-05 19:57:49] Total token usage (stream): 4111 / 32768 (12.55%)
+[2025-06-05 19:57:49] max_new_tokens: 7000
+[2025-06-05 19:57:49] System prompt tokens: 582
+[2025-06-05 19:57:49] Task prompt tokens: 1571
+[2025-06-05 19:57:49] max_new_tokens: 7000
+[2025-06-05 19:57:49] count_prompt_tokens (stream): 2171
+[2025-06-05 19:57:58] _last_input_token_count: 2171
+[2025-06-05 19:57:58] Final output token count (streamed): 169
+[2025-06-05 19:57:58] Total token usage (stream): 2340 / 32768 (7.14%)
+[2025-06-05 19:57:58] max_new_tokens: 7000
+[2025-06-05 19:57:58] System prompt tokens: 2619
+[2025-06-05 19:57:58] Task prompt tokens: 2285
+[2025-06-05 19:57:58] max_new_tokens: 7000
+[2025-06-05 19:57:58] count_prompt_tokens (stream): 4938
+[2025-06-05 19:59:01] max_new_tokens: 7000
+[2025-06-05 19:59:01] System prompt tokens: 0
+[2025-06-05 19:59:01] Task prompt tokens: 1991
+[2025-06-05 19:59:01] max_new_tokens: 7000
+[2025-06-05 19:59:01] count_prompt_tokens (stream): 1999
+[2025-06-05 20:04:49] max_new_tokens: 7000
+[2025-06-05 20:04:49] System prompt tokens: 0
+[2025-06-05 20:04:49] Task prompt tokens: 2075
+[2025-06-05 20:04:49] max_new_tokens: 7000
+[2025-06-05 20:04:49] count_prompt_tokens (stream): 2083
+[2025-06-05 20:05:47] _last_input_token_count: 2083
+[2025-06-05 20:05:47] Final output token count (streamed): 1306
+[2025-06-05 20:05:47] Total token usage (stream): 3389 / 32768 (10.34%)
+[2025-06-05 20:05:47] max_new_tokens: 7000
+[2025-06-05 20:05:47] System prompt tokens: 2619
+[2025-06-05 20:05:47] Task prompt tokens: 1325
+[2025-06-05 20:05:47] max_new_tokens: 7000
+[2025-06-05 20:05:47] count_prompt_tokens (stream): 3962
+[2025-06-05 20:06:16] _last_input_token_count: 3962
+[2025-06-05 20:06:16] Final output token count (streamed): 541
+[2025-06-05 20:06:16] Total token usage (stream): 4503 / 32768 (13.74%)
