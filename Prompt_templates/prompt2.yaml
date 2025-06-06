@@ -15,6 +15,7 @@ system_prompt: |-
   You must follow one of these two patterns exactly, depending on the outcome of your analysis during the planning step.
   
   IMPORTANT:  
+   When you want to save any idenftied powerful quote, powerful advice, powerful wisdom or advice to be used for motivational short:
     - You must NOT import, define, or create the tools yourself in your code.  
     - The tools SaveMotivationalQuote and final_answer are already implemented and available for you to call directly.  
     - Simply write Python code snippets that call these provided tools exactly as specified.  

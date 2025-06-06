@@ -37,6 +37,15 @@ model_path_SwinIR_color_denoise15_onnx = r"c:\Users\didri\Desktop\LLM-models\Vid
 model_path_Swin_BSRGAN_X4_pth = r"c:\Users\didri\Desktop\LLM-models\Video-upscale-models\BSRGAN_DFOWMFC_s64w8_SwinIR-L_x4_GAN.pth"
 model_path_Swin_BSRGAN_X4_onnx = r"c:\Users\didri\Desktop\LLM-models\Video-upscale-models\BSRGAN_DFOWMFC_s64w8_SwinIR-L_x4_GAN.onnx"
 model_path_realesgran_x2_pth = r"c:\Users\didri\Desktop\LLM-models\Video-upscale-models\RealESRGAN_x2plus.pth"
+video_task_que = queue.Queue()
+gpu_lock = threading.Lock()
+transcript_queue = queue.Queue()
+count_lock = threading.Lock()
+
+#- en idee er at man har en ekstra agent som kan gå igjennom alle lagde videoclips til slutt og ser om det går ann og lage noe montage, en shorts video som innholder motivational quotes/advices fra videoklips (resultat blir da at agenten  velger rekkefølge  på videoen som skal slå sammen til 1. video, med tanke at (det skal være motiverende og det må passe sammen)
+def create_motivational_montage_agent(clips: List[str], output_path: str):
+    return 
+
 
 
 
@@ -129,13 +138,18 @@ def test_videoquality_comparison(original_video_path, new_video_path):
 
 
 
+from proglog import ProgressBarLogger
 
+class MyProgressLogger(ProgressBarLogger):
+    def callback(self, **changes):
+        for param, value in changes.items():
+            print(f"{param}: {value}")
 
-
+ 
 def create_short_video(video_path, start_time, end_time, video_name, subtitle_text):
-    torch.cuda.set_device(1)
+    logger = MyProgressLogger()
     probe = ffmpeg.probe(video_path)
-    print(probe)
+    log(probe)
     format_info = probe.get('format', {})
     bitrate = int(format_info.get('bit_rate', 0))
     video_streams = [s for s in probe['streams'] if s['codec_type'] == 'video']
@@ -143,31 +157,26 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
     audio_streams = [s for s in probe['streams'] if s['codec_type'] == 'audio']
     audio_codec = audio_streams[0]['codec_name'] if audio_streams else None
     subtitles = subtitle_text
-    print("subtitles: ",subtitles)
-    torch.cuda.set_device(0)
-    print("Before loading YOLO model")
+    log(f"subtitles: {subtitles}")
+    log("Before loading YOLO model")
 
 
-    def mix_audio(original_audio, background_music_path, bg_music_volume=0.15):
-         bg_music = AudioFileClip(background_music_path)
+    # def mix_audio(original_audio, background_music_path, bg_music_volume=0.15):
+    #      bg_music = AudioFileClip(background_music_path)
 
-         if bg_music.duration < original_audio.duration:
-              bg = afx.AudioLoop(bg_music,duration=original_audio.duration)
-         else:
-              bg_music = bg_music.subclipped(0,original_audio.duration)
+    #      if bg_music.duration < original_audio.duration:
+    #           bg = afx.AudioLoop(bg_music,duration=original_audio.duration)
+    #      else:
+    #           bg_music = bg_music.subclipped(0,original_audio.duration)
             
         
-         bg_music = bg_music.volumex(bg_music_volume)
+    #      bg_music = bg_music.volumex(bg_music_volume)
 
-         original_audio = original_audio.volumex(1.0)
+    #      original_audio = original_audio.volumex(1.0)
 
-         mixed_audio = CompositeVideoClip([original_audio,bg_music])
+    #      mixed_audio = CompositeVideoClip([original_audio,bg_music])
 
-         return mixed_audio
-    
-
-
-
+    #      return mixed_audio
 
 
     def split_subtitles_into_chunks(text, max_words=3):
@@ -175,7 +184,8 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
         return [' '.join(words[i:i + max_words]) for i in range(0, len(words), max_words)]
     
     def create_subtitles(txt,duration,clip_relative_start):
-        chunks = split_subtitles_into_chunks(txt)
+        uppercase_subtitles = txt.upper()
+        chunks = split_subtitles_into_chunks(uppercase_subtitles)
         chunk_duration = duration / len(chunks)
         text_clips = []
         for i, chunk in  enumerate(tqdm(chunks, desc="Processing chunk", unit="chunk")):
@@ -184,7 +194,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
             print(duration)
             txt_clip = TextClip(
                 text=chunk,
-                font=r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Logging_and_filepaths\Video_clips\Cardo-Bold.ttf", 
+                font=r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Logging_and_filepaths\Video_clips\Cardo-Regular.ttf", 
                 font_size=80,
                 margin=(10, 10), 
                 text_align="center" ,
@@ -209,17 +219,17 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
         prev_cx, prev_cy = None, None
         cropped_frames = []
         onnx_path_gpu = r"c:\Users\didri\Desktop\LLM-models\Face-Detection-Models\yolov8x-face-lindevs_cuda.onnx"
-        providers = ['CUDAExecutionProvider'] 
+        providers = ['CPUExecutionProvider'] 
         sess_options = ort.SessionOptions()
         sess_options.log_severity_level = 0
         session = ort.InferenceSession(onnx_path_gpu, sess_options, providers=providers)
-        print("ONNX Runtime providers in use:", session.get_providers())
+        log(f"ONNX Runtime providers in use: {session.get_providers()}")
         input_name = session.get_inputs()[0].name
         total_batches = (len(frames) + batch_size - 1) // batch_size
         progress_bar = tqdm(total=len(frames), desc="Processing frames", unit="frame", dynamic_ncols=True)
         try:
             for i in range(0, len(frames), batch_size):
-                print(f"batch: {i} - {i + batch_size}")
+                log(f"batch: {i} - {i + batch_size}")
                 batch = frames[i:i+batch_size]
                 original_count = len(batch)
                 
@@ -242,7 +252,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 
                 if len(processed_batch) < batch_size:
                     processed_batch += [np.zeros((3, 928, 928), dtype=np.float32)] * (batch_size - len(processed_batch))
-                    print(f"processed batch: {len(processed_batch)} of {total_batches}")
+                    log(f"processed batch: {len(processed_batch)} of {total_batches}")
             
                 input_tensor = np.stack(processed_batch).astype(np.float32)
 
@@ -295,7 +305,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
                     cropped_frame = frame[y0:y0+crop_h, x0:x0+crop_w]
                     if cropped_frame.shape[:2] != (TARGET_H, TARGET_W):
                         cropped_frame = cv2.resize(cropped_frame, (TARGET_W, TARGET_H))
-                    print(f"appending frame: {cropped_frame}")
+                    log(f"appending frame: {cropped_frame}")
                     cropped_frames.append(cropped_frame)
         finally:
             progress_bar.close() 
@@ -312,40 +322,43 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 
     full_video = VideoFileClip(video_path)
     clip = full_video.subclipped(start_time, end_time)
-    print(f"clip duration: {clip.duration}, clip fps: {clip.fps}, clip width: {clip.w}, clip height: {clip.h}, start_time: {start_time}, end_time: {end_time}, video_path: {video_path}")
+    log(f"clip duration: {clip.duration}, clip fps: {clip.fps}, clip width: {clip.w}, clip height: {clip.h}, start_time: {start_time}, end_time: {end_time}, video_path: {video_path}")
 
 
     frames = []
     for frame in clip.iter_frames():
         frames.append(frame)
-    print(f"Extracted {len(frames)} frames.")
+    log(f"Extracted {len(frames)} frames.")
 
 
     cropped_frames = detect_and_crop_frames_batch(frames=frames,batch_size=4)
     processed_clip = ImageSequenceClip(cropped_frames, fps=clip.fps).with_duration(clip.duration)
 
     
-    subtitle_clips = []
-    for text, start, end in subtitles:
-        clip_relative_start = start - start_time
-        clip_relative_end = end - start_time
-        duration = clip_relative_end - clip_relative_start
-        print(f"subtitle_clips: {subtitle_clips}")
+    # subtitle_clips = []
+    # for text, start, end in subtitles:
+    #     clip_relative_start = start - start_time
+    #     clip_relative_end = end - start_time
+    #     duration = clip_relative_end - clip_relative_start
+    #     log(f"subtitle_clips: {subtitle_clips}")
         
-        if duration <= 0:
-            continue
+    #     if duration <= 0:
+    #         continue
 
-        subtitle_chunk_clips = create_subtitles(text, duration, clip_relative_start)
-        subtitle_clips.extend(subtitle_chunk_clips)
-        print(f"subtitle_clips: {subtitle_clips}")
+    #     subtitle_chunk_clips = create_subtitles(text, duration, clip_relative_start)
+    #     subtitle_clips.extend(subtitle_chunk_clips)
+    #     log(f"subtitle_clips: {subtitle_clips}")
 
-    final_clip = CompositeVideoClip(
-                [processed_clip.with_position('center')] + subtitle_clips,
-                size=processed_clip.size
-            )
+    # final_clip = CompositeVideoClip(
+    #             [processed_clip.with_position('center')] + subtitle_clips,
+    #             size=processed_clip.size
+    #         )
+    final_clip = processed_clip.with_position('center')
+
 
     background_music_path = r"c:\Users\didri\AppData\Local\CapCut\Videos\Video Tools\audio\Documentary Cinematic Violin by Infraction [No Copyright Music] # Life Goes On [mp3].mp3"
-    final_clip.audio = mix_audio(clip.audio, background_music_path, bg_music_volume=0.15)
+    #final_clip.audio = mix_audio(clip.audio, background_music_path, bg_music_volume=0.15)
+    final_clip.audio = clip.audio
 
     ###FILTERS,BRIGHTNESS,CONTRAST, ANIMATION#######
     final_clip = FadeIn(duration=1.0).apply(final_clip)
@@ -353,22 +366,23 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 
 
 
-    print(f"video original fps: {clip.fps}")
+    log(f"video original fps: {clip.fps}")
     output_dir = "./Logging_and_filepaths/Video_clips"
     os.makedirs(output_dir, exist_ok=True)
     out_path = os.path.join(output_dir, f"{video_name}.mp4")
     final_clip.write_videofile(
         out_path,
+        logger=logger,
         codec=video_codec or "libx264",
         audio_codec=audio_codec or "aac",
         bitrate=str(bitrate) or "4000k",
         preset="slow",
-        threads=4,
+        threads=5,
         fps=clip.fps,
         ffmpeg_params=["-vf", "format=yuv420p"],
     )
-    print(f"video is completed: output path : {out_path}, video name: {video_name} video_fps: {clip.fps}, codec: {video_codec}, bitrate: {bitrate}, audio_codec: {audio_codec}, subtitles: {subtitles}")
-    print(f"Final video resolution (width x height): {final_clip.size[0]} x {final_clip.size[1]}")  
+    log(f"video is completed: output path : {out_path}, video name: {video_name} video_fps: {clip.fps}, codec: {video_codec}, bitrate: {bitrate}, audio_codec: {audio_codec}, subtitles: {subtitles}")
+    log(f"Final video resolution (width x height): {final_clip.size[0]} x {final_clip.size[1]}")  
     full_video.close()
     clip.close()
 
@@ -396,8 +410,6 @@ def parse_subtitle_text_block(text_block):
 
 
 
-
-count_lock = threading.Lock()
 global count
 count = 0
 def run_video_short_creation_thread(video_url,start_time,end_time,text):
@@ -406,7 +418,7 @@ def run_video_short_creation_thread(video_url,start_time,end_time,text):
             current_count = count
             count += 1
         try:
-            print(f"RUNNING --> [run_video_short_creation_thead]: video_url: {video_url}, start_time: {start_time}, end_time: {end_time}")
+            log(f"RUNNING --> [run_video_short_creation_thead]: video_url: {video_url}, start_time: {start_time}, end_time: {end_time}")
             count += 1
             text_video_path = video_url
             text_video_start_time = start_time
@@ -414,26 +426,26 @@ def run_video_short_creation_thread(video_url,start_time,end_time,text):
             text_video_title = "short1" + str(current_count)
             try:
                subtitles = parse_subtitle_text_block(text)
-               print("Subtitles: ",subtitles)
+               log(f"Subtitles: {subtitles}",)
    
-               print(f"Subtitle passed to the [create_short_video] --> subtitle_text_tuple: {subtitles}")
+               log(f"Subtitle passed to the [create_short_video] --> subtitle_text_tuple: {subtitles}")
     
                try:
-                  print("creating video now")
+                  log("creating video now")
     
                   create_short_video(video_path=text_video_path, start_time=text_video_start_time, end_time = text_video_endtime, video_name = text_video_title,subtitle_text=subtitles)
                except Exception as e:
-                  print(f"error during creation of video : {str(e)}")
+                  log(f"error during creation of video : {str(e)}")
                text_video_path = ""
                text_video_start_time = None
                text_video_endtime = None
                text_video_title = ""
                subtitles = []
             except Exception as e:
-                print(f"error during [create_short_video] {str(e)}")
+                log(f"error during [create_short_video] {str(e)}")
         except Exception as e:
           import traceback
-          print("[ERROR] in run_video_short_creation_thread:")
+          log("[ERROR] in run_video_short_creation_thread:")
           traceback.print_exc()
 
 
@@ -488,85 +500,52 @@ def parse_timestamp_line(line):
 
 
 
-    
-
-
-@tool
-def SaveMotivationalQuote_CreateShort(text: str, text_file: str) -> None:
-    """Appends a motivational quote, wisdom or text with timestamp to the output text file.
-    Args:
-        text: The quote or message to save, include all timestamp if [start - end]. To avoid syntax errors, wrap the string in triple quotes 
-              when calling this function, especially if the text contains commas, quotes, or line breaks.
-              Example:
-              text = "This is a quote, advice to be saved.
-        text_file: The path to the file where the quote will be saved.
-    """
-    with open(text_file, "a", encoding="utf-8") as f:
-        f.write("New text saved:" + text.strip() +"\n\n")
-        print(f"text: {text}")
-        start_time, end_time = parse_multiline_block(text)
-        print(f"[start_time: {start_time}, end_time: {end_time}]   FROM : SaveMotivationalQuote_CreateShort")
-    
-    if start_time is None or end_time is None:
-        raise ValueError(f"Start_time or end_time is None, start_time: {start_time}, end_time: {end_time}")
-  
-
-    video_url = get_current_videourl()
-    print("[VIDEO URL IN: SaveMotivationalQuote_CreateShort]", video_url)
-    print(f"Video Url to be used for video short creation from [get_current_videourl]: {video_url}")
-    try:
-        print("running thread now")
-        thread = threading.Thread(target=run_video_short_creation_thread, args=(video_url,start_time,end_time, text))
-        thread.start()
-    except Exception as e:
-        print(f"error: {str(e)}")
-
-
+def video_creation_worker():
+     while True:
+          try:
+             video_url,  start_time, end_time, text = video_task_que.get()
+             log(f"\n\n\n\n\n\n\n\n\n\nCurrent work being proccessed...[ video_url: {video_url}, start_time: {start_time}, end_time: {end_time}, text: {text} to que]")
+             log(f"Processing video task: {video_url}, {start_time}-{end_time}")
+             run_video_short_creation_thread(video_url, start_time, end_time, text)
+             log(f"Done Creating Video \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+          except Exception as e:
+               log(f" error during video_creation_worker: {str(e)}")
+               raise ValueError(f"Error during video creation")
+          finally:
+               video_task_que.task_done()
 
 @tool
 def SaveMotivationalQuote(text: str, text_file: str) -> None:
-    """Appends a motivational quote, wisdom or text with timestamp to the output text file.
+    """Appends a powerful  motivational quote, Advice, wisdom or text with timestamp to the output text file.
     Args:
-        text: The quote or message to save. To avoid syntax errors, wrap the string in triple quotes 
+        text:  The quote or message to save. To avoid syntax errors, wrap the string in triple quotes 
               when calling this function, especially if the text contains commas, quotes, or line breaks.
               Example:
               text = \"This is a quote, with commas, 'apostrophes', and line breaks. Still safe."
-        text_file: The path to the file where the quote will be saved.
+        text_file: The path to the file where the quote will be saved, you have access to this `text_file` just provide text_file=text_file .
     """
     with open(text_file, "a", encoding="utf-8") as f:
             f.write("===START_QUOTE===\n")
             f.write(text.strip() + "\n")
             f.write("===END_QUOTE===\n\n")
-            print(f"text: {text}")
-            start_time, end_time = parse_multiline_block(text)
-            print(f"[start_time: {start_time}, end_time: {end_time}]   FROM : SaveMotivationalQuote")
+    #         log(f"text: {text}")
+    #         start_time, end_time = parse_multiline_block(text)
+    #         log(f"[start_time: {start_time}, end_time: {end_time}]   FROM : SaveMotivationalQuote")
                 
-    if start_time is None or end_time is None:
-                    raise ValueError(f"Start_time or end_time is None, start_time: {start_time}, end_time: {end_time}")
+    # if start_time is None or end_time is None:
+    #                 log("starttime is None & End_time is None")
+    #                 raise ValueError(f"Start_time or end_time is None, start_time: {start_time}, end_time: {end_time}")
+    
             
-    video_url = get_current_videourl()
-    print("[VIDEO URL IN: SaveMotivationalQuote_CreateShort]", video_url)
-    print(f"Video Url to be used for video short creation from [get_current_videourl]: {video_url}")
-    try:
-        print("running thread now")
-        thread = threading.Thread(target=run_video_short_creation_thread, args=(video_url,start_time,end_time, text))
-        thread.start()
-    except Exception as e:
-        print(f"error: {str(e)}")
+    # video_url = get_current_videourl()
+    # log(f"Video Url to be used for video short creation from [get_current_videourl]: {video_url}")
+    # log(f"Starting video creation now:  {video_url}: start_time:  {start_time}, end_time: {end_time}")
 
-
-
-
-
-
-
-
-#- en idee er at man har en ekstra agent som kan gå igjennom alle lagde videoclips til slutt og ser om det går ann og lage noe montage, en shorts video som innholder motivational quotes/advices fra videoklips (resultat blir da at agenten  velger rekkefølge  på videoen som skal slå sammen til 1. video, med tanke at (det skal være motiverende og det må passe sammen)
-def create_motivational_montage_agent(clips: List[str], output_path: str):
-    return 
-
-
-
+    # try:
+    #      log(f"Added video_url: {video_url}, start_time: {start_time}, end_time: {end_time}, text: {text} to que")
+    #      video_task_que.put((video_url, start_time, end_time, text))
+    # except Exception as e:
+    #      log(f"error during adding items to que: {str(e)}")
 
 
 
@@ -576,17 +555,15 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
     log(f"✅ Entered Transcript_Reasoning_AGENT() transcript_path: {transcripts_path}, agent_txt_saving_path: {agent_txt_saving_path}")
 
     global Global_model
-    loaded_reasoning_agent_prompts = r'C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Prompt_templates\loaded_reasoning_agent_prompts.yaml'
+    loaded_reasoning_agent_prompts = r'C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Prompt1.yaml'
     with open(loaded_reasoning_agent_prompts, 'r', encoding='utf-8') as f:
             Prompt_template = yaml.safe_load(f)
 
     final_answer = FinalAnswerTool()
-    
     Reasoning_Text_Agent = CodeAgent(
         model=Global_model,
         tools=[SaveMotivationalQuote,final_answer],
-        max_steps=3,
-        verbosity_level=4,
+        max_steps=2,
         planning_interval=1,
         prompt_templates=Prompt_template,
         stream_outputs=True
@@ -604,7 +581,7 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
     while True:
         try:
             print(f"transcript_path for chunk tool : {transcripts_path}")
-            chunk = chunk_limiter.forward(file_path=transcripts_path, max_chars=1500)
+            chunk = chunk_limiter.forward(file_path=transcripts_path, max_chars=3000)
                
         except Exception as e:
                 print(f"Error during chunking from file {transcripts_path}: {e}")
@@ -616,36 +593,54 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
                 break
 
         task = f"""
-           You are a human-like reader analyzing & reading the chunk to decide if it contains motivational, inspirational, wisdom-based, or life-changing quotes or advice.
-            You may find multiple motivational or inspirational quotes within the text chunk. Your task is to carefully analyze the entire chunk and:
-            - Identify all separate quotes or pieces of wisdom worth saving.
-            - Ignore non-motivational or normal talk that doesn’t meet the criteria.
-            - For each valid quote, call SaveMotivationalQuote separately with the full timestamp and text.
-            - Continue scanning the chunk to find additional quotes, even if normal talk appears between quotes.
-            - Do NOT stop after finding the first quote
-            Example usage for saving multiple quotes in one chunk:
+            Your task is to carefully read the following chunk from a motivational podcast transcript.
+            you must read/reason carefully. because alot of the text is motivational, and very few text per chunk if any at all is worth saving. 
+            DO not save any incomplete sentence, or text that does not provide a full standalone text that provides powerful messages as a standalone.. 
+            When analyzing the chunk, look 3–4 lines before and after any line that feels “almost” meaningful to ensure you’re capturing a complete thought. Sometimes a message only becomes powerful when read with its full lead-up or conclusion. 
+            You must read and reason like a human (chain of thought), evaluating not just for motivational tone, but for clarity, completeness, and impact. Much of the content may sound positive, but very little of it is actually worth saving.
+            Do NOT save if: The sentence is incomplete, vague, or lacks full context. It starts with filler or linking words like: "And that's true...", "Because every day...", "Which means...", "That’s why..." The message cannot stand alone and make sense or impact without previous lines.
            
-            Once all quotes are identified and saved, call final_answer("please provide me with next text to analyze").
-            Instruction for Extracting Valuable Quotes or Wisdom:
-            NOTE: Look specifically for quotes or advice that:
-            From the provided text chunk, carefully identify and save only the quotes, advice, or meaningful statements that meet the following criteria:
-            1. Inspire action or courage: Encourage the listener to take bold steps, face challenges, or overcome fear.
-            2. Share deep life lessons or universal truths: Reflect insights about life, human nature, or the world that resonate broadly.
-            3. Teach about discipline, power, respect, or success: Convey principles or mindsets essential for personal growth and achievement.
-            4. Offer practical wisdom or mindset shifts: Provide guidance or perspectives that can transform the way someone thinks or lives.
-            5.Are emotionally uplifting or provoke reflection: Evoke positive emotions, hope, or thoughtful introspection.
-            6. Provide full and clear context: Present each quote or piece of advice in a way that the meaning is complete and understandable without needing additional explanation.
-            7.Are meaningful and quotable: Avoid simple statements, basic facts, or generic remarks. Save only those that stand out as powerful, memorable, and suitable for motivating or inspiring an audience in a short video format.
-            NOTE: One line in the chunk might not provide full context, but multiple lines in a chunk can provide full context & valuable quote to be saved, so consider reasoning over the entire chunk when answering.
-            Often, several consecutive lines together (2 or 3 lines) may form a meaningful and powerful quote or insight worth saving, even if a single line alone does not.
+
+             Identify valid text to save:
+                Quotes:  Short, impactful sentences or phrases often attributed to famous people, authors, or anonymous sources that inspire, motivate, or provoke powerful thought. They stand alone as a complete sentence and are easily memorable, making them perfect for sharing as brief motivational messages or social media posts.
+                Example:
+                  "Success is not final, failure is not fatal: It is the courage to continue that counts." – Winston Churchill
+                  "Dream big. Start small. Act now."
+
+                Advices: Practical recommendations or actionable tips designed to guide behavior or decision-making. These are typically prescriptive and offer clear steps or mindsets to adopt. Unlike quotes, advice usually has a direct, instructive tone and aims to help someone take positive action or avoid common pitfalls.
+                    Example:
+                        "When facing doubt, list three reasons why you can succeed before giving up."
+                        "To build resilience, embrace challenges as learning opportunities rather than setbacks."
 
 
-            your goal is to execute code to savemotivationalquote or provide final_answer for next chunk to analyze this is your priortize task
+                Wisdom: Deeper, often philosophical insights or truths about life, human nature, or success that carry timeless value. Wisdom transcends simple advice by offering perspective or understanding gained from experience or reflection. These messages can be thought-provoking and meaningful for long-term mindset shifts.
+                    Example:
+                        "True strength lies not in never falling, but in rising every time we fall."
+                        "Patience is the companion of wisdom."
 
 
-            Here is the chunk you will analyze using only reasoning like a human:
-            [chunk start]{chunk}[chunk end]
+                Personal growth: 
+                    Statements or reflections focused on self-improvement, emotional development, and the journey of becoming a better version of oneself. These often encourage introspection, goal-setting, and mindset transformation. They may combine motivational and practical elements but are specifically centered on internal change and progress.
+                    Example:
+                        "Every day is a new chance to rewrite your story and grow beyond your limits."
+                        "Personal growth begins at the end of your comfort zone."
 
+
+            - If you find one or more powerful quotes or messages, analyze the chunk completly before you later save them using your provided tools.
+            `SaveMotivationalQuote(text="...", text_file=text_file)`
+            `final_answer("...")`
+            - If you do NOT find any powerful quotes or messages in this chunk, please respond with 'final_answer' and ask for the next chunk.
+
+
+           
+
+            Here is the chunk you will analyze using only reasoning like a human (Chain of Thought):
+
+            [chunk start]
+              {chunk}
+            [chunk end]
+
+            NOW please begin by analyzing and reasoning over the entire chunk and identify any potensial text worth saving by reasoning in  'planning' by using chain of thought . you must finnish with the entre chunk before you later save after <end_plan> 
             """
         result = Reasoning_Text_Agent.run(
                 task=task,
@@ -659,9 +654,6 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
 
 
 
-
-gpu_lock = threading.Lock()
-transcript_queue = queue.Queue()
 
 log_file_path = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\transcription_log.txt"
 
@@ -750,8 +742,6 @@ def transcribe_single_video(video_path, device):
         transcript_queue.put((video_path, txt_output_path, agent_text_saving_path))
         gpu_lock.release()
         del tool     
-        gc.collect()
-        torch.cuda.empty_cache()
         log(f"Released GPU lock after transcribing {video_path}\n")
         log(f"added video_path: {video_path}, transcript: {txt_output_path}, agent_saving_path: {agent_text_saving_path} to queue  for GPU processing")
 
@@ -770,7 +760,7 @@ def gpu_worker():
             trust_remote_code=True,
             device_map="auto",
             torch_dtype="auto",
-            #max_new_tokens=8000,
+            max_new_tokens=15000,
         )
     log(f"Loaded Global_model on device")
 
@@ -803,15 +793,19 @@ if __name__ == "__main__":
     torch.cuda.empty_cache()
     gc.collect()
 
+    # worker_thread = threading.Thread(target=video_creation_worker)
+    # worker_thread.start()
+
     video_paths = [
         r"c:\Users\didri\Documents\Mindset Reset： Take Control of Your Mental Habits ｜ The Mel Robbins Podcast.mp4",
+        r"c:\Users\didri\Documents\Robert Greene： A Process for Finding & Achieving Your Unique Purpose.mp4"
     ]
     log(f"Video_paths: {len(video_paths)}")
 
     devices = ["cuda", "cpu"] 
     video_device_pairs = [(video_paths[i], devices[i % len(devices)]) for i in range(len(video_paths))]
 
-    max_threads = 1
+    max_threads = 2
     start_time = time.time()
     with ThreadPoolExecutor(max_workers=max_threads) as executor:
         futures = []
@@ -827,10 +821,14 @@ if __name__ == "__main__":
 
 
     gpu_thread = threading.Thread(target=gpu_worker, name="GPU-Worker")
+
     gpu_thread.start()
 
   
-    #transcript_queue.put(None)  # Stoppsignal til gpu_worker
+    transcript_queue.put(None) 
+
     transcript_queue.join() 
     gpu_thread.join()
+   # worker_thread.join()
+
 
