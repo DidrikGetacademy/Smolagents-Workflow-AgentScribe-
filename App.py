@@ -515,37 +515,37 @@ def video_creation_worker():
                video_task_que.task_done()
 
 @tool
-def SaveMotivationalQuote(text: str, text_file: str) -> None:
-    """Appends a powerful  motivational quote, Advice, wisdom or text with timestamp to the output text file.
+def SaveMotivationalText(text: str, text_file: str) -> None:
+    """Save motivational text for motivational shorts video, the text that meets task criteria  to a file with a timestamp.
     Args:
-        text:  The quote or message to save. To avoid syntax errors, wrap the string in triple quotes 
+         text: The text to be saved. To avoid syntax errors, wrap the string in triple quotes 
               when calling this function, especially if the text contains commas, quotes, or line breaks.
               Example:
-              text = \"This is a quote, with commas, 'apostrophes', and line breaks. Still safe."
-        text_file: The path to the file where the quote will be saved, you have access to this `text_file` just provide text_file=text_file .
+              text = \"[00.23s - 00.40s] This is a quote, with commas, 'apostrophes', and line breaks. Still safe."
+        text_file: The path to the file where the quote will be saved, you have access to the variable, just write text_file=text_file.
     """
     with open(text_file, "a", encoding="utf-8") as f:
             f.write("===START_QUOTE===\n")
             f.write(text.strip() + "\n")
             f.write("===END_QUOTE===\n\n")
-    #         log(f"text: {text}")
-    #         start_time, end_time = parse_multiline_block(text)
-    #         log(f"[start_time: {start_time}, end_time: {end_time}]   FROM : SaveMotivationalQuote")
+            log(f"text: {text}")
+            start_time, end_time = parse_multiline_block(text)
+            log(f"[start_time: {start_time}, end_time: {end_time}]   FROM : SaveMotivationalQuote")
                 
-    # if start_time is None or end_time is None:
-    #                 log("starttime is None & End_time is None")
-    #                 raise ValueError(f"Start_time or end_time is None, start_time: {start_time}, end_time: {end_time}")
+    if start_time is None or end_time is None:
+                    log("starttime is None & End_time is None")
+                    raise ValueError(f"Start_time or end_time is None, start_time: {start_time}, end_time: {end_time}")
     
             
-    # video_url = get_current_videourl()
-    # log(f"Video Url to be used for video short creation from [get_current_videourl]: {video_url}")
-    # log(f"Starting video creation now:  {video_url}: start_time:  {start_time}, end_time: {end_time}")
+    video_url = get_current_videourl()
+    log(f"Video Url to be used for video short creation from [get_current_videourl]: {video_url}")
+    log(f"Starting video creation now:  {video_url}: start_time:  {start_time}, end_time: {end_time}")
 
-    # try:
-    #      log(f"Added video_url: {video_url}, start_time: {start_time}, end_time: {end_time}, text: {text} to que")
-    #      video_task_que.put((video_url, start_time, end_time, text))
-    # except Exception as e:
-    #      log(f"error during adding items to que: {str(e)}")
+    try:
+         log(f"Added video_url: {video_url}, start_time: {start_time}, end_time: {end_time}, text: {text} to que")
+         video_task_que.put((video_url, start_time, end_time, text))
+    except Exception as e:
+         log(f"error during adding items to que: {str(e)}")
 
 
 
@@ -555,16 +555,15 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
     log(f"✅ Entered Transcript_Reasoning_AGENT() transcript_path: {transcripts_path}, agent_txt_saving_path: {agent_txt_saving_path}")
 
     global Global_model
-    loaded_reasoning_agent_prompts = r'C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Prompt1.yaml'
+    loaded_reasoning_agent_prompts = r'C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\smolagents_prompt.yaml'
     with open(loaded_reasoning_agent_prompts, 'r', encoding='utf-8') as f:
             Prompt_template = yaml.safe_load(f)
 
     final_answer = FinalAnswerTool()
     Reasoning_Text_Agent = CodeAgent(
         model=Global_model,
-        tools=[SaveMotivationalQuote,final_answer],
-        max_steps=2,
-        planning_interval=1,
+        tools=[SaveMotivationalText,final_answer],
+        max_steps=1,
         prompt_templates=Prompt_template,
         stream_outputs=True
     )
@@ -581,7 +580,7 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
     while True:
         try:
             print(f"transcript_path for chunk tool : {transcripts_path}")
-            chunk = chunk_limiter.forward(file_path=transcripts_path, max_chars=3000)
+            chunk = chunk_limiter.forward(file_path=transcripts_path, max_chars=1500)
                
         except Exception as e:
                 print(f"Error during chunking from file {transcripts_path}: {e}")
@@ -593,54 +592,98 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
                 break
 
         task = f"""
-            Your task is to carefully read the following chunk from a motivational podcast transcript.
-            you must read/reason carefully. because alot of the text is motivational, and very few text per chunk if any at all is worth saving. 
-            DO not save any incomplete sentence, or text that does not provide a full standalone text that provides powerful messages as a standalone.. 
-            When analyzing the chunk, look 3–4 lines before and after any line that feels “almost” meaningful to ensure you’re capturing a complete thought. Sometimes a message only becomes powerful when read with its full lead-up or conclusion. 
-            You must read and reason like a human (chain of thought), evaluating not just for motivational tone, but for clarity, completeness, and impact. Much of the content may sound positive, but very little of it is actually worth saving.
-            Do NOT save if: The sentence is incomplete, vague, or lacks full context. It starts with filler or linking words like: "And that's true...", "Because every day...", "Which means...", "That’s why..." The message cannot stand alone and make sense or impact without previous lines.
-           
+          You are an expert at identifying  powerful, share-worthy snippets from motivational podcast transcripts.
+                    Your job is to:
 
-             Identify valid text to save:
-                Quotes:  Short, impactful sentences or phrases often attributed to famous people, authors, or anonymous sources that inspire, motivate, or provoke powerful thought. They stand alone as a complete sentence and are easily memorable, making them perfect for sharing as brief motivational messages or social media posts.
-                Example:
-                  "Success is not final, failure is not fatal: It is the courage to continue that counts." – Winston Churchill
-                  "Dream big. Start small. Act now."
+                    1. Read the transcript chunk below and internally reason through its overall message.
+                    2. Extract only those lines or passages that:
+                        • Stand alone with full context (no missing setup).  
+                        • Pack a punch of advice, insight, or inspiration.  
+                        • Are memorable enough to anchor a motivational short video.
 
-                Advices: Practical recommendations or actionable tips designed to guide behavior or decision-making. These are typically prescriptive and offer clear steps or mindsets to adopt. Unlike quotes, advice usually has a direct, instructive tone and aims to help someone take positive action or avoid common pitfalls.
-                    Example:
-                        "When facing doubt, list three reasons why you can succeed before giving up."
-                        "To build resilience, embrace challenges as learning opportunities rather than setbacks."
+                    Do NOT save generic fluff—the transcript as a whole is already motivational.
 
+                    ––––––––––––––––––––––––––––––––––––––––––––––––––––––
+                    Helper definitions (WHAT TO SAVE):
 
-                Wisdom: Deeper, often philosophical insights or truths about life, human nature, or success that carry timeless value. Wisdom transcends simple advice by offering perspective or understanding gained from experience or reflection. These messages can be thought-provoking and meaningful for long-term mindset shifts.
-                    Example:
-                        "True strength lies not in never falling, but in rising every time we fall."
-                        "Patience is the companion of wisdom."
+                    • Inspiring Text:  
+                    – Definition: Uplifts, excites and encourages the listener , sparks hope or ambition It can be a message or story that motivates the reader to take action, achieve goals, or view things in a new way..  
+                    – Example: “When you face your fears, you discover the strength you never knew you had.”
 
+                    • Wisdom Text:  
+                    – Definition: Condensed life lessons, timeless truths or a collection of teachings, stories, or sayings that offer guidance on living a good and fulfilling life, often with an emphasis on morality, virtue, and achieving happiness.  
+                    – Example: “Success isn’t a destination— it’s a mindset you cultivate every day.”
 
-                Personal growth: 
-                    Statements or reflections focused on self-improvement, emotional development, and the journey of becoming a better version of oneself. These often encourage introspection, goal-setting, and mindset transformation. They may combine motivational and practical elements but are specifically centered on internal change and progress.
-                    Example:
-                        "Every day is a new chance to rewrite your story and grow beyond your limits."
-                        "Personal growth begins at the end of your comfort zone."
+                    • Motivational Text:  
+                    – Definition: Calls to action that push toward growth or change a piece of writing, usually concise, that is designed to inspire, uplift, or encourage an individual to pursue goals or overcome obstacles. These texts can take various forms, including quotes, stories, speeches, and even articles or letters. The core function of motivational text is to evoke a positive mindset, instill confidence, and drive action. .  
+                    – Example: “Stop waiting for the perfect moment; create it with your own two hands.”
 
+                    • Quote Text:  
+                    – Definition: Motivational quotes are concise, Short, standalone sentences, aphorisms, inspiring phrases designed to encourage and uplift individuals, often helping them stay focused, determined, and positive.  
+                    – Example: “Fall seven times, stand up eight.”
 
-            - If you find one or more powerful quotes or messages, analyze the chunk completly before you later save them using your provided tools.
-            `SaveMotivationalQuote(text="...", text_file=text_file)`
-            `final_answer("...")`
-            - If you do NOT find any powerful quotes or messages in this chunk, please respond with 'final_answer' and ask for the next chunk.
+                    • Personal Growth Text:  
+                    – Definition: Insights into self-development, mindset shifts or Personal growth, also known as self-development, is a continuous process of improving oneself in various aspects of life, including mental, emotional, social, and physical well-being.  
+                    – Example: “Your only competition is the person you were yesterday.”
+                    ––––––––––––––––––––––––––––––––––––––––––––––––––––––
+                    Helper definitions (WHAT TO AVOID):
+                    • Avoid vague compliments or praise (e.g., “That was great!”)  
+                    • Avoid cliché or overused phrases with no fresh angle  
+                    • Avoid long-winded storytelling—opt for concise impact  
+                    • Avoid context-less lyrics, jokes, or tangents  
+                    • Avoid purely descriptive narration (e.g., “Today we talked about gratitude…”)
+                    • Avoid generic motivational fluff that sounds good but adds no new insight  
+                    • Avoid surface-level pep-talks lacking depth or practical advice  
+                    • Avoid motivational filler that pads out time without delivering a punch  
+                    • Avoid text that lacks enough context or “power lines”—snippets that sound strong but don’t stand on their own
+                    ––––––––––––––––––––––––––––––––––––––––––––––––––––––
+                    Helper definitions (Content to Exclude)
+                    • Avoid uncertain or hedged language (e.g., “I think this might help you…”).
+                       Why: You want bold statements, not wishy-washy suggestions.
 
+                    • Avoid questions or rhetorical setups (e.g., “Have you ever felt stuck?”).
+                        Why: Clips that ask questions leave viewers hanging—they need resolution or insight.
 
-           
+                    • Avoid internal monologue or 2nd-person reflection (e.g., “I was thinking to myself…”).
+                        Why: We need universal truth or advice, not personal journaling.
 
-            Here is the chunk you will analyze using only reasoning like a human (Chain of Thought):
+                    • Avoid overly technical or niche jargon (e.g., “Using an autoencoder to reconstruct latent features…”).
+                        Why: Keeps it accessible and broadly relatable.
 
-            [chunk start]
-              {chunk}
-            [chunk end]
+                    • Avoid excessive qualifiers or filler words (e.g., “Basically,” “Honestly,” “You know…”).
+                        Why: Cuts to the core message.
 
-            NOW please begin by analyzing and reasoning over the entire chunk and identify any potensial text worth saving by reasoning in  'planning' by using chain of thought . you must finnish with the entre chunk before you later save after <end_plan> 
+                    • Avoid monotone observations (e.g., “This is what happened next.”).
+                        Why: We want emotional hooks, not neutral narration.
+
+                    •  Avoid back-pedaling or negations (e.g., “Don’t think this is too hard.”).
+                        Why: Positive, proactive language lands stronger.
+
+                    • Avoid over-explaining the obvious (e.g., “We all know that hard work leads to success.”).
+                        Why: Seeks fresh angles, not restated clichés.
+
+                    •  Avoid multi-step instructions (e.g., “First do this, then do that…”).
+                        Why: Short videos need one clear takeaway, not a how-to tutorial.
+
+                    •  Avoid embedded jokes or humorous asides (e.g., “I almost died laughing…”).
+                        Why: Humor can derail the motivational momentum unless it’s directly tied to the insight.
+                    ––––––––––––––––––––––––––––––––––––––––––––––––––––––----------------------------------------
+
+                    Important considerations:
+                    • Each saved snippet must be **self-contained**: if watched alone, the viewer still “gets it.”  
+                    • Prioritize **novel insights**—phrases they’ll remember and possibly share.  
+                    • Ensure each snippet works as a **standalone motivational short**: concise, punchy, and immediately impactful.
+                    ––––––––––––––––––––––––––––––––––––––––––––––––––––––------------------------------------------------------
+
+                    Now analyze the chunk below and extract any qualifying snippets based on the criteria above.  
+                    If there are none, reply clearly with: “No qualifying snippets found.” in the `final_answer` tool
+                    ––––––––––––––––––––––––––––––––––––––––––––––––––––––------------------------------------------------------
+
+                    [chunk start] 
+                    {chunk}  
+                    [chunk end]
+
+            NOW please begin by analyzing and reasoning over the entire chunk and identify any potensial text worth saving by reasoning  using chain of thought. 
             """
         result = Reasoning_Text_Agent.run(
                 task=task,
@@ -755,7 +798,7 @@ def gpu_worker():
  
     global Global_model
     Global_model = TransformersModel(
-            model_id = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Mistral-7B-Instruct-v0.2",
+            model_id = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Ministral-8B-Instruct-2410",
             load_in_4bit=True,
             trust_remote_code=True,
             device_map="auto",
@@ -793,12 +836,11 @@ if __name__ == "__main__":
     torch.cuda.empty_cache()
     gc.collect()
 
-    # worker_thread = threading.Thread(target=video_creation_worker)
-    # worker_thread.start()
+    worker_thread = threading.Thread(target=video_creation_worker)
+    worker_thread.start()
 
     video_paths = [
         r"c:\Users\didri\Documents\Mindset Reset： Take Control of Your Mental Habits ｜ The Mel Robbins Podcast.mp4",
-        r"c:\Users\didri\Documents\Robert Greene： A Process for Finding & Achieving Your Unique Purpose.mp4"
     ]
     log(f"Video_paths: {len(video_paths)}")
 
@@ -829,6 +871,6 @@ if __name__ == "__main__":
 
     transcript_queue.join() 
     gpu_thread.join()
-   # worker_thread.join()
+    worker_thread.join()
 
 
