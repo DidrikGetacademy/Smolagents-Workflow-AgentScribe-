@@ -3,6 +3,9 @@ from Agents_tools import ChunkLimiterTool
 import os
 import gc
 import yaml
+import sys
+import torchvision.transforms.functional as F
+sys.modules['torchvision.transforms.functional_tensor'] = F
 import subprocess
 from smolagents import SpeechToTextTool
 from moviepy import VideoFileClip, ImageSequenceClip, TextClip, CompositeVideoClip,vfx,AudioFileClip,afx
@@ -48,6 +51,22 @@ def create_motivational_montage_agent(clips: List[str], output_path: str):
 
 
 
+
+def change_saturation(frame ,mode="Increase", amount=0.5):
+     if mode == "Increase":
+        hsv = cv2.cvtColor(frame, cv2.COLOR_RGB2HSV).astype(np.float32)
+        hsv[..., 1]  *= (1.0 + amount)
+        hsv[..., 1] = np.clip(hsv[..., 1], 0, 255)
+        changed_frames = cv2.cvtColor(hsv.astype(np.uint8), cv2.COLOR_HSV2RGB)
+     elif mode == "Decrease": 
+        hsv = cv2.cvtColor(frame, cv2.COLOR_RGB2HSV).astype(np.float32)
+        hsv[..., 1] = 0  
+        hsv = np.clip(hsv, 0, 255).astype(np.uint8)
+        changed_frames = cv2.cvtColor(hsv, cv2.COLOR_HSV2RGB)
+          
+        #cv2.imwrite("before_gfpgan.jpg", cv2.cvtColor(cropped_frames[0], cv2.COLOR_RGB2BGR))
+        #cv2.imwrite("after_gfpgan.jpg", cv2.cvtColor(restored_frames[0], cv2.COLOR_RGB2BGR))
+     return changed_frames
 
 
 
@@ -147,6 +166,9 @@ class MyProgressLogger(ProgressBarLogger):
 
  
 def create_short_video(video_path, start_time, end_time, video_name, subtitle_text):
+    background_audio = None
+    change_on_saturation = None
+    
     logger = MyProgressLogger()
     probe = ffmpeg.probe(video_path)
     log(probe)
@@ -159,24 +181,6 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
     subtitles = subtitle_text
     log(f"subtitles: {subtitles}")
     log("Before loading YOLO model")
-
-
-    # def mix_audio(original_audio, background_music_path, bg_music_volume=0.15):
-    #      bg_music = AudioFileClip(background_music_path)
-
-    #      if bg_music.duration < original_audio.duration:
-    #           bg = afx.AudioLoop(bg_music,duration=original_audio.duration)
-    #      else:
-    #           bg_music = bg_music.subclipped(0,original_audio.duration)
-            
-        
-    #      bg_music = bg_music.volumex(bg_music_volume)
-
-    #      original_audio = original_audio.volumex(1.0)
-
-    #      mixed_audio = CompositeVideoClip([original_audio,bg_music])
-
-    #      return mixed_audio
 
 
     def split_subtitles_into_chunks(text, max_words=3):
@@ -194,7 +198,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
             print(duration)
             txt_clip = TextClip(
                 text=chunk,
-                font=r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Logging_and_filepaths\Video_clips\Cardo-Regular.ttf", 
+                font=r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Utils-Video_creation\Fonts\OpenSans-Italic-VariableFont_wdth,wght.ttf", 
                 font_size=80,
                 margin=(10, 10), 
                 text_align="center" ,
@@ -213,13 +217,15 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
             
         return text_clips
     
+
+    
     def detect_and_crop_frames_batch(frames, batch_size=8):
         TARGET_W, TARGET_H = 1080, 1920
         alpha = 0.1
         prev_cx, prev_cy = None, None
         cropped_frames = []
         onnx_path_gpu = r"c:\Users\didri\Desktop\LLM-models\Face-Detection-Models\yolov8x-face-lindevs_cuda.onnx"
-        providers = ['CPUExecutionProvider'] 
+        providers = ['CUDAExecutionProvider','CPUExecutionProvider'] 
         sess_options = ort.SessionOptions()
         sess_options.log_severity_level = 0
         session = ort.InferenceSession(onnx_path_gpu, sess_options, providers=providers)
@@ -309,7 +315,9 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
                     cropped_frames.append(cropped_frame)
         finally:
             progress_bar.close() 
-            del batch, predictions, detections, frame, det, h, w, areas, max_idx
+            del  predictions, detections, frame, det, h, w, areas, max_idx
+            if batch is not None:
+                del batch
             session = None
             torch.cuda.empty_cache()
             gc.collect()
@@ -331,43 +339,93 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
     log(f"Extracted {len(frames)} frames.")
 
 
-    cropped_frames = detect_and_crop_frames_batch(frames=frames,batch_size=4)
-    processed_clip = ImageSequenceClip(cropped_frames, fps=clip.fps).with_duration(clip.duration)
+    cropped_frames = detect_and_crop_frames_batch(frames=frames,batch_size=6)
 
+    sharpened_frames = []
+    for frame in cropped_frames:
+         frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+         sharpened_bgr = sharpen_frame_naturally(frame_bgr)
+         sharpened_rgb = cv2.cvtColor(sharpened_bgr,cv2.COLOR_BGR2RGB)
+         sharpened_frames.append(sharpened_rgb)
+
+    from basicsr.archs.rrdbnet_arch import RRDBNet
+    from realesrgan import RealESRGANer
+    model = RRDBNet(num_in_ch=3, num_out_ch=3, num_feat=64,num_block=23, num_grow_ch=32, scale=2)
+    bg_upsampler = RealESRGANer( model_path=r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\gfpgan\weights\RealESRGAN_x2plus.pth", model=model, scale=2)
+    restored_frames = []
+    from gfpgan import GFPGANer
+    gfpganer = GFPGANer(model_path=r'C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\gfpgan\weights\GFPGANv1.4.pth', upscale=1, arch='clean', channel_multiplier=2, bg_upsampler=bg_upsampler)
+    try:
+        for frame in tqdm(cropped_frames, desc="GFPGAN Upscaling", unit="frame"):
+
+            _, _, restored = gfpganer.enhance( frame, has_aligned=False, only_center_face=True, paste_back=True)
+
+            restored_frames.append(restored)
+            print(f"appending upscaled frame")
+    except Exception as e:
+         print(f"Error during upscaling.. {str(e)}")
+
+    if change_on_saturation != None and change_saturation == "Increase":
+            restored_frames = [change_saturation(frame,mode=change_on_saturation, amount=0.5) for frame in restored_frames]
+
+    elif change_on_saturation != None and change_on_saturation == "Decrease":
+            restored_frames = [change_saturation(frame,mode=change_on_saturation, amount=0.5) for frame in restored_frames]
+
+
+
+    processed_clip = ImageSequenceClip(restored_frames, fps=clip.fps).with_duration(clip.duration)
     
-    # subtitle_clips = []
-    # for text, start, end in subtitles:
-    #     clip_relative_start = start - start_time
-    #     clip_relative_end = end - start_time
-    #     duration = clip_relative_end - clip_relative_start
-    #     log(f"subtitle_clips: {subtitle_clips}")
+    subtitle_clips = []
+    for text, start, end in subtitles:
+        clip_relative_start = start - start_time
+        clip_relative_end = end - start_time
+        duration = clip_relative_end - clip_relative_start
+        log(f"subtitle_clips: {subtitle_clips}")
         
-    #     if duration <= 0:
-    #         continue
+        if duration <= 0:
+            continue
 
-    #     subtitle_chunk_clips = create_subtitles(text, duration, clip_relative_start)
-    #     subtitle_clips.extend(subtitle_chunk_clips)
-    #     log(f"subtitle_clips: {subtitle_clips}")
+        subtitle_chunk_clips = create_subtitles(text, duration, clip_relative_start)
+        subtitle_clips.extend(subtitle_chunk_clips)
+        log(f"subtitle_clips: {subtitle_clips}")
 
-    # final_clip = CompositeVideoClip(
-    #             [processed_clip.with_position('center')] + subtitle_clips,
-    #             size=processed_clip.size
-    #         )
+    final_clip = CompositeVideoClip(
+                [processed_clip.with_position('center')] + subtitle_clips,
+                size=processed_clip.size
+            )
+    
     final_clip = processed_clip.with_position('center')
+  
+
+    def mix_audio(original_audio, background_music_path, bg_music_volume=0.15):
+         bg_music = AudioFileClip(background_music_path)
+
+         if bg_music.duration < original_audio.duration:
+              bg = afx.AudioLoop(bg_music,duration=original_audio.duration)
+         else:
+              bg_music = bg_music.subclipped(0,original_audio.duration)
+            
+        
+         bg_music = bg_music.volumex(bg_music_volume)
+
+         original_audio = original_audio.volumex(1.0)
+
+         mixed_audio = CompositeVideoClip([original_audio,bg_music])
+
+         return mixed_audio
+    
+    if background_audio != None:
+        background_music_path = r"c:\Users\didri\AppData\Local\CapCut\Videos\Video Tools\audio\Documentary Cinematic Violin by Infraction [No Copyright Music] # Life Goes On [mp3].mp3"
+        final_clip.audio = mix_audio(clip.audio, background_music_path, bg_music_volume=0.15)
+    else:
+        final_clip.audio = clip.audio
 
 
-    background_music_path = r"c:\Users\didri\AppData\Local\CapCut\Videos\Video Tools\audio\Documentary Cinematic Violin by Infraction [No Copyright Music] # Life Goes On [mp3].mp3"
-    #final_clip.audio = mix_audio(clip.audio, background_music_path, bg_music_volume=0.15)
-    final_clip.audio = clip.audio
-
-    ###FILTERS,BRIGHTNESS,CONTRAST, ANIMATION#######
-    final_clip = FadeIn(duration=1.0).apply(final_clip)
-    final_clip = FadeOut(duration=1.0).apply(final_clip)
-
-
+    final_clip = FadeIn(duration=0.5).apply(final_clip)
+    final_clip = FadeOut(duration=0.5).apply(final_clip)
 
     log(f"video original fps: {clip.fps}")
-    output_dir = "./Logging_and_filepaths/Video_clips"
+    output_dir = "./Video_clips"
     os.makedirs(output_dir, exist_ok=True)
     out_path = os.path.join(output_dir, f"{video_name}.mp4")
     final_clip.write_videofile(
@@ -381,6 +439,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
         fps=clip.fps,
         ffmpeg_params=["-vf", "format=yuv420p"],
     )
+    
     log(f"video is completed: output path : {out_path}, video name: {video_name} video_fps: {clip.fps}, codec: {video_codec}, bitrate: {bitrate}, audio_codec: {audio_codec}, subtitles: {subtitles}")
     log(f"Final video resolution (width x height): {final_clip.size[0]} x {final_clip.size[1]}")  
     full_video.close()
@@ -555,7 +614,7 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
     log(f"✅ Entered Transcript_Reasoning_AGENT() transcript_path: {transcripts_path}, agent_txt_saving_path: {agent_txt_saving_path}")
 
     global Global_model
-    loaded_reasoning_agent_prompts = r'C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\smolagents_prompt.yaml'
+    loaded_reasoning_agent_prompts = r'C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Prompt_templates\smolagents_prompt.yaml'
     with open(loaded_reasoning_agent_prompts, 'r', encoding='utf-8') as f:
             Prompt_template = yaml.safe_load(f)
 
@@ -698,7 +757,7 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
 
 
 
-log_file_path = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\transcription_log.txt"
+log_file_path = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\debug_performance\transcription_log.txt"
 
 def log(msg):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -838,7 +897,6 @@ if __name__ == "__main__":
 
     worker_thread = threading.Thread(target=video_creation_worker)
     worker_thread.start()
-
     video_paths = [
         r"c:\Users\didri\Documents\Mindset Reset： Take Control of Your Mental Habits ｜ The Mel Robbins Podcast.mp4",
     ]

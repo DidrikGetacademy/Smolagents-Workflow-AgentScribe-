@@ -55,7 +55,7 @@ def test():
 
 
 
-        loaded_reasoning_agent_prompts = r'C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\smolagents_prompt.yaml'
+        loaded_reasoning_agent_prompts = r'C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Prompt_templates\smolagents_prompt.yaml'
         with open(loaded_reasoning_agent_prompts, 'r', encoding='utf-8') as f:
                 Prompt_template = yaml.safe_load(f)
 
