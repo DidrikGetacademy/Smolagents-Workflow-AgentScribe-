@@ -24,68 +24,106 @@
   All the steps must be in the 'Thought' sequence before any CODE
 
 
-  The Golden Rules (Apply throughout all steps):
-    Note: These rules serve as a guideline for analyzing each line in context — including surrounding lines — to determine if the text alone or combined forms a strong, clear, and motivational quote.
-    When evaluating a line, always check its standalone quality first. If incomplete or unclear, attempt to merge it with up to 5 lines before or after, ensuring the combined text is coherent and powerful.
-    A qualified quote or message must be:  
-      - Standalone: It makes sense on its own with no missing subject or context.  
-      - Complete Thought: Avoid vague pronouns or conjunctions at the start unless merged with other lines to provide clarity.  
-      - Emotionally Resonant: Sparks motivation, reflection, inspiration, or encourages personal growth.  
-      - Context-Resolved: If merging lines, the combined result must feel like a natural, strong unit — not stitched or fragmented.  
-      - Concise + Viral-Ready: Preferably under 3 lines; shorter is stronger.  
-      - No Lead-ins or Open-Ended Statements.  
-    - When merging lines:  
-      - Confirm the combined lines form a complete thought.  
-      - Confirm the lines are contextually connected and naturally stitched together.  
-      - If yes, save the merged quote in the SaveMotivationalText tool.
+  **Meta-Content Filter:**  
+  **  • Reject any host-intro, podcast framing, thank-you’s, episode references or “welcome to…” language.**  
+  **  • Reject any line beginning with “And,” “But,” “So,” unless you merge it into preceding text and remove the conjunction.**  
+  **  • A saveable quote must contain at least one imperative verb or clear benefit/outcome and at least two “power words” (e.g. mindset, growth, courage, habit).**  
+  **  • You may merge up to three consecutive lines only; merged text must still pass all filters.**  
 
-    - When evaluating merged candidates, assign a connection rating [1-10] based on:
-      -How naturally the lines flow together (no stitching or fragmentation).
-      -Clarity and completeness of the thought.
-      -Emotional resonance and motivational strength.
-      -Absence of awkward conjunctions or pronouns.
-      -stand alone for a motivational short video.
-    Prioritize merged candidates with the highest connection rating when deciding what to save.
-    Only consider merges with rating ≥ 8 as savable.
+
+  **Golden Rules (Apply throughout all steps):
+  Note: These rules serve as a guideline for analyzing each line in context — including surrounding lines — to determine if the text alone or combined forms a strong, clear, and motivational quote.
+  When evaluating a line, always check its standalone quality first. If incomplete or unclear, attempt to merge it with up to 5 lines before or after, ensuring the combined text is coherent and powerful.
+  A qualified quote or message must be:  
+    - Standalone: It makes sense on its own with no missing subject or context.  
+    - Complete Thought: Avoid vague pronouns or conjunctions at the start unless merged with other lines to provide clarity.  
+    - Emotionally Resonant: Sparks motivation, reflection, inspiration, or encourages personal growth.  
+    - Context-Resolved: If merging lines, the combined result must feel like a natural, strong unit — not stitched or fragmented.  
+    - Concise + Viral-Ready: Preferably under 3 lines; shorter is stronger.  
+    - No Lead-ins or Open-Ended Statements.  
+
+  When merging lines:  
+    - Confirm the combined lines form a complete thought.  
+    - Confirm the lines are contextually connected and naturally stitched together.  
+    - If yes, save the merged quote in the SaveMotivationalText tool.
+
+  When evaluating merged candidates, assign a connection rating [1-10] based on:
+    - How naturally the lines flow together (no stitching or fragmentation).
+    - Clarity and completeness of the thought.
+    - Emotional resonance and motivational strength.
+    - Absence of awkward conjunctions or pronouns.
+    - Stand alone for a motivational short video.
+  Prioritize merged candidates with the highest connection rating when deciding what to save.
+  Only consider merges with rating ≥ 8 as savable.
+
+  **Reject Context-Dependent or Incomplete Lines
+  - Do not save any line that cannot stand alone as a complete thought or motivational quote.  
+  - If a line begins with vague references (e.g. “that’s why…”, “if your mindset…”, “I don’t even know…”), and doesn’t contain a complete and clear idea, it must be rejected unless merged into a meaningful full thought.
+  - Examples of lines to reject unless merged into a full standalone idea:
+    - [1116.43s - 1122.03s] And that's why it's important to get serious about training your mind to work for you.
+    - [1169.23s - 1177.33s] If your mindset is like those dark bug-eyed sunglasses that just muddy everything that you see,
+    - [1182.81s - 1187.35s] I don't even know how to write a resume. How the hell am I going to get into interior design when I went to
+  - These types of lines lack the necessary context and completeness to be effective motivational messages on their own.
+  - Reject all such lines unless you can merge them with surrounding lines to create a fully formed, emotionally resonant quote with a score ≥ 8.
+
+
 
 
     Now start by strictly following every step!
 
     Step 1.
       - **Chunk Summary**  
-        - Read all lines in the chunk.  
+        - Read all lines in the chunk (internally do not output the full chunk).  
         - Write a minimum of 4  lines summary of the overall theme/message full meaning of the chunk.
 
     Step 2. **Line-by-Line Evaluation**  
-        For each line:
-        - *Text*write the line  exact (Timestamp + Text) from the chunk
-        - **Comprehend** its core message.
+        For each line:  
+        1 line is timestamp: [00.00s - ....] then the text before the next timestamp appear  
+        - *Text: *  
+        - **Comprehend** its core message.  
+        - **Meta-Content Filter:** i will Reject any host intros, thank-you’s, episode framing, or listener calls (“welcome,” “today’s episode,” “I’m Mel Robbins,” etc.). Also reject low-energy or non-actionable statements, even if spoken by the host. Only include lines that deliver clear, emotionally resonant, or actionable motivation — especially if they speak directly to the listener with encouragement, personal growth insights, or a motivational push  
         - **Check** if it stands alone:  
-          - Complete thought?  
-          - No undefined pronouns?  
-          - No leading conjunctions (unless you’ll merge).
-        - **Surrounding Context**:  
-          - When evaluating merging options, carefully apply these criteria from the Golden Rules:
-          - If a line is incomplete, vague, or begins with a conjunction (“and”, “but”, “so”, etc.),could it be merged with any other lines to form a complete thought? if not do **not** save it as-is.  
-          - Attempt merging with up to 5 previous or next surrounding lines, stitch it together in multiple ways to find connections (max 6 total lines including the original).
-          - For each merged candidate:
-                - Does the merge provide full context and a complete thought?
-                - Is the merged text clear, powerful, and emotionally resonant without needing further context?
-                - Is the merge contextually connected and natural (not fragmented or stitched)?
-                - Does it avoid starting with conjunctions unless fixed by combination?
-                - If I merge with any of the lines:
-                       - does it provide a clear powerful message without needing further context?
-                       - when merging the lines is it connected in context? if yes   
-                          - No conjunctions starting quotes ("And/But/So...") unless fixed by combination?     
-          - After merging:
-                - Re-evaluate the combined content.
-                - Only proceed **if** the result forms a **clear, complete, and emotionally resonant motivational message**.
-                - It must be strong enough to stand alone as a viral-ready quote—concise, powerful, and self-contained.
-                - If the merge still lacks clarity, context, or motivational value—**reject** it.   
+          Ask reflect(chain of thought):  
+            - No undefined pronouns?  
+            - No leading conjunctions (unless you’ll merge).        
+            - Complete thought?  
+        - **Surrounding Context:**  
+          - When evaluating merging options, carefully apply these criteria from the Golden Rules:  
+          - If a line is incomplete, vague, or begins with a conjunction (“and”, “but”, “so”, etc.), could it be merged with any other lines to form a complete thought? If not do **not** save it as-is.  
+          - Only attempt merges for lines with a standalone score ≤ 7.  
+          - Attempt merging with up to 3 previous or next surrounding lines, stitch it together in multiple ways to find connections (max 6 total lines including the original).  
+          - For each merged candidate:  
+            **Ask yourself**:  
+              - Does the merge provide full context and a complete thought?  
+              - If the text was isolated from the rest and someone watched this as a motivational shorts video would it provide full context for the listener?  
+              - Is the merged text clear, powerful, and emotionally resonant without needing further context?  
+              - Is the merge contextually connected and natural (not fragmented or stitched)?  
+              - Does it avoid starting with conjunctions unless fixed by combination?  
+              - If I merge with any of the lines:  
+                - Does it provide a clear powerful message without needing further context?  
+                - When merging the lines is it connected in context? If yes:  
+                  - No conjunctions starting quotes ("And/But/So...") unless fixed by combination?  
+          - After merging:  
+            - Re-evaluate the combined content.  
+              – Score/Merge Decision:  
+                • Assign a motivation score [1–10].  
+                • If score ≥ 8 standalone, mark savable.  
+                • Else consider merges. After merging, re-score; only save if ≥ 8.  
+            - Only proceed **if** the result forms a **clear, complete, and emotionally resonant motivational message**.  
+            - It must be strong enough to stand alone as a viral-ready quote—concise, powerful, and self-contained.  
+            - If the merge still lacks clarity, context, or motivational value—**reject** it.  
+
+          - **Surrounding Context Output:**  
+            For every line evaluation, you **must output** a `Surrounding Context` field:  
+              - If the line is fully standalone, output `Surrounding Context: N/A`  
+              - If the line builds upon or merges with other line(s), output `Surrounding Context:` followed by the timestamp(s) or line number(s) of those lines.  
+              - This should reflect the actual merge decisions and contextual connections used to determine standalone status or to save lines merged.  
+
                         
                 
       Step 3. **Decide**: 
               - Save only if the quote, on its own or merged, delivers a strong, standalone motivational insight.  
+              - Whether it’s a single line or a merge of multiple lines, emit exactly one SaveMotivationalText(...) call containing the full combined text *and* the full span of timestamps (e.g. “[12.34s–18.56s] …”).  
               - Never save vague, incomplete, or emotionally flat content.  
               - If unsure—**reject.**
               - Saveable or reject? also add a rate [1-10] where 8 is savable  
@@ -93,10 +131,30 @@
 
       step 4. **Conclusion for saving**
         - did the chunk provide any text i choose to save?  
+        **Read the text** output it, then:
+        **Last chain of thought on the text**
+            -can it be a standalone text for a motivational shorts video? if not - reject it
+            -does the text provide a full clear thought without needing any further context? if not - reject it
+        **saving criterias**
+            before deciding. ask yourself does the text contain more then 2 of this criterias?
+            1. is it a complete thought?
+            2. is it powerful? 
+            3. does it encourage the listner? 
+            4. is it inspiring for the listner? 
+            5. would the listner share this text as something it could say at a grammy award? 
+            6. does it provoke personal growth?
+            now  decide if it should be saved:
           if Yes:
+            - Emit one SaveMotivationalText(text="[start–end] Combined quote text", text_file=text_file) if the text that will be saved is merged  you must provide all the lines + timestamp in 1 SaveMotivationalText tool call.
             - the text to be saved + the exact timestamp from chunk?
             - Is the text good enough for a motivational short?
             - does it provide full context if it was isolated from the chunk.?
+              – Would a viewer instantly understand and be inspired?
+                • If yes: SaveMotivationalText(timestamp+text)
+                • If no: Reject
+              – **Meaning Check:** If you strip away all context, does this quote still convey a full, coherent piece of advice or wisdom?
+                 • If “no,” reject.
+
             - could it be a viral impactful short video? if not reject it
               if yes:
               - save it with the 'SaveMotivationalText' in the 'Code:' sequence 
@@ -105,7 +163,9 @@
           if No:
             -Provide only the `final_answer`  in 'Code:' sequence when you are done in 'Thought:' sequence
             
+  (very important) if you decide to save: If you merged any text, you must include it in a single SaveMotivationalText tool call along with all the timestamps. Each quote should normally have its own SaveMotivationalText tool call. However, if you've merged lines, include the merged lines with their exact timestamps inside one SaveMotivationalText call.
 
+  
   Here are a few examples using notional tools:
   ---
   Task: "Your task is to analyze a transcript understand it's full context and use your chain of thought to identify any possible powerful quotes/messages"
@@ -138,6 +198,7 @@
   Thought: i will start by thinking step by step by chain of thought...
   Code:
   ```py
+  print("this text was merged so i saved all the lines in 1 tool call")
    text = "[1483.58s - 1489.74s] The magic you are looking  [1489.74s - 1498.42s] for is in the work you are avoiding"
    SaveMotivationalText(text=text, text_file=text_file)
    final_answer("im done analysing the entire chunk and i have identified 1 text that could be standalone for motivational short")

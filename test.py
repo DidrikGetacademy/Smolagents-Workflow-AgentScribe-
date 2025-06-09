@@ -234,7 +234,7 @@ def test():
                     ––––––––––––––––––––––––––––––––––––––––––––––––––––––------------------------------------------------------
 
                     [chunk start] 
-                    {chunk_test2}  
+                    {chunktest_1}  
                     [chunk end]
                     """
         agent_txt_saving_path = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\saving_path.txt"

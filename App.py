@@ -32,7 +32,8 @@ import threading
 import queue
 import torch
 import datetime
-
+import re 
+from queue import Queue
 Chunk_saving_text_file = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Logging_and_filepaths\saved_transcript_storage.txt"
 Final_saving_text_file=r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Logging_and_filepaths\final_saving_motivational.txt"
 model_path_SwinIR_color_denoise15_pth = r"c:\Users\didri\Desktop\LLM-models\Video-upscale-models\SwinIR-M_noise15.pth"
@@ -49,7 +50,11 @@ count_lock = threading.Lock()
 def create_motivational_montage_agent(clips: List[str], output_path: str):
     return 
 
-
+def  clear_queue(q: Queue):
+     with q.mutex:
+          q.queue.clear()
+          q.all_tasks_done.notify_all()
+          q.unfinished_tasks = 0
 
 
 def change_saturation(frame ,mode="Increase", amount=0.5):
@@ -168,7 +173,6 @@ class MyProgressLogger(ProgressBarLogger):
 def create_short_video(video_path, start_time, end_time, video_name, subtitle_text):
     background_audio = None
     change_on_saturation = None
-    
     logger = MyProgressLogger()
     probe = ffmpeg.probe(video_path)
     log(probe)
@@ -444,6 +448,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
     log(f"Final video resolution (width x height): {final_clip.size[0]} x {final_clip.size[1]}")  
     full_video.close()
     clip.close()
+    clear_queue(video_task_que)
 
 
 def parse_subtitle_text_block(text_block):
@@ -529,6 +534,10 @@ def get_current_videourl() -> str:
     return _current_video_url
 
 
+
+
+
+
 def parse_multiline_block(block_text):
     lines = [line.strip() for line in block_text.strip().splitlines() if line.strip()]
     line = [line for line in lines if line.startswith('[')]
@@ -559,20 +568,6 @@ def parse_timestamp_line(line):
 
 
 
-def video_creation_worker():
-     while True:
-          try:
-             video_url,  start_time, end_time, text = video_task_que.get()
-             log(f"\n\n\n\n\n\n\n\n\n\nCurrent work being proccessed...[ video_url: {video_url}, start_time: {start_time}, end_time: {end_time}, text: {text} to que]")
-             log(f"Processing video task: {video_url}, {start_time}-{end_time}")
-             run_video_short_creation_thread(video_url, start_time, end_time, text)
-             log(f"Done Creating Video \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
-          except Exception as e:
-               log(f" error during video_creation_worker: {str(e)}")
-               raise ValueError(f"Error during video creation")
-          finally:
-               video_task_que.task_done()
-
 @tool
 def SaveMotivationalText(text: str, text_file: str) -> None:
     """Save motivational text for motivational shorts video, the text that meets task criteria  to a file with a timestamp.
@@ -591,20 +586,132 @@ def SaveMotivationalText(text: str, text_file: str) -> None:
             start_time, end_time = parse_multiline_block(text)
             log(f"[start_time: {start_time}, end_time: {end_time}]   FROM : SaveMotivationalQuote")
                 
-    if start_time is None or end_time is None:
-                    log("starttime is None & End_time is None")
-                    raise ValueError(f"Start_time or end_time is None, start_time: {start_time}, end_time: {end_time}")
-    
-            
-    video_url = get_current_videourl()
-    log(f"Video Url to be used for video short creation from [get_current_videourl]: {video_url}")
-    log(f"Starting video creation now:  {video_url}: start_time:  {start_time}, end_time: {end_time}")
 
-    try:
-         log(f"Added video_url: {video_url}, start_time: {start_time}, end_time: {end_time}, text: {text} to que")
-         video_task_que.put((video_url, start_time, end_time, text))
-    except Exception as e:
-         log(f"error during adding items to que: {str(e)}")
+
+
+
+
+def video_creation_worker():
+     while True:
+          try:
+             video_url,  start_time, end_time, text = video_task_que.get()
+             log(f"\n\n\n\n\n\n\n\n\n\nCurrent work being proccessed...[ video_url: {video_url}, start_time: {start_time}, end_time: {end_time}, text: {text} to que]")
+             log(f"Processing video task: {video_url}, {start_time}-{end_time}")
+             run_video_short_creation_thread(video_url, start_time, end_time, text)
+             log(f"Done Creating Video \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+          except Exception as e:
+               log(f" error during video_creation_worker: {str(e)}")
+               raise ValueError(f"Error during video creation")
+          finally:
+               video_task_que.task_done()
+
+
+
+
+def set_current_textfile(url: str):
+    global _current_agent_saving_file
+    _current_agent_saving_file = url
+
+def get_current_textfile() -> str:
+     global _current_agent_saving_file 
+     return _current_agent_saving_file
+
+def wait_for_proccessed_video_complete(queue: Queue, check_interval=40):
+     """Blocks until the queue is empty, checking every `check_interval` seconds."""
+     log(f"\n\n\n\n\n\n[wait_for_proccessed_video_complete]")
+     while not queue.empty():
+          log(f"waiting for video_task_que to be empty: items remaining: {queue.qsize()}")
+          time.sleep(check_interval)
+     log("✅ video_task_que is now empty.")
+
+
+@tool
+def create_motivationalshort(text):
+        """ tool that creates a motivational shorts video
+        Args: 
+            text: The text for motivational shorts video. Format: 
+              ===START_QUOTE=== 
+              [start_time - end_time] actual text here. 
+              ===END_QUOTE===      
+        """
+        log(f"\n\n\n[CREATE_MOTIVATIONALSHORT]")
+        match = re.search(r"\[([0-9.]+)s\s*-\s*([0-9.]+)s\]\s*(.+)", text.strip(), re.DOTALL)
+
+        if not match:
+             raise ValueError("invalid text format. ensure it includes the exact timestamp  a timestamp like  exsample: [1187.35s - 1191.89s] followed by the quote.")
+        
+        start_time = float(match.group(1))
+        end_time = float(match.group(2))
+        quote_text = match.group(3).strip()
+
+        if start_time is None or end_time is None:
+             log("start_time is None or end_time is None")
+             raise ValueError(f"start_time or end_time is None, start_time: {start_time}, end_time: {end_time}")
+        
+        video_url = get_current_videourl()
+        log(f"Video URL from get_current_videourl: {video_url}")
+        log(f"Starting video creation for {video_url} from {start_time}s to {end_time}s")
+
+        try:
+            log(f"Queued video task: url={video_url}, start={start_time}, end={end_time}, text='{quote_text}'")
+            video_task_que.put((video_url, start_time, end_time, quote_text))
+        except Exception as e:
+             log(f"Error addng to queue: {str(e)}")
+
+
+        
+
+@tool
+def Delete_rejected_line(text):
+        """  Deletes lines from the current text file that match the given text.
+        Args:
+            text: The line to delete (i.e., considered rejected/not valid) Format: 
+              ===START_QUOTE=== 
+              [start_time - end_time] actual text here. 
+              ===END_QUOTE===      
+        """
+        log(f"\n\n\n\n\n[Delete_rejected_line] text into func: {text}")
+        text_file = get_current_textfile()
+
+        with open(text_file, 'r', encoding="utf-8") as f:
+                    lines = f.readlines()
+        
+        with open(text_file, 'w', encoding="utf-8") as f:
+            for line in lines:
+                 log(f"line before stripping: {line}")
+                 if line.strip() != text.strip():
+                      f.write(line)
+                      log(f"written the line, should have removed the line from text: {line}\n\n\n\n\n")
+
+
+
+def verify_saved_text_agent(agent_saving_path):
+    set_current_textfile(agent_saving_path)
+    global Global_model
+    loaded_verify_saved_text_prompt = r'C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Prompt_templates\Verify_saved_quotes.yaml'
+    with open(loaded_verify_saved_text_prompt, 'r', encoding='utf-8') as f:
+            Prompt_template = yaml.safe_load(f)
+
+    final_answer = FinalAnswerTool()
+    create_motivational_short_agent = CodeAgent(
+        model=Global_model,
+        tools=[create_motivationalshort,Delete_rejected_line,final_answer],
+        max_steps=1,
+        prompt_templates=Prompt_template,
+    )
+
+    with open(agent_saving_path, "a", encoding="utf-8") as f:
+                      saved_quotes_text = f.read()
+
+    task = f"""Analyze all the lines, reject the lines that are not valid/suitable for a standalone motivational shorts video by using `Delete_rejected_line` tool and run  `create_motivationalshort` tool for each of those that are valid 
+    now start step by step chain of thought reasoning over the lines:
+    [{saved_quotes_text}] 
+    """
+
+    create_motivational_short_agent.run(task=task)
+
+
+        
 
 
 
@@ -612,7 +719,7 @@ def SaveMotivationalText(text: str, text_file: str) -> None:
 #Agent som analyserer tekst  fra transkript ved og lese (chunk for chunk) --->  (lagrer teksten basert på (task)) #eksempel her er motiverende/quote/inspirerende
 def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
     log(f"✅ Entered Transcript_Reasoning_AGENT() transcript_path: {transcripts_path}, agent_txt_saving_path: {agent_txt_saving_path}")
-
+    ModelCountRun = 0
     global Global_model
     loaded_reasoning_agent_prompts = r'C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Prompt_templates\smolagents_prompt.yaml'
     with open(loaded_reasoning_agent_prompts, 'r', encoding='utf-8') as f:
@@ -624,7 +731,6 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
         tools=[SaveMotivationalText,final_answer],
         max_steps=1,
         prompt_templates=Prompt_template,
-        stream_outputs=True
     )
     chunk_limiter = ChunkLimiterTool()
 
@@ -640,7 +746,6 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
         try:
             print(f"transcript_path for chunk tool : {transcripts_path}")
             chunk = chunk_limiter.forward(file_path=transcripts_path, max_chars=1500)
-               
         except Exception as e:
                 print(f"Error during chunking from file {transcripts_path}: {e}")
                 break
@@ -649,6 +754,14 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
                 print("Finished processing current transcript. Now exiting func [Transcript Reasoning Agent]")
                 del Reasoning_Text_Agent
                 break
+        
+        if not ModelCountRun == 5:
+                del Reasoning_Text_Agent
+                verify_saved_text_agent(agent_txt_saving_path)
+                ModelCountRun = 0
+                wait_for_proccessed_video_complete(video_task_que)
+                continue
+
 
         task = f"""
           You are an expert at identifying  powerful, share-worthy snippets from motivational podcast transcripts.
@@ -744,6 +857,7 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
 
             NOW please begin by analyzing and reasoning over the entire chunk and identify any potensial text worth saving by reasoning  using chain of thought. 
             """
+        ModelCountRun += 1
         result = Reasoning_Text_Agent.run(
                 task=task,
                 additional_args={"text_file": agent_txt_saving_path}
@@ -905,7 +1019,7 @@ if __name__ == "__main__":
     devices = ["cuda", "cpu"] 
     video_device_pairs = [(video_paths[i], devices[i % len(devices)]) for i in range(len(video_paths))]
 
-    max_threads = 2
+    max_threads = 1
     start_time = time.time()
     with ThreadPoolExecutor(max_workers=max_threads) as executor:
         futures = []
@@ -929,6 +1043,6 @@ if __name__ == "__main__":
 
     transcript_queue.join() 
     gpu_thread.join()
-    worker_thread.join()
+    # worker_thread.join()
 
 
