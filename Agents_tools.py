@@ -155,7 +155,10 @@ class ChunkLimiterTool(Tool):
     def reset(self):
         self.called = False
 
+
     def forward(self, file_path: str, max_chars: int) -> str:
+
+        import re  # make sure this is imported at the top
         if self.called:
             raise Exception(
                 "ChunkLimiterTool was already called in this reasoning step. "
@@ -167,24 +170,36 @@ class ChunkLimiterTool(Tool):
             self.saved_file_path = file_path
         elif not self.saved_file_path:
             raise ValueError("file_path must be provided the first time ChunkLimiterTool is used.")
-        
+
         with open(self.saved_file_path, "r", encoding="utf-8") as f:
             text = f.read()
 
         if not text.strip():
             return ""
-        
-        split_idx = text.rfind("\n", 0, max_chars)
-        if split_idx == -1: 
-            split_idx = min(len(text),max_chars)
 
-        chunk = text[:split_idx].strip()
-        remaing = text[split_idx:].lstrip()
+        split_idx = text.rfind("\n", 0, max_chars)
+        if split_idx == -1:
+            split_idx = min(len(text), max_chars)
+
+        raw_chunk = text[:split_idx].strip()
+        remainder = text[split_idx:].lstrip()
+
+        # --- New logic: split on timestamp markers ---
+        timestamp_split_regex = r'(?=\[\d+\.\d+s\s*-\s*\d+\.\d+s\])'
+        chunk_lines = re.split(timestamp_split_regex, raw_chunk)
+        
+
+
+        chunk = "\n".join(
+     
+            f"Line:{i+1}  {line.strip()}.\n"
+            for i, line in chunk_lines if line.strip()
+        )
 
         with open(self.saved_file_path, "w", encoding="utf-8") as f:
-                f.write(remaing)
-            
-        return f"{chunk}"
+            f.write(remainder)
+
+        return chunk
 
 
 

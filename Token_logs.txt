@@ -1,0 +1,36 @@
+[2025-06-09 19:58:43][ThreadPoolExecutor-0_0] 
+🔊 Using Whisper on device: cuda, 
+transcribing video: c:\Users\didri\Documents\Mindset Reset： Take Control of Your Mental Habits ｜ The Mel Robbins Podcast.mp4 
+   with inputs: {'audio': {'type': 'audio', 'description': 'The audio to transcribe. Can be a local path, a URL, or a tensor.'}, 'text_path': {'type': 'string', 'description': 'The path to save the transcript to.'}, 'video_path': {'type': 'string', 'description': 'The path to the video to transcribe. only for info logging'}}
+[2025-06-09 19:58:43][ThreadPoolExecutor-0_0] [INFO] Detected Language: en (confidence: 1.00)
+[2025-06-09 19:58:43][ThreadPoolExecutor-0_0] [INFO] Audio Duration: 4852.02 seconds
+[2025-06-09 19:58:43][ThreadPoolExecutor-0_0] opening txt_path on: c:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\work_queue_folder\Mindset Reset： Take Control of Your Mental Habits ｜ The Mel Robbins Podcast\Mindset Reset： Take Control of Your Mental Habits ｜ The Mel Robbins Podcast.txt device: cuda
+[2025-06-09 20:00:28][ThreadPoolExecutor-0_0] Total write time: 105.3947 seconds
+[2025-06-09 20:00:28][ThreadPoolExecutor-0_0] transcription complete ! device  cuda
+[2025-06-09 22:55:45][ThreadPoolExecutor-0_0] 
+🔊 Using Whisper on device: cuda, 
+transcribing video: c:\Users\didri\Documents\Mindset Reset： Take Control of Your Mental Habits ｜ The Mel Robbins Podcast.mp4 
+   with inputs: {'audio': {'type': 'audio', 'description': 'The audio to transcribe. Can be a local path, a URL, or a tensor.'}, 'text_path': {'type': 'string', 'description': 'The path to save the transcript to.'}, 'video_path': {'type': 'string', 'description': 'The path to the video to transcribe. only for info logging'}}
+[2025-06-09 22:55:45][ThreadPoolExecutor-0_0] [INFO] Detected Language: en (confidence: 1.00)
+[2025-06-09 22:55:45][ThreadPoolExecutor-0_0] [INFO] Audio Duration: 4852.02 seconds
+[2025-06-09 22:55:45][ThreadPoolExecutor-0_0] opening txt_path on: c:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\work_queue_folder\Mindset Reset： Take Control of Your Mental Habits ｜ The Mel Robbins Podcast\Mindset Reset： Take Control of Your Mental Habits ｜ The Mel Robbins Podcast.txt device: cuda
+[2025-06-09 22:57:27][ThreadPoolExecutor-0_0] Total write time: 101.8569 seconds
+[2025-06-09 22:57:27][ThreadPoolExecutor-0_0] transcription complete ! device  cuda
+[2025-06-10 00:56:40][ThreadPoolExecutor-0_0] 
+🔊 Using Whisper on device: cuda, 
+transcribing video: c:\Users\didri\Documents\Mindset Reset： Take Control of Your Mental Habits ｜ The Mel Robbins Podcast.mp4 
+   with inputs: {'audio': {'type': 'audio', 'description': 'The audio to transcribe. Can be a local path, a URL, or a tensor.'}, 'text_path': {'type': 'string', 'description': 'The path to save the transcript to.'}, 'video_path': {'type': 'string', 'description': 'The path to the video to transcribe. only for info logging'}}
+[2025-06-10 00:56:40][ThreadPoolExecutor-0_0] [INFO] Detected Language: en (confidence: 1.00)
+[2025-06-10 00:56:40][ThreadPoolExecutor-0_0] [INFO] Audio Duration: 4852.02 seconds
+[2025-06-10 00:56:40][ThreadPoolExecutor-0_0] opening txt_path on: c:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\work_queue_folder\Mindset Reset： Take Control of Your Mental Habits ｜ The Mel Robbins Podcast\Mindset Reset： Take Control of Your Mental Habits ｜ The Mel Robbins Podcast.txt device: cuda
+[2025-06-10 00:58:22][ThreadPoolExecutor-0_0] Total write time: 101.4893 seconds
+[2025-06-10 00:58:22][ThreadPoolExecutor-0_0] transcription complete ! device  cuda
+[2025-06-10 15:13:51][ThreadPoolExecutor-0_0] 
+🔊 Using Whisper on device: cuda, 
+transcribing video: c:\Users\didri\Documents\Mindset Reset： Take Control of Your Mental Habits ｜ The Mel Robbins Podcast.mp4 
+   with inputs: {'audio': {'type': 'audio', 'description': 'The audio to transcribe. Can be a local path, a URL, or a tensor.'}, 'text_path': {'type': 'string', 'description': 'The path to save the transcript to.'}, 'video_path': {'type': 'string', 'description': 'The path to the video to transcribe. only for info logging'}}
+[2025-06-10 15:13:51][ThreadPoolExecutor-0_0] [INFO] Detected Language: en (confidence: 1.00)
+[2025-06-10 15:13:51][ThreadPoolExecutor-0_0] [INFO] Audio Duration: 4852.02 seconds
+[2025-06-10 15:13:51][ThreadPoolExecutor-0_0] opening txt_path on: c:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\work_queue_folder\Mindset Reset： Take Control of Your Mental Habits ｜ The Mel Robbins Podcast\Mindset Reset： Take Control of Your Mental Habits ｜ The Mel Robbins Podcast.txt device: cuda
+[2025-06-10 15:15:32][ThreadPoolExecutor-0_0] Total write time: 100.6124 seconds
+[2025-06-10 15:15:32][ThreadPoolExecutor-0_0] transcription complete ! device  cuda

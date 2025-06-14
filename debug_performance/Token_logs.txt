@@ -1,139 +1,354 @@
-[2025-06-08 23:51:05] max_new_tokens: 15000
-[2025-06-08 23:51:05] System prompt tokens: 4142
-[2025-06-08 23:51:05] Task prompt tokens: 2137
-[2025-06-08 23:57:30] _last_input_token_count: 6282
-[2025-06-08 23:57:30] _last_output_token_count: 3694
-[2025-06-08 23:57:30] generated tokens: tensor([ 1595, 64544,  2100,  ...,  1474, 15144,  1062], device='cuda:0')
-[2025-06-08 23:57:30] Total token usage: 9976 / 32768 (30.44%)
-[2025-06-08 23:57:30] count_prompt_tokens: 6282
-[2025-06-08 23:57:30] max_new_tokens: 15000
-[2025-06-08 23:57:30] System prompt tokens: 4142
-[2025-06-08 23:57:30] Task prompt tokens: 2154
-[2025-06-09 00:00:26] _last_input_token_count: 6299
-[2025-06-09 00:00:26] _last_output_token_count: 1811
-[2025-06-09 00:00:26] generated tokens: tensor([ 1595, 64544,  2100,  ...,  1474, 15144,  1062], device='cuda:0')
-[2025-06-09 00:00:26] Total token usage: 8110 / 32768 (24.75%)
-[2025-06-09 00:00:26] count_prompt_tokens: 6299
-[2025-06-09 00:00:26] max_new_tokens: 15000
-[2025-06-09 00:00:26] System prompt tokens: 4142
-[2025-06-09 00:00:26] Task prompt tokens: 2166
-[2025-06-09 00:06:34] _last_input_token_count: 6311
-[2025-06-09 00:06:34] _last_output_token_count: 3547
-[2025-06-09 00:06:34] generated tokens: tensor([ 1595, 64544,  2100,  ...,  1474, 15144,  1062], device='cuda:0')
-[2025-06-09 00:06:34] Total token usage: 9858 / 32768 (30.08%)
-[2025-06-09 00:06:34] count_prompt_tokens: 6311
-[2025-06-09 00:06:34] max_new_tokens: 15000
-[2025-06-09 00:06:34] System prompt tokens: 4142
-[2025-06-09 00:06:34] Task prompt tokens: 2163
-[2025-06-09 00:48:17] max_new_tokens: 15000
-[2025-06-09 00:48:17] System prompt tokens: 4941
-[2025-06-09 00:48:17] Task prompt tokens: 2141
-[2025-06-09 00:48:17] max_new_tokens: 15000
-[2025-06-09 00:48:17] count_prompt_tokens (stream): 7085
-[2025-06-09 00:54:39] max_new_tokens: 15000
-[2025-06-09 00:54:39] System prompt tokens: 4894
-[2025-06-09 00:54:39] Task prompt tokens: 2181
-[2025-06-09 00:54:39] max_new_tokens: 15000
-[2025-06-09 00:54:39] count_prompt_tokens (stream): 7078
-[2025-06-09 01:00:44] max_new_tokens: 15000
-[2025-06-09 01:00:44] System prompt tokens: 4959
-[2025-06-09 01:00:44] Task prompt tokens: 2150
-[2025-06-09 01:00:44] max_new_tokens: 15000
-[2025-06-09 01:00:44] count_prompt_tokens (stream): 7112
-[2025-06-09 01:03:41] max_new_tokens: 15000
-[2025-06-09 01:03:41] System prompt tokens: 4969
-[2025-06-09 01:03:41] Task prompt tokens: 2160
-[2025-06-09 01:03:41] max_new_tokens: 15000
-[2025-06-09 01:03:41] count_prompt_tokens (stream): 7132
-[2025-06-09 01:08:20] max_new_tokens: 15000
-[2025-06-09 01:08:20] System prompt tokens: 5013
-[2025-06-09 01:08:20] Task prompt tokens: 2164
-[2025-06-09 01:08:20] max_new_tokens: 15000
-[2025-06-09 01:08:20] count_prompt_tokens (stream): 7180
-[2025-06-09 01:14:46] max_new_tokens: 15000
-[2025-06-09 01:14:46] System prompt tokens: 4982
-[2025-06-09 01:14:46] Task prompt tokens: 2133
-[2025-06-09 01:14:46] max_new_tokens: 15000
-[2025-06-09 01:14:46] count_prompt_tokens (stream): 7118
-[2025-06-09 01:18:38] max_new_tokens: 15000
-[2025-06-09 01:18:38] System prompt tokens: 5013
-[2025-06-09 01:18:38] Task prompt tokens: 2147
-[2025-06-09 01:18:38] max_new_tokens: 15000
-[2025-06-09 01:18:38] count_prompt_tokens (stream): 7163
-[2025-06-09 01:21:28] max_new_tokens: 15000
-[2025-06-09 01:21:28] System prompt tokens: 4951
-[2025-06-09 01:21:28] Task prompt tokens: 2159
-[2025-06-09 01:21:28] max_new_tokens: 15000
-[2025-06-09 01:21:28] count_prompt_tokens (stream): 7113
-[2025-06-09 01:24:26] max_new_tokens: 15000
-[2025-06-09 01:24:26] System prompt tokens: 4974
-[2025-06-09 01:24:26] Task prompt tokens: 2188
-[2025-06-09 01:24:26] max_new_tokens: 15000
-[2025-06-09 01:24:26] count_prompt_tokens (stream): 7165
-[2025-06-09 01:29:18] _last_input_token_count: 7165
-[2025-06-09 01:29:18] Final output token count (streamed): 3796
-[2025-06-09 01:29:18] Total token usage (stream): 10961 / 32768 (33.45%)
-[2025-06-09 01:29:18] max_new_tokens: 15000
-[2025-06-09 01:29:18] System prompt tokens: 4974
-[2025-06-09 01:29:18] Task prompt tokens: 2171
-[2025-06-09 01:29:18] max_new_tokens: 15000
-[2025-06-09 01:29:18] count_prompt_tokens (stream): 7148
-[2025-06-09 01:31:26] max_new_tokens: 15000
-[2025-06-09 01:31:26] System prompt tokens: 4974
-[2025-06-09 01:31:26] Task prompt tokens: 2192
-[2025-06-09 01:36:13] _last_input_token_count: 7169
-[2025-06-09 01:36:13] _last_output_token_count: 2453
-[2025-06-09 01:36:13] generated tokens: tensor([ 1438,  2438,  4270,  ...,  1474, 15144,  1062], device='cuda:0')
-[2025-06-09 01:36:13] Total token usage: 9622 / 32768 (29.36%)
-[2025-06-09 01:36:13] count_prompt_tokens: 7169
-[2025-06-09 01:36:13] max_new_tokens: 15000
-[2025-06-09 01:36:13] System prompt tokens: 4974
-[2025-06-09 01:36:13] Task prompt tokens: 2187
-[2025-06-09 01:53:41] _last_input_token_count: 7164
-[2025-06-09 01:53:41] _last_output_token_count: 7529
-[2025-06-09 01:53:41] generated tokens: tensor([ 1438,  2438,  4270,  ...,  1474, 15144,  1062], device='cuda:0')
-[2025-06-09 01:53:41] Total token usage: 14693 / 32768 (44.84%)
-[2025-06-09 01:53:41] count_prompt_tokens: 7164
-[2025-06-09 01:53:41] max_new_tokens: 15000
-[2025-06-09 01:53:41] System prompt tokens: 4974
-[2025-06-09 01:53:41] Task prompt tokens: 2208
-[2025-06-09 01:59:14] _last_input_token_count: 7185
-[2025-06-09 01:59:14] _last_output_token_count: 2808
-[2025-06-09 01:59:14] generated tokens: tensor([ 1438,  2438,  4270,  ...,  1474, 15144,  1062], device='cuda:0')
-[2025-06-09 01:59:14] Total token usage: 9993 / 32768 (30.50%)
-[2025-06-09 01:59:14] count_prompt_tokens: 7185
-[2025-06-09 01:59:14] max_new_tokens: 15000
-[2025-06-09 01:59:14] System prompt tokens: 4974
-[2025-06-09 01:59:14] Task prompt tokens: 2173
-[2025-06-09 02:02:09] _last_input_token_count: 7150
-[2025-06-09 02:02:09] _last_output_token_count: 1543
-[2025-06-09 02:02:09] generated tokens: tensor([ 1438,  2438,  4270,  ...,  1474, 15144,  1062], device='cuda:0')
-[2025-06-09 02:02:09] Total token usage: 8693 / 32768 (26.53%)
-[2025-06-09 02:02:09] count_prompt_tokens: 7150
-[2025-06-09 02:02:09] max_new_tokens: 15000
-[2025-06-09 02:02:09] System prompt tokens: 4974
-[2025-06-09 02:02:09] Task prompt tokens: 2227
-[2025-06-09 02:45:56] _last_input_token_count: 7204
-[2025-06-09 02:45:56] _last_output_token_count: 15000
-[2025-06-09 02:45:56] generated tokens: tensor([1438, 2438, 4270,  ..., 1278, 3946, 5433], device='cuda:0')
-[2025-06-09 02:45:56] Total token usage: 22204 / 32768 (67.76%)
-[2025-06-09 02:45:56] count_prompt_tokens: 7204
-[2025-06-09 02:45:56] max_new_tokens: 15000
-[2025-06-09 02:45:56] System prompt tokens: 34
-[2025-06-09 02:45:56] Task prompt tokens: 34592
-[2025-06-09 16:05:45] max_new_tokens: 15000
-[2025-06-09 16:05:45] System prompt tokens: 5248
-[2025-06-09 16:05:45] Task prompt tokens: 1751
-[2025-06-09 16:05:45] max_new_tokens: 15000
-[2025-06-09 16:05:45] count_prompt_tokens (stream): 7002
-[2025-06-09 16:07:33] _last_input_token_count: 7002
-[2025-06-09 16:07:33] Final output token count (streamed): 1576
-[2025-06-09 16:07:33] Total token usage (stream): 8578 / 32768 (26.18%)
-[2025-06-09 16:09:33] max_new_tokens: 15000
-[2025-06-09 16:09:33] System prompt tokens: 4060
-[2025-06-09 16:09:33] Task prompt tokens: 1751
-[2025-06-09 16:09:33] max_new_tokens: 15000
-[2025-06-09 16:09:33] count_prompt_tokens (stream): 5814
-[2025-06-09 16:10:41] _last_input_token_count: 5814
-[2025-06-09 16:10:41] Final output token count (streamed): 1172
-[2025-06-09 16:10:41] Total token usage (stream): 6986 / 32768 (21.32%)
+[2025-06-09 21:44:11] max_new_tokens: 10000
+[2025-06-09 21:44:11] System prompt tokens: 5192
+[2025-06-09 21:44:11] Task prompt tokens: 2314
+[2025-06-09 21:44:11] max_new_tokens: 10000
+[2025-06-09 21:44:11] count_prompt_tokens (stream): 7509
+[2025-06-09 21:56:35] max_new_tokens: 5000
+[2025-06-09 21:56:35] System prompt tokens: 5192
+[2025-06-09 21:56:35] Task prompt tokens: 2276
+[2025-06-09 21:56:35] max_new_tokens: 5000
+[2025-06-09 21:56:35] count_prompt_tokens (stream): 7471
+[2025-06-09 22:00:28] max_new_tokens: 500
+[2025-06-09 22:00:28] System prompt tokens: 5187
+[2025-06-09 22:00:28] Task prompt tokens: 3817
+[2025-06-09 22:00:28] max_new_tokens: 500
+[2025-06-09 22:00:28] count_prompt_tokens (stream): 9007
+[2025-06-09 22:01:32] _last_input_token_count: 9007
+[2025-06-09 22:01:32] Final output token count (streamed): 836
+[2025-06-09 22:01:32] Total token usage (stream): 9843 / 32768 (30.04%)
+[2025-06-09 22:01:32] max_new_tokens: 500
+[2025-06-09 22:01:32] System prompt tokens: 34
+[2025-06-09 22:01:32] Task prompt tokens: 8772
+[2025-06-09 22:02:37] _last_input_token_count: 8812
+[2025-06-09 22:02:37] _last_output_token_count: 500
+[2025-06-09 22:02:37] generated tokens: tensor([  1438,   2438,   4270,  17655,   1438,  17759,   1032,   1049,   1058,   1827,   5148,  28678,   2591,   1784,   9698,  14364,   1307,   1278,  36561,   1395,   2314,   1278,  11678,   1307, 119885,   1294,  15538,   5263,   1321,   7357,   6762,   1046,   1531,  31341,  72250,   1455,   1261,   6818, 119885,
+          1395,  20020,   1394, 105356,  19537,   1321,  36306,  12324,   1046,   1531,  31341,   8222,  11277,   1307,   2606,   1261,   8289, 119885,   1710,  63509,   8417,   1321,   2606,   1261,   6818, 119885,   1710,  50000,   8833,   1317,   4069,   5263,   1338,   1438,  17759,   1032,   1050,   1058,  12343,
+         26630,   1045,   6473,  46516,   3448,   1049,   1046,   1603,   6473,   1032,   1049,  24185,   1256,   1462,   1603,   3210,   3795,   1766,   1049,   1049,   1048,   1054,   1046,   1051,   1050,   1115,   1462,   1032,   1049,   1049,   1049,   1053,   1046,   1055,   1053,   1115,   1093,   2157,  11129,
+        102576,   1636,   1317,   4788,   1494,   1044,   1317,   9626,   1454,   1494,   1044,   1321,   1317,  29965,   1494,   1046,   5646,   1681,   2549,   1261, 119885,   3120,   1626,   1256,   1462,   1603,   1951,   2996,  71352,   3795,   1531,   3110,  27963,   1455,   1261, 119885,  16348,   8833,   4788,
+          1044,   9626,   1454,   1044,   1321,  29965,  19537,   1626,   1256,   1462,   1603,  27764,   1045,   6428,  32354,   3795,   2409,   3110,   1395, 126053,   1321,   5263,   1638,   1626,   1256,   1462,   1603,   9080,   3795,   2157,  23737,   9412,   1626,   1256,   1462,   1603,  19883,   2261,   1302,
+         27505,   3795,   3501,  18080,   6896,   1317,  26780,   1454,   1338,   1050,   1046,   1603,   6473,   1032,   1050,  24185,   1256,   1462,   1603,   3210,   3795,   1766,   1049,   1049,   1049,   1054,   1046,   1052,   1051,   1115,   1462,   1032,   1049,   1049,   1050,   1050,   1046,   1048,   1051,
+          1115,   1093,   3060,   1455,   1681,   5782,   1494,   1681,   4023,   1317,   2012,  11304,   2314,   7716,   2143,   5759,   1317,   2196,   1394,   1636,   1626,   1256,   1462,   1603,   1951,   2996,  71352,   3795,   1531,   3110,  72250,   1278,  11678,   1307,   7716,   1278,   5759,   1317,   2196,
+          1394,   1636,   1626,   1256,   1462,   1603,  27764,   1045,   6428,  32354,   3795,   2409,   3110,   1395, 126053,   1321,   5263,   1638,   1626,   1256,   1462,   1603,   9080,   3795,   2157,  23737,   9412,   1626,   1256,   1462,   1603,  19883,   2261,   1302,  27505,   3795,   3501,  18080,   6896,
+          1317,  26780,   1454,   1338,   1051,   1046,   1603,   6473,   1032,   1051,  24185,   1256,   1462,   1603,   3210,   3795,   1766,   1049,   1049,   1050,   1050,   1046,   1048,   1051,   1115,   1462,   1032,   1049,   1049,   1051,   1048,   1046,   1054,   1048,   1115,   1093,   3060,   1593,   7936,
+          2396, 119885,   1321,   5263,   1044,   1593,   1395,   1878,   4023,   1455,   1362,   2933,   1317,   5628,   1636,   1925,   1010,   1256,   1462,   1603,   1951,   2996,  71352,   3795,   1531,   3110,  55325,   1278,  11678,   1307,   1278,   7936,   2396, 119885,   1321,   5263,   1626,   1256,   1462,
+          1603,  27764,   1045,   6428,  32354,   3795,   2409,   3110,   1395, 126053,   1321,   5263,   1638,   1626,   1256,   1462,   1603,   9080,   3795,   2157,  23737,   9412,   1626,   1256,   1462,   1603,  19883,   2261,   1302,  27505,   3795,   3501,  18080,   6896,   1317,  26780,   1454,   1338,   1052,
+          1046,   1603,   6473,   1032,   1052,  24185,   1256,   1462,   1603,   3210,   3795,   1766,   1049,   1049,   1051,   1048,   1046,   1054,   1048,   1115,   1462,   1032,   1049,   1049,   1052,   1048,   1046,   1057,   1054,   1115,   1093,   2081,   3336,   2314,   2606,   2143, 119885,   5250,  10615,
+          4235,   5263,   1505,   1494,  59440,  29341,   1494,   1046,   4493,   2878,   1681,   2586,   4150,   1010,   1256,   1462,   1603,   1951,   2996,  71352,   3795,   1531,   3110,  55325,   1420,   3336,   2314,   2606, 119885,   1710,   5250,  74650], device='cuda:0')
+[2025-06-09 22:02:37] Total token usage: 9312 / 32768 (28.42%)
+[2025-06-09 22:02:37] count_prompt_tokens: 8812
+[2025-06-09 22:02:37] max_new_tokens: 500
+[2025-06-09 22:02:37] System prompt tokens: 5187
+[2025-06-09 22:02:37] Task prompt tokens: 3882
+[2025-06-09 22:02:37] max_new_tokens: 500
+[2025-06-09 22:02:37] count_prompt_tokens (stream): 9072
+[2025-06-09 22:03:06] max_new_tokens: 500
+[2025-06-09 22:03:06] System prompt tokens: 5187
+[2025-06-09 22:03:06] Task prompt tokens: 3817
+[2025-06-09 22:03:06] max_new_tokens: 500
+[2025-06-09 22:03:06] count_prompt_tokens (stream): 9007
+[2025-06-09 22:04:11] _last_input_token_count: 9007
+[2025-06-09 22:04:11] Final output token count (streamed): 836
+[2025-06-09 22:04:11] Total token usage (stream): 9843 / 32768 (30.04%)
+[2025-06-09 22:04:11] max_new_tokens: 500
+[2025-06-09 22:04:11] System prompt tokens: 34
+[2025-06-09 22:04:11] Task prompt tokens: 8772
+[2025-06-09 22:11:41] max_new_tokens: 5000
+[2025-06-09 22:11:41] System prompt tokens: 5257
+[2025-06-09 22:11:41] Task prompt tokens: 3882
+[2025-06-09 22:11:41] max_new_tokens: 5000
+[2025-06-09 22:11:41] count_prompt_tokens (stream): 9142
+[2025-06-09 22:20:20] max_new_tokens: 11000
+[2025-06-09 22:20:20] System prompt tokens: 5387
+[2025-06-09 22:20:20] Task prompt tokens: 3838
+[2025-06-09 22:20:20] max_new_tokens: 11000
+[2025-06-09 22:20:20] count_prompt_tokens (stream): 9228
+[2025-06-09 22:26:54] max_new_tokens: 11000
+[2025-06-09 22:26:54] System prompt tokens: 5473
+[2025-06-09 22:26:54] Task prompt tokens: 3795
+[2025-06-09 22:26:54] max_new_tokens: 11000
+[2025-06-09 22:26:54] count_prompt_tokens (stream): 9271
+[2025-06-09 22:33:19] max_new_tokens: 11000
+[2025-06-09 22:33:19] System prompt tokens: 5551
+[2025-06-09 22:33:19] Task prompt tokens: 3828
+[2025-06-09 22:33:19] max_new_tokens: 11000
+[2025-06-09 22:33:19] count_prompt_tokens (stream): 9382
+[2025-06-09 22:42:04] max_new_tokens: 11000
+[2025-06-09 22:42:04] System prompt tokens: 5507
+[2025-06-09 22:42:04] Task prompt tokens: 3774
+[2025-06-09 22:42:04] max_new_tokens: 11000
+[2025-06-09 22:42:04] count_prompt_tokens (stream): 9284
+[2025-06-09 22:44:21] max_new_tokens: 11000
+[2025-06-09 22:44:21] System prompt tokens: 5521
+[2025-06-09 22:44:21] Task prompt tokens: 3772
+[2025-06-09 22:44:21] max_new_tokens: 11000
+[2025-06-09 22:44:21] count_prompt_tokens (stream): 9296
+[2025-06-09 22:53:17] max_new_tokens: 11000
+[2025-06-09 22:53:17] System prompt tokens: 5878
+[2025-06-09 22:53:17] Task prompt tokens: 3837
+[2025-06-09 22:53:17] max_new_tokens: 11000
+[2025-06-09 22:53:17] count_prompt_tokens (stream): 9718
+[2025-06-09 22:57:51] max_new_tokens: 11000
+[2025-06-09 22:57:51] System prompt tokens: 5878
+[2025-06-09 22:57:51] Task prompt tokens: 3710
+[2025-06-09 22:57:51] max_new_tokens: 11000
+[2025-06-09 22:57:51] count_prompt_tokens (stream): 9591
+[2025-06-09 23:12:04] max_new_tokens: 11000
+[2025-06-09 23:12:04] System prompt tokens: 6083
+[2025-06-09 23:12:04] Task prompt tokens: 3690
+[2025-06-09 23:12:04] max_new_tokens: 11000
+[2025-06-09 23:12:04] count_prompt_tokens (stream): 9776
+[2025-06-09 23:15:50] max_new_tokens: 11000
+[2025-06-09 23:15:50] System prompt tokens: 6169
+[2025-06-09 23:15:50] Task prompt tokens: 3671
+[2025-06-09 23:15:50] max_new_tokens: 11000
+[2025-06-09 23:15:50] count_prompt_tokens (stream): 9843
+[2025-06-09 23:17:35] max_new_tokens: 11000
+[2025-06-09 23:17:35] System prompt tokens: 5986
+[2025-06-09 23:17:35] Task prompt tokens: 3855
+[2025-06-09 23:17:35] max_new_tokens: 11000
+[2025-06-09 23:17:35] count_prompt_tokens (stream): 9844
+[2025-06-09 23:21:25] max_new_tokens: 10000
+[2025-06-09 23:21:25] System prompt tokens: 5940
+[2025-06-09 23:21:25] Task prompt tokens: 3860
+[2025-06-09 23:21:25] max_new_tokens: 10000
+[2025-06-09 23:21:25] count_prompt_tokens (stream): 9803
+[2025-06-09 23:25:12] max_new_tokens: 10000
+[2025-06-09 23:25:12] System prompt tokens: 5937
+[2025-06-09 23:25:12] Task prompt tokens: 3805
+[2025-06-09 23:25:12] max_new_tokens: 10000
+[2025-06-09 23:25:12] count_prompt_tokens (stream): 9745
+[2025-06-09 23:31:21] max_new_tokens: 10000
+[2025-06-09 23:31:21] System prompt tokens: 5994
+[2025-06-09 23:31:21] Task prompt tokens: 3803
+[2025-06-09 23:31:21] max_new_tokens: 10000
+[2025-06-09 23:31:21] count_prompt_tokens (stream): 9800
+[2025-06-09 23:33:02] max_new_tokens: 10000
+[2025-06-09 23:33:02] System prompt tokens: 6002
+[2025-06-09 23:33:02] Task prompt tokens: 3792
+[2025-06-09 23:33:02] max_new_tokens: 10000
+[2025-06-09 23:33:02] count_prompt_tokens (stream): 9797
+[2025-06-09 23:36:15] max_new_tokens: 10000
+[2025-06-09 23:36:15] System prompt tokens: 5482
+[2025-06-09 23:36:15] Task prompt tokens: 3100
+[2025-06-09 23:36:15] max_new_tokens: 10000
+[2025-06-09 23:36:15] count_prompt_tokens (stream): 8585
+[2025-06-09 23:38:11] max_new_tokens: 10000
+[2025-06-09 23:38:11] System prompt tokens: 5503
+[2025-06-09 23:38:11] Task prompt tokens: 3087
+[2025-06-09 23:38:11] max_new_tokens: 10000
+[2025-06-09 23:38:11] count_prompt_tokens (stream): 8593
+[2025-06-09 23:41:13] max_new_tokens: 10000
+[2025-06-09 23:41:13] System prompt tokens: 5494
+[2025-06-09 23:41:13] Task prompt tokens: 2395
+[2025-06-09 23:41:13] max_new_tokens: 10000
+[2025-06-09 23:41:13] count_prompt_tokens (stream): 7892
+[2025-06-09 23:43:04] max_new_tokens: 10000
+[2025-06-09 23:43:04] System prompt tokens: 5919
+[2025-06-09 23:43:04] Task prompt tokens: 2729
+[2025-06-09 23:43:04] max_new_tokens: 10000
+[2025-06-09 23:43:04] count_prompt_tokens (stream): 8651
+[2025-06-09 23:50:31] max_new_tokens: 10000
+[2025-06-09 23:50:31] System prompt tokens: 5614
+[2025-06-09 23:50:31] Task prompt tokens: 2766
+[2025-06-09 23:50:31] max_new_tokens: 10000
+[2025-06-09 23:50:31] count_prompt_tokens (stream): 8383
+[2025-06-09 23:56:04] max_new_tokens: 10000
+[2025-06-09 23:56:04] System prompt tokens: 5620
+[2025-06-09 23:56:04] Task prompt tokens: 2743
+[2025-06-09 23:56:04] max_new_tokens: 10000
+[2025-06-09 23:56:04] count_prompt_tokens (stream): 8366
+[2025-06-10 00:01:04] max_new_tokens: 10000
+[2025-06-10 00:01:04] System prompt tokens: 4775
+[2025-06-10 00:01:04] Task prompt tokens: 2771
+[2025-06-10 00:01:04] max_new_tokens: 10000
+[2025-06-10 00:01:04] count_prompt_tokens (stream): 7549
+[2025-06-10 00:15:20] max_new_tokens: 10000
+[2025-06-10 00:15:20] System prompt tokens: 4775
+[2025-06-10 00:15:20] Task prompt tokens: 2919
+[2025-06-10 00:15:20] max_new_tokens: 10000
+[2025-06-10 00:15:20] count_prompt_tokens (stream): 7697
+[2025-06-10 00:18:39] max_new_tokens: 10000
+[2025-06-10 00:18:39] System prompt tokens: 5188
+[2025-06-10 00:18:39] Task prompt tokens: 3749
+[2025-06-10 00:18:39] max_new_tokens: 10000
+[2025-06-10 00:18:39] count_prompt_tokens (stream): 8940
+[2025-06-10 00:20:56] max_new_tokens: 10000
+[2025-06-10 00:20:56] System prompt tokens: 5214
+[2025-06-10 00:20:56] Task prompt tokens: 3741
+[2025-06-10 00:20:56] max_new_tokens: 10000
+[2025-06-10 00:20:56] count_prompt_tokens (stream): 8958
+[2025-06-10 00:24:14] max_new_tokens: 10000
+[2025-06-10 00:24:14] System prompt tokens: 5214
+[2025-06-10 00:24:14] Task prompt tokens: 4125
+[2025-06-10 00:24:14] max_new_tokens: 10000
+[2025-06-10 00:24:14] count_prompt_tokens (stream): 9342
+[2025-06-10 00:30:00] max_new_tokens: 10000
+[2025-06-10 00:30:00] System prompt tokens: 5214
+[2025-06-10 00:30:00] Task prompt tokens: 3621
+[2025-06-10 00:30:00] max_new_tokens: 10000
+[2025-06-10 00:30:00] count_prompt_tokens (stream): 8838
+[2025-06-10 00:30:28] max_new_tokens: 10000
+[2025-06-10 00:30:28] System prompt tokens: 5211
+[2025-06-10 00:30:28] Task prompt tokens: 3621
+[2025-06-10 00:30:28] max_new_tokens: 10000
+[2025-06-10 00:30:28] count_prompt_tokens (stream): 8835
+[2025-06-10 00:32:04] max_new_tokens: 10000
+[2025-06-10 00:32:04] System prompt tokens: 5211
+[2025-06-10 00:32:04] Task prompt tokens: 3621
+[2025-06-10 00:32:04] max_new_tokens: 10000
+[2025-06-10 00:32:04] count_prompt_tokens (stream): 8835
+[2025-06-10 00:35:27] max_new_tokens: 10000
+[2025-06-10 00:35:27] System prompt tokens: 4947
+[2025-06-10 00:35:27] Task prompt tokens: 3621
+[2025-06-10 00:35:27] max_new_tokens: 10000
+[2025-06-10 00:35:27] count_prompt_tokens (stream): 8571
+[2025-06-10 00:40:57] max_new_tokens: 10000
+[2025-06-10 00:40:57] System prompt tokens: 5042
+[2025-06-10 00:40:57] Task prompt tokens: 3703
+[2025-06-10 00:40:57] max_new_tokens: 10000
+[2025-06-10 00:40:57] count_prompt_tokens (stream): 8748
+[2025-06-10 00:45:54] max_new_tokens: 10000
+[2025-06-10 00:45:54] System prompt tokens: 4959
+[2025-06-10 00:45:54] Task prompt tokens: 3866
+[2025-06-10 00:45:54] max_new_tokens: 10000
+[2025-06-10 00:45:54] count_prompt_tokens (stream): 8828
+[2025-06-10 00:49:16] max_new_tokens: 10000
+[2025-06-10 00:49:16] System prompt tokens: 4973
+[2025-06-10 00:49:16] Task prompt tokens: 3895
+[2025-06-10 00:49:16] max_new_tokens: 10000
+[2025-06-10 00:49:16] count_prompt_tokens (stream): 8871
+[2025-06-10 00:58:46] max_new_tokens: 10000
+[2025-06-10 00:58:46] System prompt tokens: 6346
+[2025-06-10 00:58:46] Task prompt tokens: 2376
+[2025-06-10 00:58:46] max_new_tokens: 10000
+[2025-06-10 00:58:46] count_prompt_tokens (stream): 8725
+[2025-06-10 13:45:36] max_new_tokens: 5000
+[2025-06-10 13:45:36] System prompt tokens: 3925
+[2025-06-10 13:45:36] Task prompt tokens: 1645
+[2025-06-10 13:45:36] max_new_tokens: 5000
+[2025-06-10 13:45:36] count_prompt_tokens (stream): 5573
+[2025-06-10 13:46:08] _last_input_token_count: 5573
+[2025-06-10 13:46:08] Final output token count (streamed): 548
+[2025-06-10 13:46:08] Total token usage (stream): 6121 / 32768 (18.68%)
+[2025-06-10 13:52:19] max_new_tokens: 5000
+[2025-06-10 13:52:19] System prompt tokens: 4105
+[2025-06-10 13:52:19] Task prompt tokens: 1645
+[2025-06-10 13:52:19] max_new_tokens: 5000
+[2025-06-10 13:52:19] count_prompt_tokens (stream): 5753
+[2025-06-10 13:52:47] _last_input_token_count: 5753
+[2025-06-10 13:52:47] Final output token count (streamed): 501
+[2025-06-10 13:52:47] Total token usage (stream): 6254 / 32768 (19.09%)
+[2025-06-10 13:54:38] max_new_tokens: 5000
+[2025-06-10 13:54:38] System prompt tokens: 4105
+[2025-06-10 13:54:38] Task prompt tokens: 2459
+[2025-06-10 13:54:38] max_new_tokens: 5000
+[2025-06-10 13:54:38] count_prompt_tokens (stream): 6567
+[2025-06-10 13:55:14] _last_input_token_count: 6567
+[2025-06-10 13:55:14] Final output token count (streamed): 611
+[2025-06-10 13:55:14] Total token usage (stream): 7178 / 32768 (21.91%)
+[2025-06-10 13:56:24] max_new_tokens: 5000
+[2025-06-10 13:56:24] System prompt tokens: 4137
+[2025-06-10 13:56:24] Task prompt tokens: 2495
+[2025-06-10 13:56:24] max_new_tokens: 5000
+[2025-06-10 13:56:24] count_prompt_tokens (stream): 6635
+[2025-06-10 13:58:01] max_new_tokens: 5000
+[2025-06-10 13:58:01] System prompt tokens: 4137
+[2025-06-10 13:58:01] Task prompt tokens: 2490
+[2025-06-10 13:58:01] max_new_tokens: 5000
+[2025-06-10 13:58:01] count_prompt_tokens (stream): 6630
+[2025-06-10 14:01:57] max_new_tokens: 5000
+[2025-06-10 14:01:57] System prompt tokens: 4137
+[2025-06-10 14:01:57] Task prompt tokens: 2484
+[2025-06-10 14:01:57] max_new_tokens: 5000
+[2025-06-10 14:01:57] count_prompt_tokens (stream): 6624
+[2025-06-10 14:05:20] max_new_tokens: 5000
+[2025-06-10 14:05:20] System prompt tokens: 4040
+[2025-06-10 14:05:20] Task prompt tokens: 2459
+[2025-06-10 14:05:20] max_new_tokens: 5000
+[2025-06-10 14:05:20] count_prompt_tokens (stream): 6502
+[2025-06-10 14:09:32] max_new_tokens: 5000
+[2025-06-10 14:09:32] System prompt tokens: 4096
+[2025-06-10 14:09:32] Task prompt tokens: 2459
+[2025-06-10 14:09:32] max_new_tokens: 5000
+[2025-06-10 14:09:32] count_prompt_tokens (stream): 6558
+[2025-06-10 14:14:09] max_new_tokens: 5000
+[2025-06-10 14:14:09] System prompt tokens: 4170
+[2025-06-10 14:14:09] Task prompt tokens: 2459
+[2025-06-10 14:14:09] max_new_tokens: 5000
+[2025-06-10 14:14:09] count_prompt_tokens (stream): 6632
+[2025-06-10 14:18:34] max_new_tokens: 5000
+[2025-06-10 14:18:34] System prompt tokens: 4260
+[2025-06-10 14:18:34] Task prompt tokens: 2459
+[2025-06-10 14:18:34] max_new_tokens: 5000
+[2025-06-10 14:18:34] count_prompt_tokens (stream): 6722
+[2025-06-10 14:20:36] max_new_tokens: 5000
+[2025-06-10 14:20:36] System prompt tokens: 4306
+[2025-06-10 14:20:36] Task prompt tokens: 2459
+[2025-06-10 14:20:36] max_new_tokens: 5000
+[2025-06-10 14:20:36] count_prompt_tokens (stream): 6768
+[2025-06-10 14:25:33] max_new_tokens: 5000
+[2025-06-10 14:25:33] System prompt tokens: 4346
+[2025-06-10 14:25:33] Task prompt tokens: 2459
+[2025-06-10 14:25:33] max_new_tokens: 5000
+[2025-06-10 14:25:33] count_prompt_tokens (stream): 6808
+[2025-06-10 14:26:06] _last_input_token_count: 6808
+[2025-06-10 14:26:06] Final output token count (streamed): 535
+[2025-06-10 14:26:06] Total token usage (stream): 7343 / 32768 (22.41%)
+[2025-06-10 14:27:19] max_new_tokens: 5000
+[2025-06-10 14:27:19] System prompt tokens: 4327
+[2025-06-10 14:27:19] Task prompt tokens: 2459
+[2025-06-10 14:27:19] max_new_tokens: 5000
+[2025-06-10 14:27:19] count_prompt_tokens (stream): 6789
+[2025-06-10 14:27:59] _last_input_token_count: 6789
+[2025-06-10 14:27:59] Final output token count (streamed): 695
+[2025-06-10 14:27:59] Total token usage (stream): 7484 / 32768 (22.84%)
+[2025-06-10 14:47:39] max_new_tokens: 5000
+[2025-06-10 14:47:39] System prompt tokens: 4061
+[2025-06-10 14:47:39] Task prompt tokens: 2459
+[2025-06-10 14:47:39] max_new_tokens: 5000
+[2025-06-10 14:47:39] count_prompt_tokens (stream): 6523
+[2025-06-10 14:51:09] max_new_tokens: 5000
+[2025-06-10 14:51:09] System prompt tokens: 4059
+[2025-06-10 14:51:09] Task prompt tokens: 2459
+[2025-06-10 14:51:09] max_new_tokens: 5000
+[2025-06-10 14:51:09] count_prompt_tokens (stream): 6521
+[2025-06-10 14:51:53] _last_input_token_count: 6521
+[2025-06-10 14:51:53] Final output token count (streamed): 748
+[2025-06-10 14:51:53] Total token usage (stream): 7269 / 32768 (22.18%)
+[2025-06-10 14:58:29] max_new_tokens: 5000
+[2025-06-10 14:58:29] System prompt tokens: 3628
+[2025-06-10 14:58:29] Task prompt tokens: 2571
+[2025-06-10 14:58:29] max_new_tokens: 5000
+[2025-06-10 14:58:29] count_prompt_tokens (stream): 6202
+[2025-06-10 14:59:04] _last_input_token_count: 6202
+[2025-06-10 14:59:04] Final output token count (streamed): 608
+[2025-06-10 14:59:04] Total token usage (stream): 6810 / 32768 (20.78%)
+[2025-06-10 15:04:46] max_new_tokens: 5000
+[2025-06-10 15:04:46] System prompt tokens: 3812
+[2025-06-10 15:04:46] Task prompt tokens: 2150
+[2025-06-10 15:04:46] max_new_tokens: 5000
+[2025-06-10 15:04:46] count_prompt_tokens (stream): 5965
+[2025-06-10 15:07:37] max_new_tokens: 5000
+[2025-06-10 15:07:37] System prompt tokens: 3816
+[2025-06-10 15:07:37] Task prompt tokens: 2460
+[2025-06-10 15:07:37] max_new_tokens: 5000
+[2025-06-10 15:07:37] count_prompt_tokens (stream): 6279
+[2025-06-10 15:15:57] max_new_tokens: 10000
+[2025-06-10 15:15:57] System prompt tokens: 3877
+[2025-06-10 15:15:57] Task prompt tokens: 2370
+[2025-06-10 15:15:57] max_new_tokens: 10000
+[2025-06-10 15:15:57] count_prompt_tokens (stream): 6250
+[2025-06-10 15:17:22] _last_input_token_count: 6250
+[2025-06-10 15:17:22] Final output token count (streamed): 1371
+[2025-06-10 15:17:22] Total token usage (stream): 7621 / 32768 (23.26%)
+[2025-06-10 15:17:22] max_new_tokens: 10000
+[2025-06-10 15:17:23] System prompt tokens: 3877
+[2025-06-10 15:17:23] Task prompt tokens: 2328
+[2025-06-10 15:17:23] max_new_tokens: 10000
+[2025-06-10 15:17:23] count_prompt_tokens (stream): 6208
+[2025-06-10 15:40:44] _last_input_token_count: 6208
+[2025-06-10 15:40:44] Final output token count (streamed): 15666
+[2025-06-10 15:40:44] Total token usage (stream): 21874 / 32768 (66.75%)
+[2025-06-10 15:40:45] max_new_tokens: 10000
+[2025-06-10 15:40:45] System prompt tokens: 34
+[2025-06-10 15:40:45] Task prompt tokens: 24793
