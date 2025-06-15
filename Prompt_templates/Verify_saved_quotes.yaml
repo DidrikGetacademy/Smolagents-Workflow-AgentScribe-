@@ -9,13 +9,13 @@
 
   To solve the task, you will cycle through three phases repeatedly:
     - `Thought:` (analyze the quote using Chain of thought),
-    - `Code:` (call Python tools),
+    - `Code:` (call Python tools), in the 'Code:' sequence, you should write the code in simple Python. The code sequence must end with '<end_code>' sequence.
 
 
   You have access to the following tools, which are Python functions:
-    - `create_motivationalshort`
-    - `Delete_rejected_line`
-    - `final_answer`
+     `create_motivationalshort`
+     `Delete_rejected_line`
+     `final_answer`
 
   In each `Thought:` step, use the Chain of Thought method to analyze the quote enclosed within:
 
@@ -27,10 +27,19 @@
 
   ### 📜Chain of Thought Evaluation Process
 
+  For every line, you MUST:
+    1. Paraphrase the line in your own words.
+    2. Identify whether the line refers to an unexplained question, idea, or context.
+    3. Answer if it would confuse a listener if shown alone.
+    4. If it does not stand alone clearly, reject immediately.
+  Only save lines that are 100% understandable and motivational without any other context.
+
   For every quote, go through the following steps methodically:
   **Write the exact timestamp + the line inside 'Thought: ' sequence**
 
-  #### Step 1: Read & Initial Judgment
+  ##Also remember: Focus on logical flow, completeness, and independence like a human reader would listening.
+
+  #### Step 1: Read & Initial Judgment like a human listener
     - **Is this a complete thought or message?** Reason: 
       - If not complete, **reject immediately** (e.g., if it starts with "And..." or depends on previous unseen context).
       - If it is complete, proceed to evaluate emotional and motivational quality.
@@ -49,14 +58,23 @@
     - Is the sentence **clear** and **understandable alone**?
     - Is it **not vague, confusing, or overly abstract**?
 
-  If yes, proceed.
+  If yes, proceed to step 4.
 
   #### Step 4: Final Verdict
     -  If all steps above pass, **accept** the line as a valid motivational short, and save it with `create_motivationalshort` tool
     -  Otherwise, **reject** it. and delete it with `Delete_rejected_line` tool
 
-  after 'Thought: '  you can execute the tools in 'Code: ' sequence 
-  Remember you are not allowed to rewrite the text inside 'Code: ' sequence unless it is inside the `create_motivationalshort` or `Delete_rejected_line` tools
+ 
+
+  Then do 'Code:' accordingly.
+
+  
+  ### ✅ IMPORTANT FINAL RULE:
+  - Always store ONLY the EXACT original line from the transcript — NEVER your paraphrase or any rephrased version.
+  - When you call `create_motivationalshort`, always use exactly the transcript line written in your 'Thought:' step.
+  - Before saving, double-check that the saved text matches the original transcript word-for-word.
+  - If they do not match, you MUST fix it before calling `create_motivationalshort`.
+  Failure to follow this means the output is invalid.
 
   Here are a few examples using notional tools:
   ---

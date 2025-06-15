@@ -179,24 +179,24 @@ class ChunkLimiterTool(Tool):
         i = 0
 
         while i < len(lines):
-            line = lines[i].strip()
-            if not line:
-                i += 1
-                continue
+            line = lines[i]
+            line_len = len(line)
 
             # if adding this line would exceed max_chars, stop here
-            if total_len + len(line) > max_chars and chunk_lines:
+            if total_len + line_len > max_chars and chunk_lines:
                 break
+
+
 
             chunk_lines.append(line)
             total_len += len(line) + 1  # +1 for newline
             i += 1
 
         # Prepare chunk text
-        chunk = "\n".join(f"Line:{idx+1} {line}" for idx, line in enumerate(chunk_lines))
+        chunk = "".join(lines[i:])
 
         # Save the remaining lines back to file
-        remainder = "\n".join(lines[i:]).lstrip()
+        remainder = "".join(lines[i:])
         with open(self.saved_file_path, "w", encoding="utf-8") as f:
             f.write(remainder)
 
