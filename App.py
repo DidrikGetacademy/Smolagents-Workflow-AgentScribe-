@@ -355,7 +355,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
     from basicsr.archs.rrdbnet_arch import RRDBNet
     from realesrgan import RealESRGANer
     model = RRDBNet(num_in_ch=3, num_out_ch=3, num_feat=64,num_block=23, num_grow_ch=32, scale=2)
-    bg_upsampler = RealESRGANer( model_path=r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\gfpgan\weights\RealESRGAN_x2plus.pth", model=model, scale=2)
+    bg_upsampler = RealESRGANer( model_path=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\gfpgan\weights\RealESRGAN_x2plus.pth", model=model, scale=2)
     restored_frames = []
     from gfpgan import GFPGANer
     gfpganer = GFPGANer(model_path=r'C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\gfpgan\weights\GFPGANv1.4.pth', upscale=1, arch='clean', channel_multiplier=2, bg_upsampler=bg_upsampler)
@@ -537,19 +537,20 @@ def get_current_videourl() -> str:
 
 
 def parse_multiline_block(block_text):
+    log(f"block_text: {block_text}")
     lines = [line.strip() for line in block_text.strip().splitlines() if line.strip()]
     line = [line for line in lines if line.startswith('[')]
-    print(f"[parse_multiline_block] lines={lines}")
-    print(f"[parse_multiline_block] line=[{line}]")
+    log(f"[parse_multiline_block] lines={lines}")
+    log(f"[parse_multiline_block] line=[{line}]")
     if not lines:
         return None, None, 
     
     start_time, _ = parse_timestamp_line(line[0])
-    print(f"start_time: {start_time}")
+    log(f"start_time: {start_time}")
 
     _, end_time = parse_timestamp_line(line[-1])
 
-    print(f"end_time: {end_time}")
+    log(f"end_time: {end_time}")
         
     return start_time, end_time
 
@@ -610,13 +611,13 @@ def get_current_textfile() -> str:
      global _current_agent_saving_file 
      return _current_agent_saving_file
 
-def wait_for_proccessed_video_complete(queue: Queue, check_interval=40):
+def wait_for_proccessed_video_complete(queue: Queue, check_interval=5):
      """Blocks until the queue is empty, checking every `check_interval` seconds."""
-     log(f"\n\n\n\n\n\n[wait_for_proccessed_video_complete]")
+     print(f"\n\n\n\n\n\n[wait_for_proccessed_video_complete]")
      while not queue.empty():
           log(f"waiting for video_task_que to be empty: items remaining: {queue.qsize()}")
           time.sleep(check_interval)
-     log("✅ video_task_que is now empty.")
+     print("✅ video_task_que is now empty.")
 
 
 @tool
@@ -630,19 +631,13 @@ def create_motivationalshort(text: str) -> None:
                 [start_time - end_time] actual text here.
                 ===END_QUOTE===
         """
-        log(f"\n\n\n[CREATE_MOTIVATIONALSHORT]")
-        match = re.search(r"\[([0-9.]+)s\s*-\s*([0-9.]+)s\]\s*(.+)", text.strip(), re.DOTALL)
-        # start_time, end_time = parse_multiline_block(text)
-        # log(f"[start_time: {start_time}, end_time: {end_time}]   FROM : SaveMotivationalQuote")
+        log(f"\n[CREATE_MOTIVATIONALSHORT]   text sent in: {text}")
+        try:
+            start_time, end_time = parse_multiline_block(text)
+            log(f"[start_time: {start_time}, end_time: {end_time}]   FROM : create_motivationalshort")
+        except Exception as e:
+             log(f" Error during [parse_multiline_block]: {str(e)}")
                 
-
-
-        if not match:
-             raise ValueError("invalid text format. ensure it includes the exact timestamp  a timestamp like  exsample: [1187.35s - 1191.89s] followed by the quote.")
-        
-        start_time = float(match.group(1))
-        end_time = float(match.group(2))
-        quote_text = match.group(3).strip()
 
         if start_time is None or end_time is None:
              log("start_time is None or end_time is None")
@@ -653,8 +648,8 @@ def create_motivationalshort(text: str) -> None:
         log(f"Starting video creation for {video_url} from {start_time}s to {end_time}s")
 
         try:
-            log(f"Queued video task: url={video_url}, start={start_time}, end={end_time}, text='{quote_text}'")
-            video_task_que.put((video_url, start_time, end_time, quote_text))
+            log(f"Queued video task: url={video_url}, start={start_time}, end={end_time}, text='{text}'")
+            video_task_que.put((video_url, start_time, end_time, text))
         except Exception as e:
              log(f"Error addng to queue: {str(e)}")
 
@@ -688,7 +683,7 @@ def Delete_rejected_line(text: str) -> None:
 def verify_saved_text_agent(agent_saving_path):
     set_current_textfile(agent_saving_path)
     global Global_model
-    loaded_verify_saved_text_prompt = r'C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Prompt_templates\Verify_saved_quotes.yaml'
+    loaded_verify_saved_text_prompt = r'C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Prompt_templates\Verify_saved_quotes.yaml'
     with open(loaded_verify_saved_text_prompt, 'r', encoding='utf-8') as f:
             Prompt_template = yaml.safe_load(f)
 
@@ -698,17 +693,20 @@ def verify_saved_text_agent(agent_saving_path):
         tools=[create_motivationalshort,Delete_rejected_line,final_answer],
         max_steps=1,
         prompt_templates=Prompt_template,
+        stream_outputs=True
     )
 
     with open(agent_saving_path, "r", encoding="utf-8") as f:
              saved_quotes_text = f.read()
 
-    task = f"""Analyze all the lines, reject the lines that are not valid/suitable for a standalone motivational shorts video by using `Delete_rejected_line` tool and run  `create_motivationalshort` tool for each of those that are valid 
+    task = f"""Analyze all the lines but do it line for line, step by step, 
+    reject the lines that are not valid/suitable for a standalone motivational shorts video by using `Delete_rejected_line` tool and run  `create_motivationalshort` tool for each of those that are valid 
     now start step by step chain of thought reasoning over the lines:
     [{saved_quotes_text}] 
     """
 
     create_motivational_short_agent.run(task=task)
+    del create_motivational_short_agent
 
 
         
@@ -721,7 +719,7 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
     log(f"✅ Entered Transcript_Reasoning_AGENT() transcript_path: {transcripts_path}, agent_txt_saving_path: {agent_txt_saving_path}")
     ModelCountRun = 0
     global Global_model
-    loaded_reasoning_agent_prompts = r'C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Prompt_templates\smolagents_prompt.yaml'
+    loaded_reasoning_agent_prompts = r'C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Prompt_templates\test.yaml'
     with open(loaded_reasoning_agent_prompts, 'r', encoding='utf-8') as f:
             Prompt_template = yaml.safe_load(f)
 
@@ -736,20 +734,20 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
     )
     chunk_limiter = ChunkLimiterTool()
 
-    print(f"transcript_path that is being proccessed inside func[Transcript_Reasoning_Agent]: {transcripts_path}")
+    log(f"transcript_path that is being proccessed inside func[Transcript_Reasoning_Agent]: {transcripts_path}")
     transcript_title = os.path.basename(transcripts_path)
-    print(f"transcript title: {transcript_title}")
-    print(f"\nProcessing new transcript: {transcripts_path}")
+    log(f"transcript title: {transcript_title}")
+    log(f"\nProcessing new transcript: {transcripts_path}")
     with open(agent_txt_saving_path, "a", encoding="utf-8") as out:
         out.write(f"\n--- Transcript Title: {transcript_title} ---\n")
 
     chunk_limiter.reset()
     while True:
         try:
-            print(f"transcript_path for chunk tool : {transcripts_path}")
+            log(f"transcript_path for chunk tool : {transcripts_path}")
             chunk = chunk_limiter.forward(file_path=transcripts_path, max_chars=5000)
         except Exception as e:
-                print(f"Error during chunking from file {transcripts_path}: {e}")
+                log(f"Error during chunking from file {transcripts_path}: {e}")
                 break
 
         if not chunk.strip():
@@ -758,36 +756,45 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
                 break
         
         log(f"[The current ModelCountRun]: {ModelCountRun}")
-        if  ModelCountRun >= 4:
+        if  ModelCountRun >= 2:
                 del Reasoning_Text_Agent
                 verify_saved_text_agent(agent_txt_saving_path)
                 ModelCountRun = 0
                 wait_for_proccessed_video_complete(video_task_que)
-                continue
+       
+
 
 
         task = f"""
-          You are an expert at identifying  powerful, share-worthy snippets from motivational podcast transcripts.
+                    You are an expert at identifying  powerful, share-worthy snippets from motivational podcast transcripts.
                     Your job is to:
-
-                    1. Read the transcript chunk below and internally reason through its overall message.
-                    2. Extract only those lines or combinding lines  that:
+                         1. Read the transcript chunk below and internally reason through its overall message.
+                         2. Understand the connection between the lines. and what they are saying. This will happend internally and not in 'Thought: ' sequence.
+                         Remember do not save any text that does not provide a complete thought. the goal is that this text will be used as a motivational shorts video. before you save the text you identified,  ask yourself if you were a listener, would you understand it.
+                    2. Extract only those lines or passages that:
                         • Stand alone with full context (no missing setup).  
                         • Pack a punch of advice, insight, or inspiration.  
-                        • Are memorable enough to anchor a motivational short video with length: 10-20 seconds.
+                        • Are memorable enough to anchor a motivational short video.
+                        • Are complete thoughts or sentences, that if the text you decide to save were isolated from the rest would provide a complete thought and understanding for the listener.
+                        • A complete thought is that the overall meaning of the setence/text does not miss any context like exsample of lacking context is that it starts with (and, but, etc).
 
-                    Do NOT save generic fluff — the transcript as a whole is already motivational.
-                    include the exact timestamp and the connected lines for that timestamp if you decide to save any of the text!
+                    Do NOT save generic fluff—the transcript as text in chunk is already motivational.
+                    the text you choose too save needs to be complete and would result in a max  10-20 seconds motivational shorts video 
+                    IF you no text is identified. nothing that could be a standalone moitvational short, only provide `final_answer` tool stating that, this will also successfully achieve the task.
 
-                    Now begin analysing  (chain of thought) on the following text: 
+                    In the 'Thought: ' sequence. write a short summary describing the overall context of the chunk and then explain shortly what text you are looking for to save in order to fufill the task then procceed in 'Code: ' sequence  with the text to save after you internally have analyzed it all.
+ 
+
+                    You must have analyzed entire chunk before any saving. and then save all identified text
+
+
+                    Here is the chunk/text you will analyze:
 
                     [chunk start]\n
                      {chunk}  
-                    \n[chunk end]
-
-            
+                    \n[chunk end]  
             """
-      #  ModelCountRun += 1
+        ModelCountRun += 1
         result = Reasoning_Text_Agent.run(
                 task=task,
                 additional_args={"text_file": agent_txt_saving_path}
@@ -801,7 +808,7 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
 
 
 
-log_file_path = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\debug_performance\transcription_log.txt"
+log_file_path = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\debug_performance\transcription_log.txt"
 
 def log(msg):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -876,8 +883,11 @@ def transcribe_single_video(video_path, device):
         tool.device = device
         tool.setup()
 
-        
-        result_txt_path = tool.forward({"audio": audio_path, "text_path": txt_output_path, "video_path": video_path})
+        try:
+             print(f"starting TRANSCRIPTION")
+             result_txt_path = tool.forward({"audio": audio_path, "text_path": txt_output_path, "video_path": video_path})
+        except Exception as e:
+             print(f"error during transcribing: {str(e)}")
         elapsed_time = time.time() - start_time 
         log(f"⏱️ Transcription took {elapsed_time:.2f} seconds for {video_path} on device {device}")
 
@@ -906,7 +916,7 @@ def gpu_worker():
             trust_remote_code=True,
             device_map="auto",
             torch_dtype="auto",
-            max_new_tokens=10000,
+            max_new_tokens=2000,
         )
     log(f"Loaded Global_model on device")
 
@@ -925,7 +935,8 @@ def gpu_worker():
         log(f"GPU lock acquired by gpu_worker for {video_path_url}")
 
         try:
-            Transcript_Reasoning_AGENT(transcript_text_path, agent_txt_saving_path)
+            verify_saved_text_agent(agent_saving_path=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\Mindset Reset： Take Control of Your Mental Habits ｜ The Mel Robbins Podcast\agent_saving_path.txt")
+           # Transcript_Reasoning_AGENT(transcript_text_path, agent_txt_saving_path)
             log(f"Transcript_Reasoning_AGENT has exited...")
         finally:
             log(f"GPU lock released by gpu_worker for {video_path_url}")
@@ -968,8 +979,6 @@ if __name__ == "__main__":
 
     gpu_thread.start()
 
-  
-    transcript_queue.put(None) 
 
     transcript_queue.join() 
     gpu_thread.join()

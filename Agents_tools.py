@@ -157,13 +157,10 @@ class ChunkLimiterTool(Tool):
 
 
     def forward(self, file_path: str, max_chars: int) -> str:
+        import re
 
-        import re  # make sure this is imported at the top
         if self.called:
-            raise Exception(
-                "ChunkLimiterTool was already called in this reasoning step. "
-                "You must wait for the ReasoningAgent to finish processing before calling this tool again."
-            )
+            raise Exception("ChunkLimiterTool was already called in this reasoning step.")
         self.called = True
 
         if file_path:
@@ -172,34 +169,39 @@ class ChunkLimiterTool(Tool):
             raise ValueError("file_path must be provided the first time ChunkLimiterTool is used.")
 
         with open(self.saved_file_path, "r", encoding="utf-8") as f:
-            text = f.read()
+            lines = f.readlines()
 
-        if not text.strip():
+        if not lines:
             return ""
 
-        split_idx = text.rfind("\n", 0, max_chars)
-        if split_idx == -1:
-            split_idx = min(len(text), max_chars)
+        chunk_lines = []
+        total_len = 0
+        i = 0
 
-        raw_chunk = text[:split_idx].strip()
-        remainder = text[split_idx:].lstrip()
+        while i < len(lines):
+            line = lines[i].strip()
+            if not line:
+                i += 1
+                continue
 
-        # --- New logic: split on timestamp markers ---
-        timestamp_split_regex = r'(?=\[\d+\.\d+s\s*-\s*\d+\.\d+s\])'
-        chunk_lines = re.split(timestamp_split_regex, raw_chunk)
-        
+            # if adding this line would exceed max_chars, stop here
+            if total_len + len(line) > max_chars and chunk_lines:
+                break
 
+            chunk_lines.append(line)
+            total_len += len(line) + 1  # +1 for newline
+            i += 1
 
-        chunk = "\n".join(
-     
-            f"Line:{i+1}  {line.strip()}.\n"
-            for i, line in chunk_lines if line.strip()
-        )
+        # Prepare chunk text
+        chunk = "\n".join(f"Line:{idx+1} {line}" for idx, line in enumerate(chunk_lines))
 
+        # Save the remaining lines back to file
+        remainder = "\n".join(lines[i:]).lstrip()
         with open(self.saved_file_path, "w", encoding="utf-8") as f:
             f.write(remainder)
 
         return chunk
+
 
 
 

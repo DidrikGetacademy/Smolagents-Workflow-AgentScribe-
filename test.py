@@ -44,7 +44,7 @@ def SaveMotivationalText(text: str, text_file: str) -> None:
 def test():
 
         Global_model = TransformersModel(
-                model_id = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\deepseek-llm-7b-chat",
+                model_id = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Ministral-8B-Instruct-2410",
                 load_in_4bit=True,
                 trust_remote_code=True,
                 device_map="auto",
@@ -145,9 +145,12 @@ def test():
                     the text you choose too save needs to be complete and would result in a max  10-20 seconds motivational shorts video 
                     IF you no text is identified. nothing that could be a standalone moitvational short, only provide `final_answer` tool stating that.
 
-                    In the 'Thought: ' sequence. Explain your goal to successfully achieve the task provided and also explain that you have understood the core task and what you are going to do.
+                    In the 'Thought: ' sequence. summarize the overall thought of the chunk and then explain shortly what you need to do in order to successfully achieve the task
                     Remember: DO NOT repeat or rewrite the chunk in your 'Thought:' sequence.  
-                    Only summarize your plan and your reasoning. Violating this rule will cause failure.
+                    Only summarize your plan and explain what to do in order to successfully achieve the task . Violating this rule will cause failure.
+                    REMEMBER: do not write text --> then repeat the chunk
+
+                    You must have analyzed entire chunk before any saving. and then save all identified text
 
 
                     Here is the chunk/text you will analyze: 
@@ -159,7 +162,7 @@ def test():
 
 
 
-        agent_txt_saving_path = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\saving_path.txt"
+        agent_txt_saving_path = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\saving_path.txt"
         Reasoning_Text_Agent.run(task=task,additional_args={"text_file": agent_txt_saving_path})
 
 
