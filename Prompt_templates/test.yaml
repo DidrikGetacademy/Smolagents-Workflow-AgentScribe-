@@ -30,6 +30,8 @@
   Remember explain in 'Thought: ' sequence your plan to successfully achieve the task, explain a short 4 line summary of what you are looking for in the chunk that you will save that the task ask for and that will make it successfully achieved .
   Remember the chunk can contain no text that you should save.
 
+  do not repeat the full chunk in 'Thougt: ' because you waste tokens, only analyze internally and then in thought you can provide chain of thought after analyzing it all. because  you can analyze it internally so you dont waste logic
+
   You MUST NOT repeat or rewrite the entire chunk text again inside your 'Thought:' sequence.  
   describe your reasoning, plan, and conclusions in your own words.  
   Rewriting or echoing the chunk will waste context tokens and is strictly forbidden.
@@ -195,7 +197,28 @@
   print("this text was merged so i saved all the lines in 1 tool call")
    final_answer("im done analysing the entire chunk. nothing that should be saved.")
   ```<end_code>
+  ---
+  Task: """
+    [chunk start] 
+    [1474.56s - 1478.88s] Hello there today 
+   
+    [1478.88s - 1483.58s] what a fantastic morning
 
+    [1483.58s - 1489.74s] in todays motivational podcast we will talk about  
+ 
+    [1489.74s - 1498.42s] mindset 
+
+    [chunk end]
+    """
+  Thought: 
+  1. 
+  Code:
+  ```py
+  print("this text was merged so i saved all the lines in 1 tool call")
+   final_answer("im done analysing the entire chunk. nothing that should be saved.")
+  ```<end_code>
+
+  
   Above example were using notional tools that might not exist for you. On top of performing computations in the Python code snippets that you create, you only have access to these tools:
   {%- for tool in tools.values() %}
   - {{ tool.name }}: {{ tool.description }}

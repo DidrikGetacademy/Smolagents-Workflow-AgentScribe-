@@ -203,7 +203,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
             txt_clip = TextClip(
                 text=chunk,
                 font=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Utils-Video_creation\Fonts\OpenSans-VariableFont_wdth,wght.ttf", 
-                font_size=30,
+                font_size=45,
                 margin=(10, 10), 
                 text_align="center" ,
                 vertical_align="center",
@@ -214,7 +214,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
                 size=(1000, None),
                 method="label",
                 duration=chunk_duration
-            ).with_position(('center', 0.55), relative=True
+            ).with_position(('center', 0.60), relative=True
             ).with_start(start)
             text_clips.append(txt_clip)
             log_Creation(f"appending: {txt_clip}")
@@ -229,7 +229,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
         prev_cx, prev_cy = None, None
         cropped_frames = []
         onnx_path_gpu = r"c:\Users\didri\Desktop\LLM-models\Face-Detection-Models\yolov8x-face-lindevs_cuda.onnx"
-        providers = ['CUDAExecutionProvider','CPUExecutionProvider'] 
+        providers = ['CUDAExecutionProvider'] 
         sess_options = ort.SessionOptions()
         sess_options.log_severity_level = 0
         session = ort.InferenceSession(onnx_path_gpu, sess_options, providers=providers)
@@ -369,7 +369,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
     try:
         for frame in tqdm(sharpened_frames, desc="GFPGAN Upscaling", unit="frame"):
 
-            _, _, restored = gfpganer.enhance( frame, has_aligned=False, only_center_face=True, paste_back=True, weight=0.5)
+            _, _, restored = gfpganer.enhance( frame, has_aligned=False, only_center_face=True, weight=0.8)
             log_Creation(f"restored_frames: {restored_frames}")
 
             restored_frames.append(restored)
@@ -486,12 +486,10 @@ global count
 count = 0
 def run_video_short_creation_thread(video_url,start_time,end_time,text):
         global count
-        with count_lock:
-            current_count = count
-            count += 1
+        count += 1
+        current_count = count
         try:
             log_Creation(f"RUNNING --> [run_video_short_creation_thead]: video_url: {video_url}, start_time: {start_time}, end_time: {end_time}")
-            count += 1
             text_video_path = video_url
             text_video_start_time = start_time
             text_video_endtime = end_time
@@ -621,7 +619,7 @@ def get_current_textfile() -> str:
      global _current_agent_saving_file 
      return _current_agent_saving_file
 
-def wait_for_proccessed_video_complete(queue: Queue, check_interval=5):
+def wait_for_proccessed_video_complete(queue: Queue, check_interval=60):
      """Blocks until the queue is empty, checking every `check_interval` seconds."""
      print(f"\n\n\n\n\n\n[wait_for_proccessed_video_complete]")
      while not queue.empty():
@@ -660,6 +658,10 @@ def create_motivationalshort(text: str) -> None:
         try:
             log_Creation(f"Queued video task: url={video_url}, start={start_time}, end={end_time}, text='{text}'")
             video_task_que.put((video_url, start_time, end_time, text))
+            Delete_rejected_line(text)
+            global count 
+            count +=1
+            
         except Exception as e:
              log_Creation(f"Error addng to queue: {str(e)}")
 
@@ -767,10 +769,10 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
                 break
         
         log(f"[The current ModelCountRun]: {ModelCountRun}")
-        if  ModelCountRun >= 4:
+        if  ModelCountRun >= 1:
                 verify_saved_text_agent(agent_txt_saving_path)
-                ModelCountRun = 0
                 wait_for_proccessed_video_complete(video_task_que)
+                ModelCountRun = 0
 
        
 
@@ -796,7 +798,7 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
                     In the 'Thought: ' sequence. write a short summary describing the overall context of the chunk and then explain shortly what text you are looking for to save in order to fufill the task then procceed in 'Code: ' sequence  with the text to save after you internally have analyzed it all.
  
 
-                    You must have analyzed entire chunk before any saving. and then save all identified text
+                    You must have analyzed, Focus on logical flow, completeness, and independence like a human reader on the text in chunk before any saving. and then save all identified text if any is present else provide only `final_answer`
 
 
                     Here is the chunk/text you will analyze:

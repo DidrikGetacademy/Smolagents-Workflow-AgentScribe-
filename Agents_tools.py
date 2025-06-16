@@ -157,8 +157,6 @@ class ChunkLimiterTool(Tool):
 
 
     def forward(self, file_path: str, max_chars: int) -> str:
-        import re
-
         if self.called:
             raise Exception("ChunkLimiterTool was already called in this reasoning step.")
         self.called = True
@@ -182,20 +180,18 @@ class ChunkLimiterTool(Tool):
             line = lines[i]
             line_len = len(line)
 
-            # if adding this line would exceed max_chars, stop here
+            # If adding this line would exceed the limit AND we already have at least one line, stop
             if total_len + line_len > max_chars and chunk_lines:
                 break
 
-
-
+            # Otherwise, add the line
             chunk_lines.append(line)
-            total_len += len(line) + 1  # +1 for newline
+            total_len += line_len
             i += 1
 
-        # Prepare chunk text
-        chunk = "".join(lines[i:])
+        chunk = "".join(chunk_lines)
 
-        # Save the remaining lines back to file
+        # Save remaining lines back to file
         remainder = "".join(lines[i:])
         with open(self.saved_file_path, "w", encoding="utf-8") as f:
             f.write(remainder)
