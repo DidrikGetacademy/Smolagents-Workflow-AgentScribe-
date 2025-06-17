@@ -57,7 +57,7 @@ def  clear_queue(q: Queue):
           q.unfinished_tasks = 0
 
 
-def change_saturation(frame ,mode="Increase", amount=0.5):
+def change_saturation(frame ,mode="Increase", amount=0.2):
      if mode == "Increase":
         hsv = cv2.cvtColor(frame, cv2.COLOR_RGB2HSV).astype(np.float32)
         hsv[..., 1]  *= (1.0 + amount)
@@ -74,6 +74,37 @@ def change_saturation(frame ,mode="Increase", amount=0.5):
      return changed_frames
 
 
+def enhance_detail_and_sharpness(frame_bgr, clarity_factor=1.0, sharpen_amount=0.5):
+    """
+    Kombinerer detail layer clarity + mild sharpen på ett bilde.
+    
+    Args:
+        frame_bgr: Inngangsbilde (BGR)
+        clarity_factor: Hvor sterkt detail layer boostes (0.0–2.0)
+        sharpen_amount: Hvor mye mild sharpen (0.0–2.0)
+    Returns:
+        Forbedret bilde (BGR)
+    """
+
+    # === 1) Detail Layer (Clarity) ===
+    # Bruk bilateral filter for å lage en glatt versjon
+    smooth = cv2.bilateralFilter(frame_bgr, d=9, sigmaColor=75, sigmaSpace=75)
+
+    # Trekker smooth ut av original for å få detaljene
+    detail_layer = cv2.subtract(frame_bgr, smooth)
+
+    # Booster detaljene
+    boosted_detail = cv2.addWeighted(detail_layer, clarity_factor, detail_layer, 0, 0)
+
+    # Legger detaljene tilbake til originalen
+    clarity_frame = cv2.add(frame_bgr, boosted_detail)
+
+    # === 2) Mild sharpen ===
+    # Unsharp mask: original + (original - blur)
+    blur = cv2.GaussianBlur(clarity_frame, (0, 0), 3)
+    sharpened = cv2.addWeighted(clarity_frame, 1.0 + sharpen_amount, blur, -sharpen_amount, 0)
+
+    return sharpened
 
 def sharpen_frame_naturally(frame_bgr):
             from PIL import ImageFilter,Image
@@ -345,12 +376,13 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 
     cropped_frames = detect_and_crop_frames_batch(frames=frames,batch_size=6)
 
-    sharpened_frames = []
+    enchanced_frames = []
     for frame in cropped_frames:
          frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-         sharpened_bgr = sharpen_frame_naturally(frame_bgr)
-         sharpened_rgb = cv2.cvtColor(sharpened_bgr,cv2.COLOR_BGR2RGB)
-         sharpened_frames.append(sharpened_rgb)
+         enchanced_frame = enhance_detail_and_sharpness(frame, clarity_factor=1.2, sharpen_amount=0.8)
+
+         enchanced_rgb_frame = cv2.cvtColor(enchanced_frame,cv2.COLOR_BGR2RGB)
+         enchanced_frames.append(enchanced_rgb_frame)
     log_Creation(f"done appending sharpened frames")
 
 
@@ -362,6 +394,8 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
     from realesrgan import RealESRGANer 
     model = RRDBNet(num_in_ch=3, num_out_ch=3, num_feat=64,num_block=23, num_grow_ch=32, scale=2)
 
+
+
     bg_upsampler = RealESRGANer(model_path=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\gfpgan\weights\RealESRGAN_x2plus.pth", model=model, scale=2)
     restored_frames = []
     from gfpgan import GFPGANer
@@ -369,7 +403,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
     try:
         for frame in tqdm(sharpened_frames, desc="GFPGAN Upscaling", unit="frame"):
 
-            _, _, restored = gfpganer.enhance( frame, has_aligned=False, only_center_face=True, weight=0.8)
+            _, _, restored = gfpganer.enhance( frame, has_aligned=False, only_center_face=True, weight=0.4)
             log_Creation(f"restored_frames: {restored_frames}")
 
             restored_frames.append(restored)
@@ -377,15 +411,48 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
     except Exception as e:
          log_Creation(f"Error during upscaling.. {str(e)}")
 
+
+    from GPEN.face_enhancement import FaceEnhancement
+    class Args:
+            model='GPEN-BFR-512',
+            task='FaceEnhancement',
+            key=None,
+            in_size=512,
+            out_size=None,
+            channel_multiplier=2,
+            narrow=1,
+            alpha=1,
+            use_sr=True,
+            use_cuda=True,
+            save_face=False,
+            aligned=False,
+            sr_model='realesrnet', 
+            sr_scale=2,
+            tile_size=0,
+            indir='examples/imgs',
+            outdir='results/outs-BFR',
+            ext='.jpg'
+
+    Skin_texture_enchancement = FaceEnhancement(Args, in_size=Args.in_size, model=Args.model, use_sr=Args.use_sr, device=Args.use_cuda)
+    output_frames = []
+    try:
+         for frame in tqdm(restored_frames, desc="GFPGAN Upscaling", unit="frame"):
+              frame_bgr = cv2.cvtColor(frame,cv2.COLOR_RGB2BGR)
+              enchanced_frame, _, _ = Skin_texture_enchancement.process(frame_bgr)
+              output_frames.append(enchanced_frame)
+              print(f"Appended enchanced_frame(GPEN)")
+             
+    except Exception as e:
+         print(f"Error during (FACE-Enchancement) with GPEN")
+    
     if change_on_saturation != None and change_saturation == "Increase":
-            restored_frames = [change_saturation(frame,mode=change_on_saturation, amount=0.5) for frame in restored_frames]
+            Final_frames = [change_saturation(frame,mode=change_on_saturation, amount=0.2) for frame in output_frames]
 
     elif change_on_saturation != None and change_on_saturation == "Decrease":
-            restored_frames = [change_saturation(frame,mode=change_on_saturation, amount=0.5) for frame in restored_frames]
-
+            Final_frames = [change_saturation(frame,mode=change_on_saturation, amount=0.2) for frame in output_frames]
 
     try:
-       processed_clip = ImageSequenceClip(restored_frames, fps=clip.fps).with_duration(clip.duration)
+       processed_clip = ImageSequenceClip(Final_frames, fps=clip.fps).with_duration(clip.duration)
     except Exception as e:
          log_Creation(f"error during video setup")
     

@@ -6,27 +6,58 @@ from transformers import (
     DataCollatorForLanguageModeling,
     Trainer,
     TrainingArguments,
+    TrainerCallback
 )
 from datasets import load_dataset
 from peft import LoraConfig, get_peft_model
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from peft import LoraConfig, get_peft_model,prepare_model_for_kbit_training
 
-from transformers import Trainer, TrainingArguments
+import inspect
+import transformers
+from transformers import TrainingArguments
+from transformers.integrations import TensorBoardCallback
+from transformers import BitsAndBytesConfig
+print("🤖 transformers version:", transformers.__version__)
+print("🤖 transformers module path:", transformers.__file__)
+print("🤖 TrainingArguments signature:", inspect.signature(TrainingArguments.__init__))
+
+
+
+
+print(transformers.__version__)  
+# ────────── Custom callback to log metrics ─────────────────────────────────────
+class LoggingCallback(TrainerCallback):
+    def on_log(self, args, state, control, logs=None, **kwargs):
+        # logs is a dict, e.g. {"loss":..., "learning_rate":..., "eval_loss":...}
+        step = state.global_step
+        epoch = state.epoch
+        msg = [f"step={step}", f"epoch={epoch:.2f}"]
+        for k,v in logs.items():
+            msg.append(f"{k}={v:.4f}")
+        print(" | ".join(msg))
+
+
+
 
 logging.basicConfig(
-    format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(name)s - %(message)s", level=logging.INFO
 )
 logger = logging.getLogger(__name__)
-from transformers import BitsAndBytesConfig
+
+
+
 
 quant_config = BitsAndBytesConfig(
     load_in_8bit=True,
     llm_int8_threshold=6.0,         # example thresholds you can tune
     llm_int8_has_fp16_weight=False  # optional
 )
+
+
+
+
+
 CONFIG = {
     "model_name": r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Ministral-8B-Instruct-2410",
     "dataset_path": r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\Dataset_detecting_motivationalquotes_from_chunk\Mistrail_dataset\mistrail_finetune.jsonl",
@@ -40,7 +71,7 @@ CONFIG = {
     "logging_steps": 50,
     "save_steps": 500,
     "fp16": True,
-    "max_seq_length": 4096,
+    "max_seq_length": 3025,
     # LoRA specific params:
     "lora_r": 16,
     "lora_alpha": 32,
@@ -96,7 +127,7 @@ def main():
 
     # Prepare model for int8 training (if using load_in_8bit)
     model = prepare_model_for_kbit_training(model)
-
+    model.config.use_cache = False
     # Setup LoRA config
     lora_config = LoraConfig(
         r=CONFIG['lora_r'],
@@ -135,10 +166,15 @@ def main():
         push_to_hub=False,
         logging_dir=os.path.join(CONFIG['output_dir'], "logs"),
         report_to=["tensorboard"],
-        save_strategy="steps",
-        evaluation_strategy="steps",
-        eval_steps=CONFIG['save_steps'],  
+        save_strategy="epoch",
+        eval_strategy="epoch",
+        logging_strategy="steps",
+        eval_steps=CONFIG['save_steps'], 
         load_best_model_at_end=True,
+        label_names=["labels"],  
+         metric_for_best_model="eval_loss",
+        greater_is_better=False
+               
     )
 
     trainer = Trainer(
@@ -147,6 +183,7 @@ def main():
         train_dataset=tokenized_train_ds,
         eval_dataset=tokenized_eval_ds,
         data_collator=data_collator,
+        callbacks=[LoggingCallback(), TensorBoardCallback()],
     )
 
     logger.info("Starting LoRA fine-tuning...")
@@ -161,12 +198,8 @@ def main():
 
 
 if __name__ == "__main__":
-
-    
-    # Load dataset first to check it loads correctly
-    ds = load_dataset("json", data_files={"train": CONFIG["dataset_path"]})["train"]
-    print(f"🚀 Loaded dataset with {len(ds)} examples. Sample:")
-    print(ds[0])  # print first example
-    
-    # Now run the main training function
     main()
+
+
+# tensorboard --logdir path/to/Finjustert/logs
+# and navigate to http://localhost:6006 to visualize everything.
