@@ -221,7 +221,34 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
     def split_subtitles_into_chunks(text, max_words=3):
         words = text.split()
         return [' '.join(words[i:i + max_words]) for i in range(0, len(words), max_words)]
-    
+#     1. Use Forced Alignment (speech-text alignment tools)
+# Tools like Gentle, Montreal Forced Aligner, or Aeneas take the audio + subtitle text and give you word-level timings.
+
+# This is the most precise way but requires audio processing and extra tooling.
+
+# Output would be timestamps for each word, so chunk timestamps can be built exactly from those.
+
+# 2. Approximate by splitting duration proportionally by word count
+# If you don't want to process audio, you can assume uniform distribution of the subtitle duration across words.
+
+# For example:
+
+# Subtitle line duration = 6 seconds
+
+# Number of words = 12
+
+# Each word ~ 0.5 seconds
+
+# Then you sum durations per chunk (3 words * 0.5s = 1.5s per chunk), and assign start times accordingly.
+
+# This is what you already do, but it can be off if speech is uneven.
+
+# 3. Use punctuation or natural breaks to improve splitting
+# If subtitle lines contain punctuation, you might segment chunks on punctuation to better guess timing (e.g., pauses at commas or periods).
+
+# Then distribute time proportionally among chunks based on text length or estimated speaking time.
+
+
     def create_subtitles(txt,duration,clip_relative_start):
         uppercase_subtitles = txt.upper()
         chunks = split_subtitles_into_chunks(uppercase_subtitles)
@@ -788,9 +815,21 @@ def verify_saved_text_agent(agent_saving_path):
     create_motivational_short_agent.run(task=task)
     del create_motivational_short_agent
 
+def save_full_io_to_file(input_chunk: str, reasoning_steps: list[str], model_response: str, file_path: str) -> None:
+    with open(file_path, "a", encoding="utf-8") as f:
+        f.write("===INPUT CHUNK START===\n")
+        f.write(input_chunk.strip() + "\n")
+        f.write("===INPUT CHUNK END===\n\n")
 
-        
+        f.write("===REASONING STEPS===\n")
+        for step in reasoning_steps:
+            f.write(step + "\n")
+        f.write("\n")
 
+        f.write("===MODEL RESPONSE START===\n")
+        f.write(model_response.strip() + "\n")
+        f.write("===MODEL RESPONSE END===\n\n")
+        f.write("------------------------------------------------------------------------\n\n\n")
 
 
 
@@ -820,9 +859,27 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
     log(f"\nProcessing new transcript: {transcripts_path}")
     with open(agent_txt_saving_path, "a", encoding="utf-8") as out:
         out.write(f"\n--- Transcript Title: {transcript_title} ---\n")
+   
+        
+    def save_thought_and_code(step_output):
+            text = getattr(step_output, "model_output", "") or ""
+            
+            thought = ""
+            code = ""
+            if "Thought:" in text and "Code:" in text:
+                thought = text.split("Thought:")[1].split("Code:")[0].strip()
+                code = text.split("Code:")[1].strip()
+            else:
+                code = text.strip()
+            
+            reasoning_log.append(f"Thought:\n{thought}\n\nCode:\n{code}\n\n")
 
+   
+    reasoning_log = []
+    Reasoning_Text_Agent.step_callbacks.append(save_thought_and_code)
     chunk_limiter.reset()
     while True:
+        reasoning_log.clear()
         try:
             log(f"transcript_path for chunk tool : {transcripts_path}")
             chunk = chunk_limiter.forward(file_path=transcripts_path, max_chars=5000)
@@ -836,15 +893,12 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
                 break
         
         log(f"[The current ModelCountRun]: {ModelCountRun}")
-        if  ModelCountRun >= 1:
-                verify_saved_text_agent(agent_txt_saving_path)
-                wait_for_proccessed_video_complete(video_task_que)
-                ModelCountRun = 0
+        # if  ModelCountRun >= 1:
+        #         verify_saved_text_agent(agent_txt_saving_path)
+        #         wait_for_proccessed_video_complete(video_task_que)
+        #         ModelCountRun = 0
 
        
-
-
-
         task = f"""
                     You are an expert at identifying  powerful, share-worthy snippets from motivational podcast transcripts.
                     Your job is to:
@@ -874,13 +928,28 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
                      {chunk}  
                     \n[chunk end]  
             """
-        ModelCountRun += 1
+        
+
+   
+
+
+
+
+
+      #  ModelCountRun += 1
         result = Reasoning_Text_Agent.run(
                 task=task,
                 additional_args={"text_file": agent_txt_saving_path}
             )
         print(f"[Path to where the [1. reasoning agent ] saves the motivational quotes  ]: {agent_txt_saving_path}")
         print(f"Agent response: {result}\n")
+        save_full_io_to_file(
+            input_chunk=chunk,
+            reasoning_steps=reasoning_log,
+            model_response=result,
+            file_path=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\data.txt"
+        )
+
         chunk_limiter.called = False 
 
 

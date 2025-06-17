@@ -7,12 +7,6 @@ texts_to_insert = [
 
 
     """,
-    
-    """
-
-
-    """,
-
 ]
 
 def insert_text_between_chunks(prompt_text, insert_text):
@@ -27,7 +21,7 @@ def insert_text_between_chunks(prompt_text, insert_text):
 
 def process_jsonl(input_file, output_file, texts):
     with open(input_file, "r", encoding="utf-8") as fin, \
-         open(output_file, "w", encoding="utf-8") as fout:
+         open(output_file, "a", encoding="utf-8") as fout:
         for i, line in enumerate(fin):
             line = line.strip()
             if not line:
@@ -42,6 +36,6 @@ def process_jsonl(input_file, output_file, texts):
             fout.write(json.dumps(obj, ensure_ascii=False) + "\n")
 
 if __name__ == "__main__":
-    input_path = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\input.jsonl"
+    input_path = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\input_no_text_save.jsonl"
     output_path = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\output.jsonl"
     process_jsonl(input_path, output_path, texts_to_insert)
