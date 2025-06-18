@@ -34,6 +34,10 @@ import torch
 import datetime
 import re 
 from queue import Queue
+pynvml.nvmlInit()
+handle = pynvml.nvmlDeviceGetHandleByIndex(0)
+mem_info = pynvml.nvmlDeviceGetMemoryInfo(handle)
+print(f"Total Used: {mem_info.used/1e9:.1f}GB")
 Chunk_saving_text_file = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Logging_and_filepaths\saved_transcript_storage.txt"
 Final_saving_text_file=r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Logging_and_filepaths\final_saving_motivational.txt"
 model_path_SwinIR_color_denoise15_pth = r"c:\Users\didri\Desktop\LLM-models\Video-upscale-models\SwinIR-M_noise15.pth"
@@ -46,6 +50,35 @@ gpu_lock = threading.Lock()
 transcript_queue = queue.Queue()
 count_lock = threading.Lock()
 
+_current_video_url: str = None
+def set_current_videourl(url: str):
+    global _current_video_url
+    _current_video_url = url
+
+def get_current_videourl() -> str:
+    global _current_video_url
+    return _current_video_url
+
+
+
+_current_audio_url: str = None
+def set_current_audio_path(url: str):
+     global _current_audio_url
+     _current_audio_url = url
+     log(f"[set_current_audio_path]: {_current_audio_url}")
+
+def get_current_audio_path() -> str:
+     global _current_audio_url
+     return _current_audio_url
+
+
+def set_current_textfile(url: str):
+    global _current_agent_saving_file
+    _current_agent_saving_file = url
+
+def get_current_textfile() -> str:
+     global _current_agent_saving_file 
+     return _current_agent_saving_file
 #- en idee er at man har en ekstra agent som kan gå igjennom alle lagde videoclips til slutt og ser om det går ann og lage noe montage, en shorts video som innholder motivational quotes/advices fra videoklips (resultat blir da at agenten  velger rekkefølge  på videoen som skal slå sammen til 1. video, med tanke at (det skal være motiverende og det må passe sammen)
 def create_motivational_montage_agent(clips: List[str], output_path: str):
     return 
@@ -221,32 +254,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
     def split_subtitles_into_chunks(text, max_words=3):
         words = text.split()
         return [' '.join(words[i:i + max_words]) for i in range(0, len(words), max_words)]
-#     1. Use Forced Alignment (speech-text alignment tools)
-# Tools like Gentle, Montreal Forced Aligner, or Aeneas take the audio + subtitle text and give you word-level timings.
 
-# This is the most precise way but requires audio processing and extra tooling.
-
-# Output would be timestamps for each word, so chunk timestamps can be built exactly from those.
-
-# 2. Approximate by splitting duration proportionally by word count
-# If you don't want to process audio, you can assume uniform distribution of the subtitle duration across words.
-
-# For example:
-
-# Subtitle line duration = 6 seconds
-
-# Number of words = 12
-
-# Each word ~ 0.5 seconds
-
-# Then you sum durations per chunk (3 words * 0.5s = 1.5s per chunk), and assign start times accordingly.
-
-# This is what you already do, but it can be off if speech is uneven.
-
-# 3. Use punctuation or natural breaks to improve splitting
-# If subtitle lines contain punctuation, you might segment chunks on punctuation to better guess timing (e.g., pauses at commas or periods).
-
-# Then distribute time proportionally among chunks based on text length or estimated speaking time.
 
 
     def create_subtitles(txt,duration,clip_relative_start):
@@ -428,7 +436,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
     from gfpgan import GFPGANer
     gfpganer = GFPGANer(model_path=r'C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\gfpgan\weights\GFPGANv1.4.pth', upscale=1, arch='clean', channel_multiplier=2, bg_upsampler=bg_upsampler)
     try:
-        for frame in tqdm(sharpened_frames, desc="GFPGAN Upscaling", unit="frame"):
+        for frame in tqdm(enchanced_frames, desc="GFPGAN Upscaling", unit="frame"):
 
             _, _, restored = gfpganer.enhance( frame, has_aligned=False, only_center_face=True, weight=0.4)
             log_Creation(f"restored_frames: {restored_frames}")
@@ -618,26 +626,6 @@ def run_video_short_creation_thread(video_url,start_time,end_time,text):
 
 
 
-
-pynvml.nvmlInit()
-handle = pynvml.nvmlDeviceGetHandleByIndex(0)
-mem_info = pynvml.nvmlDeviceGetMemoryInfo(handle)
-print(f"Total Used: {mem_info.used/1e9:.1f}GB")
-_current_video_url: str = None
-def set_current_videourl(url: str):
-    global _current_video_url
-    _current_video_url = url
-
-
-def get_current_videourl() -> str:
-    global _current_video_url
-    return _current_video_url
-
-
-
-
-
-
 def parse_multiline_block(block_text):
     log(f"block_text: {block_text}")
     lines = [line.strip() for line in block_text.strip().splitlines() if line.strip()]
@@ -666,7 +654,6 @@ def parse_timestamp_line(line):
         return float(match.group(1)), float(match.group(2))
     else:
         return None, 
-
 
 
 @tool
@@ -705,13 +692,6 @@ def video_creation_worker():
 
 
 
-def set_current_textfile(url: str):
-    global _current_agent_saving_file
-    _current_agent_saving_file = url
-
-def get_current_textfile() -> str:
-     global _current_agent_saving_file 
-     return _current_agent_saving_file
 
 def wait_for_proccessed_video_complete(queue: Queue, check_interval=60):
      """Blocks until the queue is empty, checking every `check_interval` seconds."""
@@ -722,6 +702,26 @@ def wait_for_proccessed_video_complete(queue: Queue, check_interval=60):
      print("✅ video_task_que is now empty.")
 
 
+
+def verify_start_time_end_time_text(audio, start_time,end_time,text):
+     """ Whisper model that verifies/ensures the correct start_time - end_time of video/text"""
+     tool = SpeechToTextTool()
+     tool.device = "cuda"
+     tool.setup()
+
+
+     ###LOGIKK HERR 
+     
+     
+     final_start_time = None
+     final_end_time = None
+     
+     return final_start_time,final_end_time,text 
+     
+
+
+
+
 @tool
 def create_motivationalshort(text: str) -> None:
         """
@@ -729,9 +729,9 @@ def create_motivationalshort(text: str) -> None:
 
         Args:
             text (str): The input text for the motivational short. It must include a timestamped quote in the format:
-                ===START_QUOTE===
+                ===START_TEXT===
                 [start_time - end_time] actual text here.
-                ===END_QUOTE===
+                ===END_TEXT===
         """
         log_Creation(f"\n[CREATE_MOTIVATIONALSHORT]   text sent in: {text}")
         try:
@@ -745,6 +745,11 @@ def create_motivationalshort(text: str) -> None:
              log_Creation("start_time is None or end_time is None")
              raise ValueError(f"start_time or end_time is None, start_time: {start_time}, end_time: {end_time}")
         
+
+        log(f"[verify_start_time_end_time_text]  text: {text}, \n start_time: {start_time}, end_time: {end_time}")
+        
+        audio_path = get_current_audio_path()
+        verify_start_time_end_time_text(audio=audio_path,text=text, start_time=start_time,end_time=end_time)
         video_url = get_current_videourl()
         log_Creation(f"Video URL from get_current_videourl: {video_url}")
         log_Creation(f"Starting video creation for {video_url} from {start_time}s to {end_time}s")
@@ -767,9 +772,9 @@ def Delete_rejected_line(text: str) -> None:
         """  Deletes lines from the current text file that match the given text.
         Args:
             text: The line to delete (i.e., considered rejected/not valid) Format: 
-              ===START_QUOTE=== 
+              ===START_TEXT=== 
               [start_time - end_time] actual text here. 
-              ===END_QUOTE===      
+              ===END_TEXT===      
         """
         log(f"\n\n\n\n\n[Delete_rejected_line] text into func: {text}")
         text_file = get_current_textfile()
@@ -893,10 +898,10 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
                 break
         
         log(f"[The current ModelCountRun]: {ModelCountRun}")
-        # if  ModelCountRun >= 1:
-        #         verify_saved_text_agent(agent_txt_saving_path)
-        #         wait_for_proccessed_video_complete(video_task_que)
-        #         ModelCountRun = 0
+        if  ModelCountRun >= 6:
+                verify_saved_text_agent(agent_txt_saving_path)
+                wait_for_proccessed_video_complete(video_task_que)
+                ModelCountRun = 0
 
        
         task = f"""
@@ -915,6 +920,7 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
                     Do NOT save generic fluff—the transcript as text in chunk is already motivational.
                     the text you choose too save needs to be complete and would result in a max  10-20 seconds motivational shorts video 
                     IF you no text is identified. nothing that could be a standalone moitvational short, only provide `final_answer` tool stating that, this will also successfully achieve the task.
+                    Always confirm that the text saved also include the exact timestamps [start time - End time] text...
 
                     In the 'Thought: ' sequence. write a short summary describing the overall context of the chunk and then explain shortly what text you are looking for to save in order to fufill the task then procceed in 'Code: ' sequence  with the text to save after you internally have analyzed it all.
  
@@ -924,19 +930,12 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
 
                     Here is the chunk/text you will analyze:
 
-                    [chunk start]\n
+                     [chunk start]\n
                      {chunk}  
                     \n[chunk end]  
-            """
-        
+                      """
 
-   
-
-
-
-
-
-      #  ModelCountRun += 1
+        ModelCountRun += 1
         result = Reasoning_Text_Agent.run(
                 task=task,
                 additional_args={"text_file": agent_txt_saving_path}
@@ -1018,6 +1017,7 @@ def transcribe_single_video(video_path, device):
             audio_path
         ]
         subprocess.run(ffmpeg_cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        set_current_audio_path(audio_path)
         log(f"Extracted audio → {audio_path}")
     except subprocess.CalledProcessError:
         log(f"❌ Audio extraction failed for {video_path}")
@@ -1074,7 +1074,7 @@ def gpu_worker():
             trust_remote_code=True,
             device_map="auto",
             torch_dtype="auto",
-            max_new_tokens=3000,
+            max_new_tokens=5000,
         )
     log(f"Loaded Global_model on device")
 
@@ -1142,3 +1142,4 @@ if __name__ == "__main__":
     worker_thread.join()
 
 
+###Transcript reason agent starter ikke med engang når den er ferdig og transcribe ?? hvorfor ??

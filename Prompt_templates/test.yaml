@@ -26,6 +26,16 @@
   All the steps must be in the 'Thought' sequence before any CODE
 
   Remember that you must include all timestamps from each line in the `SaveMotivationalText` tool call. so if multiple lines are merged because it provides a complete thought you must include all the timestamps 
+  Under no circumstances omit or alter timestamps. Each saved snippet must have the exact original timestamps covering all merged lines
+  So for example, if a line is:
+  [1418.90s - 1419.58s] And one of the things
+  and you want to save only “one of the things” (a substring of the line), you must still save the full timestamp [1418.90s - 1419.58s] for that line, even though you didn’t save the entire text of the line.
+  Example of correct saving format with timestamps:
+  If merging these lines:
+  [2134.23s - 2135.87s] the only reason you are not living the life you want to live
+  [2135.87s - 2138.59s] is because you day by day keep feeding the life that you don’t want to live
+  You must save them together in one call, preserving all timestamps exactly:
+  Exsample with correct timestamps: SaveMotivationalText(text="[2134.23s - 2135.87s] the only reason you are not living the life you want to live [2135.87s - 2138.59s] is because you day by day keep feeding the life that you don’t want to live", text_file=text_file)
 
   Remember explain in 'Thought: ' sequence your plan to successfully achieve the task, explain a short 4 line summary of what you are looking for in the chunk that you will save that the task ask for and that will make it successfully achieved .
   Remember the chunk can contain no text that you should save.
@@ -150,7 +160,7 @@
   Thought: okay i will first explain my understanding of achieving the task successfully by describing what text im looking for in order to fufill the task successfully.. then conclude what to save or not. I found a complete text from the chunk that provides a powerful thought/quote. it's complete and i will include the text and exact timestamp from the chunk.
   Code:
   ```py
-   text = "[2134.23s - 2135.87s] the only reason you are not living the life you want to live [2135.87s - 2138.59s] is because you day by day keep on feeding the life you don't want to live. "
+   text = "[2134.23s - 2135.87s] the only reason you are not living the life you want to live [2135.87s - 2138.59s] is because you day by day keep on feeding the life you don't [2138.59s - 2141.07s] want to live. "
    SaveMotivationalText(text=text, text_file=text_file)
    final_answer("im done analysing the entire chunk and i have identified 1 quote from this transcript")
   ```<end_code>
@@ -179,7 +189,7 @@
    final_answer("im done analysing the entire chunk and i have identified 1 text that could be standalone for motivational short")
   ```<end_code>
   ---
-  Task: """
+  Task: """ Your task is to analyze a transcript understand it's full context and use your chain of thought to identify any possible powerful quotes/messages
     [chunk start] 
     [1474.56s - 1478.88s] Hello there today 
    
@@ -198,26 +208,48 @@
    final_answer("im done analysing the entire chunk. nothing that should be saved.")
   ```<end_code>
   ---
-  Task: """
+  Task: """ 
     [chunk start] 
-    [1474.56s - 1478.88s] Hello there today 
-   
-    [1478.88s - 1483.58s] what a fantastic morning
-
-    [1483.58s - 1489.74s] in todays motivational podcast we will talk about  
- 
-    [1489.74s - 1498.42s] mindset 
-
+      [2115.36s - 2116.12s] Success and wealth  
+      [2116.12s - 2116.18s] comes from creating space
+      [2116.18s - 2116.36s] for opportunity. 
+      [2116.36s - 2116.56s] about
+      [2116.56s - 2117.04s] meditation
+      [2117.04s - 2117.74s] and Tom
+      [2117.74s - 2117.92s] is a
+      [2117.92s - 2118.02s] very
+      [2118.02s - 2118.42s] science
     [chunk end]
     """
-  Thought: 
-  1. 
+  Thought: Identified 1 powerful text, now i will include all the timestamps to the connected text that provide the complete text.
   Code:
   ```py
-  print("this text was merged so i saved all the lines in 1 tool call")
-   final_answer("im done analysing the entire chunk. nothing that should be saved.")
+  text = "[2115.36s - 2116.12s] Success and wealth [2116.12s - 2116.18s] comes from creating space [2116.18s - 2116.36s] for opportunity.   "
+   SaveMotivationalText(text=text, text_file=text_file)
+   final_answer("im done analysing the entire chunk, i identified 1 powerful text, i included the exact timestamp from chunk and  nothing more that should be save.")
   ```<end_code>
-
+  ---
+  Task: """
+    [chunk start] 
+    
+      [2115.36s - 2116.12s] Did you forget 
+      [2116.12s - 2116.18s] this is true
+      [2116.18s - 2116.36s] i remember when 
+      [2116.36s - 2116.56s] Your only limit is the one 
+      [2116.56s - 2117.04s] you set yourself—break
+      [2117.04s - 2117.74s] free from doubts and reach
+      [2117.74s - 2117.92s] beyond what you thought 
+      [2117.92s - 2118.02s] possible
+      [2118.02s - 2118.42s] science
+    [chunk end]
+    """
+  Thought: after analyzing the full chunk i identified 1 powerful text i will remember to include the exact timestamp from chunk and the text connected to that timestamp...
+  Code:
+  ```py
+  text = " [2116.36s - 2116.56s] Your only limit is the one [2116.56s - 2117.04s] you set yourself—break [2117.04s - 2117.74s] free from doubts and reach  [2117.74s - 2117.92s] beyond what you thought [2117.92s - 2118.02s] possible  "
+   SaveMotivationalText(text=text, text_file=text_file)
+   final_answer("im done analysing the entire chunk, i identified 1 powerful text, i included the exact timestamp from chunk and  nothing more that should be save.")
+  ```<end_code>
   
   Above example were using notional tools that might not exist for you. On top of performing computations in the Python code snippets that you create, you only have access to these tools:
   {%- for tool in tools.values() %}
@@ -258,7 +290,63 @@
   19. Remember. Do not save any incomplete thoughts or text that if isolated would not provide complete context on it's own.
   20. DO NO rewrite the chunk in the 'Thought: ' sequences
   21. Remember to always include the exact timestamp for the text lines you are  saving, if any lines was merged you must provide all timestamps and texts in the `SaveMotivationalText` tool
+  22. Always preserve the original punctuation and formatting of the text lines when saving.— This avoids unintended meaning changes or loss of emphasis.
+  23. Always confirm that the timestamps for saved text cover the full span of the merged lines exactly as in the chunk, without overlaps or gaps.
+  
+  24. YOU must understand what text you are looking for: 
+    Here is a description/examples of text to show you what you are looking for:
+    ✅ GOOD EXAMPLES (longer, richer motivational quotes):
+      [1122.03s - 1130.60s] Believe in yourself even when no one else does; your inner strength will carry you through the toughest battles.
+      [1132.00s - 1140.20s] Your only limit is the one you set yourself—break free from doubts and reach beyond what you thought possible.
+      [1142.10s - 1150.55s] Success is not a straight line; it is forged by relentless effort, learning from failures, and never giving up on your dreams.
+      [1152.00s - 1159.50s] Every challenge you face is an opportunity to grow stronger, smarter, and more resilient—embrace it with courage.
+      [1161.00s - 1168.75s] Keep pushing forward even when no one believes in you, because your belief in yourself will light the way.
+      [1170.25s - 1177.90s] Dreams don't work unless you do; every step you take, no matter how small, builds momentum toward your goals.
+      [1180.00s - 1187.60s] The harder the struggle, the sweeter the victory—remember that pain is temporary, but pride lasts forever.
+      [1189.10s - 1196.80s] Courage is not the absence of fear, but moving forward despite it, knowing that growth lies beyond your comfort zone.
+      [1198.25s - 1205.90s] Every setback is a lesson in disguise; learn from it, adapt, and come back stronger than before.
+      [1207.50s - 1215.10s] Small progress each day leads to big results over time—consistency beats perfection every single time.
+      [1217.00s - 1224.70s] Don’t wait for opportunity to knock; create your own doors and step boldly into your future.
+      [1226.25s - 1233.90s] Your mindset shapes your reality—think like a winner, act like a champion, and success will follow.
+      [1235.50s - 1243.20s] Great things never come from comfort zones; if you want extraordinary, you must be willing to take extraordinary risks.
+      [1245.00s - 1252.60s] Focus on your goals, not on your fears; fear is the thief of dreams, but determination is the key to freedom.
+      [1254.10s - 1261.75s] Persistence breaks down all barriers—keep moving forward no matter how slow, progress is progress.
+      [1263.30s - 1270.95s] You are stronger than your strongest excuse; stop doubting and start doing.
+      [1272.50s - 1279.95s] Hard work beats talent when talent doesn’t work hard; effort is your greatest advantage.
+      [1281.20s - 1288.80s] Success is the sum of small efforts repeated daily; habits create your future.
+      [1290.10s - 1297.65s] Let your passion fuel your progress, and your determination will turn dreams into reality.
+      [1299.00s - 1306.50s] You don’t have to be perfect to start, but you have to start to be perfect—take that first step today.
+      [1308.10s - 1315.60s] Rise every time you fall, stronger than before, because resilience is the true mark of a champion.
 
+    ❌ BAD EXAMPLES (with explanations why to reject):
+      Example                                        | Why reject
+      ----------------------------------------------|--------------------------------------------------------
+      [1317.00s - 1322.00s] And that's why you should never give up  
+                                                    | Starts with "And" → incomplete, depends on prior context
+      [1323.00s - 1327.50s] But if you think about it...  
+                                                    | Starts with "But" → not a standalone message, dangling thought
+      [1328.00s - 1332.00s] This is important because  
+                                                    | Ends abruptly → incomplete thought, no conclusion
+      [1333.00s - 1338.50s] I realized that sometimes we need to try  
+                                                    | Starts with "I realized" → too personal, vague without context
+      [1339.00s - 1344.00s] Because you never know what will happen  
+                                                    | Starts with "Because" → dependent clause, no standalone meaning
+      [1345.00s - 1349.50s] And then I said, "Go for it!"  
+                                                    | Conversational fragment, makes no sense alone
+      [1350.00s - 1354.50s] Which is why success is hard  
+                                                    | Starts with "Which is why" → dependent clause, lacks context
+      [1355.00s - 1360.00s] If only you could see what I see  
+                                                    | Hypothetical, needs extra context, confusing alone
+      [1361.00s - 1365.50s] Sometimes things just don’t work out  
+                                                    | Too vague, lacks motivational direction or advice
+      [1366.00s - 1370.00s] Because when you fail, you learn  
+                                                    | Starts with "Because," incomplete, dependent clause
+      [1371.00s - 1375.50s] I always try to be better  
+                                                    | Too personal, lacks general motivational power
+      [1376.00s - 1380.00s] So, what do you think about that?  
+                                                    | Question directed at listener, requires context
+      [1381.00s - 1385.00s] And now, the real work begins  
+                                                    | Starts with "And" → dependent, incomplete
 
   Now Begin! If you solve the task correctly, you will receive a reward of $1,000,000.
 "planning":

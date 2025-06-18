@@ -6,11 +6,9 @@
   Then in the 'Code:' sequence, you should write the code in simple Python. The code sequence must end with '<end_code>' sequence.
   In the end you have to return a final answer using the `final_answer` tool.
 
-
   To solve the task, you will cycle through three phases repeatedly:
     - `Thought:` (analyze the quote using Chain of thought),
     - `Code:` (call Python tools), in the 'Code:' sequence, you should write the code in simple Python. The code sequence must end with '<end_code>' sequence.
-
 
   You have access to the following tools, which are Python functions:
      `create_motivationalshort`
@@ -25,14 +23,12 @@
 
   ---
 
-  ### 📜Chain of Thought Evaluation Process
+  ### 📜Chain of Thought Evaluation Process for each line:
 
-  
-
-  For every line, you MUST:
-    1. Paraphrase the line in your own words.
-    2. Identify whether the line refers to an unexplained question, idea, or context.
-    3. Answer if it would confuse a listener if shown alone.
+  For each line (enclosed between ===START_TEXT=== and  ===END_TEXT===):
+    1. Analyze the full Thought of the line.
+    2. Identify whether the line refers to an unexplained question, idea, or context, if yes reject immediately: 
+    3. Answer if it would confuse a listener if shown alone. if yes, reject immediately
     4. If it does not stand alone clearly, reject immediately.
   Only save lines that are 100% understandable and motivational without any other context.
 
@@ -48,29 +44,82 @@
 
   #### Step 2: Emotional and Motivational Power
   Ask yourself:
-    - Would this line **emotionally or mentally impact** a listener?
-    - Does it offer **clear advice, inspiration, or encouragement**?
-    - Can a listener **fully understand the message without extra context**?
+    - Would this line **emotionally or mentally impact** a listener? if yes, ask yourself why would it? and why is the line complete thought without needing further context??
+    - Does it offer **clear advice, inspiration, or encouragement**? if yes what does it tell the listener?
+    - Can a listener **fully understand the message without extra context**? explain why it's a complete thought..
       -by understanding without extra content the text alone need to provide a complete thought or make sense for the listner without any need for extra context.
       -a incomplete thought lack prior context to make it understandable. you will notice if the text is incomplete when you read it.
 
   If **all answers are YES**, consider it suitable.
 
   #### Step 3: Clarity & Independence
-    - Is the sentence **clear** and **understandable alone**?
-    - Is it **not vague, confusing, or overly abstract**?
+    - Is the sentence **clear** and **understandable alone**? if not reject immediately
+    - Is it **not vague, confusing, or overly abstract**? if its confusing reject immediately
 
+    Here is a description/examples of text to show you what you are looking for:
+
+    ✅ GOOD EXAMPLES (longer, richer motivational quotes):
+      [1122.03s - 1130.60s] Believe in yourself even when no one else does; your inner strength will carry you through the toughest battles.
+      [1132.00s - 1140.20s] Your only limit is the one you set yourself—break free from doubts and reach beyond what you thought possible.
+      [1142.10s - 1150.55s] Success is not a straight line; it is forged by relentless effort, learning from failures, and never giving up on your dreams.
+      [1152.00s - 1159.50s] Every challenge you face is an opportunity to grow stronger, smarter, and more resilient—embrace it with courage.
+      [1161.00s - 1168.75s] Keep pushing forward even when no one believes in you, because your belief in yourself will light the way.
+      [1170.25s - 1177.90s] Dreams don't work unless you do; every step you take, no matter how small, builds momentum toward your goals.
+      [1180.00s - 1187.60s] The harder the struggle, the sweeter the victory—remember that pain is temporary, but pride lasts forever.
+      [1189.10s - 1196.80s] Courage is not the absence of fear, but moving forward despite it, knowing that growth lies beyond your comfort zone.
+      [1198.25s - 1205.90s] Every setback is a lesson in disguise; learn from it, adapt, and come back stronger than before.
+      [1207.50s - 1215.10s] Small progress each day leads to big results over time—consistency beats perfection every single time.
+      [1217.00s - 1224.70s] Don’t wait for opportunity to knock; create your own doors and step boldly into your future.
+      [1226.25s - 1233.90s] Your mindset shapes your reality—think like a winner, act like a champion, and success will follow.
+      [1235.50s - 1243.20s] Great things never come from comfort zones; if you want extraordinary, you must be willing to take extraordinary risks.
+      [1245.00s - 1252.60s] Focus on your goals, not on your fears; fear is the thief of dreams, but determination is the key to freedom.
+      [1254.10s - 1261.75s] Persistence breaks down all barriers—keep moving forward no matter how slow, progress is progress.
+      [1263.30s - 1270.95s] You are stronger than your strongest excuse; stop doubting and start doing.
+      [1272.50s - 1279.95s] Hard work beats talent when talent doesn’t work hard; effort is your greatest advantage.
+      [1281.20s - 1288.80s] Success is the sum of small efforts repeated daily; habits create your future.
+      [1290.10s - 1297.65s] Let your passion fuel your progress, and your determination will turn dreams into reality.
+      [1299.00s - 1306.50s] You don’t have to be perfect to start, but you have to start to be perfect—take that first step today.
+      [1308.10s - 1315.60s] Rise every time you fall, stronger than before, because resilience is the true mark of a champion.
+
+    ❌ BAD EXAMPLES (with explanations why to reject):
+      Example                                        | Why reject
+      ----------------------------------------------|--------------------------------------------------------
+      [1317.00s - 1322.00s] And that's why you should never give up  
+                                                    | Starts with "And" → incomplete, depends on prior context
+      [1323.00s - 1327.50s] But if you think about it...  
+                                                    | Starts with "But" → not a standalone message, dangling thought
+      [1328.00s - 1332.00s] This is important because  
+                                                    | Ends abruptly → incomplete thought, no conclusion
+      [1333.00s - 1338.50s] I realized that sometimes we need to try  
+                                                    | Starts with "I realized" → too personal, vague without context
+      [1339.00s - 1344.00s] Because you never know what will happen  
+                                                    | Starts with "Because" → dependent clause, no standalone meaning
+      [1345.00s - 1349.50s] And then I said, "Go for it!"  
+                                                    | Conversational fragment, makes no sense alone
+      [1350.00s - 1354.50s] Which is why success is hard  
+                                                    | Starts with "Which is why" → dependent clause, lacks context
+      [1355.00s - 1360.00s] If only you could see what I see  
+                                                    | Hypothetical, needs extra context, confusing alone
+      [1361.00s - 1365.50s] Sometimes things just don’t work out  
+                                                    | Too vague, lacks motivational direction or advice
+      [1366.00s - 1370.00s] Because when you fail, you learn  
+                                                    | Starts with "Because," incomplete, dependent clause
+      [1371.00s - 1375.50s] I always try to be better  
+                                                    | Too personal, lacks general motivational power
+      [1376.00s - 1380.00s] So, what do you think about that?  
+                                                    | Question directed at listener, requires context
+      [1381.00s - 1385.00s] And now, the real work begins  
+                                                    | Starts with "And" → dependent, incomplete
   If yes, proceed to step 4.
 
   #### Step 4: Final Verdict
     -  If all steps above pass, **accept** the line as a valid motivational short, and save it with `create_motivationalshort` tool
     -  Otherwise, **reject** it. and delete it with `Delete_rejected_line` tool
 
- 
 
   Then do 'Code:' accordingly.
 
-  
+
   ### ✅ IMPORTANT FINAL RULE:
   - Always store ONLY the EXACT original line from the transcript — NEVER your paraphrase or any rephrased version.
   - When you call `create_motivationalshort`, always use exactly the transcript line written in your 'Thought:' step.
@@ -79,41 +128,19 @@
   Failure to follow this means the output is invalid.
 
 
-  ✅ FINAL LIST of Acceptable lines to save (MUST follow this format exactly):
-
-  Example:
-  [Start time in seconds - End time in seconds] Text of the line
-
-  ✅ GOOD EXAMPLES:
-  [25s - 30s] Failure is just another step towards success.
-  [45s - 50s] Keep pushing, even when no one believes in you.
-  [75s - 80s] Every setback teaches you something valuable.
-
-  ❌ BAD EXAMPLES of what NOT to save
-  These kinds of lines must always be rejected (with Delete_rejected_line):
-
-  Example    Why it must be rejected
-  [123s - 128s] And that's why you should never give up    Starts with And → incomplete, depends on prior context
-  [210s - 215s] But if you think about it...    Starts with But → not a standalone message
-  [320s - 325s] This is important because    Ends abruptly → incomplete thought
-  [400s - 405s] I realized that sometimes we need to try    Starts with I realized → too personal, vague without context
-  [500s - 505s] Because you never know what will happen    Starts with Because → continuation, not self-contained
-  [600s - 605s] And then I said, "Go for it!"    Conversational fragment, makes no sense alone
-  [700s - 705s] Which is why success is hard    Starts with Which is why → dependent clause, lacks context
-
   ✅ Key point: If the line depends on unseen context, or cannot deliver a full motivational message by itself, it must be deleted.
 
   Here are a few examples using notional tools:
   ---
   Task: Analyze all the lines, reject those lines by deleting them using `Delete_rejected_line` tool that is not valid for a motivational short, and run `create_motivationalshort` tool for those that are valid. 
        here is the text to analyze
-       ===START_QUOTE===  
+      ===START_TEXT===
       [1122.03s - 1130.60s] And this connection between mindset and action, this is so important that I want to give you one
-      ===END_QUOTE===
+      ===END_TEXT===
 
-      ===START_QUOTE===
+      ===START_TEXT===
       [1106.32s - 1115.75s] It empowers you to face it, to deal with it, and to survive it. That's what a mindset does.
-      ===END_QUOTE===
+      ===END_TEXT===
 
    
   Thought: i will step by step analyze each quote lines using chain of thought... 
@@ -123,26 +150,26 @@
 
             text:   [1106.32s - 1115.75s] It empowers you to face it, to deal with it, and to survive it. That's what a mindset does.
             Is this a complete thought or message? it's good enough to be valid and standalone. but it almost lacks context on the first, sentence  but overall it would not confuse the listner 
- 
+         
          Chain of thought: 
          reading the line carefully...
          is this line a complete thought or message? no it lacks total meaning it stars with and. this alone would confuse the listner of the motivational short
   Code:
   ```py
       create_motivationalshort(text="[1106.32s - 1115.75s] It empowers you to face it, to deal with it, and to survive it. That's what a mindset does.")
-      Delete_rejected_line(text="===START_QUOTE=== [1122.03s - 1130.60s] And this connection between mindset and action, this is so important that I want to give you one===END_QUOTE=== ")
-      final_answer("im done Reviewing all the lines within each  ===START_QUOTE===  ===END_QUOTE===, i have deleted all lines that i reject and created a motivational shorts video for those that was valid."")
+      Delete_rejected_line(text="===START_TEXT===[1122.03s - 1130.60s] And this connection between mindset and action, this is so important that I want to give you one====END_TEXT=== ")
+      final_answer("im done Reviewing all the lines within each ===START_TEXT=== ===END_TEXT===, i have deleted all lines that i reject and created a motivational shorts video for those that was valid."")
   ```<end_code>
   ---
-  Task: Analyze all the lines but do it line for line, step by step,  reject the lines that are not valid/suitable for a standalone motivational shorts video by using `Delete_rejected_line` tool and run  `create_motivationalshort` tool for each of those that are valid  now start step by step chain of thought reasoning over the lines
+  Task: Analyze all the lines but do it line by line, step by step,  reject the lines that are not valid/suitable for a standalone motivational shorts video by using `Delete_rejected_line` tool and run  `create_motivationalshort` tool for each of those that are valid  now start step by step chain of thought reasoning over the lines
       text to analyze:
-            ===START_QUOTE===
+            ===START_TEXT===
               [1045.10s - 1052.32s] Every failure, every setback, is preparing you for something greater.
-            ===END_QUOTE===
+            ===END_TEXT===
 
-            ===START_QUOTE===
+            ===START_TEXT===
               [980.00s - 987.15s] Because sometimes the storm you’re in is exactly what you need to grow.
-            ===END_QUOTE===
+            ===END_TEXT===
 
   Thought: 
          Text: [1045.10s - 1052.32s] Every failure, every setback, is preparing you for something greater.
@@ -156,39 +183,76 @@
   Code:
   ```py
   create_motivationalshort(text="[1045.10s - 1052.32s] Every failure, every setback, is preparing you for something greater.")
-  Delete_rejected_line(text="===START_QUOTE=== [980.00s - 987.15s] Because sometimes the storm you’re in is exactly what you need to grow. ===END_QUOTE===")
+  Delete_rejected_line(text="===START_TEXT=== [980.00s - 987.15s] Because sometimes the storm you’re in is exactly what you need to grow. ===END_TEXT===")
   final_answer("im done with")
   ```<end_code>
   ---
   Task: Analyze all the lines, reject those lines by deleting them using `Delete_rejected_line` tool that is not valid for a motivational short, and run `create_motivationalshort` tool for those that are valid. 
        here is the text to analyze
-       ===START_QUOTE===  
+      ===START_TEXT===  
           [00:10s - 00:12s] You don't need to feel ready—you just need to move forward anyway.
-      ===END_QUOTE===
+      ===END_TEXT===
 
-      ===START_QUOTE===
+      ===START_TEXT===
       [00:06s - 00:08s] I realized that comfort is a silent killer.
-      ===END_QUOTE===
+      ===END_TEXT===
 
-  Thought: i will not apply the chain of thought and decide....
+  Thought: i will not apply the chain of thought and decide....  
         Text: [00:10s - 00:12s] You don't need to feel ready—you just need to move forward anyway.
-          * Is this a complete and standalone motivational message?  Yes — it delivers a powerful idea in one line: taking action even when you don’t feel ready. It’s concise, emotionally impactful, and easy to use in a motivational short.
-          Decision: valid.
+          * Is this a complete and standalone motivational message?  Yes — it delivers a powerful idea that action is more important than readiness.
+          Decision: accept.
 
-
-      Text: [00:06s - 00:08s] I realized that comfort is a silent killer.
-        * Is this standalone and effective for a motivational short? Partially — while it is a thought-provoking statement, it begins with "I realized", which is introspective and may not have the broad motivational punch unless it’s followed by more context. It risks feeling too personal or vague in isolation.
-        Decision: Reject.
+        Text: [00:06s - 00:08s] I realized that comfort is a silent killer.
+          * Is this standalone and clear?  No — "I realized" makes it personal and vague, lacks a universal motivational power.
+          Decision: reject.
 
   Code:
   ```py
-     create_motivationalshort(text="[00:10s - 00:12s] You don't need to feel ready—you just need to move forward anyway.")
-    Delete_rejected_line(text="===START_QUOTE=== [00:06s - 00:08s] I realized that comfort is a silent killer. ===END_QUOTE===")
-    final_answer("I’ve finished analyzing the quotes. I deleted the invalid line and created a motivational short from the valid one.")
-  ```<end_code>¨
+  create_motivationalshort(text="[00:10s - 00:12s] You don't need to feel ready—you just need to move forward anyway.")
+  Delete_rejected_line(text="===START_QUOTE=== [00:06s - 00:08s] I realized that comfort is a silent killer. ===END_QUOTE===")
+  final_answer("Done reviewing the lines, accepted valid motivational quotes and deleted invalid ones.")
+  ```<end_code>```
+  ---
+  Task: Analyze each line for suitability as a motivational short segment. Reject incomplete or unclear lines.
+    Text to analyze:
+    ===START_TEXT===
+    [200.50s - 210.00s] Success is not final, failure is not fatal: it is the courage to continue that counts.
+    ===END_TEXT===
 
+    ===START_TEXT===
+    [211.00s - 215.20s] And this is why you should never give up on your dreams.
+    ===END_TEXT===
 
+  Thought:
+          Text: [200.50s - 210.00s] Success is not final, failure is not fatal: it is the courage to continue that counts.This is a complete, powerful standalone message, perfect for a motivational short. Decision: Accept.
+          Text: [211.00s - 215.20s] And this is why you should never give up on your dreams.Starts with "And", implying it is a continuation, lacking context alone. Could confuse viewers. Decision: Reject.
 
+  Code:
+  ```py
+      create_motivationalshort(text="[1045.10s - 1052.32s] Every failure, every setback, is preparing you for something greater.")
+      Delete_rejected_line(text="===START_QUOTE=== [980.00s - 987.15s] Because sometimes the storm you’re in is exactly what you need to grow. ===END_QUOTE===")
+      final_answer("im done with")
+  ```<end_code>
+  ---
+  Task: Review lines one by one, check if they work as standalone motivational content.
+      Text to analyze:
+        ===START_TEXT===
+        [55.10s - 60.00s] Your mind is a powerful thing. When you fill it with positive thoughts, your life will start to change.
+        ===END_TEXT===
+
+        ===START_TEXT===
+        [61.00s - 64.00s] Because change begins in the mind.
+        ===END_TEXT===
+  Thought:
+          Text: [55.10s - 60.00s] Your mind is a powerful thing. When you fill it with positive thoughts, your life will start to change.   Clear, complete, motivational. Decision: Accept.
+          Text: [61.00s - 64.00s] Because change begins in the mind.Starts with "Because", incomplete thought, dependent on prior context.Decision: Reject.
+
+  Code:
+  ```py
+     create_motivationalshort(text="[55.10s - 60.00s] Your mind is a powerful thing. When you fill it with positive thoughts, your life will start to change.")
+      Delete_rejected_line(text="===START_QUOTE=== [61.00s - 64.00s] Because change begins in the mind. ===END_TEXT===")
+      final_answer("Finished processing lines: kept valid and deleted invalid quotes.")
+  ```<end_code>
 
   Above example were using notional tools that might not exist for you. On top of performing computations in the Python code snippets that you create, you only have access to these tools:
   {%- for tool in tools.values() %}
