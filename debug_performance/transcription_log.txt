@@ -1,133 +1,210 @@
-[2025-06-18 17:35:00][MainThread] Video_paths: 1
-[2025-06-18 17:35:00][ThreadPoolExecutor-0_0] Starting transcription for c:\Users\didri\Documents\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.mp4 on device cuda
-[2025-06-18 17:35:00][ThreadPoolExecutor-0_0] Transcript already exists: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt, audio exists: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.wav
-[2025-06-18 17:35:00][ThreadPoolExecutor-0_0] Enqueued existing transcript for GPU processing: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:35:00][MainThread] start_time of threadpool: 1750260900.0709872 & endtime of threadpool = 1750260900.0729837, total: 0.0019965171813964844
-[2025-06-18 17:35:00][GPU-Worker] GPU worker started
-[2025-06-18 17:36:15][MainThread] Video_paths: 1
-[2025-06-18 17:36:15][ThreadPoolExecutor-0_0] Starting transcription for c:\Users\didri\Documents\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.mp4 on device cuda
-[2025-06-18 17:36:15][ThreadPoolExecutor-0_0] Transcript already exists: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt, audio exists: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.wav
-[2025-06-18 17:36:15][ThreadPoolExecutor-0_0] Enqueued existing transcript for GPU processing: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:36:15][MainThread] start_time of threadpool: 1750260975.876818 & endtime of threadpool = 1750260975.8788123, total: 0.0019943714141845703
-[2025-06-18 17:36:15][GPU-Worker] GPU worker started
-[2025-06-18 17:36:56][MainThread] Video_paths: 1
-[2025-06-18 17:36:56][ThreadPoolExecutor-0_0] Starting transcription for c:\Users\didri\Documents\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.mp4 on device cuda
-[2025-06-18 17:36:56][ThreadPoolExecutor-0_0] Transcript already exists: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt, audio exists: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.wav
-[2025-06-18 17:36:56][ThreadPoolExecutor-0_0] Enqueued existing transcript for GPU processing: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:36:56][MainThread] start_time of threadpool: 1750261016.8270721 & endtime of threadpool = 1750261016.8280685, total: 0.0009963512420654297
-[2025-06-18 17:36:56][GPU-Worker] GPU worker started
-[2025-06-18 17:37:32][MainThread] Video_paths: 1
-[2025-06-18 17:37:32][ThreadPoolExecutor-0_0] Starting transcription for c:\Users\didri\Documents\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.mp4 on device cuda
-[2025-06-18 17:37:32][ThreadPoolExecutor-0_0] Transcript already exists: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt, audio exists: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.wav
-[2025-06-18 17:37:32][ThreadPoolExecutor-0_0] Enqueued existing transcript for GPU processing: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:37:32][MainThread] start_time of threadpool: 1750261052.6567159 & endtime of threadpool = 1750261052.6588142, total: 0.0020983219146728516
-[2025-06-18 17:37:32][GPU-Worker] GPU worker started
-[2025-06-18 17:38:03][MainThread] Video_paths: 1
-[2025-06-18 17:38:03][ThreadPoolExecutor-0_0] Starting transcription for c:\Users\didri\Documents\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.mp4 on device cuda
-[2025-06-18 17:38:03][ThreadPoolExecutor-0_0] Transcript already exists: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt, audio exists: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.wav
-[2025-06-18 17:38:03][ThreadPoolExecutor-0_0] Enqueued existing transcript for GPU processing: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:38:03][MainThread] start_time of threadpool: 1750261083.7696385 & endtime of threadpool = 1750261083.771634, total: 0.001995563507080078
-[2025-06-18 17:38:03][GPU-Worker] GPU worker started
-[2025-06-18 17:38:26][GPU-Worker] Loaded Global_model on device
-[2025-06-18 17:38:46][MainThread] Video_paths: 1
-[2025-06-18 17:38:46][ThreadPoolExecutor-0_0] Starting transcription for c:\Users\didri\Documents\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.mp4 on device cuda
-[2025-06-18 17:38:46][ThreadPoolExecutor-0_0] Transcript already exists: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt, audio exists: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.wav
-[2025-06-18 17:38:46][ThreadPoolExecutor-0_0] Enqueued existing transcript for GPU processing: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:38:46][MainThread] start_time of threadpool: 1750261126.5039089 & endtime of threadpool = 1750261126.5059044, total: 0.001995563507080078
-[2025-06-18 17:38:46][GPU-Worker] GPU worker started
-[2025-06-18 17:38:59][GPU-Worker] Loaded Global_model on device
-[2025-06-18 17:39:24][MainThread] Video_paths: 1
-[2025-06-18 17:39:24][ThreadPoolExecutor-0_0] Starting transcription for c:\Users\didri\Documents\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.mp4 on device cuda
-[2025-06-18 17:39:24][ThreadPoolExecutor-0_0] Transcript already exists: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt, audio exists: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.wav
-[2025-06-18 17:39:24][ThreadPoolExecutor-0_0] Enqueued existing transcript for GPU processing: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:39:24][MainThread] start_time of threadpool: 1750261164.1278412 & endtime of threadpool = 1750261164.129254, total: 0.0014128684997558594
-[2025-06-18 17:39:24][GPU-Worker] GPU worker started
-[2025-06-18 17:39:36][GPU-Worker] Loaded Global_model on device
-[2025-06-18 17:40:46][MainThread] Video_paths: 1
-[2025-06-18 17:40:46][ThreadPoolExecutor-0_0] Starting transcription for c:\Users\didri\Documents\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.mp4 on device cuda
-[2025-06-18 17:40:46][ThreadPoolExecutor-0_0] Transcript already exists: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt, audio exists: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.wav
-[2025-06-18 17:40:46][ThreadPoolExecutor-0_0] Enqueued existing transcript for GPU processing: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:40:46][MainThread] start_time of threadpool: 1750261246.2267923 & endtime of threadpool = 1750261246.2288008, total: 0.0020084381103515625
-[2025-06-18 17:40:46][GPU-Worker] GPU worker started
-[2025-06-18 17:40:59][GPU-Worker] Loaded Global_model on device
-[2025-06-18 17:40:59][GPU-Worker] item: ('c:\\Users\\didri\\Documents\\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.mp4', 'c:\\Users\\didri\\Desktop\\Full-Agent-Flow_VideoEditing\\work_queue_folder\\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt', 'c:\\Users\\didri\\Desktop\\Full-Agent-Flow_VideoEditing\\work_queue_folder\\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\\agent_saving_path.txt')
-[2025-06-18 17:40:59][GPU-Worker] Processing c:\Users\didri\Documents\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.mp4 & c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt in GPU worker, agent is using txt path to save: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\agent_saving_path.txt
-[2025-06-18 17:40:59][GPU-Worker] GPU lock acquired by gpu_worker for c:\Users\didri\Documents\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.mp4
-[2025-06-18 17:40:59][GPU-Worker] ✅ Entered Transcript_Reasoning_AGENT() transcript_path: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt, agent_txt_saving_path: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\agent_saving_path.txt
-[2025-06-18 17:40:59][GPU-Worker] transcript_path that is being proccessed inside func[Transcript_Reasoning_Agent]: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:40:59][GPU-Worker] transcript title: The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:40:59][GPU-Worker] 
+
+
+
+
+[2025-06-19 01:42:47][MainThread] Video_paths: 1
+[2025-06-19 01:42:47][ThreadPoolExecutor-0_0] Starting transcription for c:\Users\didri\Documents\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.mp4 on device cuda
+[2025-06-19 01:42:47][ThreadPoolExecutor-0_0] Transcript already exists: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt, audio exists: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.wav
+[2025-06-19 01:42:47][ThreadPoolExecutor-0_0] Enqueued existing transcript for GPU processing: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
+[2025-06-19 01:42:47][MainThread] start_time of threadpool: 1750290167.8420088 & endtime of threadpool = 1750290167.8440037, total: 0.0019948482513427734
+[2025-06-19 01:42:47][GPU-Worker] GPU worker started
+[2025-06-19 01:43:03][GPU-Worker] Loaded Global_model on device
+[2025-06-19 01:43:03][GPU-Worker] item: ('c:\\Users\\didri\\Documents\\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.mp4', 'c:\\Users\\didri\\Desktop\\Full-Agent-Flow_VideoEditing\\work_queue_folder\\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt', 'c:\\Users\\didri\\Desktop\\Full-Agent-Flow_VideoEditing\\work_queue_folder\\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\\agent_saving_path.txt')
+[2025-06-19 01:43:03][GPU-Worker] Processing c:\Users\didri\Documents\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.mp4 & c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt in GPU worker, agent is using txt path to save: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\agent_saving_path.txt
+[2025-06-19 01:43:03][GPU-Worker] GPU lock acquired by gpu_worker for c:\Users\didri\Documents\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.mp4
+[2025-06-19 01:43:03][GPU-Worker] ✅ Entered Transcript_Reasoning_AGENT() transcript_path: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt, agent_txt_saving_path: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\agent_saving_path.txt
+[2025-06-19 01:43:03][GPU-Worker] transcript_path that is being proccessed inside func[Transcript_Reasoning_Agent]: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
+[2025-06-19 01:43:03][GPU-Worker] transcript title: The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
+[2025-06-19 01:43:03][GPU-Worker] 
 Processing new transcript: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:40:59][GPU-Worker] transcript_path for chunk tool : c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:40:59][GPU-Worker] [The current ModelCountRun]: 0
-[2025-06-18 17:41:35][GPU-Worker] transcript_path for chunk tool : c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:41:35][GPU-Worker] [The current ModelCountRun]: 1
-[2025-06-18 17:45:13][MainThread] Video_paths: 1
-[2025-06-18 17:45:13][ThreadPoolExecutor-0_0] Starting transcription for c:\Users\didri\Documents\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.mp4 on device cuda
-[2025-06-18 17:45:13][ThreadPoolExecutor-0_0] Transcript already exists: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt, audio exists: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.wav
-[2025-06-18 17:45:13][ThreadPoolExecutor-0_0] Enqueued existing transcript for GPU processing: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:45:13][MainThread] start_time of threadpool: 1750261513.4341812 & endtime of threadpool = 1750261513.4359117, total: 0.0017304420471191406
-[2025-06-18 17:45:13][GPU-Worker] GPU worker started
-[2025-06-18 17:45:26][GPU-Worker] Loaded Global_model on device
-[2025-06-18 17:45:26][GPU-Worker] item: ('c:\\Users\\didri\\Documents\\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.mp4', 'c:\\Users\\didri\\Desktop\\Full-Agent-Flow_VideoEditing\\work_queue_folder\\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt', 'c:\\Users\\didri\\Desktop\\Full-Agent-Flow_VideoEditing\\work_queue_folder\\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\\agent_saving_path.txt')
-[2025-06-18 17:45:26][GPU-Worker] Processing c:\Users\didri\Documents\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.mp4 & c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt in GPU worker, agent is using txt path to save: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\agent_saving_path.txt
-[2025-06-18 17:45:26][GPU-Worker] GPU lock acquired by gpu_worker for c:\Users\didri\Documents\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.mp4
-[2025-06-18 17:45:26][GPU-Worker] ✅ Entered Transcript_Reasoning_AGENT() transcript_path: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt, agent_txt_saving_path: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\agent_saving_path.txt
-[2025-06-18 17:45:26][GPU-Worker] transcript_path that is being proccessed inside func[Transcript_Reasoning_Agent]: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:45:26][GPU-Worker] transcript title: The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:45:26][GPU-Worker] 
-Processing new transcript: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:45:26][GPU-Worker] transcript_path for chunk tool : c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:45:26][GPU-Worker] [The current ModelCountRun]: 0
-[2025-06-18 17:45:51][GPU-Worker] transcript_path for chunk tool : c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:45:51][GPU-Worker] [The current ModelCountRun]: 1
-[2025-06-18 17:46:52][MainThread] Video_paths: 1
-[2025-06-18 17:46:52][ThreadPoolExecutor-0_0] Starting transcription for c:\Users\didri\Documents\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.mp4 on device cuda
-[2025-06-18 17:46:52][ThreadPoolExecutor-0_0] Transcript already exists: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt, audio exists: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.wav
-[2025-06-18 17:46:52][ThreadPoolExecutor-0_0] Enqueued existing transcript for GPU processing: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:46:52][MainThread] start_time of threadpool: 1750261612.1609778 & endtime of threadpool = 1750261612.1629725, total: 0.001994609832763672
-[2025-06-18 17:46:52][GPU-Worker] GPU worker started
-[2025-06-18 17:47:04][GPU-Worker] Loaded Global_model on device
-[2025-06-18 17:47:04][GPU-Worker] item: ('c:\\Users\\didri\\Documents\\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.mp4', 'c:\\Users\\didri\\Desktop\\Full-Agent-Flow_VideoEditing\\work_queue_folder\\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt', 'c:\\Users\\didri\\Desktop\\Full-Agent-Flow_VideoEditing\\work_queue_folder\\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\\agent_saving_path.txt')
-[2025-06-18 17:47:04][GPU-Worker] Processing c:\Users\didri\Documents\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.mp4 & c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt in GPU worker, agent is using txt path to save: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\agent_saving_path.txt
-[2025-06-18 17:47:04][GPU-Worker] GPU lock acquired by gpu_worker for c:\Users\didri\Documents\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.mp4
-[2025-06-18 17:47:04][GPU-Worker] ✅ Entered Transcript_Reasoning_AGENT() transcript_path: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt, agent_txt_saving_path: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\agent_saving_path.txt
-[2025-06-18 17:47:04][GPU-Worker] transcript_path that is being proccessed inside func[Transcript_Reasoning_Agent]: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:47:04][GPU-Worker] transcript title: The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:47:04][GPU-Worker] 
-Processing new transcript: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:47:04][GPU-Worker] transcript_path for chunk tool : c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:47:04][GPU-Worker] [The current ModelCountRun]: 0
-[2025-06-18 17:47:31][GPU-Worker] transcript_path for chunk tool : c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:47:31][GPU-Worker] [The current ModelCountRun]: 1
-[2025-06-18 17:48:07][GPU-Worker] transcript_path for chunk tool : c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:48:07][GPU-Worker] [The current ModelCountRun]: 2
-[2025-06-18 17:48:27][GPU-Worker] transcript_path for chunk tool : c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:48:27][GPU-Worker] [The current ModelCountRun]: 3
-[2025-06-18 17:54:44][MainThread] Video_paths: 1
-[2025-06-18 17:54:44][ThreadPoolExecutor-0_0] Starting transcription for c:\Users\didri\Documents\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.mp4 on device cuda
-[2025-06-18 17:54:44][ThreadPoolExecutor-0_0] Transcript already exists: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt, audio exists: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.wav
-[2025-06-18 17:54:44][ThreadPoolExecutor-0_0] Enqueued existing transcript for GPU processing: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:54:44][MainThread] start_time of threadpool: 1750262084.534017 & endtime of threadpool = 1750262084.5360024, total: 0.001985311508178711
-[2025-06-18 17:54:44][GPU-Worker] GPU worker started
-[2025-06-18 17:54:57][GPU-Worker] Loaded Global_model on device
-[2025-06-18 17:54:57][GPU-Worker] item: ('c:\\Users\\didri\\Documents\\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.mp4', 'c:\\Users\\didri\\Desktop\\Full-Agent-Flow_VideoEditing\\work_queue_folder\\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt', 'c:\\Users\\didri\\Desktop\\Full-Agent-Flow_VideoEditing\\work_queue_folder\\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\\agent_saving_path.txt')
-[2025-06-18 17:54:57][GPU-Worker] Processing c:\Users\didri\Documents\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.mp4 & c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt in GPU worker, agent is using txt path to save: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\agent_saving_path.txt
-[2025-06-18 17:54:57][GPU-Worker] GPU lock acquired by gpu_worker for c:\Users\didri\Documents\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.mp4
-[2025-06-18 17:54:57][GPU-Worker] ✅ Entered Transcript_Reasoning_AGENT() transcript_path: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt, agent_txt_saving_path: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\agent_saving_path.txt
-[2025-06-18 17:54:57][GPU-Worker] transcript_path that is being proccessed inside func[Transcript_Reasoning_Agent]: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:54:57][GPU-Worker] transcript title: The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:54:57][GPU-Worker] 
-Processing new transcript: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:54:57][GPU-Worker] transcript_path for chunk tool : c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:54:57][GPU-Worker] [The current ModelCountRun]: 0
-[2025-06-18 17:55:30][GPU-Worker] transcript_path for chunk tool : c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:55:30][GPU-Worker] [The current ModelCountRun]: 1
-[2025-06-18 17:56:07][GPU-Worker] transcript_path for chunk tool : c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:56:07][GPU-Worker] [The current ModelCountRun]: 2
-[2025-06-18 17:56:29][GPU-Worker] transcript_path for chunk tool : c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:56:29][GPU-Worker] [The current ModelCountRun]: 3
-[2025-06-18 17:57:02][GPU-Worker] transcript_path for chunk tool : c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:57:02][GPU-Worker] [The current ModelCountRun]: 4
-[2025-06-18 17:57:39][GPU-Worker] transcript_path for chunk tool : c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
-[2025-06-18 17:57:39][GPU-Worker] [The current ModelCountRun]: 5
+[2025-06-19 01:43:03][GPU-Worker] transcript_path for chunk tool : c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
+[2025-06-19 01:43:03][GPU-Worker] [The current ModelCountRun]: 0
+[2025-06-19 01:43:36][GPU-Worker] transcript_path for chunk tool : c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
+[2025-06-19 01:43:36][GPU-Worker] [The current ModelCountRun]: 1
+[2025-06-19 01:44:04][GPU-Worker] 
+[Delete_rejected_line] text into func: ===START_TEXT=== [1890.12s - 1891.26s] But I've also had intuitive insights that have saved my life. ===END_TEXT===
+[2025-06-19 01:44:04][GPU-Worker] [Delete_rejected_line] path to textfile: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\agent_saving_path.txt
+[2025-06-19 01:44:04][GPU-Worker] [Delete_rejected_line]  lines = f.readlines(): ['\n', '--- Transcript Title: The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt ---\n', '===START_TEXT===\n', "[1890.12s - 1891.26s] But I've also had intuitive insights that have saved my life.\n", '===END_TEXT===\n']
+[2025-06-19 01:44:04][GPU-Worker] [Delete_rejected_line]line before stripping: 
+
+[2025-06-19 01:44:04][GPU-Worker] [Delete_rejected_line]written the line, should have removed the line from text: 
+
+
+
+
+
+
+[2025-06-19 01:44:04][GPU-Worker] [Delete_rejected_line]line before stripping: --- Transcript Title: The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt ---
+
+[2025-06-19 01:44:04][GPU-Worker] [Delete_rejected_line]written the line, should have removed the line from text: --- Transcript Title: The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt ---
+
+
+
+
+
+
+[2025-06-19 01:44:04][GPU-Worker] [Delete_rejected_line]line before stripping: ===START_TEXT===
+
+[2025-06-19 01:44:04][GPU-Worker] [Delete_rejected_line]written the line, should have removed the line from text: ===START_TEXT===
+
+
+
+
+
+
+[2025-06-19 01:44:04][GPU-Worker] [Delete_rejected_line]line before stripping: [1890.12s - 1891.26s] But I've also had intuitive insights that have saved my life.
+
+[2025-06-19 01:44:04][GPU-Worker] [Delete_rejected_line]written the line, should have removed the line from text: [1890.12s - 1891.26s] But I've also had intuitive insights that have saved my life.
+
+
+
+
+
+
+[2025-06-19 01:44:04][GPU-Worker] [Delete_rejected_line]line before stripping: ===END_TEXT===
+
+[2025-06-19 01:44:04][GPU-Worker] [Delete_rejected_line]written the line, should have removed the line from text: ===END_TEXT===
+
+
+
+
+
+
+[2025-06-19 01:45:08][GPU-Worker] transcript_path for chunk tool : c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt
+[2025-06-19 01:45:08][GPU-Worker] [The current ModelCountRun]: 1
+[2025-06-19 01:46:14][GPU-Worker] 
+[Delete_rejected_line] text into func: [2089.92s - 2090.86s] Theta is where intuition lies. [2091.68s - 2092.66s] So you can train yourself to stay awake at theta. [2093.54s - 2094.28s] And when you go into theta and you're awake, you're tapping into something, [2095.14s - 2095.86s] insights, [2095.86s - 2097.46s] ideas, [2097.46s - 2099.60s] all of this stuff starts flowing out. [2100.32s - 2100.98s] That is intuition. [2100.98s - 2101.60s] That's how it connects to brainwaves.
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line] path to textfile: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\agent_saving_path.txt
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line]  lines = f.readlines(): ['\n', '--- Transcript Title: The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt ---\n', '===START_TEXT===\n', "[1890.12s - 1891.26s] But I've also had intuitive insights that have saved my life.\n", '===END_TEXT===\n', '===START_TEXT===\n', "[2089.92s - 2090.86s] Theta is where intuition lies. [2091.68s - 2092.66s] So you can train yourself to stay awake at theta. [2093.54s - 2094.28s] And when you go into theta and you're awake, you're tapping into something, [2095.14s - 2095.86s] insights, [2095.86s - 2097.46s] ideas, [2097.46s - 2099.60s] all of this stuff starts flowing out. [2100.32s - 2100.98s] That is intuition. [2100.98s - 2101.60s] That's how it connects to brainwaves.\n", '===END_TEXT===\n']
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line]line before stripping: 
+
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line]written the line, should have removed the line from text: 
+
+
+
+
+
+
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line]line before stripping: --- Transcript Title: The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt ---
+
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line]written the line, should have removed the line from text: --- Transcript Title: The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt ---
+
+
+
+
+
+
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line]line before stripping: ===START_TEXT===
+
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line]written the line, should have removed the line from text: ===START_TEXT===
+
+
+
+
+
+
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line]line before stripping: [1890.12s - 1891.26s] But I've also had intuitive insights that have saved my life.
+
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line]written the line, should have removed the line from text: [1890.12s - 1891.26s] But I've also had intuitive insights that have saved my life.
+
+
+
+
+
+
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line]line before stripping: ===END_TEXT===
+
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line]written the line, should have removed the line from text: ===END_TEXT===
+
+
+
+
+
+
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line]line before stripping: ===START_TEXT===
+
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line]written the line, should have removed the line from text: ===START_TEXT===
+
+
+
+
+
+
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line]line before stripping: [2089.92s - 2090.86s] Theta is where intuition lies. [2091.68s - 2092.66s] So you can train yourself to stay awake at theta. [2093.54s - 2094.28s] And when you go into theta and you're awake, you're tapping into something, [2095.14s - 2095.86s] insights, [2095.86s - 2097.46s] ideas, [2097.46s - 2099.60s] all of this stuff starts flowing out. [2100.32s - 2100.98s] That is intuition. [2100.98s - 2101.60s] That's how it connects to brainwaves.
+
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line]line before stripping: ===END_TEXT===
+
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line]written the line, should have removed the line from text: ===END_TEXT===
+
+
+
+
+
+
+[2025-06-19 01:46:14][GPU-Worker] 
+[Delete_rejected_line] text into func: ===START_TEXT=== [1890.12s - 1891.26s] But I've also had intuitive insights that have saved my life. ===END_TEXT===
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line] path to textfile: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\agent_saving_path.txt
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line]  lines = f.readlines(): ['\n', '--- Transcript Title: The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt ---\n', '===START_TEXT===\n', "[1890.12s - 1891.26s] But I've also had intuitive insights that have saved my life.\n", '===END_TEXT===\n', '===START_TEXT===\n', '===END_TEXT===\n']
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line]line before stripping: 
+
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line]written the line, should have removed the line from text: 
+
+
+
+
+
+
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line]line before stripping: --- Transcript Title: The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt ---
+
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line]written the line, should have removed the line from text: --- Transcript Title: The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.txt ---
+
+
+
+
+
+
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line]line before stripping: ===START_TEXT===
+
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line]written the line, should have removed the line from text: ===START_TEXT===
+
+
+
+
+
+
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line]line before stripping: [1890.12s - 1891.26s] But I've also had intuitive insights that have saved my life.
+
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line]written the line, should have removed the line from text: [1890.12s - 1891.26s] But I've also had intuitive insights that have saved my life.
+
+
+
+
+
+
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line]line before stripping: ===END_TEXT===
+
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line]written the line, should have removed the line from text: ===END_TEXT===
+
+
+
+
+
+
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line]line before stripping: ===START_TEXT===
+
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line]written the line, should have removed the line from text: ===START_TEXT===
+
+
+
+
+
+
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line]line before stripping: ===END_TEXT===
+
+[2025-06-19 01:46:14][GPU-Worker] [Delete_rejected_line]written the line, should have removed the line from text: ===END_TEXT===
+
+
+
+
+
+

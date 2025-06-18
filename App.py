@@ -1,9 +1,19 @@
+import sys
+import os
+REPO_ROOT = os.path.abspath('.')
+if REPO_ROOT not in sys.path:
+    sys.path.insert(0, REPO_ROOT)
+
+GPEN_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), 'GPEN'))
+if GPEN_PATH not in sys.path:
+    sys.path.insert(0, GPEN_PATH)
+import GPEN.__init_paths
+from GPEN.face_enhancement import FaceEnhancement
 from smolagents import TransformersModel, FinalAnswerTool, SpeechToTextTool, CodeAgent, tool,SpeechToTextToolCPU
 from Agents_tools import ChunkLimiterTool
-import os
 import gc
 import yaml
-import sys
+
 import torchvision.transforms.functional as F
 sys.modules['torchvision.transforms.functional_tensor'] = F
 import subprocess
@@ -27,7 +37,6 @@ import cv2
 import torch
 from moviepy.video.fx.FadeIn import FadeIn
 from moviepy.video.fx.FadeOut import FadeOut
-from concurrent.futures import ThreadPoolExecutor
 import threading
 import queue
 import torch
@@ -79,6 +88,8 @@ def set_current_textfile(url: str):
 def get_current_textfile() -> str:
      global _current_agent_saving_file 
      return _current_agent_saving_file
+
+
 #- en idee er at man har en ekstra agent som kan gå igjennom alle lagde videoclips til slutt og ser om det går ann og lage noe montage, en shorts video som innholder motivational quotes/advices fra videoklips (resultat blir da at agenten  velger rekkefølge  på videoen som skal slå sammen til 1. video, med tanke at (det skal være motiverende og det må passe sammen)
 def create_motivational_montage_agent(clips: List[str], output_path: str):
     return 
@@ -253,7 +264,10 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 
     def split_subtitles_into_chunks(text, max_words=3):
         words = text.split()
-        return [' '.join(words[i:i + max_words]) for i in range(0, len(words), max_words)]
+        log_Creation(f"[split_subtitles_into_chunks] Words after splitting: {words}")
+        chunks = [' '.join(words[i:i + max_words]) for i in range(0, len(words), max_words)]
+        log_Creation(f"[split_subtitles_into_chunks] Chunks to return: {chunks}")
+        return chunks
 
 
 
@@ -261,9 +275,12 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
         uppercase_subtitles = txt.upper()
         chunks = split_subtitles_into_chunks(uppercase_subtitles)
         chunk_duration = duration / len(chunks)
+        log_Creation(f"[create_subtitles] chunk duration {chunk_duration}")
+
         text_clips = []
         for i, chunk in  enumerate(tqdm(chunks, desc="Processing chunk", unit="chunk")):
             start = clip_relative_start + i * chunk_duration
+            log_Creation(f"[create_subtitles]: startDuration:  {start}")
 
             log_Creation(duration)
             txt_clip = TextClip(
@@ -302,7 +319,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
         log_Creation(f"ONNX Runtime providers in use: {session.get_providers()}")
         input_name = session.get_inputs()[0].name
         total_batches = (len(frames) + batch_size - 1) // batch_size
-        progress_bar = tqdm(total=len(frames), desc="Processing frames", unit="frame", dynamic_ncols=True)
+        progress_bar = tqdm(total=len(frames), desc="[detect_and_crop_frames_batch]Processing frames", unit="frame", dynamic_ncols=True)
         try:
             for i in range(0, len(frames), batch_size):
                 print(f"batch: {i} - {i + batch_size}")
@@ -381,9 +398,10 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
                     cropped_frame = frame[y0:y0+crop_h, x0:x0+crop_w]
                     if cropped_frame.shape[:2] != (TARGET_H, TARGET_W):
                         cropped_frame = cv2.resize(cropped_frame, (TARGET_W, TARGET_H))
-                    log_Creation(f"appending frame: {cropped_frame}")
+                    log_Creation(f"[detect_and_crop_frames_batch] appended frame...")
                     cropped_frames.append(cropped_frame)
         finally:
+            log_Creation(f"[detect_and_crop_frames_batch] Height: {TARGET_H}, Width: {TARGET_W}")
             progress_bar.close() 
             del  predictions, detections, frame, det, h, w, areas, max_idx
             if batch is not None:
@@ -396,114 +414,228 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 
 
 
-
+#########################################################################
+##--------------------------------------------------------------------###
+## CREATES THE (START & END) OF the currentclip from FULL ORIGINAL VIDEO
+##--------------------------------------------------------------------###
+#########################################################################
 
     full_video = VideoFileClip(video_path)
     clip = full_video.subclipped(start_time, end_time)
     log_Creation(f"clip duration: {clip.duration}, clip fps: {clip.fps}, clip width: {clip.w}, clip height: {clip.h}, start_time: {start_time}, end_time: {end_time}, video_path: {video_path}")
 
 
+
+##############################################################
+##----------------------------------------------------------###
+## Extrcting frames from original video to a LIST
+##----------------------------------------------------------###
+##############################################################
+    log_Creation(f"\n\n[Extracting original video frames]  PROCCESS starting...")
+
     frames = []
     for frame in clip.iter_frames():
         frames.append(frame)
-    log_Creation(f"Extracted {len(frames)} frames.")
+    log_Creation(f"[Extracting original video frames] Extracted {len(frames)} frames.\n\n")
+    frame_height, frame_width = frame.shape[:2]
+    log_Creation(f"[CLIP.ITER] Height: {frame_height}, Width: {frame_width}")
 
 
-    cropped_frames = detect_and_crop_frames_batch(frames=frames,batch_size=6)
 
+
+
+###############################
+##--------------------------###
+## Yolo8/facedetection + Cropping
+##--------------------------###
+###############################
+    log_Creation(f"\n\n[detect_and_crop_frames_batch]  PROCCESS starting...")
+    cropped_frames = detect_and_crop_frames_batch(frames=frames,batch_size=8)
+    log_Creation(f"[detect_and_crop_frames_batch] Successfully complete. \n\n")
+
+
+
+
+
+
+
+###########################
+##---------------------###
+## Enchance & detailed sharpening
+##---------------------##
+##########################
+    log_Creation(f"\n\n[Enchance & detailed sharpening] PROCCESS starting...")
     enchanced_frames = []
     for frame in cropped_frames:
          frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
          enchanced_frame = enhance_detail_and_sharpness(frame, clarity_factor=1.2, sharpen_amount=0.8)
-
+         log_Creation(f"[enhance_detail_and_sharpness] appending enchanced frame ...")
          enchanced_rgb_frame = cv2.cvtColor(enchanced_frame,cv2.COLOR_BGR2RGB)
          enchanced_frames.append(enchanced_rgb_frame)
-    log_Creation(f"done appending sharpened frames")
+
+    log_Creation(f"[enhance_detail_and_sharpness] Successfully done!\n\n")
 
 
 
+
+
+
+
+
+
+
+###########################
+##---------------------###
+#GFPGANER & REALESRGAN UPSCALING
+##---------------------##
+##########################
+    log_Creation(f"\n\n[GFPGANER & REALESRGAN UPSCALING] PROCCESS starting...")
     from basicsr.utils.registry import ARCH_REGISTRY
     ARCH_REGISTRY._obj_map.pop('RRDBNet', None)
     ARCH_REGISTRY._obj_map.pop('ResNetArcFace', None)
     from basicsr.archs.rrdbnet_arch import RRDBNet
     from realesrgan import RealESRGANer 
     model = RRDBNet(num_in_ch=3, num_out_ch=3, num_feat=64,num_block=23, num_grow_ch=32, scale=2)
-
-
-
     bg_upsampler = RealESRGANer(model_path=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\gfpgan\weights\RealESRGAN_x2plus.pth", model=model, scale=2)
-    restored_frames = []
+
+    GFPGaner_frames = []
+
     from gfpgan import GFPGANer
-    gfpganer = GFPGANer(model_path=r'C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\gfpgan\weights\GFPGANv1.4.pth', upscale=1, arch='clean', channel_multiplier=2, bg_upsampler=bg_upsampler)
+    gfpganer = GFPGANer(model_path=r'C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\gfpgan\weights\GFPGANv1.4.pth', upscale=2, arch='clean', channel_multiplier=2, bg_upsampler=bg_upsampler)
     try:
-        for frame in tqdm(enchanced_frames, desc="GFPGAN Upscaling", unit="frame"):
+        log_Creation(f"[GFPGANER] starting upscaling frames now....")
+        for frame in tqdm(enchanced_frames, desc="[GFPGAN] Upscaling", unit="frame"):
+            frame_height,frame_width = frame.shape[:2]
+            _, _, gfpganer_enchanced_frame = gfpganer.enhance(frame, has_aligned=False, only_center_face=True, weight=0.4)
+            enchanced_height,enchanced_width = gfpganer_enchanced_frame.shape[:2]
+            log_Creation(f"[GFPGANER] enchanced frame..")
+            log_Creation(f"[GFPGANer] Frame input---> height: {frame_height},  width: {frame_width} \n enchanced_frame:  Height: {enchanced_height}, width: {enchanced_width} \n ")
+            GFPGaner_frames.append(gfpganer_enchanced_frame)
+            log_Creation(f"[GFPGANER] appending upscaled frame")
 
-            _, _, restored = gfpganer.enhance( frame, has_aligned=False, only_center_face=True, weight=0.4)
-            log_Creation(f"restored_frames: {restored_frames}")
-
-            restored_frames.append(restored)
-            log_Creation(f"appending upscaled frame")
+        torch.cuda.empty_cache()
+        gc.collect()
+        log_Creation(f"Cleared cache and collected garbage")
     except Exception as e:
-         log_Creation(f"Error during upscaling.. {str(e)}")
+         log_Creation(f"[GFPGANER] Error during upscaling.. {str(e)}")
+
+    log_Creation(f"[GFPGAN] upscaling finnished....\n\n")
 
 
-    from GPEN.face_enhancement import FaceEnhancement
+
+
+
+
+
+
+
+###########################
+##---------------------###
+#FACEENCHANCEMENT
+##---------------------##
+##########################
+    log_Creation(f"\n\n[FACEENCHACEMENT] PROCCESS starting...")
+
+    
     class Args:
-            model='GPEN-BFR-512',
-            task='FaceEnhancement',
-            key=None,
-            in_size=512,
-            out_size=None,
-            channel_multiplier=2,
-            narrow=1,
-            alpha=1,
-            use_sr=True,
-            use_cuda=True,
-            save_face=False,
-            aligned=False,
-            sr_model='realesrnet', 
-            sr_scale=2,
-            tile_size=0,
-            indir='examples/imgs',
-            outdir='results/outs-BFR',
-            ext='.jpg'
+        model = 'GPEN-BFR-512'
+        task = 'FaceEnhancement'
+        key = None
+        in_size = 512
+        out_size = None
+        channel_multiplier = 2
+        narrow = 1
+        alpha = 1
+        use_sr = True
+        use_cuda = True
+        save_face = False
+        aligned = False
+        sr_model = 'realesrnet'
+        sr_scale = 1
+        tile_size = 0
+        ext = '.jpg'
 
-    Skin_texture_enchancement = FaceEnhancement(Args, in_size=Args.in_size, model=Args.model, use_sr=Args.use_sr, device=Args.use_cuda)
-    output_frames = []
+
+    Skin_texture_enchancement = FaceEnhancement(
+         Args,
+        in_size=Args.in_size,
+        model=Args.model,
+        use_sr=Args.use_sr,
+        device='cuda' if Args.use_cuda else 'cpu'
+    )
+
+    FaceEnhancement_frames = []
     try:
-         for frame in tqdm(restored_frames, desc="GFPGAN Upscaling", unit="frame"):
+         for frame in tqdm(GFPGaner_frames, desc="[FaceEnhancement]  proccessing frames", unit="frame"):
+              frame_height,frame_width = frame.shape[:2]
               frame_bgr = cv2.cvtColor(frame,cv2.COLOR_RGB2BGR)
               enchanced_frame, _, _ = Skin_texture_enchancement.process(frame_bgr)
-              output_frames.append(enchanced_frame)
-              print(f"Appended enchanced_frame(GPEN)")
-             
+              enchanced_height,enchanced_width = enchanced_frame.shape[:2]
+              log_Creation(f"enchanced_frame height: {enchanced_frame.shape[0]}")
+              FaceEnhancement_frames.append(enchanced_frame)
+              log_Creation(f"[FaceEnhancement] Appended enhanced frame")
+              log_Creation(f"[FaceEnhancement]Frame input---> height: {frame_height},  width: {frame_width} \n enchanced_frame:  Height: {enchanced_height}, width: {enchanced_width} \n ")
+         log_Creation("[FaceEnhancement] Successfully done")
+         torch.cuda.empty_cache()
+         gc.collect()
+         log_Creation(f"Cleared cache and collected garbage")     
     except Exception as e:
-         print(f"Error during (FACE-Enchancement) with GPEN")
+            log_Creation(f"[FaceEnhancement] Error: {str(e)}")
     
+
+
+
+#####################
+##--------------.--##
+# color/ADJUSTMENT
+##-----------------##
+#####################
+    log_Creation(f"\n\n[COLOR ADJUSTMENT] PROCCESS starting...")
+
     if change_on_saturation != None and change_saturation == "Increase":
-            Final_frames = [change_saturation(frame,mode=change_on_saturation, amount=0.2) for frame in output_frames]
+            FaceEnhancement_frames = [change_saturation(frame,mode=change_on_saturation, amount=0.2) for frame in FaceEnhancement_frames]
 
     elif change_on_saturation != None and change_on_saturation == "Decrease":
-            Final_frames = [change_saturation(frame,mode=change_on_saturation, amount=0.2) for frame in output_frames]
+            FaceEnhancement_frames = [change_saturation(frame,mode=change_on_saturation, amount=0.2) for frame in FaceEnhancement_frames]
 
+
+##############################
+##--------------------------##
+# MAKING videoclip from frames
+##--------------------------##
+##############################
+    log_Creation(f"\n\n[CREATING VIDEOCLIP] PROCCESS starting...")
     try:
-       processed_clip = ImageSequenceClip(Final_frames, fps=clip.fps).with_duration(clip.duration)
+       log_Creation(f"[processed_clip] proccessing frames now..")
+       processed_clip = ImageSequenceClip(FaceEnhancement_frames, fps=clip.fps).with_duration(clip.duration)
     except Exception as e:
-         log_Creation(f"error during video setup")
-    
+         log_Creation(f"[processed_clip] error during video setup: {str(e)}")
+      
+
+
+
+################################################
+##-------------------------------------------###
+## Subtitle creation of text and added on video
+##-------------------------------------------###
+################################################
+    log_Creation(f"Creating subtitles for video now..")
     subtitle_clips = []
     for text, start, end in subtitles:
         clip_relative_start = start - start_time
         clip_relative_end = end - start_time
         duration = clip_relative_end - clip_relative_start
+        log_Creation(f"[for text, start end in subtitles] - [create_short_video] clip_relative_start: {clip_relative_start}, clip_relative_end: {clip_relative_end}, total duration: {duration}")
         log_Creation(f"subtitle_clips: {subtitle_clips}")
         
         if duration <= 0:
             continue
 
         subtitle_chunk_clips = create_subtitles(text, duration, clip_relative_start)
+        log_Creation(f"[create_short_video] subtitle_chunk_clips: {subtitle_chunk_clips}")
+
         subtitle_clips.extend(subtitle_chunk_clips)
-        log_Creation(f"subtitle_clips: {subtitle_clips}")
+        log_Creation(f"[create_short_video] after extending subtitle_clips: {subtitle_clips}")
 
     final_clip = CompositeVideoClip(
                 [processed_clip.with_position('center')] + subtitle_clips,
@@ -511,11 +643,16 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
             )
   
 
+###############################
+##--------------------------###
+## Audio creation
+##--------------------------###
+###############################
     def mix_audio(original_audio, background_music_path, bg_music_volume=0.15):
          bg_music = AudioFileClip(background_music_path)
 
          if bg_music.duration < original_audio.duration:
-              bg = afx.AudioLoop(bg_music,duration=original_audio.duration)
+              bg_music = afx.AudioLoop(bg_music,duration=original_audio.duration)
          else:
               bg_music = bg_music.subclipped(0,original_audio.duration)
             
@@ -531,12 +668,22 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
     if background_audio != None:
         background_music_path = r"c:\Users\didri\AppData\Local\CapCut\Videos\Video Tools\audio\Documentary Cinematic Violin by Infraction [No Copyright Music] # Life Goes On [mp3].mp3"
         final_clip.audio = mix_audio(clip.audio, background_music_path, bg_music_volume=0.15)
+        log_Creation(f"adding audio to video...")
     else:
         final_clip.audio = clip.audio
+        log_Creation(f"keeping original audio")
 
 
+##################################################
+##----------------------------------------------###
+## Final ADJUSTMENT before finalizing clip
+##----------------------------------------------###
+###################################################
     final_clip = FadeIn(duration=0.5).apply(final_clip)
     final_clip = FadeOut(duration=0.5).apply(final_clip)
+
+    Final_clip_duration = final_clip.duration
+    log_Creation(f"[create_short_video] duration of full video before created/writed: {Final_clip_duration}")
 
     log_Creation(f"video original fps: {clip.fps}")
     output_dir = "./Video_clips"
@@ -559,6 +706,13 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
     full_video.close()
     clip.close()
     clear_queue(video_task_que)
+    torch.cuda.empty_cache()
+    gc.collect()
+    log_Creation(f"Cleared cache and collected garbage")
+
+
+
+
 
 
 def parse_subtitle_text_block(text_block):
@@ -573,6 +727,8 @@ def parse_subtitle_text_block(text_block):
     subtitles = []
     pattern = re.compile(r"\[(\d+\.\d+)s\s*-\s*(\d+\.\d+)s\]\s*(.+)")
     lines = text_block.strip().splitlines()
+    log_Creation(f"[parse_subtitle_text_block] input to function(text_block): {text_block}")
+    log_Creation(f"[parse_subtitle_text_block] Lines: {lines}")
     for line in lines:
         match = pattern.match(line.strip())
         if match:
@@ -580,7 +736,12 @@ def parse_subtitle_text_block(text_block):
             end = float(match.group(2))
             text=match.group(3)
             subtitles.append((text, start, end))
+    log_Creation(f"[parse_subtitle_text_block] subtitles returned...")
     return subtitles 
+
+
+
+
 
 
 
@@ -603,21 +764,20 @@ def run_video_short_creation_thread(video_url,start_time,end_time,text):
                log_Creation(f"Subtitle passed to the [create_short_video] --> subtitle_text_tuple: {subtitles}")
     
                try:
-                  log_Creation("creating video now")
-    
+                  log_Creation(f"[run_video_short_creation_thread] creating video now... \n start_time: {start_time} \n end_time: {end_time}, \n video_name: {text_video_title}, \n subtitle_text: {subtitles}")
                   create_short_video(video_path=text_video_path, start_time=text_video_start_time, end_time = text_video_endtime, video_name = text_video_title,subtitle_text=subtitles)
                except Exception as e:
-                  log_Creation(f"error during creation of video : {str(e)}")
+                  log_Creation(f"[run_video_short_creation_thread] error during creation of video : {str(e)}")
                text_video_path = ""
                text_video_start_time = None
                text_video_endtime = None
                text_video_title = ""
                subtitles = []
             except Exception as e:
-                log_Creation(f"error during [create_short_video] {str(e)}")
+                log_Creation(f"[run_video_short_creation_thread] error during [create_short_video] {str(e)}")
         except Exception as e:
           import traceback
-          log_Creation("[ERROR] in run_video_short_creation_thread:")
+          log_Creation("[run_video_short_creation_thread][ERROR] in run_video_short_creation_thread:")
           traceback.print_exc()
 
 
@@ -627,20 +787,20 @@ def run_video_short_creation_thread(video_url,start_time,end_time,text):
 
 
 def parse_multiline_block(block_text):
-    log(f"block_text: {block_text}")
+    log_Creation(f"block_text: {block_text}")
     lines = [line.strip() for line in block_text.strip().splitlines() if line.strip()]
     line = [line for line in lines if line.startswith('[')]
-    log(f"[parse_multiline_block] lines={lines}")
-    log(f"[parse_multiline_block] line=[{line}]")
+    log_Creation(f"[parse_multiline_block] lines={lines}")
+    log_Creation(f"[parse_multiline_block] line=[{line}]")
     if not lines:
         return None, None, 
     
     start_time, _ = parse_timestamp_line(line[0])
-    log(f"start_time: {start_time}")
+    log_Creation(f"[parse_multiline_block] start_time: {start_time}")
 
     _, end_time = parse_timestamp_line(line[-1])
 
-    log(f"end_time: {end_time}")
+    log_Creation(f"[parse_multiline_block] end_time: {end_time}")
         
     return start_time, end_time
 
@@ -651,8 +811,10 @@ def parse_timestamp_line(line):
     pattern = r"\[(\d+\.?\d*)s\s*-\s*(\d+\.?\d*)s\]"
     match = re.search(pattern, line)
     if match: 
+        log_Creation(f"[parse_timestamp_line] returned: {float(match.group(1)), float(match.group(2))}")
         return float(match.group(1)), float(match.group(2))
     else:
+        log_Creation(f"[parse_timestamp_line] Returned None")
         return None, 
 
 
@@ -679,13 +841,13 @@ def video_creation_worker():
      while True:
           try:
              video_url,  start_time, end_time, text = video_task_que.get()
-             log_Creation(f"\n\n\n\n\n\n\n\n\n\nCurrent work being proccessed...[ video_url: {video_url}, start_time: {start_time}, end_time: {end_time}, text: {text} to que]")
-             log_Creation(f"Processing video task: {video_url}, {start_time}-{end_time}")
+             log_Creation(f"\n\n\n\n\n\n\n\n\n\n[video_creation_worker] Current work being proccessed...[ video_url: {video_url}, start_time: {start_time}, end_time: {end_time}, text: {text} to que]")
+             log_Creation(f"[video_creation_worker] Processing video task: {video_url}, {start_time}-{end_time}")
              run_video_short_creation_thread(video_url, start_time, end_time, text)
              log_Creation(f"Done Creating Video \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
           except Exception as e:
-               log_Creation(f" error during video_creation_worker: {str(e)}")
-               raise ValueError(f"Error during video creation")
+               log_Creation(f"[video_creation_worker] error during video_creation_worker: {str(e)}")
+               raise ValueError(f"[video_creation_worker]Error during video creation")
           finally:
                video_task_que.task_done()
 
@@ -695,11 +857,11 @@ def video_creation_worker():
 
 def wait_for_proccessed_video_complete(queue: Queue, check_interval=60):
      """Blocks until the queue is empty, checking every `check_interval` seconds."""
-     print(f"\n\n\n\n\n\n[wait_for_proccessed_video_complete]")
+     log_Creation(f"\n\n\n\n\n\n[wait_for_proccessed_video_complete]")
      while not queue.empty():
-          log(f"waiting for video_task_que to be empty: items remaining: {queue.qsize()}")
+          log_Creation(f"[wait_for_proccessed_video_complete]  waiting for video_task_que to be empty: items remaining: {queue.qsize()}")
           time.sleep(check_interval)
-     print("✅ video_task_que is now empty.")
+     log_Creation("[wait_for_proccessed_video_complete]✅ video_task_que is now empty.")
 
 
 
@@ -709,8 +871,37 @@ def verify_start_time_end_time_text(audio, start_time,end_time,text):
      tool.device = "cuda"
      tool.setup()
 
+    # chunk [
+# [284.20s - 285.80s] As amazing as things are right now,
+# [286.56s - 288.76s] AI is doubling in power,
+# [289.12s - 289.76s] cost of power,
+# [290.08s - 291.30s] every 3.3 months.
+# [291.78s - 293.04s] So in the next one year,
+# [293.24s - 294.84s] it's going to increase by 16 times.
+# [295.40s - 296.48s] In the next 24 months,
+# [296.76s - 298.06s] 256 times.
+# [298.58s - 299.50s] In the next five years,
+# [299.56s - 300.40s] can you guess how many times?
+# [301.28s - 302.12s] One million.
+# [302.98s - 303.90s] It's exponential.
+# [304.28s - 306.46s] If it's doubling every 3.3 months,
+# [306.60s - 307.44s] in five years,
+# [307.52s - 308.76s] it's a million times more powerful.
+# [309.40s - 311.16s] So when AI is a million times more powerful,
 
-     ###LOGIKK HERR 
+    #]
+
+     #Når agenten lagrer tekst fra chunk
+     #Så hender det at den lagrer eks:  [290.08s - 291.30s]  months. [291.78s - 293.04s] So in the next one year,
+     #så da blir det feil at videoen starter fra 290.08s....
+    ##så jeg får en whisper modell til og gå over nettopp den tidsperioden fra 290.08s ---> 293.04s
+    # den kjører vad_filter=True med 1ms så jeg får ordriktig nye tidsstamp med og bruke teksten som fasit.
+    #returnerer tidsstamp for hvert ord/2 ord   også må en funksjon  fikse start_time og end_time på hele teksten for å få duration av video.
+    
+
+
+#Code execution failed at line 'create_motivationalshort(text="[832.99s - 833.57s\] Success and wealth comes from creating space for opportunity.")' due to: UnboundLocalError: cannot access local variable 'start_time' where it is not associated with a value
+     
      
      
      final_start_time = None
@@ -735,27 +926,28 @@ def create_motivationalshort(text: str) -> None:
         """
         log_Creation(f"\n[CREATE_MOTIVATIONALSHORT]   text sent in: {text}")
         try:
+          #  audio_path = get_current_audio_path()
+         #   Redefined_text = verify_start_time_end_time_text(audio=audio_path,text=text, start_time=start_time,end_time=end_time)
             start_time, end_time = parse_multiline_block(text)
             log_Creation(f"[start_time: {start_time}, end_time: {end_time}]   FROM : create_motivationalshort")
         except Exception as e:
-             log_Creation(f" Error during [parse_multiline_block]: {str(e)}")
+             log_Creation(f" [verify_start_time_end_time_text]  Error during [parse_multiline_block]: {str(e)}")
                 
 
         if start_time is None or end_time is None:
-             log_Creation("start_time is None or end_time is None")
+             log_Creation("[verify_start_time_end_time_text] start_time is None or end_time is None")
              raise ValueError(f"start_time or end_time is None, start_time: {start_time}, end_time: {end_time}")
         
 
-        log(f"[verify_start_time_end_time_text]  text: {text}, \n start_time: {start_time}, end_time: {end_time}")
+        log_Creation(f"[verify_start_time_end_time_text]  text: {text}, \n start_time: {start_time}, end_time: {end_time}")
         
-        audio_path = get_current_audio_path()
-        verify_start_time_end_time_text(audio=audio_path,text=text, start_time=start_time,end_time=end_time)
+       
         video_url = get_current_videourl()
-        log_Creation(f"Video URL from get_current_videourl: {video_url}")
-        log_Creation(f"Starting video creation for {video_url} from {start_time}s to {end_time}s")
+        log_Creation(f"[verify_start_time_end_time_text] Video URL from get_current_videourl: {video_url}")
+        log_Creation(f"[verify_start_time_end_time_text] Starting video creation for {video_url} from {start_time}s to {end_time}s")
 
         try:
-            log_Creation(f"Queued video task: url={video_url}, start={start_time}, end={end_time}, text='{text}'")
+            log_Creation(f"[verify_start_time_end_time_text] Queued video task: url={video_url}, start={start_time}, end={end_time}, text='{text}'")
             video_task_que.put((video_url, start_time, end_time, text))
             Delete_rejected_line(text)
             global count 
@@ -776,18 +968,20 @@ def Delete_rejected_line(text: str) -> None:
               [start_time - end_time] actual text here. 
               ===END_TEXT===      
         """
-        log(f"\n\n\n\n\n[Delete_rejected_line] text into func: {text}")
+        log(f"\n[Delete_rejected_line] text into func: {text}")
         text_file = get_current_textfile()
+        log(f"[Delete_rejected_line] path to textfile: {text_file}")
 
         with open(text_file, 'r', encoding="utf-8") as f:
                     lines = f.readlines()
+                    log(f"[Delete_rejected_line] lines: {lines}")
         
         with open(text_file, 'w', encoding="utf-8") as f:
             for line in lines:
-                 log(f"line before stripping: {line}")
+                 log(f"[Delete_rejected_line]line before stripping: {line}")
                  if line.strip() != text.strip():
                       f.write(line)
-                      log(f"written the line, should have removed the line from text: {line}\n\n\n\n\n")
+                      log(f"[Delete_rejected_line]written the line, should have removed the line from text: {line}\n\n\n\n\n")
 
 
 
@@ -898,7 +1092,7 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
                 break
         
         log(f"[The current ModelCountRun]: {ModelCountRun}")
-        if  ModelCountRun >= 6:
+        if  ModelCountRun >= 1:
                 verify_saved_text_agent(agent_txt_saving_path)
                 wait_for_proccessed_video_complete(video_task_que)
                 ModelCountRun = 0
@@ -1077,14 +1271,18 @@ def gpu_worker():
             max_new_tokens=5000,
         )
     log(f"Loaded Global_model on device")
+    itemcount = 0
 
     while True:
         item = transcript_queue.get()
+
         log(f"item: {item}")
-        if item is None:
+        if item is None and itemcount <= 0:
             log("Shutdown signal received, exiting GPU worker")
             transcript_queue.task_done()
             break
+
+        itemcount += 1
 
         video_path_url, transcript_text_path,agent_txt_saving_path = item
         set_current_videourl(video_path_url)
@@ -1109,6 +1307,10 @@ if __name__ == "__main__":
 
     worker_thread = threading.Thread(target=video_creation_worker)
     worker_thread.start()
+    # set_current_audio_path(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.wav")
+    # set_current_videourl(r"c:\Users\didri\Documents\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.mp4")
+    # create_motivationalshort(text="[2115.36s - 2116.12s] and we[2116.12s - 2116.18s] were[2116.18s - 2116.36s] talking [2116.36s - 2116.56s] about")
+
     video_paths = [
         r"c:\Users\didri\Documents\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.mp4",
     ]
@@ -1142,4 +1344,3 @@ if __name__ == "__main__":
     worker_thread.join()
 
 
-###Transcript reason agent starter ikke med engang når den er ferdig og transcribe ?? hvorfor ??

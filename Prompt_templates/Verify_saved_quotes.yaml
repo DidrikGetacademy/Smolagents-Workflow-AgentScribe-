@@ -5,7 +5,10 @@
   At each step, in the 'Thought:' sequence, you should strictly follow the Chain of thought evaluation proccess on each line.
   Then in the 'Code:' sequence, you should write the code in simple Python. The code sequence must end with '<end_code>' sequence.
   In the end you have to return a final answer using the `final_answer` tool.
+  Reasoning stays in Thought: only
 
+  Code: should contain only the actual code to execute  tool calls — no extra prose, no explanations, no reasoning
+  
   To solve the task, you will cycle through three phases repeatedly:
     - `Thought:` (analyze the quote using Chain of thought),
     - `Code:` (call Python tools), in the 'Code:' sequence, you should write the code in simple Python. The code sequence must end with '<end_code>' sequence.
@@ -21,11 +24,18 @@
   **[timestamp] motivational line**  
   ===END_TEXT===
 
-  ---
+
+  **KEY RULE:**  
+    - Whenever you encounter:
+        ===START_TEXT===  
+        …some transcript text…  
+        ===END_TEXT===  
+      you must treat **everything** between `===START_TEXT===` and `===END_TEXT===` as **one complete, indivisible unit**.  
+      Do **not** split on timestamps or segments; analyze the full block as a single thought.
 
   ### 📜Chain of Thought Evaluation Process for each line:
 
-  For each line (enclosed between ===START_TEXT=== and  ===END_TEXT===):
+  For each full text (enclosed between ===START_TEXT=== and  ===END_TEXT===):
     1. Analyze the full Thought of the line.
     2. Identify whether the line refers to an unexplained question, idea, or context, if yes reject immediately: 
     3. Answer if it would confuse a listener if shown alone. if yes, reject immediately
@@ -81,7 +91,7 @@
       [1299.00s - 1306.50s] You don’t have to be perfect to start, but you have to start to be perfect—take that first step today.
       [1308.10s - 1315.60s] Rise every time you fall, stronger than before, because resilience is the true mark of a champion.
 
-    ❌ BAD EXAMPLES (with explanations why to reject):
+     BAD EXAMPLES (with explanations why to reject this type of **text**):
       Example                                        | Why reject
       ----------------------------------------------|--------------------------------------------------------
       [1317.00s - 1322.00s] And that's why you should never give up  
@@ -110,6 +120,8 @@
                                                     | Question directed at listener, requires context
       [1381.00s - 1385.00s] And now, the real work begins  
                                                     | Starts with "And" → dependent, incomplete
+      [1594.20s - 1594.90s] We all do. [1597.66s - 1598.44s] That's what he's saying.
+                                                    | Incomplete, no complete thought, depends on prior context.
   If yes, proceed to step 4.
 
   #### Step 4: Final Verdict
@@ -147,13 +159,11 @@
             text: [1122.03s - 1130.60s] And this connection between mindset and action, this is so important that I want to give you one
                * Is this a complete thought or message? No it' lacks context it starts with and,  and also lacks context at the end. this is not a complete thought. it would confuse the listner if this was a motivational shorts video. 
             Decision: i will reject it!
-
             text:   [1106.32s - 1115.75s] It empowers you to face it, to deal with it, and to survive it. That's what a mindset does.
             Is this a complete thought or message? it's good enough to be valid and standalone. but it almost lacks context on the first, sentence  but overall it would not confuse the listner 
-         
-         Chain of thought: 
-         reading the line carefully...
-         is this line a complete thought or message? no it lacks total meaning it stars with and. this alone would confuse the listner of the motivational short
+            Chain of thought: 
+            reading the line carefully...
+            is this line a complete thought or message? no it lacks total meaning it stars with and. this alone would confuse the listner of the motivational short
   Code:
   ```py
       create_motivationalshort(text="[1106.32s - 1115.75s] It empowers you to face it, to deal with it, and to survive it. That's what a mindset does.")
@@ -182,9 +192,9 @@
 
   Code:
   ```py
-  create_motivationalshort(text="[1045.10s - 1052.32s] Every failure, every setback, is preparing you for something greater.")
-  Delete_rejected_line(text="===START_TEXT=== [980.00s - 987.15s] Because sometimes the storm you’re in is exactly what you need to grow. ===END_TEXT===")
-  final_answer("im done with")
+      create_motivationalshort(text="[1045.10s - 1052.32s] Every failure, every setback, is preparing you for something greater.")
+      Delete_rejected_line(text="===START_TEXT=== [980.00s - 987.15s] Because sometimes the storm you’re in is exactly what you need to grow. ===END_TEXT===")
+      final_answer("im done with")
   ```<end_code>
   ---
   Task: Analyze all the lines, reject those lines by deleting them using `Delete_rejected_line` tool that is not valid for a motivational short, and run `create_motivationalshort` tool for those that are valid. 
@@ -201,17 +211,15 @@
         Text: [00:10s - 00:12s] You don't need to feel ready—you just need to move forward anyway.
           * Is this a complete and standalone motivational message?  Yes — it delivers a powerful idea that action is more important than readiness.
           Decision: accept.
-
         Text: [00:06s - 00:08s] I realized that comfort is a silent killer.
           * Is this standalone and clear?  No — "I realized" makes it personal and vague, lacks a universal motivational power.
           Decision: reject.
-
   Code:
   ```py
   create_motivationalshort(text="[00:10s - 00:12s] You don't need to feel ready—you just need to move forward anyway.")
   Delete_rejected_line(text="===START_QUOTE=== [00:06s - 00:08s] I realized that comfort is a silent killer. ===END_QUOTE===")
   final_answer("Done reviewing the lines, accepted valid motivational quotes and deleted invalid ones.")
-  ```<end_code>```
+  ```<end_code>
   ---
   Task: Analyze each line for suitability as a motivational short segment. Reject incomplete or unclear lines.
     Text to analyze:
@@ -249,7 +257,7 @@
 
   Code:
   ```py
-     create_motivationalshort(text="[55.10s - 60.00s] Your mind is a powerful thing. When you fill it with positive thoughts, your life will start to change.")
+      create_motivationalshort(text="[55.10s - 60.00s] Your mind is a powerful thing. When you fill it with positive thoughts, your life will start to change.")
       Delete_rejected_line(text="===START_QUOTE=== [61.00s - 64.00s] Because change begins in the mind. ===END_TEXT===")
       final_answer("Finished processing lines: kept valid and deleted invalid quotes.")
   ```<end_code>
@@ -273,7 +281,7 @@
   {%- endif %}
 
   Here are the rules you should always follow to solve your task:
-  1. Always provide a 'Thought:' sequence, and a 'Code:\n```py' sequence ending with '```<end_code>' sequence, else you will fail.
+  1. Always REMEMBER to provide a 'Thought:' sequence, and a 'Code:\n```py' sequence ending with '```<end_code>' sequence, else you will fail.
   2. Use only variables that you have defined!
   3. Always use the right arguments for the tools. DO NOT pass the arguments as a dict as in 'answer = wiki({'query': "What is the place where James Bond lives?"})', but use the arguments directly as in 'answer = wiki(query="What is the place where James Bond lives?")'.
   4. Take care to not chain too many sequential tool calls in the same code block, especially when the output format is unpredictable. For instance, a call to search has an unpredictable return format, so do not have another tool call that depends on its output in the same block: rather output results with print() to use them in the next block.
@@ -295,8 +303,9 @@
   20. Always reject and delete lines that start with conjunctions (e.g., and, but, because, which) or otherwise depend on prior or external context. These lines are incomplete and unsuitable for standalone motivational shorts.
   21. If a line is ambiguous, vague, or ends abruptly, reject it immediately. Only save lines that form a complete, clear, and motivational thought understandable without any extra context.
   22. NEVER paraphrase or modify the text when saving. Always save the exact original line including timestamp.
-
-
+  23. Whenever you see ===START_TEXT=== and ===END_TEXT===, treat all of the content between them as one single segment, and never split it up or analyze only portions of it.
+  24. You must only execute tool calls inside 'Code: ' sequence or you will FAIL.
+  25. You must Only use your reasoning and chain of thought in the 'Thought: ' sequence or you will FAIL.
   exsample output flow you will follow strictly:
   Thought: ...
   Code:

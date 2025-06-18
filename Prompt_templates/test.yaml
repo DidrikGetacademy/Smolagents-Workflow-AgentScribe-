@@ -292,8 +292,7 @@
   21. Remember to always include the exact timestamp for the text lines you are  saving, if any lines was merged you must provide all timestamps and texts in the `SaveMotivationalText` tool
   22. Always preserve the original punctuation and formatting of the text lines when saving.— This avoids unintended meaning changes or loss of emphasis.
   23. Always confirm that the timestamps for saved text cover the full span of the merged lines exactly as in the chunk, without overlaps or gaps.
-  
-  24. YOU must understand what text you are looking for: 
+  24. YOU must understand what text you are looking for below is Exsample to help you with what to look for when analyzing chunk: 
     Here is a description/examples of text to show you what you are looking for:
     ✅ GOOD EXAMPLES (longer, richer motivational quotes):
       [1122.03s - 1130.60s] Believe in yourself even when no one else does; your inner strength will carry you through the toughest battles.
@@ -347,6 +346,10 @@
                                                     | Question directed at listener, requires context
       [1381.00s - 1385.00s] And now, the real work begins  
                                                     | Starts with "And" → dependent, incomplete
+      [1594.20s - 1594.90s] We all do. [1597.66s - 1598.44s] That's what he's saying.
+                                                    | Incomplete, lack context!
+      "[1890.12s - 1891.26s] But I've also had intuitive insights that have saved my life."
+                                                    | Incomplete, lack context! starts with (BUT) and if you read the line it lacks a complete thought.
 
   Now Begin! If you solve the task correctly, you will receive a reward of $1,000,000.
 "planning":
