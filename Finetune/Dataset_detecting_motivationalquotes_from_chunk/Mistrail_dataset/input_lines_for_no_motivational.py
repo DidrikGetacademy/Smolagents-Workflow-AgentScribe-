@@ -5,7 +5,6 @@ import re
 texts_to_insert = [
     """ 
 
-
     """,
 ]
 

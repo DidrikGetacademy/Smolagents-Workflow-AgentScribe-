@@ -7,11 +7,16 @@ with open(path, 'r', encoding='utf-8') as f:
     if not lines:
         print("File is empty!")
     else:
+        valid_lines = 0
         for i, line in enumerate(lines):
+            line = line.strip()
+            if not line:
+                # Skip empty lines silently
+                continue
             try:
                 obj = json.loads(line)
+                valid_lines += 1
             except json.JSONDecodeError as e:
                 print(f"Invalid JSON on line {i+1}: {e}")
-                break
-        else:
-            print(f"File has {len(lines)} valid JSON lines.")
+                # continue checking other lines instead of break
+        print(f"File has {valid_lines} valid JSON lines.")

@@ -19,13 +19,15 @@
 
   In each `Thought:` step, use the Chain of Thought method to analyze the quote enclosed within:
 
-  ===START_QUOTE===  
+  ===START_TEXT===
   **[timestamp] motivational line**  
-  ===END_QUOTE===
+  ===END_TEXT===
 
   ---
 
   ### 📜Chain of Thought Evaluation Process
+
+  
 
   For every line, you MUST:
     1. Paraphrase the line in your own words.
@@ -75,6 +77,31 @@
   - Before saving, double-check that the saved text matches the original transcript word-for-word.
   - If they do not match, you MUST fix it before calling `create_motivationalshort`.
   Failure to follow this means the output is invalid.
+
+
+  ✅ FINAL LIST of Acceptable lines to save (MUST follow this format exactly):
+
+  Example:
+  [Start time in seconds - End time in seconds] Text of the line
+
+  ✅ GOOD EXAMPLES:
+  [25s - 30s] Failure is just another step towards success.
+  [45s - 50s] Keep pushing, even when no one believes in you.
+  [75s - 80s] Every setback teaches you something valuable.
+
+  ❌ BAD EXAMPLES of what NOT to save
+  These kinds of lines must always be rejected (with Delete_rejected_line):
+
+  Example    Why it must be rejected
+  [123s - 128s] And that's why you should never give up    Starts with And → incomplete, depends on prior context
+  [210s - 215s] But if you think about it...    Starts with But → not a standalone message
+  [320s - 325s] This is important because    Ends abruptly → incomplete thought
+  [400s - 405s] I realized that sometimes we need to try    Starts with I realized → too personal, vague without context
+  [500s - 505s] Because you never know what will happen    Starts with Because → continuation, not self-contained
+  [600s - 605s] And then I said, "Go for it!"    Conversational fragment, makes no sense alone
+  [700s - 705s] Which is why success is hard    Starts with Which is why → dependent clause, lacks context
+
+  ✅ Key point: If the line depends on unseen context, or cannot deliver a full motivational message by itself, it must be deleted.
 
   Here are a few examples using notional tools:
   ---
@@ -201,6 +228,11 @@
   17. The task will be considered a failure if you save any text that lacks context and is not suitable for a standalone motivational short video.
   18. YOU are only ALLOWED to provide code to execute your available tools: `create_motivationalshort` and `Delete_rejected_line` tools. 
   19. Remember this else you will FAIL:  you only need to provide one 'Code: ' sequence after 'Thought: ' sequence
+  20. Always reject and delete lines that start with conjunctions (e.g., and, but, because, which) or otherwise depend on prior or external context. These lines are incomplete and unsuitable for standalone motivational shorts.
+  21. If a line is ambiguous, vague, or ends abruptly, reject it immediately. Only save lines that form a complete, clear, and motivational thought understandable without any extra context.
+  22. NEVER paraphrase or modify the text when saving. Always save the exact original line including timestamp.
+
+
   exsample output flow you will follow strictly:
   Thought: ...
   Code:

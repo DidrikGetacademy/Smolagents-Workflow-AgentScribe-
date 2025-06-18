@@ -680,9 +680,9 @@ def SaveMotivationalText(text: str, text_file: str) -> None:
         text_file: The path to the file where the quote will be saved, you have access to the variable, just write text_file=text_file.
     """
     with open(text_file, "a", encoding="utf-8") as f:
-            f.write("===START_QUOTE===\n")
+            f.write("===START_TEXT===\n")
             f.write(text.strip() + "\n")
-            f.write("===END_QUOTE===\n\n")
+            f.write("===END_TEXT===\n\n")
             print(f"text: {text}")
 
 
@@ -1110,7 +1110,7 @@ if __name__ == "__main__":
     worker_thread = threading.Thread(target=video_creation_worker)
     worker_thread.start()
     video_paths = [
-        r"c:\Users\didri\Documents\Mindset Reset： Take Control of Your Mental Habits ｜ The Mel Robbins Podcast.mp4",
+        r"c:\Users\didri\Documents\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.mp4",
     ]
     log(f"Video_paths: {len(video_paths)}")
 

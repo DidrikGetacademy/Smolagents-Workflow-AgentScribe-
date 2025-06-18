@@ -63,15 +63,15 @@ CONFIG = {
     "dataset_path": r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\Dataset_detecting_motivationalquotes_from_chunk\Mistrail_dataset\mistrail_finetune.jsonl",
     "output_dir": r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Ministral-8B-Instruct-2410\Finjustert",
     "per_device_train_batch_size": 1,
-    "gradient_accumulation_steps": 8,
+    "gradient_accumulation_steps": 2,
     "learning_rate": 2e-4,  # slightly higher lr for LoRA
     "weight_decay": 0.01,
-    "num_train_epochs": 3,
-    "warmup_steps": 100,
-    "logging_steps": 50,
-    "save_steps": 500,
+    "num_train_epochs": 1,
+    "warmup_steps": 50,
+    "logging_steps": 1,
+    "save_steps": 4,
     "fp16": True,
-    "max_seq_length": 3025,
+    "max_seq_length": 4096,
     # LoRA specific params:
     "lora_r": 16,
     "lora_alpha": 32,
@@ -161,7 +161,7 @@ def main():
         fp16=CONFIG['fp16'],
         logging_steps=CONFIG['logging_steps'],
         save_steps=CONFIG['save_steps'],
-        save_total_limit=3,
+        save_total_limit=2,
         remove_unused_columns=False,
         push_to_hub=False,
         logging_dir=os.path.join(CONFIG['output_dir'], "logs"),
@@ -170,9 +170,8 @@ def main():
         eval_strategy="epoch",
         logging_strategy="steps",
         eval_steps=CONFIG['save_steps'], 
-        load_best_model_at_end=True,
         label_names=["labels"],  
-         metric_for_best_model="eval_loss",
+        metric_for_best_model="eval_loss",
         greater_is_better=False
                
     )

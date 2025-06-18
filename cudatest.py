@@ -1,2 +1,4 @@
 import torch
-print(torch.cuda.is_available())
+torch.cuda.empty_cache()
+import gc
+gc.collect()
