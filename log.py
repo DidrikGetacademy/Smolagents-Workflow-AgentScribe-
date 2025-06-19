@@ -1,5 +1,5 @@
 
-log_file_path = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Token_logs.txt"
+log_file_path = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\debug_performance\log.txt"
 import datetime
 import threading 
 def log(msg):
