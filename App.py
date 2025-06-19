@@ -13,11 +13,10 @@ from smolagents import TransformersModel, FinalAnswerTool, SpeechToTextTool, Cod
 from Agents_tools import ChunkLimiterTool
 import gc
 import yaml
-
+from log import log 
 import torchvision.transforms.functional as F
 sys.modules['torchvision.transforms.functional_tensor'] = F
 import subprocess
-from smolagents import SpeechToTextTool
 from moviepy import VideoFileClip, ImageSequenceClip, TextClip, CompositeVideoClip,vfx,AudioFileClip,afx
 import threading
 import cv2
@@ -785,37 +784,35 @@ def run_video_short_creation_thread(video_url,start_time,end_time,text):
 
 
 
-
 def parse_multiline_block(block_text):
-    log_Creation(f"block_text: {block_text}")
-    lines = [line.strip() for line in block_text.strip().splitlines() if line.strip()]
-    line = [line for line in lines if line.startswith('[')]
-    log_Creation(f"[parse_multiline_block] lines={lines}")
-    log_Creation(f"[parse_multiline_block] line=[{line}]")
-    if not lines:
-        return None, None, 
-    
-    start_time, _ = parse_timestamp_line(line[0])
-    log_Creation(f"[parse_multiline_block] start_time: {start_time}")
-
-    _, end_time = parse_timestamp_line(line[-1])
-
-    log_Creation(f"[parse_multiline_block] end_time: {end_time}")
-        
-    return start_time, end_time
-
-
-
-def parse_timestamp_line(line):
+    """
+    1) Splitter blokken i linjer.
+    2) Finner ALLE '[start - end] tekst' — uansett hvordan de står.
+    3) Bygger NY tekst med én linje per subtitle.
+    4) Returnerer start_time (første), end_time (siste) OG den nye teksten.
+    """
     import re
-    pattern = r"\[(\d+\.?\d*)s\s*-\s*(\d+\.?\d*)s\]"
-    match = re.search(pattern, line)
-    if match: 
-        log_Creation(f"[parse_timestamp_line] returned: {float(match.group(1)), float(match.group(2))}")
-        return float(match.group(1)), float(match.group(2))
-    else:
-        log_Creation(f"[parse_timestamp_line] Returned None")
-        return None, 
+    log(f"block_text: {block_text}")
+
+    pattern = re.compile(r"\[(\d+\.\d+)s\s*-\s*(\d+\.\d+)s\]\s*([^\[]+)")
+    matches = pattern.findall(block_text)
+
+    if not matches:
+         return None, None, ""
+    new_text = "\n".join(
+         f"[{start}s - {end}s] {text.strip()}"
+         for start, end, text in matches 
+         
+    )
+
+    Video_start_time = float(matches[0][0])
+    Video_end_time = float(matches[-1][1])
+
+    log_Creation(f"[parse_multiline_block] start_time: {start_time}")
+    log_Creation(f"[parse_multiline_block] end_time: {end_time}")
+    log_Creation(f"[parse_multiline_block] new_text: {new_text}")
+
+    return Video_start_time, Video_end_time, new_text
 
 
 @tool
@@ -831,7 +828,7 @@ def SaveMotivationalText(text: str, text_file: str) -> None:
     with open(text_file, "a", encoding="utf-8") as f:
             f.write("===START_TEXT===\n")
             f.write(text.strip() + "\n")
-            f.write("===END_TEXT===\n\n")
+            f.write("===END_TEXT===\n")
             print(f"text: {text}")
 
 
@@ -865,44 +862,38 @@ def wait_for_proccessed_video_complete(queue: Queue, check_interval=60):
 
 
 
-def verify_start_time_end_time_text(audio, start_time,end_time,text):
+def verify_start_time_end_time_text(audio_path, Video_start_time,Video_end_time,text):
+     from utils import SpeechToTextTool_verify
      """ Whisper model that verifies/ensures the correct start_time - end_time of video/text"""
-     tool = SpeechToTextTool()
+     tool = SpeechToTextTool_verify()
      tool.device = "cuda"
      tool.setup()
 
-    # chunk [
-# [284.20s - 285.80s] As amazing as things are right now,
-# [286.56s - 288.76s] AI is doubling in power,
-# [289.12s - 289.76s] cost of power,
-# [290.08s - 291.30s] every 3.3 months.
-# [291.78s - 293.04s] So in the next one year,
-# [293.24s - 294.84s] it's going to increase by 16 times.
-# [295.40s - 296.48s] In the next 24 months,
-# [296.76s - 298.06s] 256 times.
-# [298.58s - 299.50s] In the next five years,
-# [299.56s - 300.40s] can you guess how many times?
-# [301.28s - 302.12s] One million.
-# [302.98s - 303.90s] It's exponential.
-# [304.28s - 306.46s] If it's doubling every 3.3 months,
-# [306.60s - 307.44s] in five years,
-# [307.52s - 308.76s] it's a million times more powerful.
-# [309.40s - 311.16s] So when AI is a million times more powerful,
+     def extract_audio_segment(audio_path, start_time, end_time):
+              """
+                Klipper ut lydsegment fra audio_path fra start_time til end_time (i sekunder).
+                Returnerer path til den midlertidige lydfilen med segmentet.
+              """
+              import ffmpeg
+              import tempfile
+              duration = end_time, start_time
+              temp_file = tempfile.NamedTemporaryFile(suffix='.wav',delete=False)
+              temp_path = temp_file.name
+              temp_file.close()
+              (
+                   ffmpeg
+                   .input(audio_path, ss=start_time, t=duration)
+                   .output(temp_path, format='wav', acodec='pcm_s16le', ac=1, ar='16000')  # mono 16kHz wav for ASR
+                   .overwrite_output()
+                   .run(quiet=True)
+              )
+              return temp_path
 
-    #]
+     segment = extract_audio_segment(audio_path, Video_start_time, Video_end_time)
 
-     #Når agenten lagrer tekst fra chunk
-     #Så hender det at den lagrer eks:  [290.08s - 291.30s]  months. [291.78s - 293.04s] So in the next one year,
-     #så da blir det feil at videoen starter fra 290.08s....
-    ##så jeg får en whisper modell til og gå over nettopp den tidsperioden fra 290.08s ---> 293.04s
-    # den kjører vad_filter=True med 1ms så jeg får ordriktig nye tidsstamp med og bruke teksten som fasit.
-    #returnerer tidsstamp for hvert ord/2 ord   også må en funksjon  fikse start_time og end_time på hele teksten for å få duration av video.
-    
-
-
-#Code execution failed at line 'create_motivationalshort(text="[832.99s - 833.57s\] Success and wealth comes from creating space for opportunity.")' due to: UnboundLocalError: cannot access local variable 'start_time' where it is not associated with a value
      
-     
+     whisper_results = tool.forward({"audio": audio_path, "text_path": txt_output_path, "video_path": video_path})
+
      
      final_start_time = None
      final_end_time = None
@@ -928,7 +919,7 @@ def create_motivationalshort(text: str) -> None:
         try:
           #  audio_path = get_current_audio_path()
          #   Redefined_text = verify_start_time_end_time_text(audio=audio_path,text=text, start_time=start_time,end_time=end_time)
-            start_time, end_time = parse_multiline_block(text)
+            start_time, end_time, new_text = parse_multiline_block(text)
             log_Creation(f"[start_time: {start_time}, end_time: {end_time}]   FROM : create_motivationalshort")
         except Exception as e:
              log_Creation(f" [verify_start_time_end_time_text]  Error during [parse_multiline_block]: {str(e)}")
@@ -939,16 +930,15 @@ def create_motivationalshort(text: str) -> None:
              raise ValueError(f"start_time or end_time is None, start_time: {start_time}, end_time: {end_time}")
         
 
-        log_Creation(f"[verify_start_time_end_time_text]  text: {text}, \n start_time: {start_time}, end_time: {end_time}")
+        log_Creation(f"[verify_start_time_end_time_text]  text: {new_text}, \n start_time: {start_time}, end_time: {end_time}")
         
        
         video_url = get_current_videourl()
-        log_Creation(f"[verify_start_time_end_time_text] Video URL from get_current_videourl: {video_url}")
         log_Creation(f"[verify_start_time_end_time_text] Starting video creation for {video_url} from {start_time}s to {end_time}s")
 
         try:
             log_Creation(f"[verify_start_time_end_time_text] Queued video task: url={video_url}, start={start_time}, end={end_time}, text='{text}'")
-            video_task_que.put((video_url, start_time, end_time, text))
+            video_task_que.put((video_url, start_time, end_time, new_text))
             Delete_rejected_line(text)
             global count 
             count +=1
@@ -961,7 +951,8 @@ def create_motivationalshort(text: str) -> None:
 
 @tool
 def Delete_rejected_line(text: str) -> None:
-        """  Deletes lines from the current text file that match the given text.
+        """  Deletes a block from the text file that contains the given inner text,
+             by removing the whole block: ===START_TEXT=== ... ===END_TEXT===
         Args:
             text: The line to delete (i.e., considered rejected/not valid) Format: 
               ===START_TEXT=== 
@@ -973,15 +964,30 @@ def Delete_rejected_line(text: str) -> None:
         log(f"[Delete_rejected_line] path to textfile: {text_file}")
 
         with open(text_file, 'r', encoding="utf-8") as f:
-                    lines = f.readlines()
-                    log(f"[Delete_rejected_line] lines: {lines}")
+                    content = f.readlines()
+
+        block_text = text.strip() 
+
+        match = re.search(r'===START_TEXT===\s*(.*?)\s===END_TEXT===',block_text, flags=re.DOTALL)
+        if not match:
+           log("[Delete_rejected_line] Could not extract block content — check input format!")
+           return
+        
+        
+        inner_text = re.escape(match.group(1).strip())
+
+
+        pattern = rf'===START_TEXT===\s*.*?{inner_text}.*?\s===END_TEXT==='
+
+        new_content, count = re.subn(pattern, '', content, flags=re.DOTALL)
+
+        log(f"[Delete_rejected_line] Removed {count} block(s).\nNew content:\n{new_content.strip()}")
+
         
         with open(text_file, 'w', encoding="utf-8") as f:
-            for line in lines:
-                 log(f"[Delete_rejected_line]line before stripping: {line}")
-                 if line.strip() != text.strip():
-                      f.write(line)
-                      log(f"[Delete_rejected_line]written the line, should have removed the line from text: {line}\n\n\n\n\n")
+            f.write(new_content.strip() + "\n")
+
+
 
 
 
@@ -1029,6 +1035,19 @@ def save_full_io_to_file(input_chunk: str, reasoning_steps: list[str], model_res
         f.write(model_response.strip() + "\n")
         f.write("===MODEL RESPONSE END===\n\n")
         f.write("------------------------------------------------------------------------\n\n\n")
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1125,7 +1144,7 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
                     Here is the chunk/text you will analyze:
 
                      [chunk start]\n
-                     {chunk}  
+                      {chunk}  
                     \n[chunk end]  
                       """
 
@@ -1140,7 +1159,7 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
             input_chunk=chunk,
             reasoning_steps=reasoning_log,
             model_response=result,
-            file_path=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\data.txt"
+            file_path=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\debug_performance\AgentRun_Data.txt"
         )
 
         chunk_limiter.called = False 
@@ -1150,15 +1169,12 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
 
 
 
-log_file_path = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\debug_performance\transcription_log.txt"
 
-def log(msg):
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    thread_name = threading.current_thread().name
-    log_message = f"[{timestamp}][{thread_name}] {msg}"
-    print(log_message)
-    with open(log_file_path, "a", encoding="utf-8") as f:
-        f.write(log_message + "\n")
+
+
+
+
+log_file_path = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\debug_performance\transcription_log.txt"
 
 
 video_creation_path = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\debug_performance\Video_creationLog_path.txt"
@@ -1307,9 +1323,6 @@ if __name__ == "__main__":
 
     worker_thread = threading.Thread(target=video_creation_worker)
     worker_thread.start()
-    # set_current_audio_path(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.wav")
-    # set_current_videourl(r"c:\Users\didri\Documents\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.mp4")
-    # create_motivationalshort(text="[2115.36s - 2116.12s] and we[2116.12s - 2116.18s] were[2116.18s - 2116.36s] talking [2116.36s - 2116.56s] about")
 
     video_paths = [
         r"c:\Users\didri\Documents\The Formula for Thriving in a Changing World (Success, Intuition, & Fulfillment) ｜ Vishen Lahkiani.mp4",
