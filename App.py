@@ -9,11 +9,13 @@ if GPEN_PATH not in sys.path:
     sys.path.insert(0, GPEN_PATH)
 import GPEN.__init_paths
 from GPEN.face_enhancement import FaceEnhancement
+
+
+
 from smolagents import TransformersModel, FinalAnswerTool, SpeechToTextTool, CodeAgent, tool,SpeechToTextToolCPU
 from Agents_tools import ChunkLimiterTool
 import gc
 import yaml
-
 import torchvision.transforms.functional as F
 sys.modules['torchvision.transforms.functional_tensor'] = F
 import subprocess
@@ -94,6 +96,16 @@ def get_current_textfile() -> str:
 def create_motivational_montage_agent(clips: List[str], output_path: str):
     return 
 
+
+def upload_to_social_media_accounts():
+     return
+
+
+def Run_Smolagents_viral_extractor():
+     return 
+
+
+
 def  clear_queue(q: Queue):
      with q.mutex:
           q.queue.clear()
@@ -113,8 +125,6 @@ def change_saturation(frame ,mode="Increase", amount=0.2):
         hsv = np.clip(hsv, 0, 255).astype(np.uint8)
         changed_frames = cv2.cvtColor(hsv, cv2.COLOR_HSV2RGB)
           
-        #cv2.imwrite("before_gfpgan.jpg", cv2.cvtColor(cropped_frames[0], cv2.COLOR_RGB2BGR))
-        #cv2.imwrite("after_gfpgan.jpg", cv2.cvtColor(restored_frames[0], cv2.COLOR_RGB2BGR))
      return changed_frames
 
 
@@ -155,83 +165,11 @@ def sharpen_frame_naturally(frame_bgr):
             img_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
             pil_img = Image.fromarray(img_rgb)
 
-            sharpned_pil = pil_img.filter(ImageFilter.UnsharpMask(radius=1.2, percent=113,threshold=2))
+            sharpned_pil = pil_img.filter(ImageFilter.UnsharpMask(radius=1.2, percent=90,threshold=3))
             sharpned_rgb = np.array(sharpned_pil)
             sharpened_bgr = cv2.cvtColor(sharpned_rgb, cv2.COLOR_RGB2BGR)
             print(f"sharpening completed")
             return sharpened_bgr
-
-
-def downscale_to_size( img: np.ndarray, width: int, height: int) -> np.ndarray:
-            """
-            Downscale an image to a specific width and height using Lanczos interpolation.
-            """
-            new_size = (width, height)
-            print(f"downscale complete on img: {img},  {new_size}")
-            return cv2.resize(img, new_size, interpolation=cv2.INTER_LANCZOS4)
-
-
-
-def change_video_resolution(video_path, target_width, target_height, output_path=None):
-        if output_path is None:
-            output_path = "./converted_original_for_quality_test.mp4"
-        (
-            ffmpeg
-            .input(video_path)
-            .output(output_path, vf=f'scale={target_width}:{target_height}', preset='slow', crf=18)
-            .overwrite_output()
-            .run()
-        )
-        return output_path
-    
-
-
-def get_video_resolution(video_path):
-        cmd = [
-            "ffprove",
-            "-v", "error",
-            "-select_streams", "v:0",
-            "-show_entries", "stream=width,height",
-            video_path
-        ]
-        result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        if result.returncode != 0:
-            raise RuntimeError(f"ffprobe failed: {result.stderr}")
-        width, height = map(int, result.stdout.strip().split('x'))
-        return width,height    
-
-
-def test_videoquality_comparison(original_video_path, new_video_path):
-        import subprocess
-        try: 
-            orig_width, orig_height = get_video_resolution(original_video_path)
-            new_width, new_height = get_video_resolution(new_video_path)
-            if (orig_width,orig_height) != (new_width, new_height):
-               print(f"video sizes differ: original {orig_width}x{orig_height}, new {new_width}x{new_height}")
-            
-
-            print(f"both videos have the same resolution continuing...: {orig_width}x {orig_height}")
-
-            if orig_width == 1920 and orig_height == 1080:
-                model_path = "./vmaf_float_v0.6.1.json"
-            elif orig_width == 3840 and orig_height == 2160:
-                model_path = "./vmaf_float_4k_v0.6.1.json"
-
-            else: 
-                print("resolution not supported")
-                return
-            
-            cmd = [
-                "ffmpeg",
-                "-i", new_video_path,
-                "-i", original_video_path,
-                "-lavfi", f"libvmaf={model_path}:log_fmt=json:log_path./vmaf_output.json",
-                "-f", "null",
-                "-"
-            ]
-            subprocess.run(cmd)
-        except Exception as e:
-            print(f"error during testing of videoquality!!!! reason: {str(e)}")
 
 
 
@@ -268,15 +206,18 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
     def group_subtitle_words_in_pairs(subtitle_words):
          chunks = []
          i = 0
+         offset = float(subtitle_words[0]['start']) if subtitle_words else 0.0
          while i < len(subtitle_words):
               pair = subtitle_words[i:i+2]
 
               text_chunk = ''.join([w['word'].strip() + ' ' for w in pair]).strip().upper()
 
-              start = float(pair[0]['start'])
+              start = float(pair[0]['start']) - offset
 
-              end = float(pair[-1]['end'])
+              end = float(pair[-1]['end']) - offset  
               duration = end - start
+              start = max(0.0, start)
+              duration = max(0.0, duration)
               
               chunks.append({'text': text_chunk, 'start': start, 'duration': duration})
 
@@ -293,26 +234,31 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
   
 
     def create_subtitles_from_pairs(pairs):
+        from moviepy.video.fx import FadeIn, FadeOut
         text_clips = []
+        fade_duration = 0.15
+
         for c in pairs:
+            log(f"text for c in pairs: {c}")
             txt_clip = TextClip(
                 text=c['text'],
                 font=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Utils-Video_creation\Fonts\OpenSans-VariableFont_wdth,wght.ttf", 
-                font_size=45,
+                font_size=80,
                 margin=(10, 10), 
                 text_align="center",
                 vertical_align="center",
                 horizontal_align="center",
                 color='white',
                 stroke_color="black",
-                stroke_width=3,
-                size=(1000, None),
+                stroke_width=4,
+                size=(1000, 150),
                 method="label",
                 duration=c['duration']
-            ).with_position(('center', 0.60), relative=True
-            ).with_start(c['start'])
+               ).with_start(c['start']).with_position(('center', 0.60), relative=True)
+            txt_clip  = txt_clip.with_effects([FadeIn(fade_duration), FadeOut(fade_duration)])
             text_clips.append(txt_clip)
             log(f"[create_subtitles_from_pairs] Appending: {txt_clip}")
+            log(f"Text_clips: {text_clips}")
         return text_clips
 
         
@@ -439,12 +385,12 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 
 
 
-##############################################################
-##----------------------------------------------------------###
-## Extrcting frames from original video to a LIST
-##----------------------------------------------------------###
-##############################################################
-    log(f"\n\n[Extracting original video frames]  PROCCESS starting...")
+# ##############################################################
+# ##----------------------------------------------------------###
+# ## Extrcting frames from original video to a LIST
+# ##----------------------------------------------------------###
+# ##############################################################
+#     log(f"\n\n[Extracting original video frames]  PROCCESS starting...")
 
     frames = []
     for frame in clip.iter_frames():
@@ -457,11 +403,11 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 
 
 
-###############################
-##--------------------------###
-## Yolo8/facedetection + Cropping
-##--------------------------###
-###############################
+# ###############################
+# ##--------------------------###
+# ## Yolo8/facedetection + Cropping
+# ##--------------------------###
+# ###############################
     log(f"\n\n[detect_and_crop_frames_batch]  PROCCESS starting...")
     cropped_frames = detect_and_crop_frames_batch(frames=frames,batch_size=8)
     log(f"[detect_and_crop_frames_batch] Successfully complete. \n\n")
@@ -502,34 +448,34 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 #GFPGANER & REALESRGAN UPSCALING
 ##---------------------##
 ##########################
-    log(f"\n\n[GFPGANER & REALESRGAN UPSCALING] PROCCESS starting...")
-    from basicsr.utils.registry import ARCH_REGISTRY
-    ARCH_REGISTRY._obj_map.pop('RRDBNet', None)
-    ARCH_REGISTRY._obj_map.pop('ResNetArcFace', None)
-    from basicsr.archs.rrdbnet_arch import RRDBNet
-    from realesrgan import RealESRGANer 
-    model = RRDBNet(num_in_ch=3, num_out_ch=3, num_feat=64,num_block=23, num_grow_ch=32, scale=2)
-    bg_upsampler = RealESRGANer(model_path=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\gfpgan\weights\RealESRGAN_x2plus.pth", model=model, scale=2)
+    # log(f"\n\n[GFPGANER & REALESRGAN UPSCALING] PROCCESS starting...")
+    # from basicsr.utils.registry import ARCH_REGISTRY
+    # ARCH_REGISTRY._obj_map.pop('RRDBNet', None)
+    # ARCH_REGISTRY._obj_map.pop('ResNetArcFace', None)
+    # from basicsr.archs.rrdbnet_arch import RRDBNet
+    # from realesrgan import RealESRGANer 
+    # model = RRDBNet(num_in_ch=3, num_out_ch=3, num_feat=64,num_block=23, num_grow_ch=32, scale=2)
+    # bg_upsampler = RealESRGANer(model_path=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\gfpgan\weights\RealESRGAN_x2plus.pth", model=model, scale=2)
 
-    GFPGaner_frames = []
-    from gfpgan import GFPGANer
-    gfpganer = GFPGANer(model_path=r'C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\gfpgan\weights\GFPGANv1.4.pth', upscale=2, arch='clean', channel_multiplier=2, bg_upsampler=bg_upsampler)
-    try:
-        log(f"[GFPGANER] starting upscaling frames now....")
-        for frame in tqdm(enchanced_frames, desc="[GFPGAN] Upscaling", unit="frame"):
-            frame_height,frame_width = frame.shape[:2]
-            _, _, gfpganer_enchanced_frame = gfpganer.enhance(frame, has_aligned=False, only_center_face=True, weight=0.3)
-            enchanced_height,enchanced_width = gfpganer_enchanced_frame.shape[:2]
-            log(f"[GFPGANER] enchanced frame..")
-            log(f"[GFPGANer] Frame input---> height: {frame_height},  width: {frame_width} \n enchanced_frame:  Height: {enchanced_height}, width: {enchanced_width} \n ")
-            GFPGaner_frames.append(gfpganer_enchanced_frame)
-            log(f"[GFPGANER] appending upscaled frame")
+    # GFPGaner_frames = []
+    # from gfpgan import GFPGANer
+    # gfpganer = GFPGANer(model_path=r'C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\gfpgan\weights\GFPGANv1.4.pth', upscale=2, arch='clean', channel_multiplier=2, bg_upsampler=bg_upsampler)
+    # try:
+    #     log(f"[GFPGANER] starting upscaling frames now....")
+    #     for frame in tqdm(enchanced_frames, desc="[GFPGAN] Upscaling", unit="frame"):
+    #         frame_height,frame_width = frame.shape[:2]
+    #         _, _, gfpganer_enchanced_frame = gfpganer.enhance(frame, has_aligned=False, only_center_face=True, paste_back=True, weight=0.3)
+    #         enchanced_height,enchanced_width = gfpganer_enchanced_frame.shape[:2]
+    #         log(f"[GFPGANER] enchanced frame..")
+    #         log(f"[GFPGANer] Frame input---> height: {frame_height},  width: {frame_width} \n enchanced_frame:  Height: {enchanced_height}, width: {enchanced_width} \n ")
+    #         GFPGaner_frames.append(gfpganer_enchanced_frame)
+    #         log(f"[GFPGANER] appending upscaled frame")
 
-        log(f"Cleared cache and collected garbage")
-    except Exception as e:
-         log(f"[GFPGANER] Error during upscaling.. {str(e)}")
+    #     log(f"Cleared cache and collected garbage")
+    # except Exception as e:
+    #      log(f"[GFPGANER] Error during upscaling.. {str(e)}")
 
-    log(f"[GFPGAN] upscaling finnished....\n\n")
+    # log(f"[GFPGAN] upscaling finnished....\n\n")
 
 
 
@@ -561,7 +507,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
         save_face = False
         aligned = False
         sr_model = 'realesrnet'
-        sr_scale = 1
+        sr_scale = 2
         tile_size = 0
         ext = '.jpg'
 
@@ -576,10 +522,14 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 
     FaceEnhancement_frames = []
     try:
-         for frame in tqdm(GFPGaner_frames, desc="[FaceEnhancement]  proccessing frames", unit="frame"):
+   
+
+         for frame in tqdm(enchanced_frames, desc="[FaceEnhancement]  proccessing frames", unit="frame"):
+              log(f"Input frame size: {frame.shape[1]} x {frame.shape[0]}")
               frame_height,frame_width = frame.shape[:2]
               frame_bgr = cv2.cvtColor(frame,cv2.COLOR_RGB2BGR)
               enchanced_frame, _, _ = Skin_texture_enchancement.process(frame_bgr)
+              log(f"Enhanced frame size: {enchanced_frame.shape[1]} x {enchanced_frame.shape[0]}")
               enchanced_height,enchanced_width = enchanced_frame.shape[:2]
               log(f"enchanced_frame height: {enchanced_frame.shape[0]}")
               FaceEnhancement_frames.append(enchanced_frame)
@@ -588,7 +538,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
          log("[FaceEnhancement] Successfully done")
          torch.cuda.empty_cache()
          gc.collect()
-         del GFPGaner_frames
+         #del GFPGaner_frames
 
          log(f"Cleared cache and collected garbage")     
     except Exception as e:
@@ -597,11 +547,11 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 
 
 
-#####################
-##--------------.--##
-# color/ADJUSTMENT
-##-----------------##
-#####################
+# #####################
+# ##--------------.--##
+# # color/ADJUSTMENT
+# ##-----------------##
+# #####################
     log(f"\n\n[COLOR ADJUSTMENT] PROCCESS starting...")
     if change_on_saturation != None and change_saturation == "Increase":
             FaceEnhancement_frames = [change_saturation(frame,mode=change_on_saturation, amount=0.2) for frame in FaceEnhancement_frames]
@@ -610,11 +560,11 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
             FaceEnhancement_frames = [change_saturation(frame,mode=change_on_saturation, amount=0.2) for frame in FaceEnhancement_frames]
 
 
-##############################
-##--------------------------##
-# MAKING videoclip from frames
-##--------------------------##
-##############################
+# ##############################
+# ##--------------------------##
+# # MAKING videoclip from frames
+# ##--------------------------##
+# ##############################
 
     log(f"\n\n[CREATING VIDEOCLIP] PROCCESS starting...")
     try:
@@ -626,11 +576,11 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 
 
 
-################################################
-##-------------------------------------------###
-## Subtitle creation of text and added on video
-##-------------------------------------------###
-################################################
+# ################################################
+# ##-------------------------------------------###
+# ## Subtitle creation of text and added on video
+# ##-------------------------------------------###
+# ################################################
 
     try:
         log(f"Creating subtitles from pairs now..")
@@ -649,11 +599,11 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
     except Exception as e:
          log(f"Error during: finalizing clip with subtitle_clips:  {str(e)}")
 
-###############################
-##--------------------------###
-## Audio creation
-##--------------------------###
-###############################
+# ###############################
+# ##--------------------------###
+# ## Audio creation
+# ##--------------------------###
+# ###############################
     def mix_audio(original_audio, background_music_path, bg_music_volume=0.15):
         bg_music = AudioFileClip(background_music_path)
 
@@ -703,24 +653,31 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
         codec="h264_nvenc",
         preset="p7",
         audio_codec=audio_codec or "aac",
-        bitrate=str(bitrate) or "4000k",
+        bitrate="4000k",
         threads=8,
-        fps=clip.fps,
+        fps=30,
         ffmpeg_params=[
-             "-crf", "18",
-             "-vf", "format=yuv420p"],
+             "-crf", "10",
+             "-vf", "eq=brightness=0.05, format=yuv420p"],
         remove_temp=True
     )
-    
+
+    from RIFE_FPS import run_rife
+    try:
+      output_video = run_rife(out_path)
+      print(f"Interpolated video saved to: {output_video}")
+      log(f"done with interpolation")
+    except Exception as e:
+         print(f"error during frame interpolation: {str(e)}")
+  #  finally:
+    #    os.remove(out_path)
+
+
     log(f"video is completed: output path : {out_path}, video name: {video_name} video_fps: {clip.fps}, codec: {video_codec}, bitrate: {bitrate}, audio_codec: {audio_codec}, subtitles: {subtitle_text}")
     log(f"Final video resolution (width x height): {final_clip.size[0]} x {final_clip.size[1]}")  
     full_video.close()
     clip.close()
-    clear_queue(video_task_que)
-    torch.cuda.empty_cache()
-    gc.collect()
-    log(f"Cleared cache and collected garbage")
-
+   
 
 
 

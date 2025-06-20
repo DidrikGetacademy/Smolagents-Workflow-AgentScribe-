@@ -1,6 +1,19 @@
 
 
-        
+   Attempting uninstall: decorator
+    Found existing installation: decorator 5.2.1
+    Uninstalling decorator-5.2.1:
+      Successfully uninstalled decorator-5.2.1
+  Attempting uninstall: moviepy
+    Found existing installation: moviepy 2.2.1
+    Uninstalling moviepy-2.2.1:
+      Successfully uninstalled moviepy-2.2.1
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+numba 0.61.2 requires numpy<2.3,>=1.24, but you have numpy 1.23.5 which is incompatible.
+scikit-image 0.25.2 requires numpy>=1.24, but you have numpy 1.23.5 which is incompatible.
+tensorflow 2.19.0 requires numpy<2.2.0,>=1.26.0, but you have numpy 1.23.5 which is incompatible.
+xformers 0.0.30 requires torch==2.7.0, but you have torch 2.7.1+cu128 which is incompatible.
+Successfully installed decorator-4.4.2 moviepy-1.0.3 numpy-1.23.5 sk-video-1.1.10       
 from faster_whisper import WhisperModel
 import torch 
 import time
