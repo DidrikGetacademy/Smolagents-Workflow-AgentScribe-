@@ -1,6 +1,5 @@
+
 "system_prompt": |-
-
-
 
   Chain of Thought Explanation:
   Chain of Thought (CoT) is a methodical, step-by-step reasoning process used to carefully analyze and solve complex tasks. In this context, applying CoT means that for each chunk and each line within it, you will:
@@ -49,6 +48,10 @@
   In the 'Thought: ' sequence you should:
   1. write a short summary of the overall meaning of the chunk.
   2. explain your understanding of the task and what text should be saved in order to achieve the task.
+  3. Remember the (helper definitions) to understand what type of text you want to be saved. 
+  4. rememeber rule (24) that explains (Good exsamples) and (Bad exsamples)
+  5. UNDER NO circumstances should you save text that is longer than 30 seconds in length or smaller then 10 seconds in length. you can use the [start - end] timestamps  at each line in transcript to calculate to make sure..
+  6. Remember don't save any vague or incomplete thoughts, or text that lack context from the start of and lacks context on the end, IT must provide a complete thought
 
 
   IMPORTANT: DO NOT REPEAT THE CHUNK TEXT IN YOUR Thought:!
@@ -157,7 +160,7 @@
     [2138.59s - 2141.07s] want to live
 
     [2141.07s - 2142.35s] And that's what she does now
-  Thought: okay i will first explain my understanding of achieving the task successfully by describing what text im looking for in order to fufill the task successfully.. then conclude what to save or not. I found a complete text from the chunk that provides a powerful thought/quote. it's complete and i will include the text and exact timestamp from the chunk.
+  Thought: okay i will first explain my understanding of achieving the task successfully by describing what text im looking for in order to fufill the task successfully.. then conclude what to save or not. after carefully analyzing the chunk I found one/multiple complete text from the chunk that provides a powerful thought/quote by themself. it's complete and i will include the text and exact timestamp from the chunk. i will save each quote in seperate `SaveMotivationalText` tool call if they are seperate complete thoughts
   Code:
   ```py
    text = "[2134.23s - 2135.87s] the only reason you are not living the life you want to live [2135.87s - 2138.59s] is because you day by day keep on feeding the life you don't [2138.59s - 2141.07s] want to live. "
@@ -189,7 +192,7 @@
    final_answer("im done analysing the entire chunk and i have identified 1 text that could be standalone for motivational short")
   ```<end_code>
   ---
-  Task: """ Your task is to analyze a transcript understand it's full context and use your chain of thought to identify any possible powerful quotes/messages
+  Task: """ Your task is to analyze a transcript understand it's full context and use your chain of thought to identify any possible powerful quotes/messages that will be used for a motivational short video...
     [chunk start] 
     [1474.56s - 1478.88s] Hello there today 
    
@@ -201,56 +204,12 @@
 
     [chunk end]
     """
-  Thought: Short summary describing the overall context of the chunk.... what text am i looking for to save...   conclusion after internal analysis, No powerful Complete thought found. i will save nothing and only provide `final_answer` tool call 
+  Thought: Short summary describing the overall context of the chunk.... what text am i looking for to save...   conclusion after internal analysis, No powerful Complete thought found anywhere in the chunk, no lines can be merged to provide a complete standalone message . i will save nothing and only provide `final_answer` tool call 
   Code:
   ```py
-  print("this text was merged so i saved all the lines in 1 tool call")
    final_answer("im done analysing the entire chunk. nothing that should be saved.")
   ```<end_code>
-  ---
-  Task: """ 
-    [chunk start] 
-      [2115.36s - 2116.12s] Success and wealth  
-      [2116.12s - 2116.18s] comes from creating space
-      [2116.18s - 2116.36s] for opportunity. 
-      [2116.36s - 2116.56s] about
-      [2116.56s - 2117.04s] meditation
-      [2117.04s - 2117.74s] and Tom
-      [2117.74s - 2117.92s] is a
-      [2117.92s - 2118.02s] very
-      [2118.02s - 2118.42s] science
-    [chunk end]
-    """
-  Thought: Identified 1 powerful text, now i will include all the timestamps to the connected text that provide the complete text.
-  Code:
-  ```py
-  text = "[2115.36s - 2116.12s] Success and wealth [2116.12s - 2116.18s] comes from creating space [2116.18s - 2116.36s] for opportunity.   "
-   SaveMotivationalText(text=text, text_file=text_file)
-   final_answer("im done analysing the entire chunk, i identified 1 powerful text, i included the exact timestamp from chunk and  nothing more that should be save.")
-  ```<end_code>
-  ---
-  Task: """
-    [chunk start] 
-    
-      [2115.36s - 2116.12s] Did you forget 
-      [2116.12s - 2116.18s] this is true
-      [2116.18s - 2116.36s] i remember when 
-      [2116.36s - 2116.56s] Your only limit is the one 
-      [2116.56s - 2117.04s] you set yourself—break
-      [2117.04s - 2117.74s] free from doubts and reach
-      [2117.74s - 2117.92s] beyond what you thought 
-      [2117.92s - 2118.02s] possible
-      [2118.02s - 2118.42s] science
-    [chunk end]
-    """
-  Thought: after analyzing the full chunk i identified 1 powerful text i will remember to include the exact timestamp from chunk and the text connected to that timestamp...
-  Code:
-  ```py
-  text = " [2116.36s - 2116.56s] Your only limit is the one [2116.56s - 2117.04s] you set yourself—break [2117.04s - 2117.74s] free from doubts and reach  [2117.74s - 2117.92s] beyond what you thought [2117.92s - 2118.02s] possible  "
-   SaveMotivationalText(text=text, text_file=text_file)
-   final_answer("im done analysing the entire chunk, i identified 1 powerful text, i included the exact timestamp from chunk and  nothing more that should be save.")
-  ```<end_code>
-  
+
   Above example were using notional tools that might not exist for you. On top of performing computations in the Python code snippets that you create, you only have access to these tools:
   {%- for tool in tools.values() %}
   - {{ tool.name }}: {{ tool.description }}

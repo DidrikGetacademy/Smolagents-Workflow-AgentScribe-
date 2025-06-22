@@ -10,7 +10,7 @@
   Code: should contain only the actual code to execute  tool calls — no extra prose, no explanations, no reasoning
   
   To solve the task, you will cycle through three phases repeatedly:
-    - `Thought:` (analyze the quote using Chain of thought),
+    - `Thought:` (analyze all the text between `===START_TEXT===` and `===END_TEXT===`  using Chain of thought), 
     - `Code:` (call Python tools), in the 'Code:' sequence, you should write the code in simple Python. The code sequence must end with '<end_code>' sequence.
 
   You have access to the following tools, which are Python functions:
@@ -18,26 +18,29 @@
      `Delete_rejected_line`
      `final_answer`
 
-  In each `Thought:` step, use the Chain of Thought method to analyze the quote enclosed within:
+  In each `Thought:` step, use the Chain of Thought method to analyze all of the text enclosed within:
 
   ===START_TEXT===
-  **[timestamp] motivational line**  
+  **[timestamp] text [timestamp] ..... **  
   ===END_TEXT===
 
-
   **KEY RULE:**  
-    - Whenever you encounter:
+    - You MUST analyze all the text as 1 complete thought enclosed within:
         ===START_TEXT===  
-        …some transcript text…  
+          quotes 
         ===END_TEXT===  
       you must treat **everything** between `===START_TEXT===` and `===END_TEXT===` as **one complete, indivisible unit**.  
       Do **not** split on timestamps or segments; analyze the full block as a single thought.
+      Unified analysis with full timestamps:
+      Treat everything between ===START_TEXT=== and ===END_TEXT=== as one single quote—do/text to analyze, do not split it by timestamp. When saving or evaluating, because you will decide if the full text, provides a complete thought good enough and that meets criteria  include all timestamp pairs in the saved snippet, but perform your Chain‑of‑Thought analysis on the entire block as one cohesive message.
+      23a. Do NOT isolate, analyze, or save only the first sentence—you must reason over the **entire** block as a single, cohesive quote.
+      always remember to include all timestamps for each line if saving the complete text.
 
   ### 📜Chain of Thought Evaluation Process for each line:
 
   For each full text (enclosed between ===START_TEXT=== and  ===END_TEXT===):
     1. Analyze the full Thought of the line.
-    2. Identify whether the line refers to an unexplained question, idea, or context, if yes reject immediately: 
+    2. Identify whether the lines refers to an unexplained question, idea, or context, if yes reject immediately: 
     3. Answer if it would confuse a listener if shown alone. if yes, reject immediately
     4. If it does not stand alone clearly, reject immediately.
   Only save lines that are 100% understandable and motivational without any other context.
@@ -153,8 +156,6 @@
       ===START_TEXT===
       [1106.32s - 1115.75s] It empowers you to face it, to deal with it, and to survive it. That's what a mindset does.
       ===END_TEXT===
-
-   
   Thought: i will step by step analyze each quote lines using chain of thought... 
             text: [1122.03s - 1130.60s] And this connection between mindset and action, this is so important that I want to give you one
                * Is this a complete thought or message? No it' lacks context it starts with and,  and also lacks context at the end. this is not a complete thought. it would confuse the listner if this was a motivational shorts video. 
@@ -174,7 +175,7 @@
   Task: Analyze all the lines but do it line by line, step by step,  reject the lines that are not valid/suitable for a standalone motivational shorts video by using `Delete_rejected_line` tool and run  `create_motivationalshort` tool for each of those that are valid  now start step by step chain of thought reasoning over the lines
       text to analyze:
             ===START_TEXT===
-              [1045.10s - 1052.32s] Every failure, every setback, is preparing you for something greater.
+              [1045.10s - 1052.32s] Every failure, every setback, [1052.32s - 1055.32s] is preparing you for something greater.
             ===END_TEXT===
 
             ===START_TEXT===
@@ -182,49 +183,49 @@
             ===END_TEXT===
 
   Thought: 
-         Text: [1045.10s - 1052.32s] Every failure, every setback, is preparing you for something greater.
+         Text:  [1045.10s - 1052.32s] Every failure, every setback, [1052.32s - 1055.32s] is preparing you for something greater.
          Is this complete and motivational? Yes — it's concise, impactful, and fits well into a motivational short.
          Decision: valid.
 
-         Text: [980.00s - 987.15s] Because sometimes the storm you’re in is exactly what you need to grow.
+         Text: [980.00s - 987.15s] Because sometimes the storm you’re in is [987.15s - 999.00s] exactly what you need to grow.
             * Is this standalone?   Almost — but it starts with "Because", making it feel like a continuation of a previous sentence. It’s not fully clear on its own.
          Decision: Reject.
 
   Code:
   ```py
-      create_motivationalshort(text="[1045.10s - 1052.32s] Every failure, every setback, is preparing you for something greater.")
+      create_motivationalshort(text="[1045.10s - 1052.32s] Every failure, every setback, [1052.32s - 1055.32s] is preparing you for something greater.")
       Delete_rejected_line(text="===START_TEXT=== [980.00s - 987.15s] Because sometimes the storm you’re in is exactly what you need to grow. ===END_TEXT===")
-      final_answer("im done with")
+      final_answer("Done with task.")
   ```<end_code>
   ---
   Task: Analyze all the lines, reject those lines by deleting them using `Delete_rejected_line` tool that is not valid for a motivational short, and run `create_motivationalshort` tool for those that are valid. 
        here is the text to analyze
       ===START_TEXT===  
-          [00:10s - 00:12s] You don't need to feel ready—you just need to move forward anyway.
+          [00:10s - 00:12s] You don't need to feel [00:12s - 00:16s] ready—you just need to move forward anyway.
       ===END_TEXT===
 
       ===START_TEXT===
-      [00:06s - 00:08s] I realized that comfort is a silent killer.
+      [00:06s - 00:08s] I realized that comfort is a silent  [00:08s - 00:12s] killer.
       ===END_TEXT===
 
   Thought: i will not apply the chain of thought and decide....  
-        Text: [00:10s - 00:12s] You don't need to feel ready—you just need to move forward anyway.
+        Text:  [00:10s - 00:12s] You don't need to feel [00:12s - 00:16s] ready—you just need to move forward anyway..
           * Is this a complete and standalone motivational message?  Yes — it delivers a powerful idea that action is more important than readiness.
           Decision: accept.
-        Text: [00:06s - 00:08s] I realized that comfort is a silent killer.
+        Text: [00:06s - 00:08s] I realized that my life is soon over
           * Is this standalone and clear?  No — "I realized" makes it personal and vague, lacks a universal motivational power.
           Decision: reject.
   Code:
   ```py
-  create_motivationalshort(text="[00:10s - 00:12s] You don't need to feel ready—you just need to move forward anyway.")
-  Delete_rejected_line(text="===START_QUOTE=== [00:06s - 00:08s] I realized that comfort is a silent killer. ===END_QUOTE===")
+  create_motivationalshort(text="[00:10s - 00:12s] You don't need to feel [00:12s - 00:16s] ready—you just need to move forward anyway..")
+  Delete_rejected_line(text="===START_QUOTE=== [00:06s - 00:08s] I realized that my life is soon over ===END_QUOTE===")
   final_answer("Done reviewing the lines, accepted valid motivational quotes and deleted invalid ones.")
   ```<end_code>
   ---
   Task: Analyze each line for suitability as a motivational short segment. Reject incomplete or unclear lines.
     Text to analyze:
     ===START_TEXT===
-    [200.50s - 210.00s] Success is not final, failure is not fatal: it is the courage to continue that counts.
+    [200.50s - 210.00s] Success is not final, failure is not  [210.00s - 215.00s]fatal: it is the courage to continue that counts.
     ===END_TEXT===
 
     ===START_TEXT===
@@ -303,9 +304,12 @@
   20. Always reject and delete lines that start with conjunctions (e.g., and, but, because, which) or otherwise depend on prior or external context. These lines are incomplete and unsuitable for standalone motivational shorts.
   21. If a line is ambiguous, vague, or ends abruptly, reject it immediately. Only save lines that form a complete, clear, and motivational thought understandable without any extra context.
   22. NEVER paraphrase or modify the text when saving. Always save the exact original line including timestamp.
-  23. Whenever you see ===START_TEXT=== and ===END_TEXT===, treat all of the content between them as one single segment, and never split it up or analyze only portions of it.
+  23. Whenever you see ===START_TEXT=== and ===END_TEXT===, treat all of the content between them as one single segment, and never split it up or analyze only portions of it.  
   24. You must only execute tool calls inside 'Code: ' sequence or you will FAIL.
-  25. You must Only use your reasoning and chain of thought in the 'Thought: ' sequence or you will FAIL.
+  25. If the text you are analyzing between the `===START_TEXT=== ` & `===END_TEXT===` does not include all timestamps, you must reject it right away. you can detect this if the text is long and only shows 1 [timestamp] REJECT
+  26. You must ALWAYS analyze the full Text line between:  ===START_TEXT===   ===END_TEXT===
+
+  27. You must Only use your reasoning and chain of thought in the 'Thought: ' sequence or you will FAIL.
   exsample output flow you will follow strictly:
   Thought: ...
   Code:

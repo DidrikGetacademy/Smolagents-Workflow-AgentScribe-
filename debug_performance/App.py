@@ -14,7 +14,6 @@ from Agents_tools import ChunkLimiterTool
 import gc
 from Upload_youtube import upload_video
 from log import log 
-from log import VideoCreator_logger
 import yaml
 import torchvision.transforms.functional as F
 sys.modules['torchvision.transforms.functional_tensor'] = F
@@ -747,8 +746,9 @@ def parse_multiline_block(block_text):
     Video_start_time = float(matches[0][0])
     Video_end_time = float(matches[-1][1])
 
-    log(f"[parse_multiline_block] start_time: {Video_start_time}, [parse_multiline_block] end_time: {Video_end_time},[parse_multiline_block] new_text: {new_text}")
-
+    log(f"[parse_multiline_block] start_time: {Video_start_time}")
+    log(f"[parse_multiline_block] end_time: {Video_end_time}")
+    log(f"[parse_multiline_block] new_text: {new_text}")
 
     return Video_start_time, Video_end_time, new_text
 
@@ -779,7 +779,7 @@ def video_creation_worker():
           try:
              video_url,  final_start_time, final_end_time, subtitle_text = video_task_que.get()
           except queue.Empty:
-                log(f"[video_creation_worker] Que empty!")
+                log(f"[video_creation_worker]Que empty!")
                 break 
           try:
              log(f"\n\n\n\n\n\n\n\n\n\n[video_creation_worker] Current work being proccessed...[ video_url: {video_url}, start_time: {final_start_time}, end_time: {final_end_time}, text: {subtitle_text} to que]")
@@ -826,9 +826,9 @@ def verify_start_time_end_time_text(audio_path, Video_start_time, Video_end_time
     import ffmpeg
     import tempfile
 
-    log(f"1. [verify_start_time_end_time_text] Starting verification for text: '{text}'")
-    log(f"2. [verify_start_time_end_time_text] Audio path: {audio_path}")
-    log(f"3.  [verify_start_time_end_time_text] Initial video start time: {Video_start_time}, end time: {Video_end_time}")
+    log(f"[verify_start_time_end_time_text] Starting verification for text: '{text}'")
+    log(f"[verify_start_time_end_time_text] Audio path: {audio_path}")
+    log(f"[verify_start_time_end_time_text] Initial video start time: {Video_start_time}, end time: {Video_end_time}")
 
     tool = SpeechToTextTool_verify()
     tool.device = "cuda"
@@ -837,6 +837,7 @@ def verify_start_time_end_time_text(audio_path, Video_start_time, Video_end_time
 
     def clean_word(w):
         cleaned = re.sub(r"[^\w]", "", w.strip().lower())
+        log(f"[clean_word] Original: '{w}' Cleaned: '{cleaned}'")
         return cleaned
 
     def remove_timestamps(text):
@@ -881,8 +882,6 @@ def verify_start_time_end_time_text(audio_path, Video_start_time, Video_end_time
         absolute_start = block_absolute_start + relative_start
         absolute_end = block_absolute_start + relative_end
 
-        log(f"[find_start_end_by_first_last_word] Beregner absolutt starttid: block_absolute_start ({block_absolute_start}) + ({relative_start}) = {absolute_start}")
-        log(f"[find_start_end_by_first_last_word] Beregner absolutt sluttid: block_absolute_start ({block_absolute_start}) +  ({relative_end}) = {absolute_end}")
      
         subtitle_text = []
         fasit_idx = 0
@@ -894,6 +893,8 @@ def verify_start_time_end_time_text(audio_path, Video_start_time, Video_end_time
                 subtitle_text.append(w)
                 fasit_idx += 1
 
+        log(f"[find_start_end_by_first_last_word] Beregner absolutt starttid: block_absolute_start ({block_absolute_start}) + relative_start ({relative_start}) = {absolute_start}")
+        log(f"[find_start_end_by_first_last_word] Beregner absolutt sluttid: block_absolute_start ({block_absolute_start}) + relative_end ({relative_end}) = {absolute_end}")
         log(f"COMPLETE subtitle_text: {subtitle_text}")
         return absolute_start, absolute_end,subtitle_text
 
@@ -921,9 +922,7 @@ def verify_start_time_end_time_text(audio_path, Video_start_time, Video_end_time
 
     try:
         whisper_results = tool.forward({"audio": temp_audio_path})
-        log(f"[verify_start_time_end_time_text] Whisper transcription results:")
-        for result in whisper_results:
-             log(f"[verify_start_time_end_time_text] Whisper extracted: {result}\n")
+        log(f"[verify_start_time_end_time_text] Whisper transcription results: {whisper_results}")
         if not whisper_results:
             raise ValueError("Whisper result is empty or invalid")
     finally:
@@ -931,21 +930,16 @@ def verify_start_time_end_time_text(audio_path, Video_start_time, Video_end_time
         log(f"[verify_start_time_end_time_text] Temporary audio file deleted: {temp_audio_path}")
 
     whisper_words = whisper_results[0]['words']
-    log(f"\n\n\n[verify_start_time_end_time_text] Extracted whisper words:\n")
-    for word in whisper_words:
-         log(f"extracted whisper words: {word}\n")
-    subtitle_text = []
-    final_start_time = final_end_time = None
+    log(f"[verify_start_time_end_time_text] Extracted whisper words: {whisper_words}")
 
     final_start_time, final_end_time, subtitle_text = find_start_end_by_first_last_word(
-            whisper_words, text, Video_start_time
-        )
-
+        whisper_words, text, Video_start_time
+    )
 
 
     log(f"[verify_start_time_end_time_text] Final absolute start time: {final_start_time}, end time: {final_end_time}")
 
-    return final_start_time, final_end_time, subtitle_text
+    return final_start_time, final_end_time,subtitle_text
 
 
 
@@ -956,22 +950,12 @@ def verify_start_time_end_time_text(audio_path, Video_start_time, Video_end_time
 def create_motivationalshort(text: str) -> None:
         """
         Tool that creates a motivational shorts video.
+
         Args:
-            text (str): The complete input text for the motivational short.
-                The text must include the entire message — as one complete 
-                thought, quote, or motivational statement — along with 
-                timestamps for each line. The text must be enclosed within 
-                the markers (===START_TEXT===) and (===END_TEXT===) in the 
-                following format:
-
-                    ===START_TEXT===
-                    [start_time - end_time] Line 1
-                    [start_time - end_time] Line 2
-                    ...
-                    ===END_TEXT===
-
-                All content between START_TEXT and END_TEXT will be treated 
-                as a single cohesive message and analyzed as one unit.
+            text (str): The input text for the motivational short. It must include a timestamped quote in the format:
+                ===START_TEXT===
+                [start_time - end_time] actual text here.
+                ===END_TEXT===
         """
         log(f"\n[CREATE_MOTIVATIONALSHORT]   text sent in: {text}")
         try:
@@ -983,13 +967,12 @@ def create_motivationalshort(text: str) -> None:
             log(f"after [parse_multiline_block] --> start_time: {start_time}, end_time: {end_time}, new_text: {new_text}")
         except Exception as e:
              log(f" [verify_start_time_end_time_text]  Error during [parse_multiline_block]: {str(e)}")
-
                 
         
 
-        try:   
-            final_start_time, final_end_time, subtitle_text  = verify_start_time_end_time_text(audio_path=audio_path, Video_start_time=start_time, Video_end_time=end_time, text=new_text)
-            log(f"RESULT  After --> [verify_start_time_end_time_text]  final_start_time: {final_start_time},\n final_end_time: {final_end_time}.\n final_text: {subtitle_text}\n")
+        try:
+            final_start_time,final_end_time, subtitle_text  = verify_start_time_end_time_text(audio_path=audio_path,text=new_text, Video_start_time=start_time,Video_end_time=end_time)
+            log(f"[verify_start_time_end_time_text]final_start_time: {final_start_time}, final_end_time: {final_end_time}. final_text: {subtitle_text}")
         except Exception as e:
             log(f"[verify_start_time_end_time_text] error during verifying time and text: {str(e)}")
 
@@ -1115,9 +1098,6 @@ def verify_saved_text_agent(agent_saving_path):
 
     with open(agent_saving_path, "r", encoding="utf-8") as f:
              saved_quotes_text = f.read()
-            #  if not saved_quotes_text.strip():
-            #       log("empty, break")
-            #       raise ValueError("error its empty ")
 
     task = f"""Analyze all the lines but do it line for line, step by step, 
     reject the lines that are not valid/suitable for a standalone motivational shorts video by using `Delete_rejected_line` tool and run  `create_motivationalshort` tool for each of those that are valid 
@@ -1167,7 +1147,7 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
 
     log(f"transcript_path that is being proccessed inside func[Transcript_Reasoning_Agent]: {transcripts_path}")
     transcript_title = os.path.basename(transcripts_path)
-   # log(f"transcript title: {transcript_title}")
+    #log(f"transcript title: {transcript_title}")
     log(f"\nProcessing new transcript: {transcripts_path}")
     with open(agent_txt_saving_path, "a", encoding="utf-8") as out:
         out.write(f"\n--- Transcript Title: {transcript_title} ---\n")
@@ -1205,7 +1185,7 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
                 break
         
         log(f"[The current ModelCountRun]: {ModelCountRun}")
-        if  ModelCountRun >= 1:
+        if  ModelCountRun >= 0:
                 del Reasoning_Text_Agent
                 verify_saved_text_agent(agent_txt_saving_path)
                 wait_for_proccessed_video_complete(video_task_que)
@@ -1225,16 +1205,22 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
                         • Are complete thoughts or sentences, that if the text you decide to save were isolated from the rest would provide a complete thought and understanding for the listener.
                         • A complete thought is that the overall meaning of the setence/text does not miss any context like exsample of lacking context is that it starts with (and, but, etc).
 
+                    **IMPORTANT GRAMMAR RULE FOR SAVING TEXT:**
+                    When you decide to save a quote that spans multiple subtitle lines, you **must include all the connected timestamps and lines in the SAME saved text exactly as they appear from the chunk you analyzed**.  
+                    - Combine them together in one single block:  
+                    `[start_time - end_time] text line  [next_start_time - next_end_time] text line 2 until next [timestamp] and so on[...]`
+                    - Never drop or skip timestamps for any part of the connected complete text.
+                    - Do not save full chunk if it provides a complete thought. look for snippets that is about 10-25 seconds long.
+                    - Double-check that the saved text is continuous and keeps all timestamps in order just as they are present from the chunk you analyze.
+
+
                     Do NOT save generic fluff—the transcript as text in chunk is already motivational.
                     the text you choose too save needs to be complete and would result in a max  10-20 seconds motivational shorts video 
-                    IF you no text is identified. nothing that could be a standalone moitvational short, only provide `final_answer` tool stating that, this will also successfully achieve the task.
-                    Always confirm that the text saved also include the exact timestamps [start time - End time] text...
+                    IF  no text is identified. nothing that could be a standalone moitvational short, only provide `final_answer` tool stating that, this will also successfully achieve the task.
 
                     In the 'Thought: ' sequence. write a short summary describing the overall context of the chunk and then explain shortly what text you are looking for to save in order to fufill the task then procceed in 'Code: ' sequence  with the text to save after you internally have analyzed it all.
  
-
                     You must have analyzed, Focus on logical flow, completeness, and independence like a human reader on the text in chunk before any saving. and then save all identified text if any is present else provide only `final_answer`
-
 
                     Here is the chunk/text you will analyze:
 
@@ -1242,6 +1228,7 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
                       {chunk}  
                     \n[chunk end]  
                       """
+
         ModelCountRun += 1
         result = Reasoning_Text_Agent.run(
                 task=task,
@@ -1254,7 +1241,7 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
             input_chunk=chunk,
             reasoning_steps=reasoning_log,
             model_response=result,
-            file_path=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\debug_performance\VerifyAgentRun_data.txt"
+            file_path=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\debug_performance\AgentRun_Data.txt"
         )
 
         chunk_limiter.called = False 
@@ -1411,14 +1398,6 @@ if __name__ == "__main__":
     import gc
     torch.cuda.empty_cache()
     gc.collect()
-    with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\debug_performance\log.txt", "w", encoding="UTF-8") as w:
-            w.write("")
-    with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\debug_performance\VerifyAgentRun_data.txt", "w", encoding="UTF-8") as w:
-            w.write("")
-    with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\debug_performance\Token_logpath", "w", encoding="UTF-8") as w:
-            w.write("")
-    with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\debug_performance\Video_creationLog_path.txt", "w", encoding="UTF-8") as w:
-            w.write("")
 
     worker_thread = threading.Thread(target=video_creation_worker,name="Video_creation(THREAD)")
     worker_thread.start()

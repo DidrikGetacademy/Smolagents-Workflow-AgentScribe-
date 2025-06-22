@@ -27,9 +27,9 @@ class SpeechToTextTool_verify():
         audio_path = inputs["audio"]
         segments, info = self.model.transcribe(
             audio_path,
-            vad_filter=True,
-            vad_parameters={"min_silence_duration_ms": 1000},
-             word_timestamps=True  
+            #vad_filter=True,
+            #vad_parameters={"min_silence_duration_ms": 0},
+            word_timestamps=True  
         )
 
         print(f"[INFO] Detected Language: {info.language} (confidence: {info.language_probability:.2f})")
