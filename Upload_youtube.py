@@ -14,27 +14,27 @@ import torch
 load_dotenv()
 import yaml
 already_uploaded_videos = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\already_uploaded.txt"                
-from log import log 
+from log import log
 # Scopes required to upload video
 SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
 
 def get_authenticated_service():
     creds = None
-    if os.path.exists("token.pickle"):
-        with open("token.pickle", "rb") as token:
+    if os.path.exists("./youtube_token.pickle"):
+        with open("./youtube_token.pickle", "rb") as token:
             creds = pickle.load(token)
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
-                os.getenv("CLIENT_SECRET_FILE"), SCOPES)
+                os.getenv("YOUTUBE_API_KEY"), SCOPES)
             creds = flow.run_console()
         with open("token.pickle", "wb") as token:
             pickle.dump(creds, token)
     return build("youtube", "v3", credentials=creds)
 
-def upload_video(model,file_path, title, description, tags, category_id="22", privacy_status="private"):
+def upload_video(model,file_path, category_id="22", privacy_status="private"):
     youtube = get_authenticated_service()
     try:
       title, description, tags, time_date = get_automatic_data_from_agent(model,file_path)
@@ -75,11 +75,6 @@ def upload_video(model,file_path, title, description, tags, category_id="22", pr
 
 
 def get_automatic_data_from_agent(model,input_video):
-
-
-            
-
-        
         #Agent Prompts
         with open((r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Prompt_templates\Viral_prompt_template.yaml"), 'r') as stream:
                     Manager_Agent_prompt_templates = yaml.safe_load(stream)
@@ -109,8 +104,8 @@ def get_automatic_data_from_agent(model,input_video):
                   Visit_WebPage,
                   fetch_youtube_video_information,
                   ], 
-            max_steps=10,
-            verbosity_level=1,
+            max_steps=6,
+            verbosity_level=4,
             prompt_templates=Manager_Agent_prompt_templates,
             add_base_tools=True,
             stream_outputs=True,
@@ -160,3 +155,14 @@ def get_automatic_data_from_agent(model,input_video):
 
 
 
+if __name__ == "__main__":
+    from smolagents import TransformersModel
+    model = TransformersModel(
+            model_id = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Safetensor_models\Ministral-8B-Instruct-2410",
+            load_in_4bit=True,
+            trust_remote_code=True,
+            device_map="auto",
+            torch_dtype="auto",
+            max_new_tokens=5000,
+    )
+    upload_video(model=model,file_path=r"c:\Users\didri\Videos\Timeline 1.mov")

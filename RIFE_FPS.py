@@ -212,3 +212,6 @@ def run_rife(input_video):
         torch.cuda.empty_cache()
         gc.collect()
         log("Cleared cache and collected garbage")
+
+if __name__ == "__main__":
+    run_rife(input_video=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\GPEN\output_true_losslessavi_ffv1.avi")

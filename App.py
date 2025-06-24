@@ -13,8 +13,8 @@ from smolagents import TransformersModel, FinalAnswerTool, SpeechToTextTool, Cod
 from Agents_tools import ChunkLimiterTool
 import gc
 from Upload_youtube import upload_video
-from log import log 
-from log import VideoCreator_logger
+from log import log_step
+import logging
 import yaml
 import torchvision.transforms.functional as F
 sys.modules['torchvision.transforms.functional_tensor'] = F
@@ -46,6 +46,7 @@ import datetime
 import re 
 from queue import Queue
 pynvml.nvmlInit()
+log = log_step
 handle = pynvml.nvmlDeviceGetHandleByIndex(0)
 mem_info = pynvml.nvmlDeviceGetMemoryInfo(handle)
 log(f"Total Used: {mem_info.used/1e9:.1f}GB")
@@ -1271,7 +1272,9 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
 
 
 def transcribe_single_video(video_path, device):
-    log(f"Starting transcription for {video_path} on device {device}")
+    log_step("transcribe_single_video",
+             f"Enter | video={video_path}, device={device}",
+             level=logging.DEBUG)
 
     if not os.path.isfile(video_path):
         log(f"❌ File not found: {video_path}")
@@ -1416,8 +1419,6 @@ if __name__ == "__main__":
     with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\debug_performance\VerifyAgentRun_data.txt", "w", encoding="UTF-8") as w:
             w.write("")
     with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\debug_performance\Token_logpath", "w", encoding="UTF-8") as w:
-            w.write("")
-    with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\debug_performance\Video_creationLog_path.txt", "w", encoding="UTF-8") as w:
             w.write("")
 
     worker_thread = threading.Thread(target=video_creation_worker,name="Video_creation(THREAD)")
