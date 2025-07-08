@@ -1,0 +1,7 @@
+{"time":"2025-07-07T18:58:24.5638455+02:00","level":"INFO","msg":"stream: starting","core version":"0.20.1","symlink path":"C:\\Users\\didri\\Desktop\\Full-Agent-Flow_VideoEditing\\Finetune\\wandb\\run-20250707_185823-4e7he49o\\logs\\debug-core.log"}
+{"time":"2025-07-07T18:58:25.0544837+02:00","level":"INFO","msg":"stream: created new stream","id":"4e7he49o"}
+{"time":"2025-07-07T18:58:25.0545389+02:00","level":"INFO","msg":"stream: started","id":"4e7he49o"}
+{"time":"2025-07-07T18:58:25.0545389+02:00","level":"INFO","msg":"handler: started","stream_id":"4e7he49o"}
+{"time":"2025-07-07T18:58:25.0545389+02:00","level":"INFO","msg":"sender: started","stream_id":"4e7he49o"}
+{"time":"2025-07-07T18:58:25.0545389+02:00","level":"INFO","msg":"writer: Do: started","stream_id":"4e7he49o"}
+{"time":"2025-07-07T18:58:25.3970782+02:00","level":"INFO","msg":"Starting system monitor"}

@@ -18,5 +18,4 @@ with open(path, 'r', encoding='utf-8') as f:
                 valid_lines += 1
             except json.JSONDecodeError as e:
                 print(f"Invalid JSON on line {i+1}: {e}")
-                # continue checking other lines instead of break
         print(f"File has {valid_lines} valid JSON lines.")

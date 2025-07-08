@@ -1,7 +1,7 @@
 import json
 import tiktoken
 
-path = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\Dataset_detecting_motivationalquotes_from_chunk\Mistrail_dataset\mistrail_finetune.jsonl"
+path = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\Dataset_detecting_motivationalquotes_from_chunk\Supervised_dataset\train.jsonl"
 
 # Velg encoding som passer modellen du skal bruke, f.eks. "cl100k_base" for GPT-4/3.5-turbo
 encoding = tiktoken.get_encoding("cl100k_base")
