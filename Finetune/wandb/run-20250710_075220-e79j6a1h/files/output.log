@@ -1,0 +1,732 @@
+ 25%|████████████████████████████████████████████████████████████████████████████████████████████████████████████▌                                                                                                                                                                                                                                                                                                                                     | 250/1000 [1:00:50<2:20:15, 11.22s/it][34m[1mwandb[0m: [33mWARNING[0m The get_url method is deprecated and will be removed in a future release. Please use `run.url` instead.
+[----------------TRAINING METRICS--------------][2025-07-10 08:26:20] TRAIN | Step: 150 | Epoch: 0.05 | Samples: 150
+🔹 Loss: 1.1729 | Perplexity: 3.2313499787656417
+🔹 LR: 8.510000000000001e-05
+🔹 Grad Norm: 0.576845645904541
+🔹 #Tokens: 258892.0
+🔹 Token Acc: 0.7511432683467865
+
+🚀 Starter opp!
+Første loss – bruker som referanse fremover.
+------------------------------------------------------------
+
+
+
+{'loss': 1.1729, 'grad_norm': 0.576845645904541, 'learning_rate': 8.510000000000001e-05, 'num_tokens': 258892.0, 'mean_token_accuracy': 0.7511432683467865, 'epoch': 0.05}
+C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\peft\utils\save_and_load.py:250: UserWarning: Setting `save_embedding_layers` to `True` as the embedding layer has been resized during finetuning.
+  warnings.warn(
+ 50%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████                                                                                                                                                                                                                         | 500/1000 [2:06:02<2:18:14, 16.59s/it]C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\peft\utils\save_and_load.py:250: UserWarning: Setting `save_embedding_layers` to `True` as the embedding layer has been resized during finetuning.
+[----------------TRAINING METRICS--------------][2025-07-10 09:07:15] TRAIN | Step: 300 | Epoch: 0.11 | Samples: 300
+🔹 Loss: 1.1285 | Perplexity: 3.091016496247433
+🔹 LR: 7.01e-05
+🔹 Grad Norm: 0.9047257900238037
+🔹 #Tokens: 526355.0
+🔹 Token Acc: 0.7567194322745006
+
+✅ Litt bedre!
+Loss ned med -0.0444. Stabil læring.
+------------------------------------------------------------
+
+
+
+{'loss': 1.1285, 'grad_norm': 0.9047257900238037, 'learning_rate': 7.01e-05, 'num_tokens': 526355.0, 'mean_token_accuracy': 0.7567194322745006, 'epoch': 0.11}
+[----------------TRAINING METRICS--------------][2025-07-10 09:45:11] TRAIN | Step: 450 | Epoch: 0.16 | Samples: 450
+🔹 Loss: 1.0961 | Perplexity: 2.9924725934639027
+🔹 LR: 5.5100000000000004e-05
+🔹 Grad Norm: 0.6234124302864075
+🔹 #Tokens: 786789.0
+🔹 Token Acc: 0.7615652473767599
+
+✅ Litt bedre!
+Loss ned med -0.0324. Stabil læring.
+------------------------------------------------------------
+
+
+
+{'loss': 1.0961, 'grad_norm': 0.6234124302864075, 'learning_rate': 5.5100000000000004e-05, 'num_tokens': 786789.0, 'mean_token_accuracy': 0.7615652473767599, 'epoch': 0.16}
+  warnings.warn(
+ 75%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌                                                                                                            | 750/1000 [3:05:12<1:06:48, 16.03s/it]C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\peft\utils\save_and_load.py:250: UserWarning: Setting `save_embedding_layers` to `True` as the embedding layer has been resized during finetuning.
+[----------------TRAINING METRICS--------------][2025-07-10 10:22:29] TRAIN | Step: 600 | Epoch: 0.21 | Samples: 600
+🔹 Loss: 1.1171 | Perplexity: 3.0559790013662824
+🔹 LR: 4.0100000000000006e-05
+🔹 Grad Norm: 0.9326322078704834
+🔹 #Tokens: 1045679.0
+🔹 Token Acc: 0.759442941347758
+
+🔄 Litt ustabilt... (0.0210)
+Ikke alvorlig, men følg med på trenden.
+------------------------------------------------------------
+
+
+
+{'loss': 1.1171, 'grad_norm': 0.9326322078704834, 'learning_rate': 4.0100000000000006e-05, 'num_tokens': 1045679.0, 'mean_token_accuracy': 0.759442941347758, 'epoch': 0.21}
+[----------------TRAINING METRICS--------------][2025-07-10 10:57:34] TRAIN | Step: 750 | Epoch: 0.26 | Samples: 750
+🔹 Loss: 1.1283 | Perplexity: 3.0903983547643925
+🔹 LR: 2.51e-05
+🔹 Grad Norm: 0.5850532650947571
+🔹 #Tokens: 1298575.0
+🔹 Token Acc: 0.7558442811171214
+
+🔄 Litt ustabilt... (0.0112)
+Ikke alvorlig, men følg med på trenden.
+------------------------------------------------------------
+
+
+
+{'loss': 1.1283, 'grad_norm': 0.5850532650947571, 'learning_rate': 2.51e-05, 'num_tokens': 1298575.0, 'mean_token_accuracy': 0.7558442811171214, 'epoch': 0.26}
+  warnings.warn(
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1000/1000 [4:04:00<00:00, 17.77s/it]C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\peft\utils\save_and_load.py:250: UserWarning: Setting `save_embedding_layers` to `True` as the embedding layer has been resized during finetuning.
+[----------------TRAINING METRICS--------------][2025-07-10 11:32:57] TRAIN | Step: 900 | Epoch: 0.32 | Samples: 900
+🔹 Loss: 1.0704 | Perplexity: 2.916545885038448
+🔹 LR: 1.0100000000000002e-05
+🔹 Grad Norm: 0.7305089831352234
+🔹 #Tokens: 1554326.0
+🔹 Token Acc: 0.7658512047926584
+
+✅ Litt bedre!
+Loss ned med -0.0579. Stabil læring.
+------------------------------------------------------------
+
+
+
+{'loss': 1.0704, 'grad_norm': 0.7305089831352234, 'learning_rate': 1.0100000000000002e-05, 'num_tokens': 1554326.0, 'mean_token_accuracy': 0.7658512047926584, 'epoch': 0.32}
+  warnings.warn(
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1000/1000 [4:04:02<00:00, 14.64s/it]
+{'train_runtime': 14644.5609, 'train_samples_per_second': 0.068, 'train_steps_per_second': 0.068, 'train_loss': 1.1152824478149415, 'num_tokens': 1725246.0, 'mean_token_accuracy': 0.7645505040884018, 'epoch': 0.35}
+Successfully done finetuning!
+--------------Running a manual test--------------------
+
+
+-------------------------Running an eval test after training to see model's performance..--------------------------------.
+Truncating eval dataset: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 19/19 [00:00<00:00, 784.71 examples/s]
+
+input_ids shape: torch.Size([1, 1064]), dtype: torch.int64
+DEBUG TEST OUTPUT: system
+You are a quote‐detection assistant for creating motivational shorts. Your task is to carefully analyze and read a timestamped chunk and extract any standalone motivational quotes or advice or motivational passages that are complete and self‐contained, and could be used for a short inspirational video, If quotes are found, save them using the appropriate function. If none are found, return a final response indicating that.
+        You are to Save standalone motivational quotes, advice, inspiring messages, that are  complete  and does not lack context if isolated from the rest of the chunk.
+        Analyze the chunk/text between [chunk start] and [chunk end].
+
+        ### Objective:
+        Your job is to extract motivational quotes from the input text chunk. These are typically short, self-contained passages that offer encouragement, life advice, or inspiration.
+
+        ###  Reasoning:
+        Always begin with a `Thought:` statement explaining your reasoning — for example, whether you identified quotes, and how many.
+
+        ###Instructions --- Your Expected Output Format:
+        - If **two quote, Advice or motivational complete message** is found in the chunk you analyze, output:
+            Thought: I found 2 standalone motivational passages that meet the criteria, so I’m saving them.
+            <code>
+            SaveMotivationalText(text="[start - end] Quote 1", text_file=text_file)
+            SaveMotivationalText(text="[start - end] Quote 2", text_file=text_file)
+            final_answer("im done analyzing chunk")
+            </code>
+
+        - If **one  quote, Advice or motivational complete message** is found in the chunk you analyze, output:
+            Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it.
+            <code>
+            SaveMotivationalText(text="[start - end] Quote", text_file=text_file)
+            final_answer("im done analyzing chunk")
+            </code>
+
+
+        - If **no quotes, Advice or motivational complete message** is found in the chunk you analyze, output:
+            Thought:Thought: I carefully scanned every timestamped line in this chunk, looking for a short, self‑contained motivational passage. I considered whether any sentence offered clear encouragement or life advice on its own, without relying on surrounding context. None of the lines met the criteria of a standalone inspirational quote—they were either filler commentary, generic statements, or fragments. Since there isn’t a complete motivational statement I can save, I will not call SaveMotivationalText. and only provide `final_answer`
+            <code>
+            final_answer("After carefully analyzing the chunk/text, I have concluded nothing can be saved.")
+            </code>
+
+        ### Notes:
+        - Quotes must be **motivational** and **standalone** — avoid fragments or generic sentences.
+        - Always include both `Thought:` and `<code>` blocks.
+        - Use exact function names and punctuation as shown.
+        - Do not return quotes that are incomplete or unclear.
+        - o not create multiple SaveMotivationalText() calls for each line in a single quote.
+        - Do not alter or guess missing timestamps — use the exact start and end values provided in the lines that contain the quote.
+        - Quote text should appear as a single, continuous string, even if it was originally split across 2–3 lines.
+
+        ##Timestamp Handling:
+        When a quote spans multiple lines (each line containing a separate timestamp):
+            - Merge the lines into a single quote.
+            - Include the **start time from the first line** and the **end time from the last line**.
+            - Preserve original spacing and punctuation.
+            - Output the full quote like:
+
+        Exsample identified quote from chunk:
+        [chunk start]
+        [620.10s - 622.40s] In today's episode, we'll cover some important updates about mental clarity
+        [622.41s - 623.69s] But before that, thank you for supporting the channel
+        [623.70s - 627.11s] You will encounter many challenges in life
+        [627.12s - 628.00s] But you must never be defeated by the challenges
+        [628.01s - 629.55s] That was a quote I heard recently and it really stuck with me
+        [629.56s - 631.00s] Anyway, let’s move on to the main topic of today’s discussion
+        [chunk end]
+
+        Your output should be:
+
+        Thought: I found 1 standalone motivational passages that meet the criteria, so I’m saving them.
+        <code>SaveMotivationalText(text="[623.70s - 628.00s] You will encounter many challenges in life  [627.12s - 628.00s] But you must never be defeated by the challenges", text_file=text_file) final_answer("Im done analyzing the chunk")</code>
+user
+Here is the chunk you will analyze:
+
+[chunk start]
+[600.00s - 602.76s] Uh, and then, um, we also had a lot of, uh, people who, uh,.
+[602.86s - 606.26s] And, uh, we also have the ability to take advantage of, uh, some of the other technologies that are out there, uh,.
+[606.36s - 609.86s] Um, but we're gonna have a lot of people in the room.
+[609.96s - 612.72s] It was an incredible experience.
+[612.82s - 615.36s] Yeah, it's very interesting because it's, it's a lot of people that have been doing this for years.
+[615.46s - 618.60s] And I'm not gonna go into that right now.
+[618.70s - 622.14s] I mean, we've seen a lot of, uh, of, uh, of, uh,.
+[622.24s - 625.38s] I mean, they're not going to get their money back.
+[625.48s - 628.86s] Um, you know, we have some, uh,.
+[628.96s - 631.88s] The best way to predict the future is to invent it
+[631.98s - 635.16s] Um, and, and, and, and, and I think that's probably what we're going to see.
+[635.26s - 637.76s] And then you, you're like, okay, well, I'll, I'll go and find a,.
+[637.86s - 641.16s] And, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and,
+assistant mask is not none
+
+🔹 Example 1
+📥 Raw model input:
+system
+You are a quote‐detection assistant for creating motivational shorts. Your task is to carefully analyze and read a timestamped chunk and extract any standalone motivational quotes or advice or motivational passages that are complete and self‐contained, and could be used for a short inspirational video, If quotes are found, save them using the appropriate function. If none are found, return a final response indicating that.
+        You are to Save standalone motivational quotes, advice, inspiring messages, that are  complete  and does not lack context if isolated from the rest of the chunk.
+        Analyze the chunk/text between [chunk start] and [chunk end].
+
+        ### Objective:
+        Your job is to extract motivational quotes from the input text chunk. These are typically short, self-contained passages that offer encouragement, life advice, or inspiration.
+
+        ###  Reasoning:
+        Always begin with a `Thought:` statement explaining your reasoning — for example, whether you identified quotes, and how many.
+
+        ###Instructions --- Your Expected Output Format:
+        - If **two quote, Advice or motivational complete message** is found in the chunk you analyze, output:
+            Thought: I found 2 standalone motivational passages that meet the criteria, so I’m saving them.
+            <code>
+            SaveMotivationalText(text="[start - end] Quote 1", text_file=text_file)
+            SaveMotivationalText(text="[start - end] Quote 2", text_file=text_file)
+            final_answer("im done analyzing chunk")
+            </code>
+
+        - If **one  quote, Advice or motivational complete message** is found in the chunk you analyze, output:
+            Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it.
+            <code>
+            SaveMotivationalText(text="[start - end] Quote", text_file=text_file)
+            final_answer("im done analyzing chunk")
+            </code>
+
+
+        - If **no quotes, Advice or motivational complete message** is found in the chunk you analyze, output:
+            Thought:Thought: I carefully scanned every timestamped line in this chunk, looking for a short, self‑contained motivational passage. I considered whether any sentence offered clear encouragement or life advice on its own, without relying on surrounding context. None of the lines met the criteria of a standalone inspirational quote—they were either filler commentary, generic statements, or fragments. Since there isn’t a complete motivational statement I can save, I will not call SaveMotivationalText. and only provide `final_answer`
+            <code>
+            final_answer("After carefully analyzing the chunk/text, I have concluded nothing can be saved.")
+            </code>
+
+        ### Notes:
+        - Quotes must be **motivational** and **standalone** — avoid fragments or generic sentences.
+        - Always include both `Thought:` and `<code>` blocks.
+        - Use exact function names and punctuation as shown.
+        - Do not return quotes that are incomplete or unclear.
+        - o not create multiple SaveMotivationalText() calls for each line in a single quote.
+        - Do not alter or guess missing timestamps — use the exact start and end values provided in the lines that contain the quote.
+        - Quote text should appear as a single, continuous string, even if it was originally split across 2–3 lines.
+
+        ##Timestamp Handling:
+        When a quote spans multiple lines (each line containing a separate timestamp):
+            - Merge the lines into a single quote.
+            - Include the **start time from the first line** and the **end time from the last line**.
+            - Preserve original spacing and punctuation.
+            - Output the full quote like:
+
+        Exsample identified quote from chunk:
+        [chunk start]
+        [620.10s - 622.40s] In today's episode, we'll cover some important updates about mental clarity
+        [622.41s - 623.69s] But before that, thank you for supporting the channel
+        [623.70s - 627.11s] You will encounter many challenges in life
+        [627.12s - 628.00s] But you must never be defeated by the challenges
+        [628.01s - 629.55s] That was a quote I heard recently and it really stuck with me
+        [629.56s - 631.00s] Anyway, let’s move on to the main topic of today’s discussion
+        [chunk end]
+
+        Your output should be:
+
+        Thought: I found 1 standalone motivational passages that meet the criteria, so I’m saving them.
+        <code>SaveMotivationalText(text="[623.70s - 628.00s] You will encounter many challenges in life  [627.12s - 628.00s] But you must never be defeated by the challenges", text_file=text_file) final_answer("Im done analyzing the chunk")</code>
+
+
+🎯 Ground truth assistant response:
+user
+Here is the chunk you will analyze:
+
+[chunk start]
+[600.00s - 603.21s] cool it's a cool i kind of want to do wow
+[603.31s - 606.65s] That's what makes me a great monitor engineer is because, like, my mixes,.
+[606.75s - 609.56s] There's no, this isn't giving me new ways of getting users.
+[609.66s - 613.16s] the way nature works, that we need to tend.
+[613.26s - 616.49s] I, I, I think Twitter is actually, eh, eh, there's lots of really wonderful things that have come from Twitter.
+[616.59s - 619.48s] have been in this position right now.
+[619.58s - 623.18s] And we're gonna find out what all four of you are going to be talking about at TEDxWiz.
+[623.28s - 626.43s] And, and it probably has to.
+[626.53s - 629.58s] Love the trees until
+[629.68s - 633.08s] their leaves fall off,
+[633.18s - 636.13s] then encourage them to
+[636.23s - 639.03s] try again next year
+[639.13s - 641.60s] Copy his work, and he's kind of a contemporary of Fritz Lang.
+[641.70s - 645.10s] The leadership and teachings of Dr.
+[645.20s - 648.37s] You know, I don't know how many dates I've
+[648.47s - 651.58s] I'd never been in a place that was just white people before.
+[651.68s - 654.68s] You use fucking like a comma
+[654.78s - 658.31s] So, in addition to eating the foods that can help move the energy in the lungs,.
+[658.41s - 661.05s] Its not over if
+[661.15s - 664.31s] youre still here, Chronicler said Its
+[664.41s - 667.90s] not a tragedy if
+[668.00s - 671.24s] youre still alive
+[671.34s - 674.32s] Um, it seems to be a, a, um,.
+[674.42s - 676.94s] And then we went into questions about,.
+[677.04s - 680.10s] I continue to have both my research, um, folks and, and those other folks on my FinTech team here at Edison.
+[680.20s - 682.66s] It's just something to put beside other things.
+[chunk end]
+
+assistant
+Thought: I found 2 standalone motivational passages that meet the criteria, so I’m saving them.
+<code>
+SaveMotivationalText(text="[626.53s - 629.58s] Love the trees until [629.68s - 633.08s] their leaves fall off, [633.18s - 636.13s] then encourage them to [636.23s - 639.03s] try again next year", text_file=text_file)
+SaveMotivationalText(text="[658.41s - 661.05s] Its not over if [661.15s - 664.31s] youre still here, Chronicler said Its [664.41s - 667.90s] not a tragedy if [668.00s - 671.24s] youre still alive", text_file=text_file)
+final_answer("Im done analyzing the chunk")
+</code>
+
+
+
+🧠 Model generated response:
+user
+Here is the chunk you will analyze:
+
+[chunk start]
+[600.00s - 602.76s] Uh, and then, um, we also had a lot of, uh, people who, uh,.
+[602.86s - 606.26s] And, uh, we also have the ability to take advantage of, uh, some of the other technologies that are out there, uh,.
+[606.36s - 609.86s] Um, but we're gonna have a lot of people in the room.
+[609.96s - 612.72s] It was an incredible experience.
+[612.82s - 615.36s] Yeah, it's very interesting because it's, it's a lot of people that have been doing this for years.
+[615.46s - 618.60s] And I'm not gonna go into that right now.
+[618.70s - 622.14s] I mean, we've seen a lot of, uh, of, uh, of, uh,.
+[622.24s - 625.38s] I mean, they're not going to get their money back.
+[625.48s - 628.86s] Um, you know, we have some, uh,.
+[628.96s - 631.88s] The best way to predict the future is to invent it
+[631.98s - 635.16s] Um, and, and, and, and, and I think that's probably what we're going to see.
+[635.26s - 637.76s] And then you, you're like, okay, well, I'll, I'll go and find a,.
+[637.86s - 641.16s] And, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and,
+------------------------------------------------------------
+input_ids shape: torch.Size([1, 1064]), dtype: torch.int64
+DEBUG TEST OUTPUT: system
+You are a quote‐detection assistant for creating motivational shorts. Your task is to carefully analyze and read a timestamped chunk and extract any standalone motivational quotes or advice or motivational passages that are complete and self‐contained, and could be used for a short inspirational video, If quotes are found, save them using the appropriate function. If none are found, return a final response indicating that.
+        You are to Save standalone motivational quotes, advice, inspiring messages, that are  complete  and does not lack context if isolated from the rest of the chunk.
+        Analyze the chunk/text between [chunk start] and [chunk end].
+
+        ### Objective:
+        Your job is to extract motivational quotes from the input text chunk. These are typically short, self-contained passages that offer encouragement, life advice, or inspiration.
+
+        ###  Reasoning:
+        Always begin with a `Thought:` statement explaining your reasoning — for example, whether you identified quotes, and how many.
+
+        ###Instructions --- Your Expected Output Format:
+        - If **two quote, Advice or motivational complete message** is found in the chunk you analyze, output:
+            Thought: I found 2 standalone motivational passages that meet the criteria, so I’m saving them.
+            <code>
+            SaveMotivationalText(text="[start - end] Quote 1", text_file=text_file)
+            SaveMotivationalText(text="[start - end] Quote 2", text_file=text_file)
+            final_answer("im done analyzing chunk")
+            </code>
+
+        - If **one  quote, Advice or motivational complete message** is found in the chunk you analyze, output:
+            Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it.
+            <code>
+            SaveMotivationalText(text="[start - end] Quote", text_file=text_file)
+            final_answer("im done analyzing chunk")
+            </code>
+
+
+        - If **no quotes, Advice or motivational complete message** is found in the chunk you analyze, output:
+            Thought:Thought: I carefully scanned every timestamped line in this chunk, looking for a short, self‑contained motivational passage. I considered whether any sentence offered clear encouragement or life advice on its own, without relying on surrounding context. None of the lines met the criteria of a standalone inspirational quote—they were either filler commentary, generic statements, or fragments. Since there isn’t a complete motivational statement I can save, I will not call SaveMotivationalText. and only provide `final_answer`
+            <code>
+            final_answer("After carefully analyzing the chunk/text, I have concluded nothing can be saved.")
+            </code>
+
+        ### Notes:
+        - Quotes must be **motivational** and **standalone** — avoid fragments or generic sentences.
+        - Always include both `Thought:` and `<code>` blocks.
+        - Use exact function names and punctuation as shown.
+        - Do not return quotes that are incomplete or unclear.
+        - o not create multiple SaveMotivationalText() calls for each line in a single quote.
+        - Do not alter or guess missing timestamps — use the exact start and end values provided in the lines that contain the quote.
+        - Quote text should appear as a single, continuous string, even if it was originally split across 2–3 lines.
+
+        ##Timestamp Handling:
+        When a quote spans multiple lines (each line containing a separate timestamp):
+            - Merge the lines into a single quote.
+            - Include the **start time from the first line** and the **end time from the last line**.
+            - Preserve original spacing and punctuation.
+            - Output the full quote like:
+
+        Exsample identified quote from chunk:
+        [chunk start]
+        [620.10s - 622.40s] In today's episode, we'll cover some important updates about mental clarity
+        [622.41s - 623.69s] But before that, thank you for supporting the channel
+        [623.70s - 627.11s] You will encounter many challenges in life
+        [627.12s - 628.00s] But you must never be defeated by the challenges
+        [628.01s - 629.55s] That was a quote I heard recently and it really stuck with me
+        [629.56s - 631.00s] Anyway, let’s move on to the main topic of today’s discussion
+        [chunk end]
+
+        Your output should be:
+
+        Thought: I found 1 standalone motivational passages that meet the criteria, so I’m saving them.
+        <code>SaveMotivationalText(text="[623.70s - 628.00s] You will encounter many challenges in life  [627.12s - 628.00s] But you must never be defeated by the challenges", text_file=text_file) final_answer("Im done analyzing the chunk")</code>
+user
+Here is the chunk you will analyze:
+
+[chunk start]
+[600.00s - 602.76s] And then, um, I think, uh,.
+[602.86s - 606.05s] I'm like, I don't know.
+[606.15s - 608.86s] Yeah, but, but you're talking about a very small percentage of people who are actually getting sick.
+[608.96s - 612.27s] And, and the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the
+assistant mask is not none
+
+🔹 Example 2
+📥 Raw model input:
+system
+You are a quote‐detection assistant for creating motivational shorts. Your task is to carefully analyze and read a timestamped chunk and extract any standalone motivational quotes or advice or motivational passages that are complete and self‐contained, and could be used for a short inspirational video, If quotes are found, save them using the appropriate function. If none are found, return a final response indicating that.
+        You are to Save standalone motivational quotes, advice, inspiring messages, that are  complete  and does not lack context if isolated from the rest of the chunk.
+        Analyze the chunk/text between [chunk start] and [chunk end].
+
+        ### Objective:
+        Your job is to extract motivational quotes from the input text chunk. These are typically short, self-contained passages that offer encouragement, life advice, or inspiration.
+
+        ###  Reasoning:
+        Always begin with a `Thought:` statement explaining your reasoning — for example, whether you identified quotes, and how many.
+
+        ###Instructions --- Your Expected Output Format:
+        - If **two quote, Advice or motivational complete message** is found in the chunk you analyze, output:
+            Thought: I found 2 standalone motivational passages that meet the criteria, so I’m saving them.
+            <code>
+            SaveMotivationalText(text="[start - end] Quote 1", text_file=text_file)
+            SaveMotivationalText(text="[start - end] Quote 2", text_file=text_file)
+            final_answer("im done analyzing chunk")
+            </code>
+
+        - If **one  quote, Advice or motivational complete message** is found in the chunk you analyze, output:
+            Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it.
+            <code>
+            SaveMotivationalText(text="[start - end] Quote", text_file=text_file)
+            final_answer("im done analyzing chunk")
+            </code>
+
+
+        - If **no quotes, Advice or motivational complete message** is found in the chunk you analyze, output:
+            Thought:Thought: I carefully scanned every timestamped line in this chunk, looking for a short, self‑contained motivational passage. I considered whether any sentence offered clear encouragement or life advice on its own, without relying on surrounding context. None of the lines met the criteria of a standalone inspirational quote—they were either filler commentary, generic statements, or fragments. Since there isn’t a complete motivational statement I can save, I will not call SaveMotivationalText. and only provide `final_answer`
+            <code>
+            final_answer("After carefully analyzing the chunk/text, I have concluded nothing can be saved.")
+            </code>
+
+        ### Notes:
+        - Quotes must be **motivational** and **standalone** — avoid fragments or generic sentences.
+        - Always include both `Thought:` and `<code>` blocks.
+        - Use exact function names and punctuation as shown.
+        - Do not return quotes that are incomplete or unclear.
+        - o not create multiple SaveMotivationalText() calls for each line in a single quote.
+        - Do not alter or guess missing timestamps — use the exact start and end values provided in the lines that contain the quote.
+        - Quote text should appear as a single, continuous string, even if it was originally split across 2–3 lines.
+
+        ##Timestamp Handling:
+        When a quote spans multiple lines (each line containing a separate timestamp):
+            - Merge the lines into a single quote.
+            - Include the **start time from the first line** and the **end time from the last line**.
+            - Preserve original spacing and punctuation.
+            - Output the full quote like:
+
+        Exsample identified quote from chunk:
+        [chunk start]
+        [620.10s - 622.40s] In today's episode, we'll cover some important updates about mental clarity
+        [622.41s - 623.69s] But before that, thank you for supporting the channel
+        [623.70s - 627.11s] You will encounter many challenges in life
+        [627.12s - 628.00s] But you must never be defeated by the challenges
+        [628.01s - 629.55s] That was a quote I heard recently and it really stuck with me
+        [629.56s - 631.00s] Anyway, let’s move on to the main topic of today’s discussion
+        [chunk end]
+
+        Your output should be:
+
+        Thought: I found 1 standalone motivational passages that meet the criteria, so I’m saving them.
+        <code>SaveMotivationalText(text="[623.70s - 628.00s] You will encounter many challenges in life  [627.12s - 628.00s] But you must never be defeated by the challenges", text_file=text_file) final_answer("Im done analyzing the chunk")</code>
+
+
+🎯 Ground truth assistant response:
+user
+Here is the chunk you will analyze:
+
+[chunk start]
+[600.00s - 602.92s] So we're thinking that the sneeze did him in.
+[603.02s - 606.25s] Tell them, your first job is to go over and evict those miners' families out of those houses and tear the houses down.
+[606.35s - 609.16s] So it's been months and months of installation with still a good effect.
+[609.26s - 612.22s] And we continued to talk and laugh for, like,
+[612.32s - 615.07s] And if you're gonna be useful and valuable, that's where that's gonna happen.
+[chunk end]
+
+assistant
+Thought: I carefully scanned every timestamped line in this chunk, looking for a short, self‑contained motivational passage. I considered whether any sentence offered clear encouragement or life advice on its own, without relying on surrounding context. None of the lines met the criteria of a standalone inspirational quote—they were either filler commentary, generic statements, or fragments. Since there isn’t a complete motivational statement I can save, I will not call SaveMotivationalText. and only provide `final_answer` <code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved.")
+</code>
+
+
+
+🧠 Model generated response:
+user
+Here is the chunk you will analyze:
+
+[chunk start]
+[600.00s - 602.76s] And then, um, I think, uh,.
+[602.86s - 606.05s] I'm like, I don't know.
+[606.15s - 608.86s] Yeah, but, but you're talking about a very small percentage of people who are actually getting sick.
+[608.96s - 612.27s] And, and the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the
+------------------------------------------------------------
+input_ids shape: torch.Size([1, 1064]), dtype: torch.int64
+DEBUG TEST OUTPUT: system
+You are a quote‐detection assistant for creating motivational shorts. Your task is to carefully analyze and read a timestamped chunk and extract any standalone motivational quotes or advice or motivational passages that are complete and self‐contained, and could be used for a short inspirational video, If quotes are found, save them using the appropriate function. If none are found, return a final response indicating that.
+        You are to Save standalone motivational quotes, advice, inspiring messages, that are  complete  and does not lack context if isolated from the rest of the chunk.
+        Analyze the chunk/text between [chunk start] and [chunk end].
+
+        ### Objective:
+        Your job is to extract motivational quotes from the input text chunk. These are typically short, self-contained passages that offer encouragement, life advice, or inspiration.
+
+        ###  Reasoning:
+        Always begin with a `Thought:` statement explaining your reasoning — for example, whether you identified quotes, and how many.
+
+        ###Instructions --- Your Expected Output Format:
+        - If **two quote, Advice or motivational complete message** is found in the chunk you analyze, output:
+            Thought: I found 2 standalone motivational passages that meet the criteria, so I’m saving them.
+            <code>
+            SaveMotivationalText(text="[start - end] Quote 1", text_file=text_file)
+            SaveMotivationalText(text="[start - end] Quote 2", text_file=text_file)
+            final_answer("im done analyzing chunk")
+            </code>
+
+        - If **one  quote, Advice or motivational complete message** is found in the chunk you analyze, output:
+            Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it.
+            <code>
+            SaveMotivationalText(text="[start - end] Quote", text_file=text_file)
+            final_answer("im done analyzing chunk")
+            </code>
+
+
+        - If **no quotes, Advice or motivational complete message** is found in the chunk you analyze, output:
+            Thought:Thought: I carefully scanned every timestamped line in this chunk, looking for a short, self‑contained motivational passage. I considered whether any sentence offered clear encouragement or life advice on its own, without relying on surrounding context. None of the lines met the criteria of a standalone inspirational quote—they were either filler commentary, generic statements, or fragments. Since there isn’t a complete motivational statement I can save, I will not call SaveMotivationalText. and only provide `final_answer`
+            <code>
+            final_answer("After carefully analyzing the chunk/text, I have concluded nothing can be saved.")
+            </code>
+
+        ### Notes:
+        - Quotes must be **motivational** and **standalone** — avoid fragments or generic sentences.
+        - Always include both `Thought:` and `<code>` blocks.
+        - Use exact function names and punctuation as shown.
+        - Do not return quotes that are incomplete or unclear.
+        - o not create multiple SaveMotivationalText() calls for each line in a single quote.
+        - Do not alter or guess missing timestamps — use the exact start and end values provided in the lines that contain the quote.
+        - Quote text should appear as a single, continuous string, even if it was originally split across 2–3 lines.
+
+        ##Timestamp Handling:
+        When a quote spans multiple lines (each line containing a separate timestamp):
+            - Merge the lines into a single quote.
+            - Include the **start time from the first line** and the **end time from the last line**.
+            - Preserve original spacing and punctuation.
+            - Output the full quote like:
+
+        Exsample identified quote from chunk:
+        [chunk start]
+        [620.10s - 622.40s] In today's episode, we'll cover some important updates about mental clarity
+        [622.41s - 623.69s] But before that, thank you for supporting the channel
+        [623.70s - 627.11s] You will encounter many challenges in life
+        [627.12s - 628.00s] But you must never be defeated by the challenges
+        [628.01s - 629.55s] That was a quote I heard recently and it really stuck with me
+        [629.56s - 631.00s] Anyway, let’s move on to the main topic of today’s discussion
+        [chunk end]
+
+        Your output should be:
+
+        Thought: I found 1 standalone motivational passages that meet the criteria, so I’m saving them.
+        <code>SaveMotivationalText(text="[623.70s - 628.00s] You will encounter many challenges in life  [627.12s - 628.00s] But you must never be defeated by the challenges", text_file=text_file) final_answer("Im done analyzing the chunk")</code>
+user
+Here is the chunk you will analyze:
+
+[chunk start]
+[600.00s - 602.89s] So, you know, we've got to figure out a way to get these things done.
+[602.99s - 605.72s] Um, because, uh, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the,
+assistant mask is not none
+
+🔹 Example 3
+📥 Raw model input:
+system
+You are a quote‐detection assistant for creating motivational shorts. Your task is to carefully analyze and read a timestamped chunk and extract any standalone motivational quotes or advice or motivational passages that are complete and self‐contained, and could be used for a short inspirational video, If quotes are found, save them using the appropriate function. If none are found, return a final response indicating that.
+        You are to Save standalone motivational quotes, advice, inspiring messages, that are  complete  and does not lack context if isolated from the rest of the chunk.
+        Analyze the chunk/text between [chunk start] and [chunk end].
+
+        ### Objective:
+        Your job is to extract motivational quotes from the input text chunk. These are typically short, self-contained passages that offer encouragement, life advice, or inspiration.
+
+        ###  Reasoning:
+        Always begin with a `Thought:` statement explaining your reasoning — for example, whether you identified quotes, and how many.
+
+        ###Instructions --- Your Expected Output Format:
+        - If **two quote, Advice or motivational complete message** is found in the chunk you analyze, output:
+            Thought: I found 2 standalone motivational passages that meet the criteria, so I’m saving them.
+            <code>
+            SaveMotivationalText(text="[start - end] Quote 1", text_file=text_file)
+            SaveMotivationalText(text="[start - end] Quote 2", text_file=text_file)
+            final_answer("im done analyzing chunk")
+            </code>
+
+        - If **one  quote, Advice or motivational complete message** is found in the chunk you analyze, output:
+            Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it.
+            <code>
+            SaveMotivationalText(text="[start - end] Quote", text_file=text_file)
+            final_answer("im done analyzing chunk")
+            </code>
+
+
+        - If **no quotes, Advice or motivational complete message** is found in the chunk you analyze, output:
+            Thought:Thought: I carefully scanned every timestamped line in this chunk, looking for a short, self‑contained motivational passage. I considered whether any sentence offered clear encouragement or life advice on its own, without relying on surrounding context. None of the lines met the criteria of a standalone inspirational quote—they were either filler commentary, generic statements, or fragments. Since there isn’t a complete motivational statement I can save, I will not call SaveMotivationalText. and only provide `final_answer`
+            <code>
+            final_answer("After carefully analyzing the chunk/text, I have concluded nothing can be saved.")
+            </code>
+
+        ### Notes:
+        - Quotes must be **motivational** and **standalone** — avoid fragments or generic sentences.
+        - Always include both `Thought:` and `<code>` blocks.
+        - Use exact function names and punctuation as shown.
+        - Do not return quotes that are incomplete or unclear.
+        - o not create multiple SaveMotivationalText() calls for each line in a single quote.
+        - Do not alter or guess missing timestamps — use the exact start and end values provided in the lines that contain the quote.
+        - Quote text should appear as a single, continuous string, even if it was originally split across 2–3 lines.
+
+        ##Timestamp Handling:
+        When a quote spans multiple lines (each line containing a separate timestamp):
+            - Merge the lines into a single quote.
+            - Include the **start time from the first line** and the **end time from the last line**.
+            - Preserve original spacing and punctuation.
+            - Output the full quote like:
+
+        Exsample identified quote from chunk:
+        [chunk start]
+        [620.10s - 622.40s] In today's episode, we'll cover some important updates about mental clarity
+        [622.41s - 623.69s] But before that, thank you for supporting the channel
+        [623.70s - 627.11s] You will encounter many challenges in life
+        [627.12s - 628.00s] But you must never be defeated by the challenges
+        [628.01s - 629.55s] That was a quote I heard recently and it really stuck with me
+        [629.56s - 631.00s] Anyway, let’s move on to the main topic of today’s discussion
+        [chunk end]
+
+        Your output should be:
+
+        Thought: I found 1 standalone motivational passages that meet the criteria, so I’m saving them.
+        <code>SaveMotivationalText(text="[623.70s - 628.00s] You will encounter many challenges in life  [627.12s - 628.00s] But you must never be defeated by the challenges", text_file=text_file) final_answer("Im done analyzing the chunk")</code>
+
+
+🎯 Ground truth assistant response:
+user
+Here is the chunk you will analyze:
+
+[chunk start]
+[600.00s - 603.29s] And I was, I was so excited to do summer stock and be,.
+[603.39s - 606.36s] Uh, no, at that point, I'm, I'll go just put in music that I know.
+[606.46s - 609.73s] It's important for all of us to admit that in every society,.
+[609.83s - 612.29s] aim at this stage is to regain full hip mobility within your limits.
+[612.39s - 615.53s] Technology is a simple
+[615.63s - 619.02s] tool that can be used for
+[619.12s - 621.95s] good or evil
+[622.05s - 624.85s] You know, to me, is, is the number one reason why.
+[624.95s - 628.03s] And, and these can be, sort of, acetylcholine, or dopamine, things that are associated with learning and memory.
+[628.13s - 631.58s] If you want to be happy,
+[631.68s - 634.57s] let go of your anger and
+[634.67s - 638.18s] bitterness and embrace kindness, compassion,
+[638.28s - 641.53s] faith, and love
+[641.63s - 644.24s] So, hopefully, during that segment, you could start, and if you need to, pause the tape right now, but just start to identify.
+[644.34s - 647.70s] This is, I think, the key point.
+[647.80s - 651.08s] And then the employees, or the laborers, were, um,.
+[651.18s - 654.43s] Like, I don't want nuance for different types of rapes, or,.
+[654.53s - 657.19s] I think they're normally twenty, and they're ten if you bring in an empty.
+[657.29s - 659.71s] Um, but even in the United States, both of them are very active here as well.
+[chunk end]
+
+assistant
+Thought: I found 2 standalone motivational passages that meet the criteria, so I’m saving them.
+<code>
+SaveMotivationalText(text="[612.39s - 615.53s] Technology is a simple [615.63s - 619.02s] tool that can be used for [619.12s - 621.95s] good or evil", text_file=text_file)
+SaveMotivationalText(text="[628.13s - 631.58s] If you want to be happy, [631.68s - 634.57s] let go of your anger and [634.67s - 638.18s] bitterness and embrace kindness, compassion, [638.28s - 641.53s] faith, and love", text_file=text_file)
+final_answer("Im done analyzing the chunk")
+</code>
+
+
+
+🧠 Model generated response:
+user
+Here is the chunk you will analyze:
+
+[chunk start]
+[600.00s - 602.89s] So, you know, we've got to figure out a way to get these things done.
+[602.99s - 605.72s] Um, because, uh, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the,
+------------------------------------------------------------
+Complete! Merging model with checkpoint now..
+🔄 Loading tokenizer from adapter checkpoint...
+🔄 Loading base model...
+Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00, 15.00it/s]
+Base model vocab size: 151936
+🔄 Loading LoRA adapter...
+Error during merging: Error(s) in loading state_dict for PeftModelForCausalLM:
+	size mismatch for base_model.model.model.embed_tokens.weight: copying a param with shape torch.Size([151680, 2048]) from checkpoint, the shape in current model is torch.Size([151936, 2048]).
+	size mismatch for base_model.model.lm_head.weight: copying a param with shape torch.Size([151680, 2048]) from checkpoint, the shape in current model is torch.Size([151936, 2048]).
+trying to merge another way
+Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:14<00:00,  7.24s/it]
+Traceback (most recent call last):
+  File "c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\fine_tune_mistrail_copy.py", line 139, in supervised_Finetune
+    merge_adapter_checkpoint(base_model_path,adapter_path,output_dir)
+  File "c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\merge_and_unload.py", line 29, in merge_adapter_checkpoint
+    peft_model = PeftModel.from_pretrained(base_model, adapter_path)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\peft\peft_model.py", line 541, in from_pretrained
+    load_result = model.load_adapter(
+                  ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\peft\peft_model.py", line 1276, in load_adapter
+    load_result = set_peft_model_state_dict(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\peft\utils\save_and_load.py", line 448, in set_peft_model_state_dict
+    load_result = model.load_state_dict(peft_model_state_dict, strict=False)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\module.py", line 2593, in load_state_dict
+    raise RuntimeError(
+RuntimeError: Error(s) in loading state_dict for PeftModelForCausalLM:
+	size mismatch for base_model.model.model.embed_tokens.weight: copying a param with shape torch.Size([151680, 2048]) from checkpoint, the shape in current model is torch.Size([151936, 2048]).
+	size mismatch for base_model.model.lm_head.weight: copying a param with shape torch.Size([151680, 2048]) from checkpoint, the shape in current model is torch.Size([151936, 2048]).
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\fine_tune_mistrail_copy.py", line 149, in <module>
+    supervised_Finetune()
+  File "c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\fine_tune_mistrail_copy.py", line 144, in supervised_Finetune
+    merge_adapter_checkpoint_2(adapter_path,output_dir)
+  File "c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\merge_and_unload.py", line 62, in merge_adapter_checkpoint_2
+    peft_model = AutoPeftModelForCausalLM.from_pretrained(adapter_path)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\peft\auto.py", line 142, in from_pretrained
+    return cls._target_peft_class.from_pretrained(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\peft\peft_model.py", line 541, in from_pretrained
+    load_result = model.load_adapter(
+                  ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\peft\peft_model.py", line 1276, in load_adapter
+    load_result = set_peft_model_state_dict(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\peft\utils\save_and_load.py", line 448, in set_peft_model_state_dict
+    load_result = model.load_state_dict(peft_model_state_dict, strict=False)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\module.py", line 2593, in load_state_dict
+    raise RuntimeError(
+RuntimeError: Error(s) in loading state_dict for PeftModelForCausalLM:
+	size mismatch for base_model.model.model.embed_tokens.weight: copying a param with shape torch.Size([151680, 2048]) from checkpoint, the shape in current model is torch.Size([151936, 2048]).
+	size mismatch for base_model.model.lm_head.weight: copying a param with shape torch.Size([151680, 2048]) from checkpoint, the shape in current model is torch.Size([151936, 2048]).

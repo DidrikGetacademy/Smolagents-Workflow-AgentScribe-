@@ -1,0 +1,31 @@
+  0%|                                                                                                                                                                                                                                                                                                                                                                                                                         | 0/2208 [00:00<?, ?it/s]C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\_dynamo\eval_frame.py:838: UserWarning: torch.utils.checkpoint: the use_reentrant parameter should be passed explicitly. In version 2.5 we will raise an exception if use_reentrant is not passed. use_reentrant=False is recommended, but if you need to preserve the current default behavior, you can pass use_reentrant=True. Refer to docs for more details on the differences between the two variants.
+  return fn(*args, **kwargs)
+ 13%|█████████████████████████████████████████████████▌                                                                                                                                                                                                                                                                                                                                                        | 278/2208 [2:57:05<15:43:53, 29.34s/it]                                       
+[----------------TRAINING METRICS--------------][2025-07-11 19:15:18] TRAIN | Step: 100 | Epoch: 0.14 | Samples: 800
+🔹 Loss: 0.0080 | Perplexity: 1.0080320855042735
+🔹 LR: 0.00019900956997320992
+🔹 Grad Norm: 0.042702142149209976
+🔹 #Tokens: 1194457.0
+🔹 Token Acc: 0.9857845255732536
+
+🚀 Starter opp!
+Første loss – bruker som referanse fremover.
+------------------------------------------------------------
+
+
+
+{'loss': 0.008, 'grad_norm': 0.042702142149209976, 'learning_rate': 0.00019900956997320992, 'num_tokens': 1194457.0, 'mean_token_accuracy': 0.9857845255732536, 'epoch': 0.14}
+[----------------TRAINING METRICS--------------][2025-07-11 20:00:00] TRAIN | Step: 200 | Epoch: 0.27 | Samples: 1600
+🔹 Loss: 0.0030 | Perplexity: 1.003004504503377
+🔹 LR: 0.00019601824621027057
+🔹 Grad Norm: 0.01067617442458868
+🔹 #Tokens: 2388271.0
+🔹 Token Acc: 0.9866422723978758
+
+🔄 Litt ustabilt... (-0.0050)
+Ikke alvorlig, men følg med på trenden.
+------------------------------------------------------------
+
+
+
+{'loss': 0.003, 'grad_norm': 0.01067617442458868, 'learning_rate': 0.00019601824621027057, 'num_tokens': 2388271.0, 'mean_token_accuracy': 0.9866422723978758, 'epoch': 0.27}

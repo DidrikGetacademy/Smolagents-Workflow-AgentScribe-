@@ -1,0 +1,66 @@
+ 10%|█████████████████████████████████████████████▊                                                                                                                                                                                                                                                                                                                                                                                                      | 105/1000 [43:37<6:50:19, 27.51s/it]Traceback (most recent call last):
+  File "c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\fine_tune_mistrail_copy.py", line 149, in <module>
+    supervised_Finetune()
+  File "c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\fine_tune_mistrail_copy.py", line 128, in supervised_Finetune
+    trainer.train()
+  File "C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\transformers\trainer.py", line 2207, in train
+    return inner_training_loop(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\transformers\trainer.py", line 2549, in _inner_training_loop
+    tr_loss_step = self.training_step(model, inputs, num_items_in_batch)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\trl\trainer\sft_trainer.py", line 864, in training_step
+    return super().training_step(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\transformers\trainer.py", line 3750, in training_step
+    loss = self.compute_loss(model, inputs, num_items_in_batch=num_items_in_batch)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\trl\trainer\sft_trainer.py", line 818, in compute_loss
+    (loss, outputs) = super().compute_loss(
+                      ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\transformers\trainer.py", line 3837, in compute_loss
+    outputs = model(**inputs)
+              ^^^^^^^^^^^^^^^
+  File "C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\accelerate\utils\operations.py", line 818, in forward
+    return model_forward(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\accelerate\utils\operations.py", line 806, in __call__
+    return convert_to_fp32(self.model_forward(*args, **kwargs))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\amp\autocast_mode.py", line 44, in decorate_autocast
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\peft\peft_model.py", line 1757, in forward
+    return self.base_model(
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\peft\tuners\tuners_utils.py", line 193, in forward
+    return self.model.forward(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\transformers\utils\generic.py", line 943, in wrapper
+    output = func(self, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\transformers\models\qwen2\modeling_qwen2.py", line 563, in forward
+    loss = self.loss_function(logits=logits, labels=labels, vocab_size=self.config.vocab_size, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\transformers\loss\loss_utils.py", line 67, in ForCausalLMLoss
+    loss = fixed_cross_entropy(logits, shift_labels, num_items_in_batch, ignore_index, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\transformers\loss\loss_utils.py", line 36, in fixed_cross_entropy
+    loss = nn.functional.cross_entropy(source, target, ignore_index=ignore_index, reduction=reduction)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\didri\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\functional.py", line 3494, in cross_entropy
+    return torch._C._nn.cross_entropy_loss(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 1.86 GiB. GPU 0 has a total capacity of 12.00 GiB of which 0 bytes is free. Of the allocated memory 23.69 GiB is allocated by PyTorch, and 1.31 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)

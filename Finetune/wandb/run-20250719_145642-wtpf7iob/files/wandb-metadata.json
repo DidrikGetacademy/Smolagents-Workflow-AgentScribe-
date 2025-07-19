@@ -1,0 +1,43 @@
+{
+  "os":  "Windows-10-10.0.19045-SP0",
+  "python":  "CPython 3.11.9",
+  "startedAt":  "2025-07-19T12:56:43.353854Z",
+  "program":  "c:\\Users\\didri\\Desktop\\Full-Agent-Flow_VideoEditing\\Finetune\\fine_tune_mistrail_copy.py",
+  "codePath":  "Finetune\\fine_tune_mistrail_copy.py",
+  "git":  {
+    "remote":  "https://github.com/DidrikGetacademy/Smolagents-Workflow-AgentScribe-.git",
+    "commit":  "fa923089c02f7bd6206046bf6b330b384f266164"
+  },
+  "email":  "didrik2000@live.no",
+  "root":  "C:\\Users\\didri\\Desktop\\Full-Agent-Flow_VideoEditing\\Finetune",
+  "host":  "DESKTOP-U0MJB5D",
+  "executable":  "C:\\Users\\didri\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+  "codePathLocal":  "fine_tune_mistrail_copy.py",
+  "cpu_count":  8,
+  "cpu_count_logical":  16,
+  "gpu":  "NVIDIA GeForce RTX 3060",
+  "gpu_count":  1,
+  "disk":  {
+    "/":  {
+      "total":  "499498610688",
+      "used":  "371084111872"
+    }
+  },
+  "memory":  {
+    "total":  "34268540928"
+  },
+  "cpu":  {
+    "count":  8,
+    "countLogical":  16
+  },
+  "gpu_nvidia":  [
+    {
+      "name":  "NVIDIA GeForce RTX 3060",
+      "memoryTotal":  "12884901888",
+      "cudaCores":  3584,
+      "architecture":  "Ampere",
+      "uuid":  "GPU-58f9aba5-1ee0-72aa-add9-09d65d8cc133"
+    }
+  ],
+  "cudaVersion":  "12.9"
+}
