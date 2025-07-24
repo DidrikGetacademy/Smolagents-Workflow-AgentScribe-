@@ -1,9 +1,0 @@
-{"time":"2025-07-11T17:38:23.6109424+02:00","level":"INFO","msg":"stream: starting","core version":"0.20.1","symlink path":"C:\\Users\\didri\\Desktop\\Full-Agent-Flow_VideoEditing\\Finetune\\wandb\\run-20250711_173823-e456vecu\\logs\\debug-core.log"}
-{"time":"2025-07-11T17:38:23.9654333+02:00","level":"INFO","msg":"stream: created new stream","id":"e456vecu"}
-{"time":"2025-07-11T17:38:23.9654333+02:00","level":"INFO","msg":"stream: started","id":"e456vecu"}
-{"time":"2025-07-11T17:38:23.9654333+02:00","level":"INFO","msg":"writer: Do: started","stream_id":"e456vecu"}
-{"time":"2025-07-11T17:38:23.9659386+02:00","level":"INFO","msg":"sender: started","stream_id":"e456vecu"}
-{"time":"2025-07-11T17:38:23.9660144+02:00","level":"INFO","msg":"handler: started","stream_id":"e456vecu"}
-{"time":"2025-07-11T17:38:24.5497771+02:00","level":"INFO","msg":"Starting system monitor"}
-{"time":"2025-07-11T18:32:14.7323858+02:00","level":"INFO","msg":"api: retrying HTTP error","status":502,"url":"https://api.wandb.ai/files/didrik2000-myself/huggingface/e456vecu/file_stream","body":"\n<html><head>\n<meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\">\n<title>502 Server Error</title>\n</head>\n<body text=#000000 bgcolor=#ffffff>\n<h1>Error: Server Error</h1>\n<h2>The server encountered a temporary error and could not complete your request.<p>Please try again in 30 seconds.</h2>\n<h2></h2>\n</body></html>\n"}
-{"time":"2025-07-11T20:15:01.8718314+02:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/graphql\": context deadline exceeded"}

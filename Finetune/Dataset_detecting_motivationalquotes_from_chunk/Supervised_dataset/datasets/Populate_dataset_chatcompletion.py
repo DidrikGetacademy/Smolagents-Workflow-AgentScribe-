@@ -3,15 +3,19 @@ import random
 import re
 from datasets import load_dataset
 from transformers import AutoTokenizer
+import re
 
 CONFIG = {
-    'model_name': 'mistralai/Mistral-7B-Instruct-v0.3',
+    'model_name': r'C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-3B-Instruct',
 }
-
+count_only_filler = 0
+count_single_Quote_mix = 0
+count_single_quote_natural = 0
+Count_double_quotes = 0
 def log(msg):
     print(msg)
 
-def add_timestamps_and_filler(sentences, filler_before, filler_after, base_start=600.0, avg_sentence_duration=3.0):
+def add_timestamps_and_filler(sentences, filler_before, filler_after, base_start=random.uniform(300.0, 1200.0), avg_sentence_duration=3.0):
     all_sents = filler_before + sentences + filler_after
     timestamped_text = ""
     current_time = base_start
@@ -70,157 +74,52 @@ def sample_unique_fillers(n, filler_pool, used_set):
     return selected
 
 
-def chunk_text_with_filler_quote_split(filler_sentences, quote, used_filler_sentences, base_start=600.0, avg_sentence_duration=4.0):
-    # Randomly choose between original (50%) and enhanced (50%) approach
-    use_enhanced = random.random() < 1
-    
-    if use_enhanced:
-        # Enhanced version with filler at both ends
-        quote_words = quote.split()
-        if len(quote_words) < 3:  # Fallback to original if quote is too short
-            use_enhanced = False
-        else:
-            # Split quote into 2-4 segments
-            num_segments = random.randint(2, min(4, len(quote_words)//2))
-            segment_size = len(quote_words) // num_segments
-            segments = []
-            
-            for i in range(num_segments):
-                start_idx = i * segment_size
-                end_idx = (i+1)*segment_size if i < num_segments-1 else len(quote_words)
-                segments.append(" ".join(quote_words[start_idx:end_idx]))
-            
-            # Add filler to start and end
-            n_start = random.randint(1, min(3, len(segments[0].split())))
-            start_words = segments[0].split()[:n_start]
-            segments[0] = " ".join(segments[0].split()[n_start:])
-            
-            n_end = random.randint(1, min(3, len(segments[-1].split())))
-            end_words = segments[-1].split()[-n_end:]
-            segments[-1] = " ".join(segments[-1].split()[:-n_end])
-            
-            # Get filler sentences
-            filler_start = sample_unique_fillers(1, filler_sentences, used_filler_sentences)[0]
-            filler_end = sample_unique_fillers(1, filler_sentences, used_filler_sentences)[0]
-            
-            # Build lines
-            lines = []
-            current_time = base_start
-            
-            # First line: filler + start words
-            first_line = f"{filler_start} {' '.join(start_words)}"
-            duration = random.uniform(avg_sentence_duration*0.8, avg_sentence_duration*1.2)
-            end_time = current_time + duration
-            lines.append(f"[{current_time:.2f}s - {end_time:.2f}s] {first_line} ")
-            current_time = end_time + 0.1
-            
-            # Middle segments
-            for segment in segments:
-                if segment.strip():
-                    duration = random.uniform(avg_sentence_duration*0.8, avg_sentence_duration*1.2)
-                    end_time = current_time + duration
-                    lines.append(f"[{current_time:.2f}s - {end_time:.2f}s] {segment}")
-                    current_time = end_time + 0.1
-            
-            # Last line: end words + filler
-            last_line = f"{' '.join(end_words)} {filler_end}"
-            duration = random.uniform(avg_sentence_duration*0.8, avg_sentence_duration*1.2)
-            end_time = current_time + duration
-            lines.append(f"[{current_time:.2f}s - {end_time:.2f}s] {last_line}")
-            
-            return {
-                "chunk_text": "[chunk start]\n" + "\n".join(lines) + "\n[chunk end]",
-           
-            }
-    else:
-   
-        quote_words = quote.split()
-        n_quote_start = random.randint(1, min(3, len(quote_words)))
-        quote_start_words = quote_words[:n_quote_start]
-        quote_rest_words = quote_words[n_quote_start:]
-
-        filler = sample_unique_fillers(1, filler_sentences, used_filler_sentences)
-        if not filler:
-            return None
-        filler = filler[0]
-
-        lines = []
-        current_time = base_start
-
-        line1_text = filler.strip() + " " + " ".join(quote_start_words)
-        duration = random.uniform(avg_sentence_duration * 0.8, avg_sentence_duration * 1.2)
-        start_t = current_time
-        end_t = current_time + duration
-        lines.append(f"[{start_t:.2f}s - {end_t:.2f}s] {line1_text}")
-        current_time = end_t + 0.1
-
-    
-        rest_text = " ".join(quote_rest_words)
-        rest_sents = re.split(r'(?<=[.!?]) +', rest_text) if rest_text else []
-
-        for sent in rest_sents:
-            sent = sent.strip()
-            if not sent:
-                continue
-            duration = random.uniform(avg_sentence_duration * 0.8, avg_sentence_duration * 1.2)
-            start_t = current_time
-            end_t = current_time + duration
-            lines.append(f"[{start_t:.2f}s - {end_t:.2f}s] {sent}")
-            current_time = end_t + 0.1
-
-        return {
-            "chunk_text": "[chunk start]\n" + "\n".join(lines) + "\n[chunk end]",
-        }
 
 
 def preprocess_with_filler_balanced(example, idx, filler_sentences, used_filler_sentences, tokenizer, dataset_quotes=None):
+    global count_only_filler
+    global count_single_Quote_mix
+    global count_single_quote_natural
+    global Count_double_quotes
     system_prompt = """
-       
-    """
-   
-    instruction = """
-     You are a quote‐detection assistant for creating motivational shorts. Your task is to carefully analyze and read a timestamped chunk and extract any standalone motivational quotes or advice or motivational passages that are complete and self‐contained, and could be used for a short inspirational video, If quotes are found, save them using the appropriate function. If none are found, return a final response indicating that.
+        You are a quote‐detection assistant for creating motivational shorts. Your task is to carefully analyze and read a timestamped chunk and extract any standalone motivational quotes or advice or motivational passages that are complete and self‐contained, and could be used for a short inspirational video, If quotes are found, save them using the appropriate function. If none are found, return a final response indicating that.
         You are to Save standalone motivational quotes, advice, inspiring messages, that are  complete  and does not lack context if isolated from the rest of the chunk.
         Analyze the chunk/text between [chunk start] and [chunk end].
-        ### Objective:
-        Your job is to extract motivational quotes from the input text chunk. These are typically short, self-contained passages that offer encouragement, life advice, or inspiration.
-        ###  Reasoning:
-        Always begin with a `Thought:` statement explaining your reasoning — for example, whether you identified quotes, and how many.
-        ###Instructions --- Your Expected Output Format:
-        - If **two quote, Advice or motivational complete message** is found in the chunk you analyze, output:
+        Objective: Your job is to extract motivational quotes from the input text chunk. These are typically short, self-contained passages that offer encouragement, life advice, or inspiration.
+        Reasoning: Always begin with a `Thought:` statement explaining your reasoning — for example, whether you identified quotes, and how many.
+        Instructions --- Your Expected Output Format:
+        - If two quote, Advice or motivational complete message is found in the chunk you analyze, output:
             Thought: I found 2 standalone motivational passages that meet the criteria, so I’m saving them.
             <code>
             SaveMotivationalText(text="[start - end] Quote 1", text_file=text_file)
             SaveMotivationalText(text="[start - end] Quote 2", text_file=text_file)
             final_answer("im done analyzing chunk")
             </code>
-        - If **one  quote, Advice or motivational complete message** is found in the chunk you analyze, output:
+        - If one  quote, Advice or motivational complete message is found in the chunk you analyze, output:
             Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it.
             <code>
             SaveMotivationalText(text="[start - end] Quote", text_file=text_file)
             final_answer("im done analyzing chunk")
             </code>    
-        - If **no quotes, Advice or motivational complete message** is found in the chunk you analyze, output:
+        - If no quotes, Advice or motivational complete message is found in the chunk you analyze, output:
             Thought:Thought: I carefully scanned every timestamped line in this chunk, looking for a short, self‑contained motivational passage. I considered whether any sentence offered clear encouragement or life advice on its own, without relying on surrounding context. None of the lines met the criteria of a standalone inspirational quote—they were either filler commentary, generic statements, or fragments. Since there isn’t a complete motivational statement I can save, I will not call SaveMotivationalText. and only provide `final_answer`
             <code>
             final_answer("After carefully analyzing the chunk/text, I have concluded nothing can be saved.")
             </code>
-        ### Notes:
-        - Quotes must be **motivational** and **standalone** — avoid fragments or generic sentences.
+        Notes:
+        - Quotes must be motivational and standalone — avoid fragments or generic sentences.
         - Always include both `Thought:` and `<code>` blocks.
         - Use exact function names and punctuation as shown.
         - Do not return quotes that are incomplete or unclear.
-        - o not create multiple SaveMotivationalText() calls for each line in a single quote.
+        - Do not create multiple SaveMotivationalText() calls for each line in a single quote.
         - Do not alter or guess missing timestamps — use the exact start and end values provided in the lines that contain the quote.
-        - Quote text should appear as a single, continuous string, even if it was originally split across 2–3 lines.
-                        
-        ##Timestamp Handling:
-        When a quote spans multiple lines (each line containing a separate timestamp):
-            - Merge the lines into a single quote.
-            - Include the **start time from the first line** and the **end time from the last line**.
-            - Preserve original spacing and punctuation.
-            - Output the full quote like:
-
+        - Quote text should appear as a single, continuous string, even if it was originally split across 2–3 lines.         
+        Timestamp Handling:
+             When a quote spans multiple lines (each line containing a separate timestamp):
+                - Merge the lines into a single quote.
+                - Include the **start time from the first line** and the **end time from the last line**.
+                - Preserve original spacing and punctuation.
+                - Output the full quote like:
         Exsample identified quote from chunk:
         [chunk start]
         [620.10s - 622.40s] In today's episode, we'll cover some important updates about mental clarity
@@ -232,16 +131,21 @@ def preprocess_with_filler_balanced(example, idx, filler_sentences, used_filler_
         [chunk end]
 
         Your output should be:
-
-        Thought: I found 1 standalone motivational passages that meet the criteria, so I’m saving them.
-        <code>SaveMotivationalText(text="[623.70s - 628.00s] You will encounter many challenges in life  [627.12s - 628.00s] But you must never be defeated by the challenges", text_file=text_file) final_answer("Im done analyzing the chunk")</code>\n
+            Thought: I found 1 standalone motivational passages that meet the criteria, so I’m saving them.
+            <code>SaveMotivationalText(text="[623.70s - 628.00s] You will encounter many challenges in life  [627.12s - 628.00s] But you must never be defeated by the challenges", text_file=text_file) final_answer("Im done analyzing the chunk")</code>\n
+    """
+   
+    instruction = """
         Here is the chunk you will analyze:\n
     """
-    if idx % 3 == 0:
+
+    if random.random() < 0.2:
+        count_only_filler += 1
         n_fillers = random.randint(5, 10)
         selected_fillers = sample_unique_fillers(n_fillers, filler_sentences, used_filler_sentences)
         if selected_fillers is None:
             return None
+
 
         chunk_text = "[chunk start]\n" + add_timestamps_and_filler([], selected_fillers, []) + "[chunk end]\n"
         label_text = (
@@ -252,9 +156,10 @@ def preprocess_with_filler_balanced(example, idx, filler_sentences, used_filler_
         )
 
     else:
-
+        quote_filler_mix_bool = False
         quote_filler_mix_chance = 0.5
         double_quote_chance = 0.5
+  
         if dataset_quotes is None:
             dataset_quotes = [example["text"]]
 
@@ -262,6 +167,7 @@ def preprocess_with_filler_balanced(example, idx, filler_sentences, used_filler_
             return q.replace("“", '').replace("”", '').replace("‘", "").replace("’", "").replace(".", "").replace('""', '').strip()
 
         if random.random() < double_quote_chance and len(dataset_quotes) > 1:
+            Count_double_quotes += 1
             other_example = random.choice(dataset_quotes)
             while other_example == example["quote"]:
                 other_example = random.choice(dataset_quotes)
@@ -272,23 +178,92 @@ def preprocess_with_filler_balanced(example, idx, filler_sentences, used_filler_
 
         all_sentences = []
         quotes_splits = []
+        quote_filler_mix_bool = (len(quotes) == 1) and (random.random() < quote_filler_mix_chance)
         for i, q in enumerate(quotes):
-            random_max_words = random.randint(4,10)
+            random_max_words = random.randint(4,7)
+
+            # Split quote i mindre linjer som vanlig
             quote_sents = split_quote_randomly(q, max_words_per_line=random_max_words)
+            print(f"Spltted quotes randomaly: {quote_sents}")
+
+            if quote_filler_mix_bool and len(quotes) == 1:
+                count_single_Quote_mix += 1
+                #henter ut en filler linje
+                filler_intro = sample_unique_fillers(1, filler_sentences, used_filler_sentences)
+                if filler_intro is not None and len(filler_intro) > 0: # hvis filler_intro ikke er null og mengden filler_intro er større enn 0
+                  #  start_end_mix_chance = 0.5
+                   # if random.random() > start_end_mix_chance:
+                        
+                    quote_words = quote_sents[0].split() # splitter en quote linje fra første linja/starten av quoten i lista til ord.
+                    quote_word_amount = random.randint(1, len(quote_words))
+                        
+                    moved_words = " ".join(quote_words[:quote_word_amount])
+                    remaining_quote = " ".join(quote_words[quote_word_amount:])
+
+                    #slå sammen filler og første quote-linje
+                    randomkChance = 0.5
+                    if random.random() < randomkChance:
+
+                        mixed_line = filler_intro[0].rstrip(".") + ", " + moved_words
+                    else: 
+                        mixed_line = filler_intro[0].rstrip(".") + " " + moved_words
+
+                    if remaining_quote:
+                        quote_sents[0] = mixed_line
+                        quote_sents.insert(1, remaining_quote)
+                    else:
+                        quote_sents[0] = mixed_line
+                    # else:
+                    #     quote_words = quote_sents[-1].split() 
+                    #     quote_word_amount = random.randint(1,len(quote_words) - 2)
+
+                    #     moved_words = " ".join(quote_words[-quote_word_amount:])
+                    #     remaining_quote = " ".join(quote_words[:-quote_word_amount])
+
+                    #     randomkChance = 0.5
+                    #     if random.random() < randomkChance:
+                    #         mixed_filler = moved_words + ", " + filler_intro[0].lstrip().capitalize()
+                    #     else:
+                    #         mixed_filler = moved_words + " " + filler_intro[0].lstrip().capitalize()
+
+                    #     if remaining_quote:
+                    #         quote_sents[-1] = remaining_quote
+                    #         filler_intro[0] = mixed_filler
+                    #     else:
+                    #         quote_sents.pop()  
+                    #         filler_intro[0] = mixed_filler
+
+
+
+            elif quote_filler_mix_bool == False and len(quotes) == 1:
+                count_single_quote_natural += 1
+            
+
+
+            # legg til quote linjer i listen
             quotes_splits.append(quote_sents)
             all_sentences.extend(quote_sents)
+            
+
+
+            #Vis det er flere enn en quote legg til random fillers mellom dem
             if i < len(quotes) - 1:
-                n_fillers_mid = random.randint(1, 6)
+                n_fillers_mid = random.randint(1, 5)
                 fillers_mid = sample_unique_fillers(n_fillers_mid, filler_sentences, used_filler_sentences)
                 if fillers_mid is None:
                     return None
                 all_sentences.extend(fillers_mid)
 
-        filler_before = sample_unique_fillers(random.randint(2, 10), filler_sentences, used_filler_sentences)
-        filler_after = sample_unique_fillers(random.randint(2, 7), filler_sentences, used_filler_sentences)
-        if filler_before is None or filler_after is None:
-            return None
+        filler_before = sample_unique_fillers(random.randint(1, 10), filler_sentences, used_filler_sentences)
+        if filler_before is None or len(filler_before) == 0:
+            log(f"[Warning] Ran out of filler sentences for filler_before at idx {idx}")
 
+            return None
+        filler_after = sample_unique_fillers(random.randint(1, 10), filler_sentences, used_filler_sentences)
+        if filler_after is None or len(filler_after) == 0:
+            log(f"[Warning] Ran out of filler sentences for filler_before at idx {idx}")
+            return None
+        
         chunk_text = add_timestamps_and_filler(all_sentences, filler_before, filler_after)
         chunk_text = "[chunk start]\n" + chunk_text + "[chunk end]\n"
 
@@ -324,7 +299,64 @@ def preprocess_with_filler_balanced(example, idx, filler_sentences, used_filler_
             if not found:
                 matched_quote_lines.append((None, None, q_line))
 
-        if len(quotes) == 1:
+      
+        if len(quotes) == 1 and quote_filler_mix_bool:
+            parts = []
+            print(f"quotes: {quotes}\n")
+            print(f"matched_quote_lines: {matched_quote_lines}\n")
+            quote = quotes[0]
+            print(f"Quote: {quote}\n")
+            quote_words = quote.split()  # splitt sitatet i ord
+            print(f"Quote words splitted: {quote_words}\n")
+            
+            # Rens sitatordene for punktum, komma osv. og gjør lowercase for sammenligning
+            quote_words_cleaned = [re.sub(r"[^\w\s’']", '', word).lower() for word in quote_words]
+            print(f"Quote words cleaned: {quote_words_cleaned}\n")
+
+            i = 0  # indeks for sitatord
+            new_matched_quote_lines = []
+
+            for start_t, end_t, text in matched_quote_lines:
+                original_words = text.strip().split()
+                cleaned_words = [re.sub(r"[^\w\s’']", '', w).lower() for w in original_words]
+
+                matched_words = []
+                for orig_word, clean_word in zip(original_words, cleaned_words):
+                    if i < len(quote_words_cleaned) and clean_word == quote_words_cleaned[i]:
+                        # Ta med ordet fra sitatet med original casing (fra quote_words)
+                        matched_words.append(quote_words[i])
+                        i += 1
+                    else:
+                        # Ord matcher ikke neste ord i sitatet, hopp over det
+                        pass
+                
+                if matched_words:
+                    new_matched_quote_lines.append((start_t, end_t, ' '.join(matched_words)))
+                
+                if i >= len(quote_words_cleaned):
+                    # Hele sitatet er funnet, stopp
+                    break
+
+            # Bygg opp output med tidsstempler og teksten som matcher
+            for start_t, end_t, text in new_matched_quote_lines:
+                if start_t is not None and end_t is not None:
+                    parts.append(f"[{start_t:.2f}s - {end_t:.2f}s] {text}")
+                else:
+                    parts.append(text)
+
+            full_quote_with_timestamps = " ".join(parts).replace('"', '\\"')
+            print(f"parts: {parts}")
+            print(f"full quote with timestamps: {full_quote_with_timestamps}")
+
+            label_text = (
+                'Thought: I found 1 standalone motivational passage that meet the criteria, so I’m saving it.\n' +
+                '<code>\n'
+                f'SaveMotivationalText(text="{full_quote_with_timestamps}", text_file=text_file)\n'
+                'final_answer("Im done analyzing the chunk")\n'
+                '</code>'
+            )
+            
+        elif len(quotes) == 1 and not quote_filler_mix_bool:
             parts = []
             for start_t, end_t, text in matched_quote_lines:
                 if start_t is not None and end_t is not None:
@@ -339,6 +371,7 @@ def preprocess_with_filler_balanced(example, idx, filler_sentences, used_filler_
                 'final_answer("Im done analyzing the chunk")\n'
                 '</code>'
             )
+
         else:
             save_calls = []
             idx_line = 0
@@ -353,7 +386,7 @@ def preprocess_with_filler_balanced(example, idx, filler_sentences, used_filler_
                         parts.append(text)
                 combined_text = " ".join(parts).replace('"', '\\"')
                 save_calls.append(f'SaveMotivationalText(text="{combined_text}", text_file=text_file)')
-            Thought = f"I found {len(save_calls)} standalone motivational passage{'s' if len(save_calls)>1 else ''} that meet the criteria, so I’m saving {'them' if len(save_calls)>1 else 'it'}."
+            Thought = f"I found {len(save_calls)} standalone motivational passage{'s' if len(save_calls) > 1 else ''} that meet the criteria, so I’m saving {'them' if len(save_calls)>1 else 'it'}."
             label_text = (
                 f"Thought: {Thought}\n"
                 "<code>\n" + "\n".join(save_calls) + "\n"
@@ -380,18 +413,19 @@ def main():
 
     filler_sentences = load_filler_sentences()
     tokenizer = AutoTokenizer.from_pretrained(CONFIG['model_name'], trust_remote_code=True)
-    from sklearn.model_selection import train_test_split
 
     quotes_list = load_quote_dataset()
     dataset = [{"quote": q} for q in quotes_list]
 
-    train_ds, test_ds = train_test_split(dataset, test_size=0.2, random_state=42)
 
 
     quotes_list = [x['quote'] for x in dataset]
 
     train_data = []
-    test_data = []
+    train_ds = dataset
+
+        
+
 
     for idx, example in enumerate(train_ds):
         processed = preprocess_with_filler_balanced(example, idx, filler_sentences, used_filler_sentences, tokenizer, quotes_list)
@@ -399,17 +433,24 @@ def main():
             break
         train_data.append(processed)
 
-    for idx, example in enumerate(test_ds):
-        processed = preprocess_with_filler_balanced(example, idx, filler_sentences, used_filler_sentences, tokenizer, quotes_list)
-        if processed is None:
-            break
-        test_data.append(processed)
 
-    with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\Dataset_detecting_motivationalquotes_from_chunk\Supervised_dataset\datasets\train2.jsonl", "w", encoding="utf-8") as f:
+
+    train_data_path = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\Dataset_detecting_motivationalquotes_from_chunk\Supervised_dataset\datasets\train.jsonl"
+    with open(train_data_path, "w", encoding="utf-8") as f:
         for item in train_data:
             f.write(json.dumps(item, ensure_ascii=False) + "\n")
 
-    log("Saved train.json and test.json with processed data.")
+
+    print(f"Laget totalt: [{Count_double_quotes}] dobble quote eksempler.")
+    print(f"Laget totalt: [{count_single_Quote_mix}] single quote/filler mix eksempler")
+    print(f"Laget totalt:  [{count_only_filler}] Ingen sitater eksempler")
+    print(f"Laget totalt: [{count_single_quote_natural}] single quote uten mix eksempler")
+
+   # from trunacte import trunacte_dataset
+   # trunacte_dataset(train_data_path)
+    print("DONE!")
+
+    log("done")
 
 if __name__ == "__main__":
     main()

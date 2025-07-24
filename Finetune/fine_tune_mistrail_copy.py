@@ -5,17 +5,16 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 from transformers import BitsAndBytesConfig
 from trl import SFTConfig, SFTTrainer
-from transformers.integrations import WandbCallback
 import  gc 
 import os
 from loss_logger import LossAndEvalloggingCallback
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
-os.environ["WANDB_MODE"] = "online"  
 torch.backends.cudnn.enabled = True
 torch.backends.cudnn.benchmark = True
 from log import log
-from val_test import print_model_output_evaltest
-  
+from val_test import run_eval_comparison_test
+os.environ["WANDB_DISABLED"] = "true"
+os.environ["WANDB_MODE"] = "offline"
 
 def supervised_Finetune():
 
@@ -25,29 +24,43 @@ def supervised_Finetune():
         load_in_4bit=True,
         bnb_4bit_use_double_quant=True,
         bnb_4bit_quant_type="nf4",
-        bnb_4bit_compute_dtype="bfloat16",
+        bnb_4bit_compute_dtype="float16",
+
     )
-    model_id = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-3B-Instruct"
-    model = AutoModelForCausalLM.from_pretrained(model_id, device_map="auto",attn_implementation="sdpa",  torch_dtype=torch.bfloat16, quantization_config=bnb_config, use_cache=False, local_files_only=True)
-
-
+    model_id = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-3B-Instruct\Merged_checkpoint2316"
+    model = AutoModelForCausalLM.from_pretrained(model_id, device_map="auto", torch_dtype=torch.float16, quantization_config=bnb_config, use_cache=False,local_files_only=True)
     model.config.use_cache = False
     print(f"Model: {model}")
+
+
+
+    print("clearing cache after model loading...")
+    gc.collect()
+    torch.cuda.empty_cache()
 
 
 
 
 
     log("\n----------------Loading tokenizer-------------\n")
-    tokenizer = AutoTokenizer.from_pretrained(model_id, local_files_only=True)
+
+
+    tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True,local_files_only=True)
+
+    
+
+    log(f"tokenizer.pad token was None changed it to : {tokenizer.pad_token}")
     before_vocab = len(tokenizer)
     log(f"Vocab length BEFORE training: {before_vocab}")
+    log(f"Tokenizer.pad_token already exist: {tokenizer.pad_token}")
 
-    log(f"Tokenizer pad_token: {tokenizer.pad_token}")
-
+    
+    print("clearing cache after tokenizer...")
+    gc.collect()
+    torch.cuda.empty_cache()
 
     peft_config = LoraConfig(
-        r=8,
+        r=16,
         lora_alpha=32,
         lora_dropout=0.02,
         target_modules=["q_proj","k_proj","v_proj","o_proj","gate_proj", "up_proj", "down_proj"],
@@ -58,7 +71,13 @@ def supervised_Finetune():
 
     model_kbit = prepare_model_for_kbit_training(
         model,
+        use_gradient_checkpointing=True
         )
+    
+    print("clearing cache after prepare model for kbit training...")
+    gc.collect()
+    torch.cuda.empty_cache()
+        
     model = get_peft_model(model_kbit , peft_config)
     trainable = []
     frozen   = []
@@ -66,8 +85,8 @@ def supervised_Finetune():
         (trainable if param.requires_grad else frozen).append(name)
 
 
-    print("🟢 Trainable parameters:\n", "\n".join(trainable))
-    print("\n⚪️ Frozen parameters:\n", "\n".join(frozen[:5]), "\n…(+ more)")
+    log(f"🟢 Trainable parameters: {trainable}")
+    log(f"\n⚪️ Frozen parameters: {frozen[:5]}")
     log(f"Perft_config: {peft_config} \n ")
     log(f"Model is prepared for kbit training now...\n model: {model}\n")
     log(f"model: {model}\n")
@@ -82,86 +101,128 @@ def supervised_Finetune():
         "json",
         data_files={
             "train": r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\Dataset_detecting_motivationalquotes_from_chunk\Supervised_dataset\datasets\train.jsonl",
-            "test": r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\Dataset_detecting_motivationalquotes_from_chunk\Supervised_dataset\datasets\test.jsonl",
+            "eval": r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\Dataset_detecting_motivationalquotes_from_chunk\Supervised_dataset\datasets\test.jsonl",
             "validation": r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\Dataset_detecting_motivationalquotes_from_chunk\Supervised_dataset\datasets\validation.jsonl"
         }
     )
-    train_set = dataset["train"].select(range(500)).shuffle(seed=32)
-    test_set = dataset["test"].select(range(125))
+    train_set = dataset["train"].select(range(10))
+    val_data = dataset["eval"].select(range(2))
     validation_set = dataset["validation"]
     log(f"Training dataset size: {len(train_set)}\n")
-    log(f"evaluation dataset size: {len(test_set)}\n")
+    log(f"evaluation dataset size: {len(val_data)}\n")
     log(f"validation dataset size: {len(validation_set)}\n")
 
 
+    print("clearing cache after loading dataset")
+    gc.collect()
+    torch.cuda.empty_cache()
 
-    sft_output = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-3B-Instruct"
+
+    sft_output = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-3B-Instruct\Merged_checkpoint2316"
     sft_config = SFTConfig(
             output_dir=sft_output,
             assistant_only_loss=True,
-            num_train_epochs=3,
+            num_train_epochs=1,
             per_device_train_batch_size=1,
-            gradient_accumulation_steps=8,
-            learning_rate=2e-5,
-            max_length=2000,
-            bf16=True,
-            logging_steps=100,
+            gradient_accumulation_steps=4,
+            per_device_eval_batch_size=1,
+            learning_rate=1e-4,
+            max_length=2200,
+            #bf16=True,
+            fp16=True,
+            logging_steps=200,
+            dataset_num_proc=4,
             save_strategy="epoch",
             eval_strategy="epoch",
-            warmup_ratio=0.1,
-            save_total_limit=3,
-            lr_scheduler_type="cosine",
+            warmup_ratio=0.2,
+            save_total_limit=2,
+            lr_scheduler_type="linear",
             metric_for_best_model="loss",
-            chat_template_path=r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-3B-Instruct",
+            chat_template_path=r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-3B-Instruct\Merged_checkpoint2316",
             report_to=None,
+            dataloader_num_workers=3,
+            dataloader_pin_memory=True,
+            load_best_model_at_end=True,
+            greater_is_better=False,
+            eos_token="<|im_end|>",
+            pad_token="<|endoftext|>"
         )
 
     trainer = SFTTrainer(
             model=model,
             train_dataset=train_set,
-            eval_dataset=test_set, 
+            eval_dataset=val_data, 
             args=sft_config,
-            callbacks=[LossAndEvalloggingCallback,WandbCallback],
+            callbacks=[LossAndEvalloggingCallback],
             processing_class=tokenizer,
         )
     
-    log(f"Testing Model on validationset")
-    print_model_output_evaltest(trainer,sft_config,model,tokenizer, eval_dataset=validation_set, num_samples=5, max_new_tokens=500)
+
+
+
+
+    Trainer_vocab_size = len(trainer.processing_class)
+    model_embedding_size = trainer.model.get_input_embeddings().weight.size(0)
+
+
+    if Trainer_vocab_size != model_embedding_size:
+        log(f"Resizing model embeddings from {model_embedding_size} to {Trainer_vocab_size}")
+        trainer.model.resize_token_embeddings(Trainer_vocab_size)
+        log(f"new_vocab_size(SFTTrainer): {Trainer_vocab_size}")
+    else:
+       log(f"Trengte ikke rezise, alt er likt")
+
+
+
+
+
+
+
+
+   
+    run_eval_comparison_test(trainer,sft_config,model,tokenizer, eval_dataset=validation_set, num_samples=5, max_new_tokens=500,phase="Before Training")
+    print("clearing cache after validation test")
+    gc.collect()
+    torch.cuda.empty_cache()
+
 
 
 
     log(f"----------------Starting Training now----------------")
-    trainer.train()
+    trainer_output = trainer.train()
+    print("clearing cache after training complete")
+
+
+    gc.collect()
+    torch.cuda.empty_cache()
+    evalloss = trainer.evaluate(eval_dataset=validation_set)
+    import json 
+    with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\Dataset_detecting_motivationalquotes_from_chunk\Supervised_dataset\logs\Evaluation_logg.txt", "w", encoding="utf-8") as f:
+        f.write(json.dumps(evalloss, ensure_ascii=False, indent=2))
+
+
+    with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\Dataset_detecting_motivationalquotes_from_chunk\Supervised_dataset\logs\finetuning_loss_logg.txt", "a", encoding="utf-8") as f:
+        f.write("\n#----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#\n")
+        f.write("\n.......................FINAL FINETUNING METRICS......................................\n")
+        f.write(f"✅ Trening ferdig etter {trainer_output.global_step} steg\n")
+        f.write(f"📉 Slutt-trenings-loss: {trainer_output.training_loss:.4f}\n")
+        f.write(f"📊 Slutt-metrics: {trainer_output.metrics}\n")
 
 
 
-    # if after_vocab != before_vocab:
-    #     log("Tokenizer vokabular har vokst—trimmer embeddings tilbake til original")
-    #     old_weights = model.get_input_embeddings().weight.data
-    #     # Klipp vekk de ekstra radene:
-    #     new_weights = old_weights[:before_vocab, :].clone()
-    #     # Erstatt i modellen:
-    #     model.get_input_embeddings().weight.data = new_weights
-    #     model.config.vocab_size = before_vocab
-    # else:
-    #     log("Ingen ekstra tokens lagt til—ingen trimming nødvendig")
 
+    print("clearing cache after evaluation complete")
+    gc.collect()
+    torch.cuda.empty_cache()
 
+    run_eval_comparison_test(trainer,sft_config,model,tokenizer, eval_dataset=validation_set, num_samples=5, max_new_tokens=500,phase="After Training")
 
-
-    after_training_tokenizer = len(tokenizer)
-    print(len(after_training_tokenizer))
-    log(f"Vocab length AFTER training: {after_training_tokenizer}")
-    if after_training_tokenizer != before_vocab:
-        model.resize_token_embeddings(after_training_tokenizer)
-        log(f"Rezied model embedding with after training tokenizer")
 
     log("Successfully done finetuning!")
-
     log("--------------Running a manual test--------------------\n\n")
-    print_model_output_evaltest(trainer,sft_config,model,tokenizer,eval_dataset=validation_set,num_samples=5,max_new_tokens=500)
-    log(f"SUCCESS :D")
 
+
+    log(f"SUCCESS :D")
 if __name__ == "__main__":
     gc.collect()
     torch.cuda.empty_cache()

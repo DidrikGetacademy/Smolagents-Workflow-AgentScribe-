@@ -1,14 +1,11 @@
 
-
 from log import validation_logger
 import torch
+from difflib import SequenceMatcher
 
-def print_model_output_evaltest(trainer, sft_config, model, tokenizer, eval_dataset, num_samples=3, max_new_tokens=150):
-
-    
+def run_eval_comparison_test(trainer, sft_config, model, tokenizer, eval_dataset, num_samples=15, max_new_tokens=150, phase="Before Training"):
     model.eval()
-    validation_logger("-------------------------Running an eval test after training to see model's performance..--------------------------------.\n")
-
+    validation_logger(f"\n📊 Running Evaluation Test – {phase}")
 
     prepared_eval_dataset = trainer._prepare_dataset(
         dataset=eval_dataset,
@@ -16,66 +13,53 @@ def print_model_output_evaltest(trainer, sft_config, model, tokenizer, eval_data
         args=sft_config,
         packing=False,
         formatting_func=None,
-        dataset_name="eval",
+        dataset_name=f"eval_{phase.lower().replace(' ', '_')}",
     )
 
+    correct_count = 0
+    wrong_count = 0
+    total_count = min(num_samples, len(prepared_eval_dataset))
 
-    for i in range(min(num_samples, len(prepared_eval_dataset))):
+    for i in range(total_count):
         example = prepared_eval_dataset[i]
         input_ids_list = example["input_ids"]
         assistant_mask = example.get("assistant_masks", None)
 
-  
-        if assistant_mask is not None:
-            first_assistant_idx = next((idx for idx, m in enumerate(assistant_mask) if m == 1), len(input_ids_list))
-        else:
-            first_assistant_idx = len(input_ids_list)
+        first_assistant_idx = next((idx for idx, m in enumerate(assistant_mask) if m == 1), len(input_ids_list)) if assistant_mask else len(input_ids_list)
+        user_input_ids = input_ids_list[:first_assistant_idx]
+        gt_assistant_ids = input_ids_list[first_assistant_idx:] if assistant_mask else []
 
-
-        user_input_ids = input_ids_list[:first_assistant_idx] 
-
-
-    
-        raw_input_text = tokenizer.decode(user_input_ids, skip_special_tokens=False)
-        validation_logger(f"Raw input text for example {i+1}: {raw_input_text}")
-
-    
         input_ids = torch.tensor(user_input_ids, device=model.device).unsqueeze(0)
 
-       
-        try:
-            validation_logger(f"input_ids shape: {input_ids.shape}, dtype: {input_ids.dtype}")
+        with torch.no_grad():
+            try:
+                output_ids = model.generate(input_ids=input_ids, max_new_tokens=max_new_tokens)
+            except Exception as e:
+                validation_logger(f"❌ Failed generation on example {i+1}: {e}")
+                continue
 
-            with torch.no_grad():
-                output_ids = model.generate(
-                    input_ids=input_ids,
-                    max_new_tokens=max_new_tokens,             
-                     )
-        except Exception as e:
-            validation_logger(f"🔥 model.generate failed: {e}")
-            return  # Skip this example
-        output = tokenizer.decode(output_ids[0], skip_special_tokens=True)
-        validation_logger(f"DEBUG TEST OUTPUT: {output}")
+        # Modellens svar
+        generated_text = tokenizer.decode(output_ids[0][input_ids.shape[-1]:], skip_special_tokens=True).strip()
 
-        # 7) Dekode ground truth assistant (for validation_loggerging)
-        if assistant_mask is not None:
-            gt_assistant_ids = input_ids_list[first_assistant_idx:]
-            decoded_assistant = tokenizer.decode(gt_assistant_ids, skip_special_tokens=True)
-            validation_logger(f"assistant mask is not none")
+        # Ground truth svar
+        expected_text = tokenizer.decode(gt_assistant_ids, skip_special_tokens=True).strip()
+
+        # Sammenlign likhet
+        similarity = SequenceMatcher(None, generated_text, expected_text).ratio()
+
+        # 0.85+ tolkes som "riktig"
+        if similarity > 0.85:
+            correct_count += 1
         else:
-            decoded_assistant = "<No assistant response in example>"
-            validation_logger(f"attention mask is  none")
+            wrong_count += 1
 
-        # 8) Dekode modellen sin generering (kun ny generert tekst)
-        gen_ids = output_ids[0][input_ids.shape[-1]:]
-        model_generated_text = tokenizer.decode(gen_ids, skip_special_tokens=True)
+        validation_logger(f"\n\n\n🔹 Example {i+1}")
+        validation_logger(f"🎯 Expected: {expected_text}")
+        validation_logger(f"🧠 Generated: {generated_text}")
+        validation_logger(f"✅ Similarity: {similarity:.2f} -> {'✔️' if similarity > 0.85 else '❌'}")
+        validation_logger("-" * 60)
+        validation_logger("\n\n\n\n")
 
-        # 9) Print og validation_loggerge
-        detailed_validation_logger = (
-            f"\n🔹 Example {i+1}\n"
-            f"📥 Raw model input:\n{raw_input_text}\n\n"
-            f"🎯 Ground truth assistant response:\n{decoded_assistant}\n\n"
-            f"🧠 Model generated response:\n{model_generated_text}\n"
-            + ("-" * 60)
-        )
-        validation_logger(detailed_validation_logger)
+    accuracy_percent = (correct_count / total_count) * 100
+    validation_logger(f"\n📈 Eval Accuracy ({phase}): {correct_count}/{total_count} = {accuracy_percent:.2f}%")
+    validation_logger(f"❌ Wrong count: {wrong_count}\n")
