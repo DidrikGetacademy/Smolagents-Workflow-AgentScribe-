@@ -57,34 +57,32 @@ instruction = """ Here is the chunk you will analyze:\n
     """
 
 chunk_text = """
-[00:00s - 00:30s] you know man that we've been taught that failing is final. But the truth is, if you're doing anything meaningful
-[00:31s - 01:00s] if you're building something, taking a risk, creating a life that’s true to you — you’re going to mess up. And that’s not just okay,
-[01:01s - 01:30s] it’s necessary.
-[01:31s - 02:00s] The people we admire the most?
-[02:01s - 02:30s] They’ve all failed.
-[02:31s - 03:00s] Repeatedly.
-[03:01s - 03:30s] And what makes them different isn’t that they avoided failure,
-[03:31s - 04:00s] it’s that they didn’t let it stop them. They learned, they adapted, 
-[04:01s - 04:30s] and they kept going. the mind can be under alot of pressure when you work day in and day out.
-[04:31s - 05:00s] yea people need to be careful
-[05:01s - 05:30s] alot of stress can make the mind shutdown
-[05:31s - 06:00s] yea people forget that
-[06:01s - 06:30s] but did you know that last night 
-
+[06:51s - 07:00s] product that he sold and the guarantee was this He said all you have to do you can get all\n
+[07:01s - 07:10s] your money back if you just open up a Google doc and say what you're going to do every\n
+[07:11s - 07:20s] day and at the end of the day you're going to say what you did That's\n
+[07:21s - 07:30s] it And you just do that for six weeks That's all you have to do And if you do \n
+[07:31s - 07:40s] that and you dont get the the results Ill you know Ill give your money back And what's crazy about that is when he was talking about it he said \n
+[07:41s - 07:50s] Do you know what the completion rate of twice a day doing something is he's like it's like less than 1% \n
+[07:51s - 08:00s] He's like so I can happily do it because it seems so simple And so I think we we we underplay how simple success \n
+[08:01s - 08:10s] is and extrapolate an expectation of how easy it must be from that And then we're disappointed \n
+[08:11s - 08:20s] or dissatisfied when it doesn't meet those expectations Like it is harder than we expect but also the rewards may be also greater than we expect James Clear \n
+[08:21s - 08:30s] has this unbelievable insight It doesn't make sense to continue wanting something if you're not willing \n
+[08:31s - 08:40s] to do what it takes to get it If you don't want to live the lifestyle then release yourself from the desire\n
+[08:41s - 08:50s] To crave the result but not the process is to guarantee disappointment\n
+[08:51s - 09:00s] Yeah Holy Super true I mean um I think Naval quoted this blog a long time ago but desire\n
+[09:01s - 09:10s] is a contract you make with yourself to be unhappy until\n
+[09:11s - 09:20s] you get what you want And if you never \n
+[09:21s - 09:30s] if you basically know that you're never \n
+[09:31s - 09:40s] willing to put the work in to get\n
+[09:41s - 09:50s] the thing Yep That's an\n
 """
-# we've been taught that failing is final. But the truth is, if you're doing anything meaningful — if you're building something, taking a risk, creating a life that’s true to you — you’re going to mess up. And that’s not just okay, it’s necessary.
-# The people we admire the most? They’ve all failed. Repeatedly. And what makes them different isn’t that they avoided failure, it’s that they didn’t let it stop them. They learned, they adapted, and they kept going.
 
 quote1 = """
-[00:00s - 00:30s] we've been taught that failing is final. But the truth is, if you're doing anything meaningful
-[00:31s - 01:00s] if you're building something, taking a risk, creating a life that’s true to you — you’re going to mess up. And that’s not just okay,
-[01:01s - 01:30s] it’s necessary.
-[01:31s - 02:00s] The people we admire the most?
-[02:01s - 02:30s] They’ve all failed.
-[02:31s - 03:00s] Repeatedly.
-[03:01s - 03:30s] And what makes them different isn’t that they avoided failure,
-[03:31s - 04:00s] it’s that they didn’t let it stop them. They learned, they adapted, 
-[04:01s - 04:30s] and they kept going.
+[07:31s - 07:40s] he said 
+[07:41s - 07:50s] Do you know what the completion rate of twice a day doing something is he's like it's like less than 1% 
+[07:51s - 08:00s] He's like so I can happily do it because it seems so simple And so I think we we we underplay how simple success 
+[08:01s - 08:10s] is and extrapolate an expectation of how easy it must be from that And then we're disappointed 
+[08:11s - 08:20s] or dissatisfied when it doesn't meet those expectations Like it is harder than we expect but also the rewards may be also greater than we expect
 """
 
 quote2 = """"""

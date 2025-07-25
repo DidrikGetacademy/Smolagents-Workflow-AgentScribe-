@@ -28,7 +28,7 @@ def supervised_Finetune():
 
     )
     model_id = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-3B-Instruct\Merged_checkpoint2316"
-    model = AutoModelForCausalLM.from_pretrained(model_id, device_map="auto", torch_dtype=torch.float16, quantization_config=bnb_config, use_cache=False,local_files_only=True)
+    model = AutoModelForCausalLM.from_pretrained(model_id, device_map="auto", torch_dtype=torch.float16, quantization_config=bnb_config, trust_remote_code=True, use_cache=False,local_files_only=True)
     model.config.use_cache = False
     print(f"Model: {model}")
 
@@ -45,7 +45,7 @@ def supervised_Finetune():
     log("\n----------------Loading tokenizer-------------\n")
 
 
-    tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True,local_files_only=True)
+    tokenizer = AutoTokenizer.from_pretrained(model_id,local_files_only=True, trust_remote_code=True)
 
     
 
@@ -62,7 +62,7 @@ def supervised_Finetune():
     peft_config = LoraConfig(
         r=16,
         lora_alpha=32,
-        lora_dropout=0.02,
+        lora_dropout=0.03,
         target_modules=["q_proj","k_proj","v_proj","o_proj","gate_proj", "up_proj", "down_proj"],
         bias="none",
         task_type="CAUSAL_LM"
@@ -105,8 +105,8 @@ def supervised_Finetune():
             "validation": r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\Dataset_detecting_motivationalquotes_from_chunk\Supervised_dataset\datasets\validation.jsonl"
         }
     )
-    train_set = dataset["train"].select(range(10))
-    val_data = dataset["eval"].select(range(2))
+    train_set = dataset["train"].shuffle(seed=32)
+    val_data = dataset["eval"]
     validation_set = dataset["validation"]
     log(f"Training dataset size: {len(train_set)}\n")
     log(f"evaluation dataset size: {len(val_data)}\n")
@@ -122,19 +122,21 @@ def supervised_Finetune():
     sft_config = SFTConfig(
             output_dir=sft_output,
             assistant_only_loss=True,
-            num_train_epochs=1,
+            num_train_epochs=2,
             per_device_train_batch_size=1,
             gradient_accumulation_steps=4,
             per_device_eval_batch_size=1,
             learning_rate=1e-4,
-            max_length=2200,
+            max_length=3100,
             #bf16=True,
             fp16=True,
-            logging_steps=200,
+            logging_steps=100,
             dataset_num_proc=4,
-            save_strategy="epoch",
-            eval_strategy="epoch",
-            warmup_ratio=0.2,
+            save_strategy="steps",
+            eval_strategy="steps",
+            save_steps=150,
+            eval_steps=100,
+            warmup_ratio=0.1,
             save_total_limit=2,
             lr_scheduler_type="linear",
             metric_for_best_model="loss",
@@ -167,7 +169,7 @@ def supervised_Finetune():
 
     if Trainer_vocab_size != model_embedding_size:
         log(f"Resizing model embeddings from {model_embedding_size} to {Trainer_vocab_size}")
-        trainer.model.resize_token_embeddings(Trainer_vocab_size)
+        trainer.model.resize_token_embeddings(Trainer_vocab_size,mean_resizing=False)
         log(f"new_vocab_size(SFTTrainer): {Trainer_vocab_size}")
     else:
        log(f"Trengte ikke rezise, alt er likt")

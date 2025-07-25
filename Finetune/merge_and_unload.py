@@ -4,9 +4,9 @@ from peft import PeftModel
 import gc
 
 # Paths
-model_id = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-3B-Instruct"
-lora_checkpoint_dir       = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-3B-Instruct\checkpoint-2316"
-merged_model_output_path = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-3B-Instruct\Merged_checkpoint2316"
+model_id = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-3B-Instruct\Merged_checkpoint2316"
+lora_checkpoint_dir       = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-3B-Instruct\Merged_checkpoint2316\checkpoint-250"
+merged_model_output_path = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-3B-Instruct-MERGED"
 
 # Load tokenizer
 tokenizer = AutoTokenizer.from_pretrained(model_id, local_files_only=True)

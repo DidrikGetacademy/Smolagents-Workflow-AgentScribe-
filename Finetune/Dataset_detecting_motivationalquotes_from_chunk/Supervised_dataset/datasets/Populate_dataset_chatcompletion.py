@@ -114,6 +114,7 @@ def preprocess_with_filler_balanced(example, idx, filler_sentences, used_filler_
         - Do not create multiple SaveMotivationalText() calls for each line in a single quote.
         - Do not alter or guess missing timestamps — use the exact start and end values provided in the lines that contain the quote.
         - Quote text should appear as a single, continuous string, even if it was originally split across 2–3 lines.         
+        -It’s very important that the quote, advice, or personal growth message you identify forms a complete thought — one that, if isolated from the rest of the text, still makes complete sense on its own. Saving incomplete thoughts will result in failure.
         Timestamp Handling:
              When a quote spans multiple lines (each line containing a separate timestamp):
                 - Merge the lines into a single quote.
@@ -248,18 +249,18 @@ def preprocess_with_filler_balanced(example, idx, filler_sentences, used_filler_
 
             #Vis det er flere enn en quote legg til random fillers mellom dem
             if i < len(quotes) - 1:
-                n_fillers_mid = random.randint(1, 5)
+                n_fillers_mid = random.randint(5, 10)
                 fillers_mid = sample_unique_fillers(n_fillers_mid, filler_sentences, used_filler_sentences)
                 if fillers_mid is None:
                     return None
                 all_sentences.extend(fillers_mid)
 
-        filler_before = sample_unique_fillers(random.randint(1, 10), filler_sentences, used_filler_sentences)
+        filler_before = sample_unique_fillers(random.randint(1, 15), filler_sentences, used_filler_sentences)
         if filler_before is None or len(filler_before) == 0:
             log(f"[Warning] Ran out of filler sentences for filler_before at idx {idx}")
 
             return None
-        filler_after = sample_unique_fillers(random.randint(1, 10), filler_sentences, used_filler_sentences)
+        filler_after = sample_unique_fillers(random.randint(1, 15), filler_sentences, used_filler_sentences)
         if filler_after is None or len(filler_after) == 0:
             log(f"[Warning] Ran out of filler sentences for filler_before at idx {idx}")
             return None

@@ -50,8 +50,8 @@ def filter_dataset(input_jsonl):
 
     tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=True)
 
-    min_length = 1700
-    max_length = 2200
+    min_length = 2000
+    max_length = 3070
     kept_count = 0
     removed_count = 0
 
