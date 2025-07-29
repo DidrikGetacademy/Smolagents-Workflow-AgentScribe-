@@ -10,9 +10,9 @@ if GPEN_PATH not in sys.path:
 import GPEN.__init_paths
 from GPEN.face_enhancement import FaceEnhancement
 from smolagents import TransformersModel, FinalAnswerTool, SpeechToTextTool, CodeAgent, tool,SpeechToTextToolCPU
-from Agents_tools import ChunkLimiterTool
+from Custom_Agent_Tools import ChunkLimiterTool
 import gc
-from Upload_youtube import upload_video
+from Agent_AutoUpload.Upload_youtube import upload_video
 from log import log 
 import yaml
 import torchvision.transforms.functional as F

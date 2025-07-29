@@ -6,7 +6,7 @@ from transformers import AutoTokenizer
 import re
 
 CONFIG = {
-    'model_name': r'C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-3B-Instruct',
+    'model_name': r'C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-3B-Instruct-MERGED',
 }
 count_only_filler = 0
 count_single_Quote_mix = 0
@@ -102,7 +102,7 @@ def preprocess_with_filler_balanced(example, idx, filler_sentences, used_filler_
             final_answer("im done analyzing chunk")
             </code>    
         - If no quotes, Advice or motivational complete message is found in the chunk you analyze, output:
-            Thought:Thought: I carefully scanned every timestamped line in this chunk, looking for a short, self‑contained motivational passage. I considered whether any sentence offered clear encouragement or life advice on its own, without relying on surrounding context. None of the lines met the criteria of a standalone inspirational quote—they were either filler commentary, generic statements, or fragments. Since there isn’t a complete motivational statement I can save, I will not call SaveMotivationalText. and only provide `final_answer`
+            Thought: I carefully scanned every timestamped line in this chunk, looking for a short, self‑contained motivational passage. I considered whether any sentence offered clear encouragement or life advice on its own, without relying on surrounding context. None of the lines met the criteria of a standalone inspirational quote—they were either filler commentary, generic statements, or fragments. Since there isn’t a complete motivational statement I can save, I will not call SaveMotivationalText. and only provide `final_answer`
             <code>
             final_answer("After carefully analyzing the chunk/text, I have concluded nothing can be saved.")
             </code>
@@ -203,14 +203,19 @@ def preprocess_with_filler_balanced(example, idx, filler_sentences, used_filler_
 
                     #slå sammen filler og første quote-linje
                     randomkChance = 0.5
+                    only_start = 0.5
+                    #if random.random() < only_start:
+
                     if random.random() < randomkChance:
 
                         mixed_line = filler_intro[0].rstrip(".") + ", " + moved_words
                     else: 
                         mixed_line = filler_intro[0].rstrip(".") + " " + moved_words
-
+                 #   else:
+                   #     mixed_line_end = filler_intro[-1].rstrip(".") +  " " + moved_words
                     if remaining_quote:
                         quote_sents[0] = mixed_line
+                        #quote_sents[-1] = mixed_line_end
                         quote_sents.insert(1, remaining_quote)
                     else:
                         quote_sents[0] = mixed_line

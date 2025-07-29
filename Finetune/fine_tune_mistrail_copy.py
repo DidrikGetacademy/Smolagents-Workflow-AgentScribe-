@@ -27,7 +27,7 @@ def supervised_Finetune():
         bnb_4bit_compute_dtype="float16",
 
     )
-    model_id = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-3B-Instruct\Merged_checkpoint2316"
+    model_id = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-3B-Instruct-MERGED"
     model = AutoModelForCausalLM.from_pretrained(model_id, device_map="auto", torch_dtype=torch.float16, quantization_config=bnb_config, trust_remote_code=True, use_cache=False,local_files_only=True)
     model.config.use_cache = False
     print(f"Model: {model}")
@@ -105,7 +105,7 @@ def supervised_Finetune():
             "validation": r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\Dataset_detecting_motivationalquotes_from_chunk\Supervised_dataset\datasets\validation.jsonl"
         }
     )
-    train_set = dataset["train"].shuffle(seed=32)
+    train_set = dataset["train"]
     val_data = dataset["eval"]
     validation_set = dataset["validation"]
     log(f"Training dataset size: {len(train_set)}\n")
@@ -118,7 +118,7 @@ def supervised_Finetune():
     torch.cuda.empty_cache()
 
 
-    sft_output = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-3B-Instruct\Merged_checkpoint2316"
+    sft_output = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-3B-Instruct-MERGED"
     sft_config = SFTConfig(
             output_dir=sft_output,
             assistant_only_loss=True,
@@ -127,7 +127,7 @@ def supervised_Finetune():
             gradient_accumulation_steps=4,
             per_device_eval_batch_size=1,
             learning_rate=1e-4,
-            max_length=3100,
+            max_length=4000,
             #bf16=True,
             fp16=True,
             logging_steps=100,
@@ -138,9 +138,9 @@ def supervised_Finetune():
             eval_steps=100,
             warmup_ratio=0.1,
             save_total_limit=2,
-            lr_scheduler_type="linear",
+            lr_scheduler_type="cosine",
             metric_for_best_model="loss",
-            chat_template_path=r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-3B-Instruct\Merged_checkpoint2316",
+            chat_template_path=r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-3B-Instruct-MERGED",
             report_to=None,
             dataloader_num_workers=3,
             dataloader_pin_memory=True,

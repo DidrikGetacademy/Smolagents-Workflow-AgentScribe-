@@ -9,15 +9,16 @@ if GPEN_PATH not in sys.path:
     sys.path.insert(0, GPEN_PATH)
 import GPEN.__init_paths
 from GPEN.face_enhancement import FaceEnhancement
-from smolagents import TransformersModel, FinalAnswerTool, SpeechToTextTool, CodeAgent, tool,SpeechToTextToolCPU
-from Agents_tools import ChunkLimiterTool
+from smolagents import TransformersModel, FinalAnswerTool, SpeechToTextTool, CodeAgent, tool,SpeechToTextToolCPU,InferenceClientModel,GoogleSearchTool,OpenAIModel,SpeechToTextToolCPU_Custom
+from Custom_Agent_Tools import ChunkLimiterTool
+import tempfile
 import gc
-from Upload_youtube import upload_video
-from log import log_step
-import logging
+from Agent_AutoUpload.Upload_youtube import upload_video
+from log import log
 import yaml
 import torchvision.transforms.functional as F
 sys.modules['torchvision.transforms.functional_tensor'] = F
+import torch.nn.functional as F  
 import subprocess
 from moviepy.audio.fx import MultiplyVolume
 from moviepy import VideoFileClip, ImageSequenceClip, TextClip, CompositeVideoClip,vfx,AudioFileClip,afx,CompositeAudioClip,afx
@@ -32,7 +33,6 @@ import cv2
 import onnxruntime as ort
 from ultralytics.utils.ops import non_max_suppression
 import pynvml
-import torch.nn.functional as F  
 import time
 import numpy as np
 import cv2
@@ -42,11 +42,11 @@ from moviepy.video.fx.FadeOut import FadeOut
 import threading
 import queue
 import torch
+from pydub import AudioSegment
 import datetime
 import re 
 from queue import Queue
 pynvml.nvmlInit()
-log = log_step
 handle = pynvml.nvmlDeviceGetHandleByIndex(0)
 mem_info = pynvml.nvmlDeviceGetMemoryInfo(handle)
 log(f"Total Used: {mem_info.used/1e9:.1f}GB")
@@ -57,6 +57,8 @@ model_path_SwinIR_color_denoise15_onnx = r"c:\Users\didri\Desktop\LLM-models\Vid
 model_path_Swin_BSRGAN_X4_pth = r"c:\Users\didri\Desktop\LLM-models\Video-upscale-models\BSRGAN_DFOWMFC_s64w8_SwinIR-L_x4_GAN.pth"
 model_path_Swin_BSRGAN_X4_onnx = r"c:\Users\didri\Desktop\LLM-models\Video-upscale-models\BSRGAN_DFOWMFC_s64w8_SwinIR-L_x4_GAN.onnx"
 model_path_realesgran_x2_pth = r"c:\Users\didri\Desktop\LLM-models\Video-upscale-models\RealESRGAN_x2plus.pth"
+
+#Threading
 video_task_que = queue.Queue()
 gpu_lock = threading.Lock()
 transcript_queue = queue.Queue()
@@ -129,21 +131,16 @@ def enhance_detail_and_sharpness(frame_bgr, clarity_factor=0.2, sharpen_amount=0
         Forbedret bilde (BGR)
     """
 
-    # === 1) Detail Layer (Clarity) ===
-    # Bruk bilateral filter for å lage en glatt versjon
     smooth = cv2.bilateralFilter(frame_bgr, d=9, sigmaColor=75, sigmaSpace=75)
 
-    # Trekker smooth ut av original for å få detaljene
+
     detail_layer = cv2.subtract(frame_bgr, smooth)
 
-    # Booster detaljene
+
     boosted_detail = cv2.addWeighted(detail_layer, clarity_factor, detail_layer, 0, 0)
 
-    # Legger detaljene tilbake til originalen
     clarity_frame = cv2.add(frame_bgr, boosted_detail)
 
-    # === 2) Mild sharpen ===
-    # Unsharp mask: original + (original - blur)
     blur = cv2.GaussianBlur(clarity_frame, (0, 0), 3)
     sharpened = cv2.addWeighted(clarity_frame, 1.0 + sharpen_amount, blur, -sharpen_amount, 0)
 
@@ -170,7 +167,7 @@ class MyProgressLogger(ProgressBarLogger):
             log(f"{param}: {value}")
             
 
- 
+ #[{'word': ' Why', 'start': 0.0, 'end': 0.18}, {'word': ' would', 'start': 0.18, 'end': 0.3}, {'word': ' we', 'start': 0.3, 'end': 0.42}, {'word': ' spend', 'start': 0.42, 'end': 0.68}, {'word': ' that', 'start': 0.68, 'end': 0.88}, {'word': ' minute', 'start': 0.88, 'end': 1.22}, {'word': ' in', 'start': 1.22, 'end': 1.42}, {'word': ' the', 'start': 1.42, 'end': 1.54}, {'word': ' past', 'start': 1.54, 'end': 2.1}, {'word': ' when', 'start': 2.1, 'end': 2.6}, {'word': ' we', 'start': 2.6, 'end': 2.72}, {'word': ' could', 'start': 2.72, 'end': 2.82}, {'word': ' be', 'start': 2.82, 'end': 2.94}, {'word': ' fully', 'start': 2.94, 'end': 3.26}, {'word': ' present', 'start': 3.26, 'end': 3.66}, {'word': ' in', 'start': 3.66, 'end': 3.84}, {'word': ' creating', 'start': 3.84, 'end': 4.32}, {'word': ' the', 'start': 4.32, 'end': 4.54}, {'word': ' future?', 'start': 4.54, 'end': 4.84}]
 def create_short_video(video_path, start_time, end_time, video_name, subtitle_text):
     background_audio = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\onerepublic I aint worried tiktok whistle loop - slowed reverb [mp3].mp3"
     change_on_saturation = "Decrease"
@@ -222,22 +219,22 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
     def create_subtitles_from_pairs(pairs):
         from moviepy.video.fx import FadeIn, FadeOut
         text_clips = []
-        fade_duration = 0.15
+        fade_duration = 0.05
 
         for c in pairs:
             log(f"text for c in pairs: {c}")
             txt_clip = TextClip(
                 text=c['text'],
                 font=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Utils-Video_creation\Fonts\OpenSans-VariableFont_wdth,wght.ttf", 
-                font_size=50,
+                font_size=100,
                 margin=(10, 10), 
                 text_align="center",
                 vertical_align="center",
                 horizontal_align="center",
                 color='white',
                 stroke_color="black",
-                stroke_width=5,
-                size=(1000, 150),
+                stroke_width=8,
+                size=(2000, 300),
                 method="label",
                 duration=c['duration']
                ).with_start(c['start']).with_position(('center', 0.60), relative=True)
@@ -250,7 +247,8 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
         
 
 
-    
+    #legge på tekst etter oppskalering
+
     def detect_and_crop_frames_batch(frames, batch_size=8):
         TARGET_W, TARGET_H = 1080, 1920
         alpha = 0.1
@@ -487,13 +485,13 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
         out_size = None
         channel_multiplier = 2
         narrow = 1
-        alpha = 1
+        alpha = 0.5
         use_sr = True
         use_cuda = True
         save_face = False
         aligned = False
         sr_model = 'realesrnet'
-        sr_scale = 2
+        sr_scale = 1
         tile_size = 0
         ext = '.jpg'
 
@@ -546,11 +544,11 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
             FaceEnhancement_frames = [change_saturation(frame,mode=change_on_saturation, amount=0.2) for frame in FaceEnhancement_frames]
 
 
-# ##############################
-# ##--------------------------##
-# # MAKING videoclip from frames
-# ##--------------------------##
-# ##############################
+# # ##############################
+# # ##--------------------------##
+# # # MAKING videoclip from frames
+# # ##--------------------------##
+# # ##############################
 
     log(f"\n\n[CREATING VIDEOCLIP] PROCCESS starting...")
     try:
@@ -634,6 +632,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 ###################################################
     final_clip = FadeIn(duration=0.1).apply(final_clip)
     final_clip = FadeOut(duration=0.1).apply(final_clip)
+    final_clip.fps = clip.fps
 
     log(f"video original fps: {clip.fps}")
     log(f"video now fps: {final_clip.fps}")
@@ -641,7 +640,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 
     del frames
     del cropped_frames
-    del enchanced_frames
+   # del enchanced_frames
     torch.cuda.empty_cache()
     gc.collect()
     os.makedirs(output_dir, exist_ok=True)
@@ -653,8 +652,8 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
         preset="p7",
         audio_codec=audio_codec or "aac",
         bitrate="4000k",
-        threads=8,
-        fps=30,
+        threads=6,
+        fps=final_clip.fps,
         ffmpeg_params=[
              "-crf", "10",
              "-vf", "eq=brightness=0.05, format=yuv420p"],
@@ -675,7 +674,8 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
     log(f"Final video resolution (width x height): {final_clip.size[0]} x {final_clip.size[1]}") 
 
     try:
-        log(f"Done loading global_model")
+        log(f"\n\n\n\n\n\n\n\n\n-------------------------------------------------------------------\n\n\n\n")
+        log("Youtube uploading & agent STARTING....")
         upload_video(model=Global_model,file_path=out_path)
         log(f"Done with uploading to youtube!")
     except Exception as e:
@@ -685,8 +685,26 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 
 
 
+def truncate_audio(audio_path, start_time, end_time, output_path):
+    """
+    Truncate an audio file from start_time to end_time and save it to output_path.
+
+    start_time, end_time: in seconds (float or int)
+    """
+    audio = AudioSegment.from_file(audio_path)
+    
+    start_ms = int(start_time * 1000)
+    end_ms = int(end_time * 1000)
+    
+    truncated = audio[start_ms:end_ms]
+    truncated.export(output_path, format="wav") 
+
+    return output_path
+
+
 global count
 count = 0
+
 def run_video_short_creation_thread(video_url,start_time,end_time,subtitle_text):
         global count
         count += 1
@@ -696,24 +714,75 @@ def run_video_short_creation_thread(video_url,start_time,end_time,subtitle_text)
             text_video_path = video_url
             video_start_time = start_time
             video_end_time = end_time
-            text_video_title = "short1" + str(current_count)
-            try:
 
-               log(f"Subtitles: {subtitle_text}")
-   
-               log(f"Subtitle passed to the [create_short_video] --> subtitle_text_tuple: {subtitle_text}")
-    
-               try:
-                  log(f"[run_video_short_creation_thread] creating video now... \n start_time: {start_time} \n end_time: {end_time}, \n video_name: {text_video_title}, \n subtitle_text: {subtitle_text}")
-                  create_short_video(video_path=text_video_path, start_time=video_start_time, end_time = video_end_time, video_name = text_video_title,subtitle_text=subtitle_text)
-               except Exception as e:
-                  log(f"[run_video_short_creation_thread] error during creation of video : {str(e)}")
-               text_video_path = ""
-               video_start_time = None
-               video_end_time = None
-               text_video_title = ""
+            
+            try:
+                device = "cuda"
+                tool = SpeechToTextTool(device=device)
+                tool.setup()
+
+                audio_path = get_current_audio_path()
+                with tempfile.TemporaryDirectory() as temp_dir:
+                    log(f"Temp dir created:{temp_dir}")
+                    truncated_audio_path = os.path.join(temp_dir, f"temp_audio_{current_count}.wav")
+                    log(f"Truncated audio clip: {truncated_audio_path}")
+                    audio_for_clip = truncate_audio(audio_path, video_start_time, video_end_time, truncated_audio_path)
+
+                    subtitle_text = re.sub(r"\[\d+\.\d+s\s*-\s*\d+\.\d+s\]", "", subtitle_text)
+                    subtitle_text = re.sub(r"\s+", " ",subtitle_text).strip()
+                    log(f"subtitletext cleaned: {subtitle_text}")
+        
+                    result = tool.forward({"audio": audio_for_clip,"subtitle_text": subtitle_text})
+                    crafted_Subtitle_text = result["matched_words"]
+                    new_video_start_time = result["video_start_time"]
+                    new_video_end_time = result["video_end_time"]
+                    log(f"new_video_start_time: {new_video_start_time},new_video_end_time: {new_video_end_time}, subtitletext: {crafted_Subtitle_text}\n")
+                    
+                    if new_video_start_time == 0.0:
+                         new_video_start_time = None
+                    
+                    
+
+
+                    if new_video_start_time is not None and new_video_end_time is not None:
+                         absoloute_start_time = video_start_time + new_video_start_time
+                         absoloute_end_time = video_start_time + new_video_end_time
+                         log(f"Changed both absoloute_start_time: {absoloute_start_time} \n absoloute_end_time: {absoloute_end_time}")
+
+                    elif new_video_start_time is not None and new_video_end_time is None:
+                         absoloute_start_time = video_start_time + new_video_start_time
+                         absoloute_end_time = video_end_time
+                         log(f" changed new absoloute_start_time: {absoloute_start_time} \n")
+
+                    elif new_video_start_time is None and new_video_end_time is not None:
+                         absoloute_start_time = video_start_time
+                         absoloute_end_time = absoloute_start_time + new_video_end_time
+                         log(f"changed new absoloute_end_time: {absoloute_end_time}\n")
+
+                    else:
+                         absoloute_start_time = video_start_time
+                         absoloute_end_time = video_end_time
+                         log(f"Did not need to change time on videoclip: absoloute_start_time: {absoloute_start_time} \n absoloute_end_time: {absoloute_end_time}")
+
+                        
+                         
+
+
             except Exception as e:
-                log(f"[run_video_short_creation_thread] error during [create_short_video] {str(e)}")
+                log(f"[ERROR] during execution: {str(e)}")
+
+            text_video_title = "short1" + str(current_count)
+   
+
+            try:
+                  log(f"[run_video_short_creation_thread] creating video now... \n start_time: {absoloute_start_time} \n end_time: {absoloute_end_time}, \n video_name: {text_video_title}, \n subtitle_text: {crafted_Subtitle_text}")
+                  create_short_video(video_path=text_video_path, start_time=absoloute_start_time, end_time = absoloute_end_time, video_name = text_video_title,subtitle_text=crafted_Subtitle_text)
+            except Exception as e:
+                log(f"[run_video_short_creation_thread] error during creation of video : {str(e)}")
+                text_video_path = ""
+                video_start_time = None
+                video_end_time = None
+                text_video_title = ""
         except Exception as e:
           import traceback
           log("[run_video_short_creation_thread][ERROR] in run_video_short_creation_thread:")
@@ -757,25 +826,32 @@ def parse_multiline_block(block_text):
 @tool
 def SaveMotivationalText(text: str, text_file: str) -> None:
     """Save motivational text for motivational shorts video, the text that meets task criteria  to a file with a timestamp.
-    You must include ALL timestamps for every connected line exactly as they appear from the chunk,  
-    
+       You must include ALL timestamps for every connected line exactly as they appear from the chunk,  
+
+    For security: Read the text that you choose to save one more time, ask yourself does it provide a complete message? if not don't save it.
     Args:
-         text: The text to save. Wrap the entire block in triple quotes if it has commas, quotes, or line breaks.
-              Example:
-              text = \"\"\"[00.23s - 00.40s] This is line one [00.40s - 00.60s] This is line two.\"\"\"
-              Make sure to keep ALL timestamps for the entire quote.
-        text_file: The path to the file where the quote will be saved, you have access to the variable, just write text_file=text_file.
+         text (str): The text to save. Wrap the entire block in triple quotes if it has commas, quotes, or line breaks
+                        Example:
+                        text = \"\"\"[00.23s - 00.40s] This is line one [00.40s - 00.60s] This is line two.\"\"\"
+                        Make sure to keep ALL timestamps for the entire quote.
+
+
+
+         text_file (str): The path to the file where the quote will be saved, you have access to the variable, just write text_file=text_file.
     """
 
-
+         
     with open(text_file, "a", encoding="utf-8") as f:
                 f.write("===START_TEXT===\n")
                 f.write(text.strip() + "\n")
                 f.write("===END_TEXT===\n")
                 log(f"text: {text}")
 
+ActiveProgress=False
 
 def video_creation_worker():
+     global ActiveProgress
+
      while True:
           try:
              video_url,  final_start_time, final_end_time, subtitle_text = video_task_que.get()
@@ -785,170 +861,26 @@ def video_creation_worker():
           try:
              log(f"\n\n\n\n\n\n\n\n\n\n[video_creation_worker] Current work being proccessed...[ video_url: {video_url}, start_time: {final_start_time}, end_time: {final_end_time}, text: {subtitle_text} to que]")
              log(f"[video_creation_worker] Processing video task: {video_url}, {final_start_time}-{final_end_time}")
+             ActiveProgress = True
              run_video_short_creation_thread(video_url, final_start_time, final_end_time, subtitle_text)
              log(f"Done Creating Video \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+             ActiveProgress=False
           except Exception as e:
                log(f"[video_creation_worker] error during video_creation_worker: {str(e)}")
                raise ValueError(f"[video_creation_worker]Error during video creation")
           finally:
                log("HIT FINALLY BLOCK...")
-             #  video_task_que.task_done()
-
-
-
+               video_task_que.task_done()
 
 
 def wait_for_proccessed_video_complete(queue: Queue, check_interval=30):
-     """Blocks until the queue is empty, checking every `check_interval` seconds."""
-     log(f"\n\n\n\n\n\n[wait_for_proccessed_video_complete]")
-     while not queue.empty():
+    global ActiveProgress
+    """Blocks until the queue is empty, checking every `check_interval` seconds."""
+    log(f"\n\n\n\n\n\n[wait_for_proccessed_video_complete]")
+    while not queue.empty() and ActiveProgress:
           log(f"[wait_for_proccessed_video_complete]  waiting for video_task_que to be empty: items remaining: {queue.qsize()}")
           time.sleep(check_interval)
-     log("[wait_for_proccessed_video_complete]✅ video_task_que is now empty.")
-
-
-
-
-
-
-
-
-
-def verify_start_time_end_time_text(audio_path, Video_start_time, Video_end_time, text):
-    """
-    Verifies the correct absolute start/end time for the given text 
-    by re-transcribing the clipped audio, matching the first and last word,
-    and adjusting by the block's absolute start time.
-    """
-
-    from Extra_utils import SpeechToTextTool_verify
-    import re
-    import os
-    import ffmpeg
-    import tempfile
-
-    log(f"1. [verify_start_time_end_time_text] Starting verification for text: '{text}'")
-    log(f"2. [verify_start_time_end_time_text] Audio path: {audio_path}")
-    log(f"3.  [verify_start_time_end_time_text] Initial video start time: {Video_start_time}, end time: {Video_end_time}")
-
-    tool = SpeechToTextTool_verify()
-    tool.device = "cuda"
-    tool.setup()
-    log("[verify_start_time_end_time_text] SpeechToTextTool_verify initialized and set to CUDA")
-
-    def clean_word(w):
-        cleaned = re.sub(r"[^\w]", "", w.strip().lower())
-        return cleaned
-
-    def remove_timestamps(text):
-
-        cleaned_text = re.sub(r"\[\d+(\.\d+)?s\s*-\s*\d+(\.\d+)?s\]", "", text)
-        log(f"[remove_timestamps] Tekst uten tidsstempler:\n{cleaned_text}")
-        return cleaned_text
-
-    def find_start_end_by_first_last_word(whisper_words, fasit_text, block_absolute_start):
-        log(f"[find_start_end_by_first_last_word] Mottatt fasit_text: '{fasit_text}'")
-        
-      
-        cleaned_text = remove_timestamps(fasit_text)
-        fasit_words_cleaned = [clean_word(w) for w in cleaned_text.strip().split()]
-        fasit_words = cleaned_text.strip().split()
-        log(f"[find_start_end_by_first_last_word] Split fasit_words (uten tidsstempler): {fasit_words}")
-
-        first_word = clean_word(fasit_words[0])
-        last_word = clean_word(fasit_words[-1])
-        log(f"[find_start_end_by_first_last_word] Første ord i fasit: '{first_word}', siste ord i fasit: '{last_word}'")
-
-        relative_start = None
-        relative_end = None
-
-        for i, w in enumerate(whisper_words):
-            w_word = clean_word(w['word'])
-            log(f"[find_start_end_by_first_last_word] Sjekker whisper ord #{i}: '{w_word}', start: {w['start']}, end: {w['end']}")
-            if relative_start is None and w_word == first_word:
-                relative_start = float(w['start'])
-                log(f"[find_start_end_by_first_last_word] Fant første ord '{first_word}' starttid: {relative_start}")
-            if w_word == last_word:
-                relative_end = float(w['end'])
-                log(f"[find_start_end_by_first_last_word] Fant siste ord '{last_word}' sluttid: {relative_end}")
-
-        if relative_start is None:
-            relative_start = float(whisper_words[0]['start'])
-            log(f"[find_start_end_by_first_last_word] Fant ikke første ord '{first_word}', bruker starttid for første whisper-ord: {relative_start}")
-        if relative_end is None:
-            relative_end = float(whisper_words[-1]['end'])
-            log(f"[find_start_end_by_first_last_word] Fant ikke siste ord '{last_word}', bruker sluttid for siste whisper-ord: {relative_end}")
-
-        absolute_start = block_absolute_start + relative_start
-        absolute_end = block_absolute_start + relative_end
-
-        log(f"[find_start_end_by_first_last_word] Beregner absolutt starttid: block_absolute_start ({block_absolute_start}) + ({relative_start}) = {absolute_start}")
-        log(f"[find_start_end_by_first_last_word] Beregner absolutt sluttid: block_absolute_start ({block_absolute_start}) +  ({relative_end}) = {absolute_end}")
-     
-        subtitle_text = []
-        fasit_idx = 0
-
-        for w in whisper_words:
-            if fasit_idx >= len(fasit_words_cleaned):
-                break
-            if clean_word(w['word']) == fasit_words_cleaned[fasit_idx]:
-                subtitle_text.append(w)
-                fasit_idx += 1
-
-        log(f"COMPLETE subtitle_text: {subtitle_text}")
-        return absolute_start, absolute_end,subtitle_text
-
-
-    def extract_audio_segment(audio_path, start_time, end_time):
-        """
-        Extracts audio segment from start_time to end_time.
-        """
-        duration = end_time - start_time
-        log(f"[extract_audio_segment] Extracting audio from {start_time} to {end_time}, duration: {duration} seconds")
-        temp_file = tempfile.NamedTemporaryFile(suffix='.wav', delete=False)
-        temp_path = temp_file.name
-        temp_file.close()
-        (
-            ffmpeg
-            .input(audio_path, ss=start_time, t=duration)
-            .output(temp_path, format='wav', acodec='pcm_s16le', ac=1, ar='16000')
-            .overwrite_output()
-            .run(quiet=True)
-        )
-        log(f"[extract_audio_segment] Audio segment saved to temporary file: {temp_path}")
-        return temp_path
-
-    temp_audio_path = extract_audio_segment(audio_path, Video_start_time, Video_end_time)
-
-    try:
-        whisper_results = tool.forward({"audio": temp_audio_path})
-        log(f"[verify_start_time_end_time_text] Whisper transcription results:")
-        for result in whisper_results:
-             log(f"[verify_start_time_end_time_text] Whisper extracted: {result}\n")
-        if not whisper_results:
-            raise ValueError("Whisper result is empty or invalid")
-    finally:
-        os.remove(temp_audio_path)
-        log(f"[verify_start_time_end_time_text] Temporary audio file deleted: {temp_audio_path}")
-
-    whisper_words = whisper_results[0]['words']
-    log(f"\n\n\n[verify_start_time_end_time_text] Extracted whisper words:\n")
-    for word in whisper_words:
-         log(f"extracted whisper words: {word}\n")
-    subtitle_text = []
-    final_start_time = final_end_time = None
-
-    final_start_time, final_end_time, subtitle_text = find_start_end_by_first_last_word(
-            whisper_words, text, Video_start_time
-        )
-
-
-
-    log(f"[verify_start_time_end_time_text] Final absolute start time: {final_start_time}, end time: {final_end_time}")
-
-    return final_start_time, final_end_time, subtitle_text
-
-
+    log("[wait_for_proccessed_video_complete]✅ video_task_que is now empty.")
 
 
 
@@ -974,42 +906,25 @@ def create_motivationalshort(text: str) -> None:
                 All content between START_TEXT and END_TEXT will be treated 
                 as a single cohesive message and analyzed as one unit.
         """
-        log(f"\n[CREATE_MOTIVATIONALSHORT]   text sent in: {text}")
         try:
             audio_path = get_current_audio_path()
-            log(f"audio_path: {audio_path}")
-
-            log(f"text before parse_multiline_block: {text}")
+            log(f"\naudio_path: \n{audio_path}\n")
             start_time, end_time, new_text = parse_multiline_block(text)
-            log(f"after [parse_multiline_block] --> start_time: {start_time}, end_time: {end_time}, new_text: {new_text}")
+
         except Exception as e:
-             log(f" [verify_start_time_end_time_text]  Error during [parse_multiline_block]: {str(e)}")
+             log(f"Error during [parse_multiline_block]: {str(e)}")
 
                 
-        
-
-        try:   
-            final_start_time, final_end_time, subtitle_text  = verify_start_time_end_time_text(audio_path=audio_path, Video_start_time=start_time, Video_end_time=end_time, text=new_text)
-            log(f"RESULT  After --> [verify_start_time_end_time_text]  final_start_time: {final_start_time},\n final_end_time: {final_end_time}.\n final_text: {subtitle_text}\n")
-        except Exception as e:
-            log(f"[verify_start_time_end_time_text] error during verifying time and text: {str(e)}")
-
-
+            
         if start_time is None or end_time is None:
-             log("[verify_start_time_end_time_text] start_time is None or end_time is None")
              raise ValueError(f"start_time or end_time is None, start_time: {start_time}, end_time: {end_time}")
         
 
-        log(f"[verify_start_time_end_time_text]  text: {new_text}, \n start_time: {start_time}, end_time: {end_time}")
-        
-       
         video_url = get_current_videourl()
-        log(f"[verify_start_time_end_time_text] Starting video creation for {video_url} from {start_time}s to {end_time}s")
-
         try:
-            log(f"[verify_start_time_end_time_text] Queued video task: url={video_url}, start={start_time}, end={end_time}, text='{text}'")
-            video_task_que.put((video_url, final_start_time, final_end_time, subtitle_text))
-            #Delete_rejected_line(text)
+            log(f"\n Original text: {text} \n \n now Added work to QUEUE: \n {video_url}, \n {start_time}s \n {end_time}s\n")
+            video_task_que.put((video_url, start_time, end_time, new_text))
+           # Delete_rejected_line(text)
             global count 
             count +=1
             
@@ -1053,7 +968,6 @@ def Delete_rejected_line(text: str) -> None:
 
         log(f"[Delete_rejected_line] Removed {count} block(s).\nNew content:\n{new_content.strip()}")
 
-        
         with open(text_file, 'w', encoding="utf-8") as f:
             f.write(new_content.strip() + "\n")
 
@@ -1083,10 +997,10 @@ def verify_saved_text_agent(agent_saving_path):
     set_current_textfile(agent_saving_path)
     log(f"agent_saving_path: {agent_saving_path}")
     global Global_model
-    loaded_verify_saved_text_prompt = r'C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Prompt_templates\Verify_saved_quotes.yaml'
-    with open(loaded_verify_saved_text_prompt, 'r', encoding='utf-8') as f:
-            Prompt_template = yaml.safe_load(f)
-        
+
+    with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Prompt_templates\verify_agent_system_prompt.yaml", "r", encoding="utf-8") as f:
+         verify_system_prompt = yaml.safe_load(f)
+
     def save_thought_and_code(step_output):
             text = getattr(step_output, "model_output", "") or ""
             
@@ -1104,9 +1018,9 @@ def verify_saved_text_agent(agent_saving_path):
         model=Global_model,
         tools=[create_motivationalshort,Delete_rejected_line,final_answer],
         max_steps=1,
-        prompt_templates=Prompt_template,
         stream_outputs=True,
         verbosity_level=1,
+        prompt_templates=verify_system_prompt
 
     )
     reasoning_log = []
@@ -1116,11 +1030,29 @@ def verify_saved_text_agent(agent_saving_path):
 
     with open(agent_saving_path, "r", encoding="utf-8") as f:
              saved_quotes_text = f.read()
-            #  if not saved_quotes_text.strip():
-            #       log("empty, break")
-            #       raise ValueError("error its empty ")
+             if not saved_quotes_text.strip():
+                  log("empty, break")
+                  raise ValueError("error its empty ")
 
-    task = f"""Analyze all the lines but do it line for line, step by step, 
+    task = f"""
+    Make sure your python structure when executing tools with <code>...</code> that they are structured correctly like this 
+    --------------------------------------------
+    #Valid
+    <code>
+    create_motivationalshort(text="....")
+    Delete_rejected_line(text="...")
+    final_answer("...")
+    </code>
+    ---
+    #Invalid 
+    <code>
+    create_motivationalshort(text="....")
+    Delete_rejected_line(text="...")
+      final_answer("...")
+    </code>
+    --------------------------------------------
+
+    Analyze all the lines but do it line for line, step by step, 
     reject the lines that are not valid/suitable for a standalone motivational shorts video by using `Delete_rejected_line` tool and run  `create_motivationalshort` tool for each of those that are valid 
     now start step by step chain of thought reasoning over the lines:
     [{saved_quotes_text}] 
@@ -1151,7 +1083,7 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
     log(f"✅ Entered Transcript_Reasoning_AGENT() transcript_path: {transcripts_path}, agent_txt_saving_path: {agent_txt_saving_path}")
     ModelCountRun = 0
     global Global_model
-    loaded_reasoning_agent_prompts = r'C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Prompt_templates\test.yaml'
+    loaded_reasoning_agent_prompts = r'C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Prompt_templates\System_prompt_TranscriptReasoning.yaml'
     with open(loaded_reasoning_agent_prompts, 'r', encoding='utf-8') as f:
             Prompt_template = yaml.safe_load(f)
 
@@ -1160,18 +1092,20 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
         model=Global_model,
         tools=[SaveMotivationalText,final_answer],
         max_steps=1,
-        verbosity_level=1,
-        stream_outputs=True,
-        prompt_templates=Prompt_template,
+        #verbosity_level=1,
+        #stream_outputs=True,
+        prompt_templates=Prompt_template
+ 
     )
     chunk_limiter = ChunkLimiterTool()
 
+        
     log(f"transcript_path that is being proccessed inside func[Transcript_Reasoning_Agent]: {transcripts_path}")
     transcript_title = os.path.basename(transcripts_path)
-   # log(f"transcript title: {transcript_title}")
+    log(f"transcript title: {transcript_title}")
     log(f"\nProcessing new transcript: {transcripts_path}")
-    with open(agent_txt_saving_path, "a", encoding="utf-8") as out:
-        out.write(f"\n--- Transcript Title: {transcript_title} ---\n")
+    # with open(agent_txt_saving_path, "a", encoding="utf-8") as out:
+    #     out.write(f"\n--- Transcript Title: {transcript_title} ---\n")
    
         
     def save_thought_and_code(step_output):
@@ -1189,17 +1123,20 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
 
    
     reasoning_log = []
+    input_token_count = 0
+    output_token_count = 0
+    current_context = 0
     Reasoning_Text_Agent.step_callbacks.append(save_thought_and_code)
     chunk_limiter.reset()
+    ModelCountRun += 1
     while True:
         reasoning_log.clear()
         try:
             log(f"transcript_path for chunk tool : {transcripts_path}")
-            chunk = chunk_limiter.forward(file_path=transcripts_path, max_chars=5000)
+            chunk = chunk_limiter.forward(file_path=transcripts_path, max_chars=4000)
         except Exception as e:
                 log(f"Error during chunking from file {transcripts_path}: {e}")
                 break
-
         if not chunk.strip():
                 log("Finished processing current transcript. Now exiting func [Transcript Reasoning Agent]")
                 del Reasoning_Text_Agent
@@ -1207,47 +1144,42 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
         
         log(f"[The current ModelCountRun]: {ModelCountRun}")
         if  ModelCountRun >= 1:
-                del Reasoning_Text_Agent
-                verify_saved_text_agent(agent_txt_saving_path)
-                wait_for_proccessed_video_complete(video_task_que)
-                ModelCountRun = 0
+                 del Reasoning_Text_Agent
+                 verify_saved_text_agent(agent_txt_saving_path)
+                 wait_for_proccessed_video_complete(video_task_que)
+                 ModelCountRun = 0
 
-       
         task = f"""
-                    You are an expert at identifying  powerful, share-worthy snippets from motivational podcast transcripts.
-                    Your job is to:
-                         1. Read the transcript chunk below and internally reason through its overall message.
-                         2. Understand the connection between the lines. and what they are saying. This will happend internally and not in 'Thought: ' sequence.
-                         Remember do not save any text that does not provide a complete thought. the goal is that this text will be used as a motivational shorts video. before you save the text you identified,  ask yourself if you were a listener, would you understand it.
-                    2. Extract only those lines or passages that:
-                        • Stand alone with full context (no missing setup).  
-                        • Pack a punch of advice, insight, or inspiration.  
-                        • Are memorable enough to anchor a motivational short video.
-                        • Are complete thoughts or sentences, that if the text you decide to save were isolated from the rest would provide a complete thought and understanding for the listener.
-                        • A complete thought is that the overall meaning of the setence/text does not miss any context like exsample of lacking context is that it starts with (and, but, etc).
+                Here is the chunk you will analyze:
+                [chunk start]
+                {chunk}
+                [chunk end]
+                """
 
-                    Do NOT save generic fluff—the transcript as text in chunk is already motivational.
-                    the text you choose too save needs to be complete and would result in a max  10-20 seconds motivational shorts video 
-                    IF you no text is identified. nothing that could be a standalone moitvational short, only provide `final_answer` tool stating that, this will also successfully achieve the task.
-                    Always confirm that the text saved also include the exact timestamps [start time - End time] text...
+        with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\debug_performance\Token_logpath.txt", "r", encoding="utf-8") as f:
 
-                    In the 'Thought: ' sequence. write a short summary describing the overall context of the chunk and then explain shortly what text you are looking for to save in order to fufill the task then procceed in 'Code: ' sequence  with the text to save after you internally have analyzed it all.
- 
+             for line in f:
+                  line = line.strip()
+                  if line.startswith("Input tokens"):
+                       input_token_count = int(line.split(":")[1].strip().rstrip(","))
+                  if line.startswith("Output tokens"):
+                       output_token_count = int(line.split(":")[1].strip().rstrip(","))
+                  
+                  current_context = input_token_count + output_token_count
+                  log(f"CURRENT CONTEXT FOR MODEL: {current_context}")
 
-                    You must have analyzed, Focus on logical flow, completeness, and independence like a human reader on the text in chunk before any saving. and then save all identified text if any is present else provide only `final_answer`
+               
 
+        MAX_CONTEXT_WINDOW = 32768
+        SAFETY_MARGIN = 10000
+        #reset_flag =  True if current_context >= (MAX_CONTEXT_WINDOW - SAFETY_MARGIN) else False
 
-                    Here is the chunk/text you will analyze:
-
-                     [chunk start]\n
-                      {chunk}  
-                    \n[chunk end]  
-                      """
-        ModelCountRun += 1
         result = Reasoning_Text_Agent.run(
                 task=task,
-                additional_args={"text_file": agent_txt_saving_path}
+                additional_args={"text_file": agent_txt_saving_path},
+                #reset=reset_flag
             )
+
         log(f"[Path to where the [1. reasoning agent ] saves the motivational quotes  ]: {agent_txt_saving_path}")
         log(f"Agent response: {result}\n")
         save_full_io_to_file(
@@ -1257,7 +1189,6 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
             model_response=result,
             file_path=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\debug_performance\VerifyAgentRun_data.txt"
         )
-
         chunk_limiter.called = False 
 
 
@@ -1265,16 +1196,8 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
 
 
 
-
-
-
-
-
-
 def transcribe_single_video(video_path, device):
-    log_step("transcribe_single_video",
-             f"Enter | video={video_path}, device={device}",
-             level=logging.DEBUG)
+    log("transcribe_single_video")
 
     if not os.path.isfile(video_path):
         log(f"❌ File not found: {video_path}")
@@ -1302,9 +1225,7 @@ def transcribe_single_video(video_path, device):
         set_current_audio_path(audio_path)
         log(f"Enqueued existing transcript for GPU processing: {txt_output_path}")
         return
-        
- 
-
+    
     try:
         ffmpeg_cmd = [
             "ffmpeg",
@@ -1373,13 +1294,19 @@ def gpu_worker():
  
     global Global_model
     Global_model = TransformersModel(
-            model_id = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Ministral-8B-Instruct-2410",
+            model_id = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-3B-Instruct-MERGED",
             load_in_4bit=True,
             trust_remote_code=True,
-            device_map="auto",
+            device_map="cuda",
             torch_dtype="auto",
-            max_new_tokens=5000,
-        )
+            max_new_tokens=4000,
+            do_sample=False,
+            use_flash_attn=True     
+     )
+
+
+
+
     log(f"Loaded Global_model on device")
     itemcount = 0
 
@@ -1415,7 +1342,7 @@ if __name__ == "__main__":
     torch.cuda.empty_cache()
     gc.collect()
     with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\debug_performance\log.txt", "w", encoding="UTF-8") as w:
-            w.write("")
+            w.write("") 
     with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\debug_performance\VerifyAgentRun_data.txt", "w", encoding="UTF-8") as w:
             w.write("")
     with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\debug_performance\Token_logpath", "w", encoding="UTF-8") as w:
@@ -1425,7 +1352,10 @@ if __name__ == "__main__":
     worker_thread.start()
 
     video_paths = [
-        r"c:\Users\didri\Documents\Jordan Peterson： Fix Yourself Before It's Too Late.mp4",
+        r"c:\Users\didri\Documents\Ed Mylett ON： Watch These 37 Minutes To COMPLETELY CHANGE Your Life ｜ Jay Shetty.mp4",
+   
+
+
     ]
     log(f"Video_paths: {len(video_paths)}")
 

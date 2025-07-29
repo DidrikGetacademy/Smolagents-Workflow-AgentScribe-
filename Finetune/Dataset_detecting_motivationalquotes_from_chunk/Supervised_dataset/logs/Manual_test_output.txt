@@ -1,0 +1,116 @@
+[2025-07-26 13:55:54] 
+📊 Running Evaluation Test – Before Training
+[2025-07-26 13:57:01] 
+
+
+🔹 Example 1
+[2025-07-26 13:57:01] 🎯 Expected: Thought: I found 2 standalone motivational passages that meet the criteria, so I’m saving them.
+<code>
+SaveMotivationalText(text="[1194.42s - 1197.96s] Struggle breeds resilience and resilience [1198.06s - 1201.41s] paves the way for [1201.51s - 1204.19s] triumph", text_file=text_file)
+SaveMotivationalText(text="[1231.67s - 1234.13s] What is the worst [1234.23s - 1237.49s] advice you have ever heard [1237.59s - 1240.30s] or received? Try to get [1240.40s - 1242.96s] it perfect because nothing's [1243.06s - 1245.96s] ever perfect", text_file=text_file)
+final_answer("Im done analyzing the chunk")
+</code>
+[2025-07-26 13:57:01] 🧠 Generated: Thought: I found 2 standalone motivational passages that meet the criteria, so I’m saving them.
+<code>
+SaveMotivationalText(text="[1194.42s - 1197.96s] Struggle breeds resilience and resilience [1198.06s - 1201.41s] paves the way for [1201.51s - 1204.19s] triumph", text_file=text_file)
+SaveMotivationalText(text="[1231.67s - 1234.13s] What is the worst [1234.23s - 1237.49s] advice you have ever heard [1237.59s - 1240.30s] or received? Try to get [1240.40s - 1242.96s] it perfect because nothing's [1243.06s - 1245.96s] ever perfect", text_file=text_file)
+final_answer("Im done analyzing the chunk")
+</code>
+[2025-07-26 13:57:01] ✅ Similarity: 1.00 -> ✔️
+[2025-07-26 13:57:01] ------------------------------------------------------------
+[2025-07-26 13:57:01] 
+
+
+
+
+[2025-07-26 13:57:30] 
+
+
+🔹 Example 2
+[2025-07-26 13:57:30] 🎯 Expected: Thought: I found 2 standalone motivational passages that meet the criteria, so I’m saving them.
+<code>
+SaveMotivationalText(text="[1174.40s - 1177.81s] A diamond shines brightest [1177.91s - 1180.31s] after enduring immense pressure", text_file=text_file)
+SaveMotivationalText(text="[1205.89s - 1208.39s] Life is quite short do [1208.49s - 1211.07s] not cut it short [1211.17s - 1213.76s] by associating with those who [1213.86s - 1216.96s] make you feel small", text_file=text_file)
+final_answer("Im done analyzing the chunk")
+</code>
+[2025-07-26 13:57:30] 🧠 Generated: Thought: I found 2 standalone motivational passages that meet the criteria, so I’m saving them.
+<code>
+SaveMotivationalText(text="[1174.40s - 1177.81s] A diamond shines brightest [1177.91s - 1180.31s] after enduring immense pressure", text_file=text_file)
+SaveMotivationalText(text="[1205.89s - 1208.39s] Life is quite short do [1208.49s - 1211.07s] not cut it short [1211.17s - 1213.76s] by associating with those who [1213.86s - 1216.96s] make you feel small", text_file=text_file)
+final_answer("Im done analyzing the chunk")
+</code>
+[2025-07-26 13:57:30] ✅ Similarity: 1.00 -> ✔️
+[2025-07-26 13:57:30] ------------------------------------------------------------
+[2025-07-26 13:57:30] 
+
+
+
+
+[2025-07-26 13:57:47] 
+
+
+🔹 Example 3
+[2025-07-26 13:57:47] 🎯 Expected: Thought: I found 2 standalone motivational passages that meet the criteria, so I’m saving them.
+<code>
+SaveMotivationalText(text="[1182.69s - 1185.40s] Within every struggle lies an [1185.50s - 1188.66s] opportunity for growth and [1188.76s - 1191.21s] self-discovery", text_file=text_file)
+SaveMotivationalText(text="[1218.90s - 1222.49s] Time: lifes inexorable weapon of humiliation", text_file=text_file)
+final_answer("Im done analyzing the chunk")
+</code>
+[2025-07-26 13:57:47] 🧠 Generated: Thought: I found 1 standalone motivational passage that meet the criteria, so I’m saving it.
+<code>
+SaveMotivationalText(text="[1182.69s - 1185.40s] Within every struggle lies an [1185.50s - 1188.66s] opportunity for growth and [1188.76s - 1191.21s] self-discovery", text_file=text_file)
+final_answer("Im done analyzing the chunk")
+</code>
+[2025-07-26 13:57:47] ✅ Similarity: 0.84 -> ❌
+[2025-07-26 13:57:47] ------------------------------------------------------------
+[2025-07-26 13:57:47] 
+
+
+
+
+[2025-07-26 13:58:05] 
+
+
+🔹 Example 4
+[2025-07-26 13:58:05] 🎯 Expected: Thought: I found 1 standalone motivational passage that meet the criteria, so I’m saving it.
+<code>
+SaveMotivationalText(text="[1207.52s - 1210.64s] The struggle is not a [1210.74s - 1214.17s] sign of weakness but [1214.27s - 1217.19s] a testament to your determination", text_file=text_file)
+final_answer("Im done analyzing the chunk")
+</code>
+[2025-07-26 13:58:06] 🧠 Generated: Thought: I found 1 standalone motivational passage that meet the criteria, so I’m saving it.
+<code>
+SaveMotivationalText(text="[1207.52s - 1210.64s] The struggle is not a [1210.74s - 1214.17s] sign of weakness but [1214.27s - 1217.19s] a testament to your determination", text_file=text_file)
+final_answer("Im done analyzing the chunk")
+</code>
+[2025-07-26 13:58:06] ✅ Similarity: 1.00 -> ✔️
+[2025-07-26 13:58:06] ------------------------------------------------------------
+[2025-07-26 13:58:06] 
+
+
+
+
+[2025-07-26 13:58:26] 
+
+
+🔹 Example 5
+[2025-07-26 13:58:26] 🎯 Expected: Thought: I found 1 standalone motivational passage that meet the criteria, so I’m saving it.
+<code>
+SaveMotivationalText(text="[1174.22s - 1176.80s] Embrace the struggle [1176.90s - 1180.50s] for it [1180.60s - 1183.23s] molds you into the person you [1183.33s - 1186.63s] are meant to be", text_file=text_file)
+final_answer("Im done analyzing the chunk")
+</code>
+[2025-07-26 13:58:26] 🧠 Generated: Thought: I found 1 standalone motivational passage that meet the criteria, so I’m saving it.
+<code>
+SaveMotivationalText(text="[1174.22s - 1176.80s] Embrace the struggle [1176.90s - 1180.50s] for it [1180.60s - 1183.23s] molds you into the person you [1183.33s - 1186.63s] are meant to be", text_file=text_file)
+final_answer("Im done analyzing the chunk")
+</code>
+[2025-07-26 13:58:26] ✅ Similarity: 1.00 -> ✔️
+[2025-07-26 13:58:26] ------------------------------------------------------------
+[2025-07-26 13:58:26] 
+
+
+
+
+[2025-07-26 13:58:26] 
+📈 Eval Accuracy (Before Training): 4/5 = 80.00%
+[2025-07-26 13:58:26] ❌ Wrong count: 1
+
