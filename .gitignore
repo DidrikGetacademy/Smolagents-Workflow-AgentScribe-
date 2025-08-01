@@ -20,3 +20,4 @@ Secrets/
 token.pickle
 youtube_token.pickle
 *.pickle
+Secrets/
