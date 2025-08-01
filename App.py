@@ -9,11 +9,10 @@ if GPEN_PATH not in sys.path:
     sys.path.insert(0, GPEN_PATH)
 import GPEN.__init_paths
 from GPEN.face_enhancement import FaceEnhancement
-from smolagents import TransformersModel, FinalAnswerTool, SpeechToTextTool, CodeAgent, tool,SpeechToTextToolCPU,InferenceClientModel,GoogleSearchTool,OpenAIModel,SpeechToTextToolCPU_Custom
-from Custom_Agent_Tools import ChunkLimiterTool
+from smolagents import TransformersModel, FinalAnswerTool, CodeAgent, tool
+from Custom_Agent_Tools import SpeechToTextToolCUDA, SpeechToTextToolCPU, SpeechToText_short_creation_thread
 import tempfile
 import gc
-from Agent_AutoUpload.Upload_youtube import upload_video
 from log import log
 import yaml
 import torchvision.transforms.functional as F
@@ -36,6 +35,7 @@ import pynvml
 import time
 import numpy as np
 import cv2
+from clean_memory import get_gpu_memory
 import torch
 from moviepy.video.fx.FadeIn import FadeIn
 from moviepy.video.fx.FadeOut import FadeOut
@@ -73,9 +73,16 @@ def get_current_videourl() -> str:
     global _current_video_url
     return _current_video_url
 
+def set_current_textfile(url: str):
+    global _current_agent_saving_file
+    _current_agent_saving_file = url
 
+def get_current_textfile() -> str:
+    return _current_agent_saving_file
 
 _current_audio_url: str = None
+
+
 def set_current_audio_path(url: str):
      global _current_audio_url
      _current_audio_url = url
@@ -86,16 +93,37 @@ def get_current_audio_path() -> str:
      return _current_audio_url
 
 
-def set_current_textfile(url: str):
-    global _current_agent_saving_file
-    _current_agent_saving_file = url
+def clean_up_Memory():
+     gc.collect()
+     torch.cuda.empty_cache()
+     log("cleaned up memory!")
 
-def get_current_textfile() -> str:
-     global _current_agent_saving_file 
-     return _current_agent_saving_file
-
-
-
+def Reload_and_change_model(model):
+     if model == "Qwen7b":
+            model = TransformersModel(
+                model_id = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-7B-Instruct",
+                load_in_4bit=True,
+                trust_remote_code=True,
+                device_map="auto",
+                torch_dtype="auto",
+                do_sample=False,
+                max_new_tokens=10000,
+                use_flash_attn=True
+                 )
+            return model
+     elif model == "Qwen3b":
+            global Global_model
+            Global_model = TransformersModel(
+                    model_id = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-3B-Instruct-MERGED",
+                    load_in_4bit=True,
+                    device_map="auto",
+                    torch_dtype="auto",
+                    max_new_tokens=3000,
+                    do_sample=False,
+                    use_flash_attn=True     
+                    )
+            return Global_model
+          
 
 def  clear_queue(q: Queue):
      with q.mutex:
@@ -167,7 +195,6 @@ class MyProgressLogger(ProgressBarLogger):
             log(f"{param}: {value}")
             
 
- #[{'word': ' Why', 'start': 0.0, 'end': 0.18}, {'word': ' would', 'start': 0.18, 'end': 0.3}, {'word': ' we', 'start': 0.3, 'end': 0.42}, {'word': ' spend', 'start': 0.42, 'end': 0.68}, {'word': ' that', 'start': 0.68, 'end': 0.88}, {'word': ' minute', 'start': 0.88, 'end': 1.22}, {'word': ' in', 'start': 1.22, 'end': 1.42}, {'word': ' the', 'start': 1.42, 'end': 1.54}, {'word': ' past', 'start': 1.54, 'end': 2.1}, {'word': ' when', 'start': 2.1, 'end': 2.6}, {'word': ' we', 'start': 2.6, 'end': 2.72}, {'word': ' could', 'start': 2.72, 'end': 2.82}, {'word': ' be', 'start': 2.82, 'end': 2.94}, {'word': ' fully', 'start': 2.94, 'end': 3.26}, {'word': ' present', 'start': 3.26, 'end': 3.66}, {'word': ' in', 'start': 3.66, 'end': 3.84}, {'word': ' creating', 'start': 3.84, 'end': 4.32}, {'word': ' the', 'start': 4.32, 'end': 4.54}, {'word': ' future?', 'start': 4.54, 'end': 4.84}]
 def create_short_video(video_path, start_time, end_time, video_name, subtitle_text):
     background_audio = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\onerepublic I aint worried tiktok whistle loop - slowed reverb [mp3].mp3"
     change_on_saturation = "Decrease"
@@ -226,7 +253,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
             txt_clip = TextClip(
                 text=c['text'],
                 font=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Utils-Video_creation\Fonts\OpenSans-VariableFont_wdth,wght.ttf", 
-                font_size=100,
+                font_size=50,
                 margin=(10, 10), 
                 text_align="center",
                 vertical_align="center",
@@ -234,7 +261,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
                 color='white',
                 stroke_color="black",
                 stroke_width=8,
-                size=(2000, 300),
+                size=(1000, 300),
                 method="label",
                 duration=c['duration']
                ).with_start(c['start']).with_position(('center', 0.60), relative=True)
@@ -402,64 +429,22 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 
 
 
-###########################
-##---------------------###
-## Enchance & detailed sharpening
-##---------------------##
-##########################
-    log(f"\n\n[Enchance & detailed sharpening] PROCCESS starting...")
-    enchanced_frames = []
-    for frame in cropped_frames:
-         frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-         enchanced_frame = enhance_detail_and_sharpness(frame_bgr, clarity_factor=0.4, sharpen_amount=0.4)
-         log(f"[enhance_detail_and_sharpness] appending enchanced frame ...")
-         enchanced_rgb_frame = cv2.cvtColor(enchanced_frame,cv2.COLOR_BGR2RGB)
-         enchanced_frames.append(enchanced_rgb_frame)
+# ###########################
+# ##---------------------###
+# ## Enchance & detailed sharpening
+# ##---------------------##
+# ##########################
+#     log(f"\n\n[Enchance & detailed sharpening] PROCCESS starting...")
+#     enchanced_frames = []
+#     for frame in cropped_frames:
+#          frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+#          enchanced_frame = enhance_detail_and_sharpness(frame_bgr, clarity_factor=0.4, sharpen_amount=0.4)
+#          log(f"[enhance_detail_and_sharpness] appending enchanced frame ...")
+#          enchanced_rgb_frame = cv2.cvtColor(enchanced_frame,cv2.COLOR_BGR2RGB)
+#          enchanced_frames.append(enchanced_rgb_frame)
 
-    log(f"[enhance_detail_and_sharpness] Successfully done!\n\n")
+#     log(f"[enhance_detail_and_sharpness] Successfully done!\n\n")
 
-
-
-
-
-
-
-
-
-
-###########################
-##---------------------###
-#GFPGANER & REALESRGAN UPSCALING
-##---------------------##
-##########################
-    log(f"\n\n[GFPGANER & REALESRGAN UPSCALING] PROCCESS starting...")
-    from basicsr.utils.registry import ARCH_REGISTRY
-    ARCH_REGISTRY._obj_map.pop('RRDBNet', None)
-    ARCH_REGISTRY._obj_map.pop('ResNetArcFace', None)
-    from basicsr.archs.rrdbnet_arch import RRDBNet
-    from realesrgan import RealESRGANer 
-    model = RRDBNet(num_in_ch=3, num_out_ch=3, num_feat=64,num_block=23, num_grow_ch=32, scale=2)
-    bg_upsampler = RealESRGANer(model_path=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\gfpgan\weights\RealESRGAN_x2plus.pth", model=model, scale=2)
-
-    GFPGaner_frames = []
-    from gfpgan import GFPGANer
-    gfpganer = GFPGANer(model_path=r'C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\gfpgan\weights\GFPGANv1.4.pth', upscale=1, arch='clean', channel_multiplier=2, bg_upsampler=None)
-    try:
-        log(f"[GFPGANER] starting upscaling frames now....")
-        for frame in tqdm(enchanced_frames, desc="[GFPGAN] Upscaling", unit="frame"):
-            frame_height,frame_width = frame.shape[:2]
-            _, _, gfpganer_enchanced_frame = gfpganer.enhance(frame, has_aligned=False, only_center_face=True, paste_back=True, weight=0.2)
-            enchanced_height,enchanced_width = gfpganer_enchanced_frame.shape[:2]
-            log(f"[GFPGANER] enchanced frame..")
-            log(f"[GFPGANer] Frame input---> height: {frame_height},  width: {frame_width} \n enchanced_frame:  Height: {enchanced_height}, width: {enchanced_width} \n ")
-            GFPGaner_frames.append(gfpganer_enchanced_frame)
-            log(f"[GFPGANER] appending upscaled frame")
-
-        log(f"Cleared cache and collected garbage")
-    except Exception as e:
-         log(f"[GFPGANER] Error during upscaling.. {str(e)}")
-
-    log(f"[GFPGAN] upscaling finnished....\n\n")
 
 
 
@@ -471,77 +456,113 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 
 # ###########################
 # ##---------------------###
-# #FACEENCHANCEMENT
+# #GFPGANER & REALESRGAN UPSCALING
 # ##---------------------##
 # ##########################
-    log(f"\n\n[FACEENCHACEMENT] PROCCESS starting...")
+#     log(f"\n\n[GFPGANER & REALESRGAN UPSCALING] PROCCESS starting...")
+#     from basicsr.utils.registry import ARCH_REGISTRY
+#     ARCH_REGISTRY._obj_map.pop('RRDBNet', None)
+#     ARCH_REGISTRY._obj_map.pop('ResNetArcFace', None)
+#     from basicsr.archs.rrdbnet_arch import RRDBNet
+#     from realesrgan import RealESRGANer 
+#     model = RRDBNet(num_in_ch=3, num_out_ch=3, num_feat=64,num_block=23, num_grow_ch=32, scale=2)
+#     bg_upsampler = RealESRGANer(model_path=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\gfpgan\weights\RealESRGAN_x2plus.pth", model=model, scale=2)
+
+#     GFPGaner_frames = []
+#     from gfpgan import GFPGANer
+#     gfpganer = GFPGANer(model_path=r'C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\gfpgan\weights\GFPGANv1.4.pth', upscale=2, arch='clean', channel_multiplier=2, bg_upsampler=bg_upsampler)
+#     try:
+#         log(f"[GFPGANER] starting upscaling frames now....")
+#         for frame in tqdm(enchanced_frames, desc="[GFPGAN] Upscaling", unit="frame"):
+#             frame_height,frame_width = frame.shape[:2]
+#             _, _, gfpganer_enchanced_frame = gfpganer.enhance(frame, has_aligned=False, only_center_face=True, paste_back=True, weight=0.3)
+#             enchanced_height,enchanced_width = gfpganer_enchanced_frame.shape[:2]
+#             log(f"[GFPGANER] enchanced frame..")
+#             log(f"[GFPGANer] Frame input---> height: {frame_height},  width: {frame_width} \n enchanced_frame:  Height: {enchanced_height}, width: {enchanced_width} \n ")
+#             GFPGaner_frames.append(gfpganer_enchanced_frame)
+#             log(f"[GFPGANER] appending upscaled frame")
+
+#         log(f"Cleared cache and collected garbage")
+#         log(f"Gfpganer total frames: {len(GFPGaner_frames)}")
+#     except Exception as e:
+#          log(f"[GFPGANER] Error during upscaling.. {str(e)}")
+
+#     log(f"[GFPGAN] upscaling finnished....\n\n")
+
+
+
+
+# # ###########################
+# # ##---------------------###
+# # #FACEENCHANCEMENT
+# # ##---------------------##
+# # ##########################
+#     log(f"\n\n[FACEENCHACEMENT] PROCCESS starting...")
 
     
-    class Args:
-        model = 'GPEN-BFR-512'
-        task = 'FaceEnhancement'
-        key = None
-        in_size = 512
-        out_size = None
-        channel_multiplier = 2
-        narrow = 1
-        alpha = 0.5
-        use_sr = True
-        use_cuda = True
-        save_face = False
-        aligned = False
-        sr_model = 'realesrnet'
-        sr_scale = 1
-        tile_size = 0
-        ext = '.jpg'
+#     class Args:
+#         model = 'GPEN-BFR-512'
+#         task = 'FaceEnhancement'
+#         key = None
+#         in_size = 512
+#         out_size = None
+#         channel_multiplier = 2
+#         narrow = 1
+#         alpha = 0.5
+#         use_sr = False
+#         use_cuda = True
+#         save_face = False
+#         aligned = False
+#         sr_model = 'realesrnet'
+#         sr_scale = 1
+#         tile_size = 0
+#         ext = '.jpg'
 
 
-    Skin_texture_enchancement = FaceEnhancement(
-         Args,
-        in_size=Args.in_size,
-        model=Args.model,
-        use_sr=Args.use_sr,
-        device='cuda' if Args.use_cuda else 'cpu'
-    )
+#     Skin_texture_enchancement = FaceEnhancement(
+#          Args,
+#         in_size=Args.in_size,
+#         model=Args.model,
+#         use_sr=Args.use_sr,
+#         device='cuda' if Args.use_cuda else 'cpu'
+#     )
 
-    FaceEnhancement_frames = []
-    try:
-   
+#     FaceEnhancement_frames = []
+#     try:
+#          for frame in tqdm(GFPGaner_frames, desc="[FaceEnhancement]  proccessing frames", unit="frame"):
+#               log(f"Input frame size: {frame.shape[1]} x {frame.shape[0]}")
+#               frame_height,frame_width = frame.shape[:2]
+#               frame_bgr = cv2.cvtColor(frame,cv2.COLOR_RGB2BGR)
+#               enchanced_frame, _, _ = Skin_texture_enchancement.process(frame_bgr)
+#               log(f"Enhanced frame size: {enchanced_frame.shape[1]} x {enchanced_frame.shape[0]}")
+#               enchanced_height,enchanced_width = enchanced_frame.shape[:2]
+#               log(f"enchanced_frame height: {enchanced_frame.shape[0]}")
+#               FaceEnhancement_frames.append(enchanced_frame)
+#               log(f"[FaceEnhancement] Appended enhanced frame")
+#               log(f"[FaceEnhancement]Frame input---> height: {frame_height},  width: {frame_width} \n enchanced_frame:  Height: {enchanced_height}, width: {enchanced_width} \n ")
+#          log("[FaceEnhancement] Successfully done")
+#          torch.cuda.empty_cache()
+#          gc.collect()
+#          #del GFPGaner_frames
 
-         for frame in tqdm(GFPGaner_frames, desc="[FaceEnhancement]  proccessing frames", unit="frame"):
-              log(f"Input frame size: {frame.shape[1]} x {frame.shape[0]}")
-              frame_height,frame_width = frame.shape[:2]
-              frame_bgr = cv2.cvtColor(frame,cv2.COLOR_RGB2BGR)
-              enchanced_frame, _, _ = Skin_texture_enchancement.process(frame_bgr)
-              log(f"Enhanced frame size: {enchanced_frame.shape[1]} x {enchanced_frame.shape[0]}")
-              enchanced_height,enchanced_width = enchanced_frame.shape[:2]
-              log(f"enchanced_frame height: {enchanced_frame.shape[0]}")
-              FaceEnhancement_frames.append(enchanced_frame)
-              log(f"[FaceEnhancement] Appended enhanced frame")
-              log(f"[FaceEnhancement]Frame input---> height: {frame_height},  width: {frame_width} \n enchanced_frame:  Height: {enchanced_height}, width: {enchanced_width} \n ")
-         log("[FaceEnhancement] Successfully done")
-         torch.cuda.empty_cache()
-         gc.collect()
-         #del GFPGaner_frames
-
-         log(f"Cleared cache and collected garbage")     
-    except Exception as e:
-            log(f"[FaceEnhancement] Error: {str(e)}")
+#          log(f"Cleared cache and collected garbage")     
+#     except Exception as e:
+#             log(f"[FaceEnhancement] Error: {str(e)}")
     
 
 
 
-# # #####################
-# # ##--------------.--##
-# # # color/ADJUSTMENT
-# # ##-----------------##
-# # #####################
-    log(f"\n\n[COLOR ADJUSTMENT] PROCCESS starting...")
-    if change_on_saturation != None and change_saturation == "Increase":
-            FaceEnhancement_frames = [change_saturation(frame,mode=change_on_saturation, amount=0.2) for frame in FaceEnhancement_frames]
+# # # #####################
+# # # ##--------------.--##
+# # # # color/ADJUSTMENT
+# # # ##-----------------##
+# # # #####################
+#     log(f"\n\n[COLOR ADJUSTMENT] PROCCESS starting...")
+#     if change_on_saturation != None and change_saturation == "Increase":
+#             FaceEnhancement_frames = [change_saturation(frame,mode=change_on_saturation, amount=0.2) for frame in FaceEnhancement_frames]
 
-    elif change_on_saturation != None and change_on_saturation == "Decrease":
-            FaceEnhancement_frames = [change_saturation(frame,mode=change_on_saturation, amount=0.2) for frame in FaceEnhancement_frames]
+#     elif change_on_saturation != None and change_on_saturation == "Decrease":
+#             FaceEnhancement_frames = [change_saturation(frame,mode=change_on_saturation, amount=0.2) for frame in FaceEnhancement_frames]
 
 
 # # ##############################
@@ -553,7 +574,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
     log(f"\n\n[CREATING VIDEOCLIP] PROCCESS starting...")
     try:
        log(f"[processed_clip] proccessing frames now..")
-       processed_clip = ImageSequenceClip(FaceEnhancement_frames, fps=clip.fps).with_duration(clip.duration)
+       processed_clip = ImageSequenceClip(cropped_frames, fps=clip.fps).with_duration(clip.duration)
     except Exception as e:
          log(f"[processed_clip] error during video setup: {str(e)}")
       
@@ -583,7 +604,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 
         log(f"Adding subtitle to the video....")
         final_clip = CompositeVideoClip(
-                    [processed_clip.with_position('center')] + subtitle_clips + [logo_with_mask.with_position('center')],
+                    [processed_clip.with_position('center')] + subtitle_clips + [logo_with_mask.with_position('center','bottom')],
                     size=processed_clip.size
                 )
         
@@ -609,7 +630,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
         bg_music = bg_music.with_effects([MultiplyVolume(bg_music_volume)])
         original_audio = original_audio.with_effects([MultiplyVolume(1.0)])
 
-        mixed_audio = CompositeAudioClip([original_audio, bg_music])
+        mixed_audio = CompositeAudioClip([original_audio, bg_music]) 
 
         return mixed_audio
 
@@ -640,7 +661,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 
     del frames
     del cropped_frames
-   # del enchanced_frames
+    #del enchanced_frames
     torch.cuda.empty_cache()
     gc.collect()
     os.makedirs(output_dir, exist_ok=True)
@@ -674,14 +695,27 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
     log(f"Final video resolution (width x height): {final_clip.size[0]} x {final_clip.size[1]}") 
 
     try:
+        from Agent_AutoUpload.Upload_youtube import upload_video
         log(f"\n\n\n\n\n\n\n\n\n-------------------------------------------------------------------\n\n\n\n")
         log("Youtube uploading & agent STARTING....")
-        upload_video(model=Global_model,file_path=out_path)
-        log(f"Done with uploading to youtube!")
+        try:
+             global Global_model
+             del Global_model    
+        except NameError:
+                pass
+        
+        get_gpu_memory()
+        Global_model = Reload_and_change_model(model="Qwen7b")
+        social_media = upload_video(model=Global_model,file_path=output_video)
+        log(f"Done with uploading to {social_media}")
     except Exception as e:
          log(f"error during uploading: {str(e)}")
- 
 
+    finally:
+         del Global_model
+         get_gpu_memory()
+         Reload_and_change_model("Qwen3b")
+ 
 
 
 
@@ -714,11 +748,14 @@ def run_video_short_creation_thread(video_url,start_time,end_time,subtitle_text)
             text_video_path = video_url
             video_start_time = start_time
             video_end_time = end_time
+            absoloute_start_time = 0
+            absoloute_end_time = 0
+
 
             
             try:
                 device = "cuda"
-                tool = SpeechToTextTool(device=device)
+                tool = SpeechToText_short_creation_thread(device=device)
                 tool.setup()
 
                 audio_path = get_current_audio_path()
@@ -736,14 +773,17 @@ def run_video_short_creation_thread(video_url,start_time,end_time,subtitle_text)
                     crafted_Subtitle_text = result["matched_words"]
                     new_video_start_time = result["video_start_time"]
                     new_video_end_time = result["video_end_time"]
+                    last_word_match = result["last_word_match"]
                     log(f"new_video_start_time: {new_video_start_time},new_video_end_time: {new_video_end_time}, subtitletext: {crafted_Subtitle_text}\n")
+                    
+
                     
                     if new_video_start_time == 0.0:
                          new_video_start_time = None
-                    
-                    
 
-
+                    if last_word_match == True:
+                         new_video_end_time = None
+                
                     if new_video_start_time is not None and new_video_end_time is not None:
                          absoloute_start_time = video_start_time + new_video_start_time
                          absoloute_end_time = video_start_time + new_video_end_time
@@ -763,9 +803,6 @@ def run_video_short_creation_thread(video_url,start_time,end_time,subtitle_text)
                          absoloute_start_time = video_start_time
                          absoloute_end_time = video_end_time
                          log(f"Did not need to change time on videoclip: absoloute_start_time: {absoloute_start_time} \n absoloute_end_time: {absoloute_end_time}")
-
-                        
-                         
 
 
             except Exception as e:
@@ -787,6 +824,9 @@ def run_video_short_creation_thread(video_url,start_time,end_time,subtitle_text)
           import traceback
           log("[run_video_short_creation_thread][ERROR] in run_video_short_creation_thread:")
           traceback.log_exc()
+
+
+
 
 
 
@@ -842,8 +882,8 @@ def SaveMotivationalText(text: str, text_file: str) -> None:
 
          
     with open(text_file, "a", encoding="utf-8") as f:
-                f.write("===START_TEXT===\n")
-                f.write(text.strip() + "\n")
+                f.write("===START_TEXT===")
+                f.write(text.strip())
                 f.write("===END_TEXT===\n")
                 log(f"text: {text}")
 
@@ -869,8 +909,9 @@ def video_creation_worker():
                log(f"[video_creation_worker] error during video_creation_worker: {str(e)}")
                raise ValueError(f"[video_creation_worker]Error during video creation")
           finally:
-               log("HIT FINALLY BLOCK...")
+               log("Video Successfully Done!")
                video_task_que.task_done()
+    
 
 
 def wait_for_proccessed_video_complete(queue: Queue, check_interval=30):
@@ -882,6 +923,29 @@ def wait_for_proccessed_video_complete(queue: Queue, check_interval=30):
           time.sleep(check_interval)
     log("[wait_for_proccessed_video_complete]✅ video_task_que is now empty.")
 
+
+        
+
+
+
+
+
+def save_full_io_to_file(modelname: str, input_chunk: str, reasoning_steps: list[str], model_response: str, file_path: str) -> None:
+    with open(file_path, "a", encoding="utf-8") as f:
+        f.write(f"Model running: {modelname}")
+        f.write("===INPUT CHUNK START===\n")
+        f.write(input_chunk.strip() + "\n")
+        f.write("===INPUT CHUNK END===\n\n")
+
+        f.write("===REASONING STEPS===\n")
+        for step in reasoning_steps:
+            f.write(step + "\n")
+        f.write("\n")
+
+        f.write("===MODEL RESPONSE START===\n")
+        f.write(model_response.strip() + "\n")
+        f.write("===MODEL RESPONSE END===\n\n")
+        f.write("------------------------------------------------------------------------\n\n\n")
 
 
 
@@ -907,6 +971,7 @@ def create_motivationalshort(text: str) -> None:
                 as a single cohesive message and analyzed as one unit.
         """
         try:
+          
             audio_path = get_current_audio_path()
             log(f"\naudio_path: \n{audio_path}\n")
             start_time, end_time, new_text = parse_multiline_block(text)
@@ -924,7 +989,7 @@ def create_motivationalshort(text: str) -> None:
         try:
             log(f"\n Original text: {text} \n \n now Added work to QUEUE: \n {video_url}, \n {start_time}s \n {end_time}s\n")
             video_task_que.put((video_url, start_time, end_time, new_text))
-           # Delete_rejected_line(text)
+            Delete_rejected_line(text)
             global count 
             count +=1
             
@@ -932,16 +997,14 @@ def create_motivationalshort(text: str) -> None:
              log(f"Error addng to queue: {str(e)}")
 
 
-        
-
 @tool
 def Delete_rejected_line(text: str) -> None:
         """  Deletes a block from the text file that contains the given inner text,
-             by removing the whole block: ===START_TEXT=== ... ===END_TEXT===
+             by removing the whole block: ===START_TEXT=== text... ===END_TEXT===
         Args:
             text: The line to delete (i.e., considered rejected/not valid) Format: 
               ===START_TEXT=== 
-              [start_time - end_time] actual text here. 
+              [start_time - end_time] actual text here... [start_time - end_time] .... 
               ===END_TEXT===      
         """
         log(f"\n[Delete_rejected_line] text into func: {text}")
@@ -951,47 +1014,20 @@ def Delete_rejected_line(text: str) -> None:
         with open(text_file, 'r', encoding="utf-8") as f:
                     content = f.read()
 
-        block_text = text.strip() 
-
-        match = re.search(r'===START_TEXT===\s*(.*?)\s===END_TEXT===',block_text, flags=re.DOTALL)
-        if not match:
-           log("[Delete_rejected_line] Could not extract block content — check input format!")
-           return
+        escaped_text = re.escape(text.strip())
         
-        
-        inner_text = re.escape(match.group(1).strip())
+        pattern = rf'===START_TEXT\s*.*?{escaped_text}.*?\s*===END_TEXT===\s*'
 
+        new_content, num_subs = re.subn(pattern, '', content, flags=re.DOTALL)
 
-        pattern = rf'===START_TEXT===\s*.*?{inner_text}.*?\s===END_TEXT==='
-
-        new_content, count = re.subn(pattern, '', content, flags=re.DOTALL)
-
-        log(f"[Delete_rejected_line] Removed {count} block(s).\nNew content:\n{new_content.strip()}")
+        if num_subs == 0:
+            log("[Delete_rejected_line] No matching block found — nothing deleted.")
+            return
 
         with open(text_file, 'w', encoding="utf-8") as f:
-            f.write(new_content.strip() + "\n")
+            f.write(new_content)
 
-
-
-
-def save_full_io_to_file(modelname: str, input_chunk: str, reasoning_steps: list[str], model_response: str, file_path: str) -> None:
-    with open(file_path, "a", encoding="utf-8") as f:
-        f.write(f"Model running: {modelname}")
-        f.write("===INPUT CHUNK START===\n")
-        f.write(input_chunk.strip() + "\n")
-        f.write("===INPUT CHUNK END===\n\n")
-
-        f.write("===REASONING STEPS===\n")
-        for step in reasoning_steps:
-            f.write(step + "\n")
-        f.write("\n")
-
-        f.write("===MODEL RESPONSE START===\n")
-        f.write(model_response.strip() + "\n")
-        f.write("===MODEL RESPONSE END===\n\n")
-        f.write("------------------------------------------------------------------------\n\n\n")
-
-
+        log(f"[Delete_rejected_line] Deleted {num_subs} block(s) containing the text.")
 
 def verify_saved_text_agent(agent_saving_path):
     set_current_textfile(agent_saving_path)
@@ -1032,7 +1068,7 @@ def verify_saved_text_agent(agent_saving_path):
              saved_quotes_text = f.read()
              if not saved_quotes_text.strip():
                   log("empty, break")
-                  raise ValueError("error its empty ")
+                  return 
 
     task = f"""
     Make sure your python structure when executing tools with <code>...</code> that they are structured correctly like this 
@@ -1052,9 +1088,9 @@ def verify_saved_text_agent(agent_saving_path):
     </code>
     --------------------------------------------
 
-    Analyze all the lines but do it line for line, step by step, 
-    reject the lines that are not valid/suitable for a standalone motivational shorts video by using `Delete_rejected_line` tool and run  `create_motivationalshort` tool for each of those that are valid 
-    now start step by step chain of thought reasoning over the lines:
+    Analyze all the textblock's, reject those textblocks that does not qualify by deleting them using `Delete_rejected_line` tool that is not valid for a motivational short, and run `create_motivationalshort` tool for those that are valid.  
+    now start step by step chain of thought reasoning over textblock/textblock's:
+    here is the text to analyze:
     [{saved_quotes_text}] 
     """
 
@@ -1065,21 +1101,9 @@ def verify_saved_text_agent(agent_saving_path):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 #Agent som analyserer tekst  fra transkript ved og lese (chunk for chunk) --->  (lagrer teksten basert på (task)) #eksempel her er motiverende/quote/inspirerende
 def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
+    from Custom_Agent_Tools import ChunkLimiterTool
     log(f"✅ Entered Transcript_Reasoning_AGENT() transcript_path: {transcripts_path}, agent_txt_saving_path: {agent_txt_saving_path}")
     ModelCountRun = 0
     global Global_model
@@ -1092,8 +1116,8 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
         model=Global_model,
         tools=[SaveMotivationalText,final_answer],
         max_steps=1,
-        #verbosity_level=1,
-        #stream_outputs=True,
+        verbosity_level=1,
+        stream_outputs=True,
         prompt_templates=Prompt_template
  
     )
@@ -1104,9 +1128,7 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
     transcript_title = os.path.basename(transcripts_path)
     log(f"transcript title: {transcript_title}")
     log(f"\nProcessing new transcript: {transcripts_path}")
-    # with open(agent_txt_saving_path, "a", encoding="utf-8") as out:
-    #     out.write(f"\n--- Transcript Title: {transcript_title} ---\n")
-   
+
         
     def save_thought_and_code(step_output):
             text = getattr(step_output, "model_output", "") or ""
@@ -1123,27 +1145,26 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
 
    
     reasoning_log = []
-    input_token_count = 0
-    output_token_count = 0
-    current_context = 0
     Reasoning_Text_Agent.step_callbacks.append(save_thought_and_code)
     chunk_limiter.reset()
-    ModelCountRun += 1
     while True:
         reasoning_log.clear()
         try:
             log(f"transcript_path for chunk tool : {transcripts_path}")
-            chunk = chunk_limiter.forward(file_path=transcripts_path, max_chars=4000)
+            chunk = chunk_limiter.forward(file_path=transcripts_path, max_chars=3000)
         except Exception as e:
                 log(f"Error during chunking from file {transcripts_path}: {e}")
                 break
+       
+       
         if not chunk.strip():
                 log("Finished processing current transcript. Now exiting func [Transcript Reasoning Agent]")
                 del Reasoning_Text_Agent
                 break
         
+   
         log(f"[The current ModelCountRun]: {ModelCountRun}")
-        if  ModelCountRun >= 1:
+        if  ModelCountRun >= 6 or not chunk.strip():
                  del Reasoning_Text_Agent
                  verify_saved_text_agent(agent_txt_saving_path)
                  wait_for_proccessed_video_complete(video_task_que)
@@ -1155,31 +1176,12 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
                 {chunk}
                 [chunk end]
                 """
-
-        with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\debug_performance\Token_logpath.txt", "r", encoding="utf-8") as f:
-
-             for line in f:
-                  line = line.strip()
-                  if line.startswith("Input tokens"):
-                       input_token_count = int(line.split(":")[1].strip().rstrip(","))
-                  if line.startswith("Output tokens"):
-                       output_token_count = int(line.split(":")[1].strip().rstrip(","))
-                  
-                  current_context = input_token_count + output_token_count
-                  log(f"CURRENT CONTEXT FOR MODEL: {current_context}")
-
-               
-
-        MAX_CONTEXT_WINDOW = 32768
-        SAFETY_MARGIN = 10000
-        #reset_flag =  True if current_context >= (MAX_CONTEXT_WINDOW - SAFETY_MARGIN) else False
-
+        
         result = Reasoning_Text_Agent.run(
-                task=task,
-                additional_args={"text_file": agent_txt_saving_path},
-                #reset=reset_flag
-            )
-
+                    task=task,
+                    additional_args={"text_file": agent_txt_saving_path},
+                )
+        ModelCountRun += 1
         log(f"[Path to where the [1. reasoning agent ] saves the motivational quotes  ]: {agent_txt_saving_path}")
         log(f"Agent response: {result}\n")
         save_full_io_to_file(
@@ -1255,8 +1257,8 @@ def transcribe_single_video(video_path, device):
              got_gpu = False  
 
    
-       
-        tool = SpeechToTextTool() if device == "cuda" else SpeechToTextToolCPU()
+
+        tool = SpeechToTextToolCUDA() if device == "cuda" else SpeechToTextToolCPU()
         tool.device = device
         tool.setup()
 
@@ -1271,7 +1273,7 @@ def transcribe_single_video(video_path, device):
         if result_txt_path != txt_output_path:
             os.rename(result_txt_path, txt_output_path)
 
-        #COPY temporary for debugging
+
         import shutil 
         copy_text_path = os.path.join(folder,f"{base_name}_Transcriptcopy.txt")
         shutil.copyfile(txt_output_path, copy_text_path)
@@ -1297,9 +1299,9 @@ def gpu_worker():
             model_id = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-3B-Instruct-MERGED",
             load_in_4bit=True,
             trust_remote_code=True,
-            device_map="cuda",
+            device_map="auto",
             torch_dtype="auto",
-            max_new_tokens=4000,
+            max_new_tokens=5000,
             do_sample=False,
             use_flash_attn=True     
      )
@@ -1353,9 +1355,6 @@ if __name__ == "__main__":
 
     video_paths = [
         r"c:\Users\didri\Documents\Ed Mylett ON： Watch These 37 Minutes To COMPLETELY CHANGE Your Life ｜ Jay Shetty.mp4",
-   
-
-
     ]
     log(f"Video_paths: {len(video_paths)}")
 
