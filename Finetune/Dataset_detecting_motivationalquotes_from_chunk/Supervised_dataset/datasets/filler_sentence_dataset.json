@@ -1,7 +1,131 @@
 
 [
+ 
+  {
+  "sentence": "I made pasta for dinner last night. Just threw in some sauce from a jar and called it a meal. Quick and easy, nothing fancy."
+  },
+  {
+  "sentence": "Traffic lights always seem to turn red when I'm in a hurry. It's like they know. Ended up being late for my appointment because of it."
+  },
+  {
+"sentence": "You know, like when things get tough, you gotta just try to stay positive and maybe"
+},
+{
+"sentence": "In everyday life, pushing yourself a bit more can help with stuff like"
+},
+{
+"sentence": "Believe that good things might happen if you keep trying to"
+},
+{
+"sentence": "The secret to getting ahead is probably starting and then"
+},
+{
+"sentence": "Each day offers a chance to do something kinda better in your"
+},
+{
+"sentence": "When problems show up, see them as sort of opportunities to learn or"
+},
+{
+"sentence": "Your attitude matters a lot, so aim for something optimistic about"
+},
+{
+"sentence": "Aim high and put in effort since possibilities exist when you"
+},
+{
+"sentence": "Hang out with folks who kinda motivate you to be"
+},
+{
+"sentence": "Think about your progress so far and continue to"
+},
+{
+"sentence": "Building toughness comes from dealing with difficulties, so avoid quitting if"
+},
+{
+"sentence": "Picture achieving goals and make little moves daily toward"
+},
+{
+"sentence": "You have some special skills that could affect things positively if you"
+},
+{
+"sentence": "Accept shifts in life as they might bring about development and"
+},
+{
+"sentence": "Remain dedicated to your path, particularly when it feels"
+},
+{
+"sentence": "Being thankful can change how you view things, so do it"
+},
+{
+"sentence": "Go outside what feels comfortable to find out what you can"
+},
+{
+"sentence": "What you do now affects, so ensure they're"
+},
+{
+"sentence": "Take lessons from mistakes and let them motivate you to"
+},
+{
+"sentence": "You're tougher than expected, so have faith in handling"
+},
+  {
+  "sentence": "I cleaned out my fridge over the weekend. Found some expired yogurt in the back. Threw it out and organized the shelves a bit."
+  },
+  {
+  "sentence": "The mail came late today. Just bills and junk flyers, as expected. Nothing interesting in there at all."
+  },
+  {
+  "sentence": "I need to buy new batteries for the remote. The TV keeps acting up because they're low. I'll pick some up on my way home."
+  },
+  {
+  "sentence": "Woke up to the alarm this morning, hit snooze a couple times. Finally got up and made some toast for breakfast."
+  },
+  {
+  "sentence": "The elevator in my building is out of order again. Had to take the stairs up five floors. Not fun with groceries in hand."
+  },
+  {
+  "sentence": "I sorted through my emails this afternoon. Deleted a bunch of spam and replied to a few work ones. Standard stuff."
+  },
+  {
+  "sentence": "My phone battery dies so fast these days. I think it's time to get a new one, but I'll wait for the next model to come out."
+  },
+  {
+  "sentence": "I walked the dog around the block earlier. He sniffed every bush like usual. Nothing out of the ordinary happened."
+  },
+  {
+  "sentence": "The laundry piled up, so I did a load today. Whites and colors separate, as always. Dried them and folded everything."
+  },
+  {
+  "sentence": "I checked the news app on my phone. Same old stories, weather updates, and some local events. Skimmed through it quickly."
+  },
   {
     "sentence": "Good morning. The soft hum of the coffee maker fills the kitchen as the first light filters through the curtains. There is an unhurried rhythm to the sounds in this space. I move between the warm touch of the countertop and the smooth surface of the mug, noticing the faint steam rising in wisps."
+  },
+  {
+  "sentence": "Hey, sometimes when stuff feels overwhelming, you could try to think about"
+  },
+  {
+  "sentence": "Like in regular routines, attempting a little extra effort might assist with things such as"
+  },
+  {
+  "sentence": "Suppose that positive outcomes could occur if you continue attempting to"
+  },
+  {
+  "sentence": "Continue being devoted to your route, especially if it appears"
+  },
+  {
+  "sentence": "Expressing appreciation may alter your perspective, so engage in it"
+  },
+  {
+  "sentence": "Venture beyond what's familiar to uncover what capabilities you have"
+  },
+  {
+  "sentence": "Actions taken presently impact the future, so confirm they are"
+  },
+  {
+  "sentence": "Absorb insights from errors and allow them to inspire you towards"
+  },
+  {
+  "sentence": "You might be more robust than anticipated, so place trust in managing"
   },
   {
     "sentence": "In those early hours, the city remains in that state between hush and stir. A distant car engine, the rustle of leaves against the pavement, footsteps that go unnoticed by most. I close my eyes and allow the patterns of sound to trace an outline of the day ahead."
@@ -59,6 +183,63 @@
   },
   {
     "sentence": "So, I'm sure the nanny did, too."
+  },
+    {
+  "sentence": "Perhaps the way to move forward involves beginning and subsequently"
+  },
+  {
+  "sentence": "Every so often, a day provides an option to attempt something somewhat improved in your"
+  },
+  {
+  "sentence": "If issues arise, consider them as potential chances to gain knowledge or perhaps"
+  },
+  {
+  "sentence": "How you feel is important, so maybe target an attitude that's somewhat hopeful regarding"
+  },
+  {
+  "sentence": "Set aims that are elevated and apply some work because options are there when you"
+  },
+  {
+  "sentence": "Spend time around individuals who somewhat encourage you to become"
+  },
+  {
+  "sentence": "Reflect on the advancements you've made until now and proceed to"
+  },
+  {
+  "sentence": "Developing durability happens by managing troubles, so refrain from stopping whenever"
+  },
+  {
+  "sentence": "Imagine reaching objectives and perform minor actions each day in the direction of"
+  },
+  {
+  "sentence": "There are certain abilities you own that might influence matters favorably should you"
+  },
+   {
+  "sentence": "Hey everyone, welcome back to the show. Today we're just chatting about some random stuff that happened this week. I mean, the traffic was insane on my way here, right? Like, why does everyone decide to drive at the same time?"
+  },
+  {
+  "sentence": "So, I was at the grocery store the other day, picking up some milk and bread. Nothing exciting, just the usual errands. The lines were long, and I ended up waiting forever at the checkout."
+  },
+  {
+  "sentence": "Alright, let's talk about the weather for a bit. It's been raining non-stop here, which means I haven't been able to go for my usual walk in the park. Kind of annoying, but what can you do?"
+  },
+  {
+  "sentence": "I tried this new coffee shop down the street. The latte was okay, but honestly, it wasn't anything special. I think I'll stick to my regular place from now on."
+  },
+  {
+  "sentence": "Last night, I binge-watched that old sitcom again. You know, the one with the friends living in the city? It's funny how those episodes never get old, even after seeing them a dozen times."
+  },
+  {
+  "sentence": "My car needed an oil change, so I took it to the mechanic. He said everything else looks fine, which is good because I wasn't expecting any big repairs."
+  },
+  {
+  "sentence": "I forgot to water my plants again. They're looking a bit wilted now. Guess I'll have to remember to do that more often before they all die on me."
+  },
+  {
+  "sentence": "The office printer jammed up today, as usual. Spent like ten minutes trying to fix it before calling IT. Happens every other week, it seems."
+  },
+  {
+  "sentence": "Acknowledge alterations in existence since they could result in advancement and maybe"
   },
   {
     "sentence": "Why Silicon Valley is so successful and why the Internet has been so important is because it allowed for."
@@ -15442,10 +15623,4574 @@
     "sentence": "She's not saying, you know, I, I'm trying to build a transducer in order to tie my shoes faster."
   },
   {
-    "sentence": "But even then, I wasn't ready."
+    "sentence": "You can’t outrun the sun with wet shoes — but that’s exactly why the lemons blink first."
   },
   {
     "sentence": "But even then, I wasn't ready."
+  },
+  {
+    "sentence": "You can’t outrun the sun with wet shoes — but that’s exactly why the lemons blink first."
+  },
+  {
+    "sentence": "But even then, I wasn't ready."
+  },
+  {
+    "sentence": "Sometimes, the cactus chooses the wind, and that’s all the permission you need."
+  },
+  {
+    "sentence": "He who forgets the spoon also invites the thunder."
+  },
+  {
+    "sentence": "It was never about the ladder, but the silence between the rungs."
+  },
+  {
+    "sentence": "Paper doesn't burn in dreams — that’s how the frogs escaped."
+  },
+  {
+    "sentence": "Three lefts and a whisper will get you further than a map."
+  },
+  {
+    "sentence": "The candle knew what the darkness had forgotten."
+  },
+  {
+  "sentence": "Even the wallpaper started peeling when the refrigerator hummed its forgotten tune."
+  },
+  {
+  "sentence": "But the stapler refused to cooperate after the clock struck sideways."
+  },
+  {
+  "sentence": "The lampshade whispered secrets to the ceiling fan during the unexpected outage."
+  },
+  {
+  "sentence": "Pencils rolled away just as the notebook decided to flip its own pages."
+  },
+  {
+  "sentence": "The remote control blinked twice before the curtains drew themselves."
+  },
+  {
+  "sentence": "Socks vanished into the dryer, leaving the shoes to ponder their mismatched fate."
+  },
+  {
+  "sentence": "The keyboard typed gibberish while the mouse scurried under the desk."
+  },
+  {
+  "sentence": "Coffee mugs clinked in protest as the spoon stirred an empty pot."
+  },
+  {
+  "sentence": "The bookshelf leaned forward, eavesdropping on the rug's patterned complaints."
+  },
+  {
+  "sentence": "Windows fogged up mysteriously right after the door slammed shut on its own."
+  },
+  {
+  "sentence": "The alarm clock snoozed itself, ignoring the calendar's urgent reminders."
+  },
+  {
+  "sentence": "Pillows fluffed up defiantly against the blanket's wrinkled accusations."
+  },
+  {
+  "sentence": "The microwave beeped erratically, confusing the oven's steady glow."
+  },
+  {
+  "sentence": "Chairs creaked in unison as the table wobbled on uneven legs."
+  },
+  {
+  "sentence": "The vase tilted precariously, spilling invisible flowers onto the floor."
+  },
+  {
+"sentence": "The toaster popped unexpectedly while the blender was plotting its next smoothie revolution."
+},
+{
+"sentence": "Curtains fluttered nervously as the vacuum cleaner inhaled the room's dusty secrets."
+},
+{
+"sentence": "The fork tangled with the knife just before the plate decided to spin on its own."
+},
+{
+"sentence": "Light bulbs flickered in Morse code, signaling the chandelier's impending descent."
+},
+{
+"sentence": "The wallet emptied itself right after the coins started jingling their escape plan."
+},
+{
+"sentence": "Pillows deflated in unison when the bedframe creaked its ancient lullaby."
+},
+{
+"sentence": "The printer jammed mid-sentence, leaving the scanner to interpret the blurry aftermath."
+},
+{
+"sentence": "Spoons clattered in the drawer as the kettle whistled a forbidden melody."
+},
+{
+"sentence": "The clock hands froze in protest against the calendar's flipped pages."
+},
+{
+"sentence": "Windows rattled softly while the door knob turned without invitation."
+},
+{
+"sentence": "The rug unraveled its threads just as the lamp switched to dim mode."
+},
+{
+"sentence": "Bookshelves sagged under the weight of unread chapters whispering complaints."
+},
+{
+"sentence": "The microwave door swung open, releasing a cloud of reheated mysteries."
+},
+{
+"sentence": "Chairs scooted closer together when the tablecloth slipped off unnoticed."
+},
+{
+"sentence": "The remote batteries died mid-channel surf, stranding the TV on static waves."
+},
+{
+"sentence": "Pots bubbled over as the stove burners flickered their fiery grievances."
+},
+{
+"sentence": "The laundry basket overflowed right before the washer spun into overdrive."
+},
+{
+"sentence": "Mirrors fogged up deliberately, obscuring the reflections' silent conversations."
+},
+{
+"sentence": "The fan blades slowed down while the air conditioner hummed a chilly tune."
+},
+{
+"sentence": "Drawers stuck halfway open, trapping the contents in mid-escape."
+},
+{
+"sentence": "The oven timer buzzed erratically as the fridge door creaked ajar."
+},
+{
+"sentence": "Cups stacked precariously when the saucers began their subtle slide."
+},
+{
+"sentence": "The iron steamed angrily just after the clothes hanger bent out of shape."
+},
+{
+"sentence": "Light switches flipped themselves during the bulb's flickering rebellion."
+},
+{
+"sentence": "The blender blades whirred to life as the juicer squeezed out unexpected pulp."
+},
+{
+"sentence": "Shelves tilted sideways while the jars rolled toward the edge."
+},
+{
+"sentence": "The dishwasher gurgled complaints right before the sink overflowed."
+},
+{
+"sentence": "Pillows plumped up defiantly against the comforter's wrinkled folds."
+},
+{
+"sentence": "The keyboard keys stuck down as the screen saver danced erratically."
+},
+{
+"sentence": "Windowsills collected dust bunnies that hopped away at dusk."
+},
+{
+"sentence": "The coffee grinder buzzed loudly while the mugs clinked in anticipation."
+},
+{
+"sentence": "Door hinges squeaked in rhythm with the floorboards' groaning symphony."
+},
+{
+"sentence": "The vacuum hose tangled itself just as the dustpan scooted under the couch."
+},
+{
+"sentence": "Lampshades tilted askew when the cords twisted into knots."
+},
+{
+"sentence": "The toaster lever jammed mid-toast, leaving the bread in limbo."
+},
+{
+"sentence": "Cabinets doors swung open as the hinges protested their rusty fate."
+},
+{
+"sentence": "The blender lid popped off during the mixer's whirlwind performance."
+},
+{
+"sentence": "Rugs bunched up underfoot while the tiles shifted slightly."
+},
+{
+"sentence": "The alarm beeped faintly as the snooze button resisted pressure."
+},
+{
+"sentence": "Pans clanged together right before the oven mitts slipped away."
+},
+{
+"sentence": "The fridge light dimmed when the freezer drawer froze shut."
+},
+{
+"sentence": "Chairs wobbled on legs that seemed to shorten overnight."
+},
+{
+"sentence": "The printer tray emptied itself as the ink cartridges ran dry."
+},
+{
+"sentence": "Spoons bent slightly while the forks pronged at empty air."
+},
+{
+"sentence": "The clock ticked backwards just after the batteries corroded."
+},
+{
+"sentence": "Windows cracked open subtly as the screens meshed with bugs."
+},
+{
+"sentence": "The microwave turntable spun wildly without any food inside."
+},
+{
+"sentence": "Books toppled over when the pages fluttered in unseen breezes."
+},
+{
+"sentence": "The kettle lid rattled as the steam escaped in wispy trails."
+},
+{
+"sentence": "Drawers rattled their contents while the handles loosened."
+},
+{
+"sentence": "The fan oscillated unevenly right before the blades blurred."
+},
+{
+"sentence": "Pillows sank deeper as the sheets tangled in knots."
+},
+{
+"sentence": "The dishwasher racks shifted during the cycle's rumble."
+},
+{
+"sentence": "Light bulbs unscrewed themselves from the sockets' grip."
+},
+{
+"sentence": "The iron cord coiled up just as the board folded in half."
+},
+{
+"sentence": "Cups chipped edges while the saucers stacked unevenly."
+},
+{
+"sentence": "The oven door creaked open, releasing a puff of warm air."
+},
+{
+"sentence": "Shelves groaned under jars that clinked softly."
+},
+{
+"sentence": "The blender pulsed irregularly as the fruits mushed together."
+},
+{
+"sentence": "Rugs frayed at edges while the vacuum roared nearby."
+},
+{
+"sentence": "The alarm silenced itself mid-ring, confusing the morning."
+},
+{
+"sentence": "Pans heated unevenly right before the stove clicked off."
+},
+{
+"sentence": "The fridge shelves sagged with forgotten leftovers."
+},
+{
+"sentence": "Chairs scraped the floor as the table legs buckled."
+},
+{
+"sentence": "The printer spewed blank pages during the cartridge's leak."
+},
+{
+"sentence": "Spoons stirred invisible soups in empty bowls."
+},
+{
+"sentence": "The clock face fogged up while the hands spun wildly."
+},
+{
+"sentence": "Windows vibrated with the wind's insistent knocks."
+},
+{
+"sentence": "The microwave buttons stuck down after repeated presses."
+},
+{
+"sentence": "Books whispered plots as the dust jackets peeled."
+},
+{
+"sentence": "The kettle boiled over just as the lid flew off."
+},
+{
+"sentence": "Drawers overflowed with odds that ends never matched."
+},
+{
+"sentence": "The fan hummed a tune while the air grew stale."
+},
+{
+"sentence": "Pillows muffled sounds from the bed's creaking frame."
+},
+{
+"sentence": "The dishwasher leaked suds onto the slippery floor."
+},
+{
+"sentence": "Light switches sparked briefly in the dim room."
+},
+{
+"sentence": "The iron scorched fabrics without any heat setting."
+},
+{
+"sentence": "Cups overflowed with liquids that never poured."
+},
+{
+"sentence": "The oven preheated to temperatures unasked for."
+},
+{
+"sentence": "Shelves collapsed under weights of empty boxes."
+},
+{
+"sentence": "The blender ground noises instead of ingredients."
+},
+{
+"sentence": "Rugs tripped feet that never stepped forward."
+},
+{
+"sentence": "The alarm dreamed of rings it never sounded."
+},
+{
+"sentence": "Pans sizzled with memories of past meals."
+},
+{
+"sentence": "The fridge hummed lullabies to spoiling milk."
+},
+{
+"sentence": "Chairs invited sits that never arrived."
+},
+{
+"sentence": "The printer dreamed in colors it couldn't print."
+},
+{
+"sentence": "Spoons scooped air from bottomless pits."
+},
+{
+"sentence": "The clock counted seconds that stretched forever."
+},
+{
+"sentence": "Windows stared blankly at passing clouds."
+},
+{
+"sentence": "The microwave cooked time instead of food."
+},
+{
+"sentence": "Books opened to pages unread by eyes."
+},
+{
+"sentence": "The kettle steamed dreams into vapor."
+},
+{
+"sentence": "Drawers hid treasures in plain disarray."
+},
+{
+"sentence": "The fan blew whispers across the room."
+},
+{
+"sentence": "Pillows cradled heads full of forgotten thoughts."
+},
+{
+"sentence": "The dishwasher washed away invisible stains."
+},
+{
+"sentence": "Light bulbs illuminated shadows' dances."
+},
+{
+"sentence": "The iron pressed wrinkles into smooth sails."
+},
+{
+"sentence": "Cups held echoes of sipped conversations."
+},
+{
+"sentence": "The oven baked silence into golden crusts."
+},
+{
+"sentence": "Shelves displayed voids between the jars."
+},
+{
+"sentence": "The blender mixed chaos with quiet spins."
+},
+{
+"sentence": "Rugs wove patterns of tangled footsteps."
+},
+{
+"sentence": "The alarm woke ghosts from their slumbers."
+},
+{
+"sentence": "Pans reflected faces in oily sheens."
+},
+{
+"sentence": "The fridge preserved moments in ice cubes."
+},
+{
+"sentence": "Chairs balanced on edges of decisions."
+},
+{
+"sentence": "The printer outputted blank confessions."
+},
+{
+"sentence": "Spoons bent under weights of nothing."
+},
+{
+"sentence": "The clock ticked riddles unsolved."
+},
+{
+"sentence": "Windows framed pictures unpainted."
+},
+{
+"sentence": "The microwave zapped sparks of ideas."
+},
+{
+"sentence": "Books bound stories that escaped."
+},
+{
+"sentence": "The kettle whistled tunes off-key."
+},
+{
+"sentence": "Drawers jammed with unspoken words."
+},
+{
+"sentence": "The fan circulated stale regrets."
+},
+{
+"sentence": "Pillows absorbed tears unshed."
+},
+{
+"sentence": "The dishwasher cycled through forgotten loads."
+},
+{
+"sentence": "Light bulbs burst with unlit brilliance."
+},
+{
+"sentence": "The iron steamed paths untraveled."
+},
+{
+"sentence": "Cups cracked under pressure unseen."
+},
+{
+"sentence": "The oven warmed hearts from afar."
+},
+{
+"sentence": "Shelves bowed to gravity's pull."
+},
+{
+"sentence": "The blender pureed abstract thoughts."
+},
+{
+"sentence": "Rugs hid crumbs of yesterday."
+},
+{
+"sentence": "The alarm silenced impending dawns."
+},
+{
+"sentence": "Pans simmered plots thickening."
+},
+{
+"sentence": "The fridge cooled heated arguments."
+},
+{
+"sentence": "Chairs rocked empty lullabies."
+},
+{
+"sentence": "The printer jammed on final words."
+},
+{
+"sentence": "Spoons stirred pots of trouble."
+},
+{
+"sentence": "The clock wound down endless hours."
+},
+{
+"sentence": "Windows shattered illusions quietly."
+},
+{
+"sentence": "The microwave reheated cold shoulders."
+},
+{
+"sentence": "Books shelved ambitions deferred."
+},
+{
+"sentence": "The kettle boiled over with excitement."
+},
+{
+"sentence": "Drawers revealed skeletons of clutter."
+},
+{
+"sentence": "The fan whispered gossip to walls."
+},
+{
+"sentence": "Pillows fluffed dreams deflated."
+},
+{
+"sentence": "The dishwasher scrubbed souls clean."
+},
+{
+"sentence": "Light bulbs flickered last goodbyes."
+},
+{
+"sentence": "The iron flattened peaks of emotion."
+},
+{
+"sentence": "Cups brimmed with half-empty promises."
+},
+{
+"sentence": "The oven roasted ideas half-baked."
+},
+{
+"sentence": "Shelves stacked layers of dust."
+},
+{
+"sentence": "The blender whipped up storms."
+},
+{
+"sentence": "Rugs unraveled threads of fate."
+},
+{
+"sentence": "The alarm buzzed intrusive thoughts."
+},
+{
+"sentence": "Pans fried eggs of contention."
+},
+{
+"sentence": "The fridge stocked shelves of solitude."
+},
+{
+"sentence": "Chairs seated invisible guests."
+},
+{
+"sentence": "The printer copied faded memories."
+},
+{
+"sentence": "Spoons dipped into saucy scandals."
+},
+{
+"sentence": "The clock struck deals with time."
+},
+{
+"sentence": "Windows veiled views obscured."
+},
+{
+"sentence": "The microwave pinged readiness unheeded."
+},
+{
+"sentence": "Books turned pages unwritten."
+},
+{
+"sentence": "The kettle steeped in mystery."
+},
+{
+"sentence": "Drawers locked away loose ends."
+},
+{
+"sentence": "The fan cooled hot tempers."
+},
+{
+"sentence": "Pillows supported weary loads."
+},
+{
+"sentence": "The dishwasher rinsed repeated cycles."
+},
+{
+"sentence": "Light bulbs shone on dark matters."
+},
+{
+"sentence": "The iron creased perfect imperfections."
+},
+{
+"sentence": "Cups toasted to absent friends."
+},
+{
+"sentence": "The oven grilled tough questions."
+},
+{
+"sentence": "Shelves held up under pressure."
+},
+{
+"sentence": "The blender liquefied solid plans."
+},
+{
+"sentence": "Rugs covered tracks erased."
+},
+{
+"sentence": "The alarm startled sleeping giants."
+},
+{
+"sentence": "Pans boiled down to essentials."
+},
+{
+"sentence": "The fridge chilled thrilling tales."
+},
+{
+"sentence": "Chairs leaned into conversations."
+},
+{
+"sentence": "The printer scanned hidden codes."
+},
+{
+"sentence": "Spoons ladled out portions of fate."
+},
+{
+"sentence": "The clock timed perfect moments."
+},
+{
+"sentence": "Windows opened to closed minds."
+},
+{
+"sentence": "The microwave defrosted frozen hearts."
+},
+{
+"sentence": "Books chronicled lives unlived."
+},
+{
+"sentence": "The kettle poured out confessions."
+},
+{
+"sentence": "Drawers organized chaos neatly."
+},
+{
+"sentence": "The fan spread rumors widely."
+},
+{
+"sentence": "Pillows cushioned hard falls."
+},
+{
+"sentence": "The dishwasher polished dull routines."
+},
+{
+"sentence": "Light bulbs enlightened empty rooms."
+},
+{
+"sentence": "The iron smoothed rough edges."
+},
+{
+"sentence": "Cups contained overflowing emotions."
+},
+{
+"sentence": "The oven heated passionate debates."
+},
+{
+"sentence": "Shelves arranged alphabetical disorders."
+},
+{
+"sentence": "The blender chopped fine details."
+},
+{
+"sentence": "Rugs absorbed spilled secrets."
+},
+{
+"sentence": "The alarm rang false positives."
+},
+{
+"sentence": "Pans seared indelible marks."
+},
+{
+"sentence": "The fridge preserved fresh regrets."
+},
+{
+"sentence": "Chairs supported flimsy arguments."
+},
+{
+"sentence": "The printer faxed obsolete messages."
+},
+{
+"sentence": "Spoons tasted bitter truths."
+},
+{
+"sentence": "The clock watched minutes slip."
+},
+{
+"sentence": "Windows reflected inner turmoils."
+},
+{
+"sentence": "The microwave radiated warm vibes."
+},
+{
+"sentence": "Books dog-eared favorite lies."
+},
+{
+"sentence": "The kettle simmered low expectations."
+},
+{
+"sentence": "Drawers concealed sharp objects."
+},
+{
+"sentence": "The fan oscillated opinions."
+},
+{
+"sentence": "Pillows dreamed in color schemes."
+},
+{
+"sentence": "The dishwasher drained energy levels."
+},
+{
+"sentence": "Light bulbs dimmed bright futures."
+},
+{
+"sentence": "The iron pressed urgent matters."
+},
+{
+"sentence": "Cups leaked confidential info."
+},
+{
+"sentence": "The oven broiled tender moments."
+},
+{
+"sentence": "Shelves dusted off old habits."
+},
+{
+"sentence": "The blender pulsed rhythmic beats."
+},
+{
+"sentence": "Rugs patterned irregular lives."
+},
+{
+"sentence": "The alarm delayed inevitable wakes."
+},
+{
+"sentence": "Pans handled hot potatoes."
+},
+{
+"sentence": "The fridge stocked expired dreams."
+},
+{
+"sentence": "Chairs folded under stress."
+},
+{
+"sentence": "The printer plotted graph lines."
+},
+{
+"sentence": "Spoons measured scant portions."
+},
+{
+"sentence": "The clock raced against deadlines."
+},
+{
+"sentence": "Windows curtained prying eyes."
+},
+{
+"sentence": "The microwave popped corn kernels."
+},
+{
+"sentence": "Books bookmarked turning points."
+},
+{
+"sentence": "The kettle teabagged herbal remedies."
+},
+{
+"sentence": "Drawers slid into place quietly."
+},
+{
+"sentence": "The fan ventilated stuffy atmospheres."
+},
+{
+"sentence": "Pillows plumped for comfort zones."
+},
+{
+"sentence": "The dishwasher sanitized dirty laundry."
+},
+{
+"sentence": "Light bulbs screwed in tightly."
+},
+{
+"sentence": "The iron boarded flights of fancy."
+},
+{
+"sentence": "Cups saucered flying rumors."
+},
+{
+"sentence": "The oven convectioned air currents."
+},
+{
+"sentence": "Shelves bracketed support systems."
+},
+{
+"sentence": "The blender emulsified oil and water."
+},
+{
+"sentence": "Rugs orientalized western rooms."
+},
+{
+"sentence": "The alarm clocked in early."
+},
+{
+"sentence": "Pans nonsticked to plans."
+},
+{
+"sentence": "The fridge magnetized notes."
+},
+{
+"sentence": "Chairs reclined in leisure."
+},
+{
+"sentence": "The printer toner low warnings."
+},
+{
+"sentence": "Spoons silvered tarnished reputations."
+},
+{
+"sentence": "The clock grandfathered traditions."
+},
+{
+"sentence": "Windows paneled glass houses."
+},
+{
+"sentence": "The microwave nucleared leftovers."
+},
+{
+"sentence": "Books paperbacked hard truths."
+},
+{
+"sentence": "The kettle pot called black."
+},
+{
+"sentence": "Drawers chested treasures."
+},
+{
+"sentence": "The fan bladed sharp remarks."
+},
+{
+"sentence": "Pillows cased in slips."
+},
+{
+"sentence": "The dishwasher plated meals."
+},
+{
+"sentence": "Light bulbs filamented ideas."
+},
+{
+"sentence": "The iron struck while hot."
+},
+{
+"sentence": "Cups handled with care."
+},
+{
+"sentence": "The oven self-cleaned messes."
+},
+{
+"sentence": "Shelves leveled playing fields."
+},
+{
+"sentence": "The blender lid secured tightly."
+},
+{
+"sentence": "Rugs shagged long hairs."
+},
+{
+"sentence": "The alarm snoozed repeatedly."
+},
+{
+"sentence": "Pans cast iron wills."
+},
+{
+"sentence": "The fridge cooled jets."
+},
+{
+"sentence": "Chairs directed orchestras."
+},
+{
+"sentence": "The printer papered walls."
+},
+{
+"sentence": "Spoons souped up engines."
+},
+{
+"sentence": "The clock timed out sessions."
+},
+{
+"sentence": "Windows screened calls."
+},
+{
+"sentence": "The microwave waved hello."
+},
+{
+"sentence": "Books covered bases."
+},
+{
+"sentence": "The kettle handled pressure."
+},
+{
+"sentence": "Drawers fronted facades."
+},
+{
+"sentence": "The fan cooled heels."
+},
+{
+"sentence": "Pillows headed rests."
+},
+{
+"sentence": "The dishwasher loaded dice."
+},
+{
+"sentence": "Light bulbs socketed plugs."
+},
+{
+"sentence": "The iron pumped weights."
+},
+{
+"sentence": "Cups mugged faces."
+},
+{
+"sentence": "The oven ranged free."
+},
+{
+"sentence": "Shelves booked reservations."
+},
+{
+"sentence": "The blender mixed signals."
+},
+{
+"sentence": "Rugs pulled legs."
+},
+{
+"sentence": "The alarm sounded off."
+},
+{
+"sentence": "Pans scanned horizons."
+},
+{
+"sentence": "The fridge doored opportunities."
+},
+{
+"sentence": "Chairs tabled motions."
+},
+{
+"sentence": "The printer pressed charges."
+},
+{
+"sentence": "Spoons forked roads."
+},
+{
+"sentence": "The clock faced facts."
+},
+{
+"sentence": "Windows viewed sources."
+},
+{
+"sentence": "The microwave timed bombs."
+},
+{
+"sentence": "Books noted details."
+},
+{
+"sentence": "The kettle whistled Dixie."
+},
+{
+"sentence": "Drawers knobbed elbows."
+},
+{
+"sentence": "The fan based operations."
+},
+{
+"sentence": "Pillows cased studies."
+},
+{
+"sentence": "The dishwasher racked brains."
+},
+{
+"sentence": "Light bulbs watt powered."
+},
+{
+"sentence": "The iron boarded ships."
+},
+{
+"sentence": "Cups eared listeners."
+},
+{
+"sentence": "The oven gassed up."
+},
+{
+"sentence": "Shelves planed wood."
+},
+{
+"sentence": "The blender jarred senses."
+},
+{
+"sentence": "Rugs matted hair."
+},
+{
+"sentence": "The alarm armed robbers."
+},
+{
+"sentence": "Pans handled pans."
+},
+{
+"sentence": "The fridge iced cakes."
+},
+{
+"sentence": "Chairs legged it."
+},
+{
+"sentence": "The printer inked deals."
+},
+{
+"sentence": "Spoons knifed backs."
+},
+{
+"sentence": "The clock handed time."
+},
+{
+"sentence": "Windows sillied jokes."
+},
+{
+"sentence": "The microwave plated gold."
+},
+{
+"sentence": "Books leafed through."
+},
+{
+"sentence": "The kettle spouted nonsense."
+},
+{
+"sentence": "Drawers lined pockets."
+},
+{
+"sentence": "The fan leafed pages."
+},
+{
+"sentence": "Pillows sham covered."
+},
+{
+"sentence": "The dishwasher jetted streams."
+},
+{
+"sentence": "Light bulbs globed worlds."
+},
+{
+"sentence": "The iron clad ships."
+},
+{
+"sentence": "Cups rimmed edges."
+},
+{
+"sentence": "The oven doored in."
+},
+{
+"sentence": "Shelves bracketed text."
+},
+{
+"sentence": "The blender pitched ideas."
+},
+{
+"sentence": "Rugs bordered areas."
+},
+{
+"sentence": "The alarm clock worked."
+},
+{
+"sentence": "Pans bottomed out."
+},
+{
+"sentence": "The fridge shelved ideas."
+},
+{
+"sentence": "Chairs armed forces."
+},
+{
+"sentence": "The printer copied cats."
+},
+{
+"sentence": "Spoons dished dirt."
+},
+{
+"sentence": "The clock second guessed."
+},
+{
+"sentence": "Windows framed charges."
+},
+{
+"sentence": "The microwave vented frustrations."
+},
+{
+"sentence": "Books spine tingled."
+},
+{
+"sentence": "The kettle lid flipped."
+},
+{
+"sentence": "Drawers pulled strings."
+},
+{
+"sentence": "The fan stand alone."
+},
+{
+"sentence": "Pillows down played."
+},
+{
+"sentence": "The dishwasher sprayed tan."
+},
+{
+"sentence": "Light bulbs shaded lamps."
+},
+{
+"sentence": "The iron steamed ahead."
+},
+{
+"sentence": "Cups chipped in."
+},
+{
+"sentence": "The oven racked up."
+},
+{
+"sentence": "Shelves stocked up."
+},
+{
+"sentence": "The blender based loaded."
+},
+{
+"sentence": "Rugs runner up."
+},
+{
+"sentence": "The alarm set off."
+},
+{
+"sentence": "Pans lid on."
+},
+{
+"sentence": "The fridge light out."
+},
+{
+"sentence": "Chairs back up."
+},
+{
+"sentence": "The printer paper thin."
+},
+{
+"sentence": "Spoons leveled playing."
+},
+{
+"sentence": "The clock minute made."
+},
+{
+"sentence": "Windows double paned."
+},
+{
+"sentence": "The microwave short waved."
+},
+{
+"sentence": "Books hard covered."
+},
+{
+"sentence": "The kettle hot pot."
+},
+{
+"sentence": "Drawers bottom drawer."
+},
+{
+"sentence": "The fan ceiling high."
+},
+{
+"sentence": "Pillows throw away."
+},
+{
+"sentence": "The dishwasher upper rack."
+},
+{
+"sentence": "Light bulbs energy saved."
+},
+{
+"sentence": "The iron dry cleaned."
+},
+{
+"sentence": "Cups coffee break."
+},
+{
+"sentence": "The oven gas leaked."
+},
+{
+"sentence": "Shelves wall mounted."
+},
+{
+"sentence": "The blender high speed."
+},
+{
+"sentence": "Rugs area code."
+},
+{
+"sentence": "The alarm false start."
+},
+{
+"sentence": "Pans stick free."
+},
+{
+"sentence": "The fridge door ajar."
+},
+{
+"sentence": "Chairs stack able."
+},
+{
+"sentence": "The printer laser sharp."
+},
+{
+"sentence": "Spoons soup ladle."
+},
+{
+"sentence": "The clock wall hung."
+},
+{
+"sentence": "Windows bay area."
+},
+{
+"sentence": "The microwave convection oven."
+},
+{
+"sentence": "Books chapter closed."
+},
+{
+"sentence": "The kettle electric shock."
+},
+{
+"sentence": "Drawers file cabinet."
+},
+{
+"sentence": "The fan exhaust pipe."
+},
+{
+"sentence": "Pillows body hug."
+},
+{
+"sentence": "The dishwasher cycle complete."
+},
+{
+"sentence": "Light bulbs LED lit."
+},
+{
+"sentence": "The iron cord less."
+},
+{
+"sentence": "Cups tea time."
+},
+{
+"sentence": "The oven self timer."
+},
+{
+"sentence": "Shelves book end."
+},
+{
+"sentence": "The blender pulse button."
+},
+{
+"sentence": "Rugs Persian knot."
+},
+{
+"sentence": "The alarm wake call."
+},
+{
+"sentence": "Pans fry pan."
+},
+{
+"sentence": "The fridge freezer burn."
+},
+{
+"sentence": "Chairs rocking horse."
+},
+{
+"sentence": "The printer ink jet."
+},
+{
+"sentence": "Spoons measuring cup."
+},
+{
+"sentence": "The clock digital display."
+},
+{
+"sentence": "Windows operating system."
+},
+{
+"sentence": "The microwave turn table."
+},
+{
+"sentence": "Books e reader."
+},
+{
+"sentence": "The kettle tea pot."
+},
+{
+"sentence": "Drawers dresser top."
+},
+{
+"sentence": "The fan box shape."
+},
+{
+"sentence": "Pillows neck support."
+},
+{
+"sentence": "The dishwasher silver ware."
+},
+{
+"sentence": "Light bulbs incandescent glow."
+},
+{
+"sentence": "The iron steam burst."
+},
+{
+"sentence": "Cups measuring spoon."
+},
+{
+"sentence": "The oven broiler pan."
+},
+{
+"sentence": "Shelves floating wall."
+},
+{
+"sentence": "The blender glass jar."
+},
+{
+"sentence": "Rugs throw rug."
+},
+{
+"sentence": "The alarm radio tune."
+},
+{
+"sentence": "Pans sauce pan."
+},
+{
+"sentence": "The fridge side by."
+},
+{
+"sentence": "Chairs bar stool."
+},
+{
+"sentence": "The printer wireless connect."
+},
+{
+"sentence": "Spoons slotted spoon."
+},
+{
+"sentence": "The clock analog face."
+},
+{
+"sentence": "Windows stained glass."
+},
+{
+"sentence": "The microwave sensor cook."
+},
+{
+"sentence": "Books audio book."
+},
+{
+"sentence": "The kettle whistling spout."
+},
+{
+"sentence": "Drawers night stand."
+},
+{
+"sentence": "The fan tower tall."
+},
+{
+"sentence": "Pillows memory foam."
+},
+{
+"sentence": "The dishwasher energy star."
+},
+{
+"sentence": "Light bulbs smart home."
+},
+{
+"sentence": "The iron auto off."
+},
+{
+"sentence": "Cups travel mug."
+},
+{
+"sentence": "The oven convection fan."
+},
+{
+"sentence": "Shelves corner unit."
+},
+{
+"sentence": "The blender personal size."
+},
+{
+"sentence": "Rugs bath mat."
+},
+{
+"sentence": "The alarm dual time."
+},
+{
+"sentence": "Pans wok stir."
+},
+{
+"sentence": "The fridge water dispenser."
+},
+{
+"sentence": "Chairs office ergonomic."
+},
+{
+"sentence": "The printer all in."
+},
+{
+"sentence": "Spoons wooden spoon."
+},
+{
+"sentence": "The clock cuckoo bird."
+},
+{
+"sentence": "Windows picture frame."
+},
+{
+"sentence": "The microwave over range."
+},
+{
+"sentence": "Books coffee table."
+},
+{
+"sentence": "The kettle instant boil."
+},
+{
+"sentence": "Drawers tool box."
+},
+{
+"sentence": "The fan pedestal base."
+},
+{
+"sentence": "Pillows decorative throw."
+},
+{
+"sentence": "The dishwasher quiet run."
+},
+{
+"sentence": "Light bulbs flood light."
+},
+{
+"sentence": "The iron vertical steam."
+},
+{
+"sentence": "Cups espresso shot."
+},
+{
+"sentence": "The oven pizza stone."
+},
+{
+"sentence": "Shelves garage storage."
+},
+{
+"sentence": "The blender immersion stick."
+},
+{
+"sentence": "Rugs door mat."
+},
+{
+"sentence": "The alarm sunrise simulation."
+},
+{
+"sentence": "Pans baking sheet."
+},
+{
+"sentence": "The fridge French door."
+},
+{
+"sentence": "Chairs dining set."
+},
+{
+"sentence": "The printer photo quality."
+},
+{
+"sentence": "Spoons serving fork."
+},
+{
+"sentence": "The clock atomic time."
+},
+{
+"sentence": "Windows sliding door."
+},
+{
+"sentence": "The microwave compact size."
+},
+{
+"sentence": "Books library card."
+},
+{
+"sentence": "The kettle glass body."
+},
+{
+"sentence": "Drawers kitchen utensil."
+},
+{
+"sentence": "The fan remote control."
+},
+{
+"sentence": "Pillows orthopedic support."
+},
+{
+"sentence": "The dishwasher stainless steel."
+},
+{
+"sentence": "Light bulbs dimmer switch."
+},
+{
+"sentence": "The iron non stick."
+},
+{
+"sentence": "Cups ceramic glaze."
+},
+{
+"sentence": "The oven double wall."
+},
+{
+"sentence": "Shelves adjustable height."
+},
+{
+"sentence": "The blender smoothie maker."
+},
+{
+"sentence": "Rugs wool blend."
+},
+{
+"sentence": "The alarm battery backup."
+},
+{
+"sentence": "Pans copper bottom."
+},
+{
+"sentence": "The fridge ice maker."
+},
+{
+"sentence": "Chairs lounge chair."
+},
+{
+"sentence": "The printer duplex print."
+},
+{
+"sentence": "Spoons plastic disposable."
+},
+{
+"sentence": "The clock pendulum swing."
+},
+{
+"sentence": "Windows casement crank."
+},
+{
+"sentence": "The microwave popcorn button."
+},
+{
+"sentence": "Books first edition."
+},
+{
+"sentence": "The kettle temperature control."
+},
+{
+"sentence": "Drawers organizer tray."
+},
+{
+"sentence": "The fan oscillating head."
+},
+{
+"sentence": "Pillows feather down."
+},
+{
+"sentence": "The dishwasher delay start."
+},
+{
+"sentence": "Light bulbs halogen bright."
+},
+{
+"sentence": "The iron spray mist."
+},
+{
+"sentence": "Cups insulated thermal."
+},
+{
+"sentence": "The oven warming drawer."
+},
+{
+"sentence": "Shelves wire rack."
+},
+{
+"sentence": "The blender food processor."
+},
+{
+"sentence": "Rugs outdoor patio."
+},
+{
+"sentence": "The alarm vibrating pillow."
+},
+{
+"sentence": "Pans griddle flat."
+},
+{
+"sentence": "The fridge bottom freezer."
+},
+{
+"sentence": "Chairs bean bag."
+},
+{
+"sentence": "The printer scanner combo."
+},
+{
+"sentence": "Spoons tasting menu."
+},
+{
+"sentence": "The clock world time."
+},
+{
+"sentence": "Windows awning vent."
+},
+{
+"sentence": "The microwave inverter tech."
+},
+{
+"sentence": "Books pop up."
+},
+{
+"sentence": "The kettle cordless base."
+},
+{
+"sentence": "Drawers cash register."
+},
+{
+"sentence": "The fan misting water."
+},
+{
+"sentence": "Pillows lumbar support."
+},
+{
+"sentence": "The dishwasher heated dry."
+},
+{
+"sentence": "Light bulbs CFL spiral."
+},
+{
+"sentence": "The iron travel size."
+},
+{
+"sentence": "Cups sippy cup."
+},
+{
+"sentence": "The oven sabbath mode."
+},
+{
+"sentence": "Shelves ladder lean."
+},
+{
+"sentence": "The blender bullet proof."
+},
+{
+"sentence": "Rugs shag pile."
+},
+{
+"sentence": "The alarm nature sounds."
+},
+{
+"sentence": "Pans dutch oven."
+},
+{
+"sentence": "The fridge smart connect."
+},
+{
+"sentence": "Chairs high chair."
+},
+{
+"sentence": "The printer 3D model."
+},
+{
+"sentence": "Spoons demitasse small."
+},
+{
+"sentence": "The clock timer set."
+},
+{
+"sentence": "Windows hopper basement."
+},
+{
+"sentence": "The microwave child lock."
+},
+{
+"sentence": "Books comic strip."
+},
+{
+"sentence": "The kettle gooseneck pour."
+},
+{
+"sentence": "Drawers apothecary chest."
+},
+{
+"sentence": "The fan whole house."
+},
+{
+"sentence": "Pillows wedge shape."
+},
+{
+"sentence": "The dishwasher third rack."
+},
+{
+"sentence": "Light bulbs night light."
+},
+{
+"sentence": "The iron sole plate."
+},
+{
+"sentence": "Cups mason jar."
+},
+{
+"sentence": "The oven proofing dough."
+},
+{
+"sentence": "Shelves etagere display."
+},
+{
+"sentence": "The blender tamper tool."
+},
+{
+"sentence": "Rugs sisal natural."
+},
+{
+"sentence": "The alarm projection display."
+},
+{
+"sentence": "Pans skillet cast."
+},
+{
+"sentence": "The fridge counter depth."
+},
+{
+"sentence": "Chairs adirondack outdoor."
+},
+{
+"sentence": "The printer large format."
+},
+{
+"sentence": "Spoons grapefruit serrated."
+},
+{
+"sentence": "The clock chime hourly."
+},
+{
+"sentence": "Windows double hung."
+},
+{
+"sentence": "The microwave exhaust fan."
+},
+{
+"sentence": "Books recipe cook."
+},
+{
+"sentence": "The kettle stove top."
+},
+{
+"sentence": "Drawers roll top."
+},
+{
+"sentence": "The fan attic vent."
+},
+{
+"sentence": "Pillows bolster long."
+},
+{
+"sentence": "The dishwasher soil sensor."
+},
+{
+"sentence": "Light bulbs spot light."
+},
+{
+"sentence": "The iron retractable cord."
+},
+{
+"sentence": "Cups stemless wine."
+},
+{
+"sentence": "The oven steam clean."
+},
+{
+"sentence": "Shelves baker rack."
+},
+{
+"sentence": "The blender nut butter."
+},
+{
+"sentence": "Rugs braided round."
+},
+{
+"sentence": "The alarm USB charge."
+},
+{
+"sentence": "Pans roasting rack."
+},
+{
+"sentence": "The fridge wine cooler."
+},
+{
+"sentence": "Chairs folding metal."
+},
+{
+"sentence": "The printer color laser."
+},
+{
+"sentence": "Spoons iced tea."
+},
+{
+"sentence": "The clock mantel piece."
+},
+{
+"sentence": "Windows bow curved."
+},
+{
+"sentence": "The microwave quick touch."
+},
+{
+"sentence": "Books travel guide."
+},
+{
+"sentence": "The kettle French press."
+},
+{
+"sentence": "Drawers jewelry box."
+},
+{
+"sentence": "The fan bathroom exhaust."
+},
+{
+"sentence": "Pillows cooling gel."
+},
+{
+"sentence": "The dishwasher adjustable tines."
+},
+{
+"sentence": "Light bulbs vintage Edison."
+},
+{
+"sentence": "The iron ceramic plate."
+},
+{
+"sentence": "Cups pint glass."
+},
+{
+"sentence": "The oven air fry."
+},
+{
+"sentence": "Shelves cube organizer."
+},
+{
+"sentence": "The blender soup hot."
+},
+{
+"sentence": "Rugs jute woven."
+},
+{
+"sentence": "The alarm Bluetooth speaker."
+},
+{
+"sentence": "Pans pressure cooker."
+},
+{
+"sentence": "The fridge mini bar."
+},
+{
+"sentence": "Chairs swivel base."
+},
+{
+"sentence": "The printer portable mobile."
+},
+{
+"sentence": "Spoons baby feeding."
+},
+{
+"sentence": "The clock desk top."
+},
+{
+"sentence": "Windows garden green."
+},
+{
+"sentence": "The microwave stainless finish."
+},
+{
+"sentence": "Books picture book."
+},
+{
+"sentence": "The kettle variable temp."
+},
+{
+"sentence": "Drawers file hanging."
+},
+{
+"sentence": "The fan clip on."
+},
+{
+"sentence": "Pillows travel neck."
+},
+{
+"sentence": "The dishwasher bottle jets."
+},
+{
+"sentence": "Light bulbs color changing."
+},
+{
+"sentence": "The iron anti drip."
+},
+{
+"sentence": "Cups collapsible silicone."
+},
+{
+"sentence": "The oven smart probe."
+},
+{
+"sentence": "Shelves tension pole."
+},
+{
+"sentence": "The blender vacuum seal."
+},
+{
+"sentence": "Rugs anti slip."
+},
+{
+"sentence": "The alarm white noise."
+},
+{
+"sentence": "Pans crepe thin."
+},
+{
+"sentence": "The fridge adjustable shelves."
+},
+{
+"sentence": "Chairs massage heat."
+},
+{
+"sentence": "The printer receipt thermal."
+},
+{
+"sentence": "Spoons cocktail stir."
+},
+{
+"sentence": "The clock silent sweep."
+},
+{
+"sentence": "Windows egress basement."
+},
+{
+"sentence": "The microwave eco mode."
+},
+{
+"sentence": "Books self help."
+},
+{
+"sentence": "The kettle infuser basket."
+},
+{
+"sentence": "Drawers soft close."
+},
+{
+"sentence": "The fan ionizer air."
+},
+{
+"sentence": "Pillows hypoallergenic fill."
+},
+{
+"sentence": "The dishwasher smart wash."
+},
+{
+"sentence": "Light bulbs motion sensor."
+},
+{
+"sentence": "The iron precision tip."
+},
+{
+"sentence": "Cups bamboo eco."
+},
+{
+"sentence": "The oven rapid preheat."
+},
+{
+"sentence": "Shelves over door."
+},
+{
+"sentence": "The blender quiet shield."
+},
+{
+"sentence": "Rugs machine wash."
+},
+{
+"sentence": "The alarm gradual wake."
+},
+{
+"sentence": "Pans omelet flip."
+},
+{
+"sentence": "The fridge door alarm."
+},
+{
+"sentence": "Chairs zero gravity."
+},
+{
+"sentence": "The printer label maker."
+},
+{
+"sentence": "Spoons honey dipper."
+},
+{
+"sentence": "The clock weather station."
+},
+{
+"sentence": "Windows impact resistant."
+},
+{
+"sentence": "The microwave trim kit."
+},
+{
+"sentence": "Books mystery novel."
+},
+{
+"sentence": "The kettle keep warm."
+},
+{
+"sentence": "Drawers divider insert."
+},
+{
+"sentence": "The fan smart wifi."
+},
+{
+"sentence": "Pillows reading prop."
+},
+{
+"sentence": "The dishwasher turbo zone."
+},
+{
+"sentence": "Light bulbs timer set."
+},
+{
+"sentence": "The iron self clean."
+},
+{
+"sentence": "Cups shot glass."
+},
+{
+"sentence": "The oven slow cook."
+},
+{
+"sentence": "Shelves ladder shelf."
+},
+{
+"sentence": "The blender travel cup."
+},
+{
+"sentence": "Rugs pet friendly."
+},
+{
+"sentence": "The alarm FM radio."
+},
+{
+"sentence": "Pans stock pot."
+},
+{
+"sentence": "The fridge humidity drawer."
+},
+{
+"sentence": "Chairs accent piece."
+},
+{
+"sentence": "The printer dot matrix."
+},
+{
+"sentence": "Spoons basting brush."
+},
+{
+"sentence": "The clock big ben."
+},
+{
+"sentence": "Windows french door."
+},
+{
+"sentence": "The microwave sensor reheat."
+},
+{
+"sentence": "Books fiction story."
+},
+{
+"sentence": "The kettle auto shut."
+},
+{
+"sentence": "Drawers lock key."
+},
+{
+"sentence": "The fan air purifier."
+},
+{
+"sentence": "Pillows body pillow."
+},
+{
+"sentence": "The dishwasher rinse aid."
+},
+{
+"sentence": "Light bulbs UV light."
+},
+{
+"sentence": "The iron fabric select."
+},
+{
+"sentence": "Cups champagne flute."
+},
+{
+"sentence": "The oven meat probe."
+},
+{
+"sentence": "Shelves closet organizer."
+},
+{
+"sentence": "The blender ice crush."
+},
+{
+"sentence": "Rugs hallway runner."
+},
+{
+"sentence": "The alarm power outage."
+},
+{
+"sentence": "Pans saute pan."
+},
+{
+"sentence": "The fridge energy saver."
+},
+{
+"sentence": "Chairs gaming chair."
+},
+{
+"sentence": "The printer card stock."
+},
+{
+"sentence": "Spoons mixing bowl."
+},
+{
+"sentence": "The clock stop watch."
+},
+{
+"sentence": "Windows tinted film."
+},
+{
+"sentence": "The microwave defrost weight."
+},
+{
+"sentence": "Books non fiction."
+},
+{
+"sentence": "The kettle boil dry."
+},
+{
+"sentence": "Drawers ball bearing."
+},
+{
+"sentence": "The fan timer off."
+},
+{
+"sentence": "Pillows microbead fill."
+},
+{
+"sentence": "The dishwasher child lock."
+},
+{
+"sentence": "Light bulbs grow plant."
+},
+{
+"sentence": "The iron burst steam."
+},
+{
+"sentence": "Cups red solo."
+},
+{
+"sentence": "The oven glass door."
+},
+{
+"sentence": "Shelves industrial metal."
+},
+{
+"sentence": "The blender dough blade."
+},
+{
+"sentence": "Rugs vintage distressed."
+},
+{
+"sentence": "The alarm loud buzzer."
+},
+{
+"sentence": "Pans grill pan."
+},
+{
+"sentence": "The fridge crisper bin."
+},
+{
+"sentence": "Chairs wing back."
+},
+{
+"sentence": "The printer envelope feed."
+},
+{
+"sentence": "Spoons rice paddle."
+},
+{
+"sentence": "The clock moon phase."
+},
+{
+"sentence": "Windows storm proof."
+},
+{
+"sentence": "The microwave add minute."
+},
+{
+"sentence": "Books text book."
+},
+{
+"sentence": "The kettle scale filter."
+},
+{
+"sentence": "Drawers full extension."
+},
+{
+"sentence": "The fan speed control."
+},
+{
+"sentence": "Pillows latex foam."
+},
+{
+"sentence": "The dishwasher express wash."
+},
+{
+"sentence": "Light bulbs bug repellent."
+},
+{
+"sentence": "The iron water tank."
+},
+{
+"sentence": "Cups beer stein."
+},
+{
+"sentence": "The oven bake element."
+},
+{
+"sentence": "Shelves glass door."
+},
+{
+"sentence": "The blender single serve."
+},
+{
+"sentence": "Rugs low pile."
+},
+{
+"sentence": "The alarm sleep tracker."
+},
+{
+"sentence": "Pans paella pan."
+},
+{
+"sentence": "The fridge adjustable temp."
+},
+{
+"sentence": "Chairs counter height."
+},
+{
+"sentence": "The printer poster size."
+},
+{
+"sentence": "Spoons caviar spoon."
+},
+{
+"sentence": "The clock binary code."
+},
+{
+"sentence": "Windows vinyl frame."
+},
+{
+"sentence": "The microwave mute button."
+},
+{
+"sentence": "Books diary journal."
+},
+{
+"sentence": "The kettle stainless steel."
+},
+{
+"sentence": "Drawers hidden compartment."
+},
+{
+"sentence": "The fan humidifier combo."
+},
+{
+"sentence": "Pillows contour shape."
+},
+{
+"sentence": "The dishwasher sanitize cycle."
+},
+{
+"sentence": "Light bulbs candle shape."
+},
+{
+"sentence": "The iron adjustable temp."
+},
+{
+"sentence": "Cups latte art."
+},
+{
+"sentence": "The oven rotisserie spit."
+},
+{
+"sentence": "Shelves modular system."
+},
+{
+"sentence": "The blender chopping bowl."
+},
+{
+"sentence": "Rugs Moroccan style."
+},
+{
+"sentence": "The alarm voice control."
+},
+{
+"sentence": "Pans fondue pot."
+},
+{
+"sentence": "The fridge sabbath mode."
+},
+{
+"sentence": "Chairs hammock swing."
+},
+{
+"sentence": "The printer sublimation dye."
+},
+{
+"sentence": "Spoons olive wood."
+},
+{
+"sentence": "The clock nixie tube."
+},
+{
+"sentence": "Windows smart glass."
+},
+{
+"sentence": "The microwave grill rack."
+},
+{
+"sentence": "Books coloring book."
+},
+{
+"sentence": "The kettle smart app."
+},
+{
+"sentence": "Drawers dovetail joint."
+},
+{
+"sentence": "The fan bladeless design."
+},
+{
+"sentence": "Pillows buckwheat hull."
+},
+{
+"sentence": "The dishwasher steam prewash."
+},
+{
+"sentence": "Light bulbs black light."
+},
+{
+"sentence": "The iron hanging loop."
+},
+{
+"sentence": "Cups copper mug."
+},
+{
+"sentence": "The oven dehydrate function."
+},
+{
+"sentence": "Shelves hanging wall."
+},
+{
+"sentence": "The blender baby food."
+},
+{
+"sentence": "Rugs cowhide natural."
+},
+{
+"sentence": "The alarm aroma therapy."
+},
+{
+"sentence": "Pans tagine clay."
+},
+{
+"sentence": "The fridge convertible zone."
+},
+{
+"sentence": "Chairs papasan cushion."
+},
+{
+"sentence": "The printer braille emboss."
+},
+{
+"sentence": "Spoons absinthe slotted."
+},
+{
+"sentence": "The clock sand hourglass."
+},
+{
+"sentence": "Windows fiberglass frame."
+},
+{
+"sentence": "The microwave bacon crisper."
+},
+{
+"sentence": "Books scrap book."
+},
+{
+"sentence": "The kettle percolator style."
+},
+{
+"sentence": "Drawers cedar lined."
+},
+{
+"sentence": "The fan evaporative cooler."
+},
+{
+"sentence": "Pillows kapok fill."
+},
+{
+"sentence": "The dishwasher pocket handle."
+},
+{
+"sentence": "Light bulbs strobe effect."
+},
+{
+"sentence": "The iron titanium sole."
+},
+{
+"sentence": "Cups tiki mug."
+},
+{
+"sentence": "The oven bread proof."
+},
+{
+"sentence": "Shelves pipe industrial."
+},
+{
+"sentence": "The blender batter mix."
+},
+{
+"sentence": "Rugs seagrass weave."
+},
+{
+"sentence": "The alarm haptic feedback."
+},
+{
+"sentence": "Pans asparagus pot."
+},
+{
+"sentence": "The fridge dual evaporator."
+},
+{
+"sentence": "Chairs kneeling stool."
+},
+{
+"sentence": "The printer vinyl cutter."
+},
+{
+"sentence": "Spoons escargot tong."
+},
+{
+"sentence": "The clock water clock."
+},
+{
+"sentence": "Windows clerestory high."
+},
+{
+"sentence": "The microwave steam sensor."
+},
+{
+"sentence": "Books address book."
+},
+{
+"sentence": "The kettle siphon brew."
+},
+{
+"sentence": "Drawers tambour roll."
+},
+{
+"sentence": "The fan solar powered."
+},
+{
+"sentence": "Pillows shredded foam."
+},
+{
+"sentence": "The dishwasher variable pressure."
+},
+{
+"sentence": "Light bulbs germicidal UV."
+},
+{
+"sentence": "The iron anti calc."
+},
+{
+"sentence": "Cups yeti cooler."
+},
+{
+"sentence": "The oven sabbath override."
+},
+{
+"sentence": "Shelves credenza buffet."
+},
+{
+"sentence": "The blender whipping cream."
+},
+{
+"sentence": "Rugs kilim flatweave."
+},
+{
+"sentence": "The alarm bed shaker."
+},
+{
+"sentence": "Pans tamale steamer."
+},
+{
+"sentence": "The fridge air filter."
+},
+{
+"sentence": "Chairs butterfly fold."
+},
+{
+"sentence": "The printer risograph print."
+},
+{
+"sentence": "Spoons lobster cracker."
+},
+{
+"sentence": "The clock candle clock."
+},
+{
+"sentence": "Windows transom above."
+},
+{
+"sentence": "The microwave convection combo."
+},
+{
+"sentence": "Books guest book."
+},
+{
+"sentence": "The kettle Turkish cezve."
+},
+{
+"sentence": "Drawers apothecary label."
+},
+{
+"sentence": "The fan neck wearable."
+},
+{
+"sentence": "Pillows anti snore."
+},
+{
+"sentence": "The dishwasher fingerprint resistant."
+},
+{
+"sentence": "Light bulbs aquarium light."
+},
+{
+"sentence": "The iron garment steamer."
+},
+{
+"sentence": "Cups demitasse cup."
+},
+{
+"sentence": "The oven pizza mode."
+},
+{
+"sentence": "Shelves hutch top."
+},
+{
+"sentence": "The blender salsa chop."
+},
+{
+"sentence": "Rugs berber loop."
+},
+{
+"sentence": "The alarm smart home."
+},
+{
+"sentence": "Pans canning pot."
+},
+{
+"sentence": "The fridge produce saver."
+},
+{
+"sentence": "Chairs egg chair."
+},
+{
+"sentence": "The printer plotter large."
+},
+{
+"sentence": "Spoons jam spoon."
+},
+{
+"sentence": "The clock incense stick."
+},
+{
+"sentence": "Windows oriel bay."
+},
+{
+"sentence": "The microwave drawer style."
+},
+{
+"sentence": "Books baby name."
+},
+{
+"sentence": "The kettle moka pot."
+},
+{
+"sentence": "Drawers lingerie chest."
+},
+{
+"sentence": "The fan car vent."
+},
+{
+"sentence": "Pillows u shape."
+},
+{
+"sentence": "The dishwasher stemware holder."
+},
+{
+"sentence": "Light bulbs reptile heat."
+},
+{
+"sentence": "The iron boiler system."
+},
+{
+"sentence": "Cups sake cup."
+},
+{
+"sentence": "The oven delayed bake."
+},
+{
+"sentence": "Shelves curio cabinet."
+},
+{
+"sentence": "The blender herb chop."
+},
+{
+"sentence": "Rugs dhurrie cotton."
+},
+{
+"sentence": "The alarm light therapy."
+},
+{
+"sentence": "Pans fish poacher."
+},
+{
+"sentence": "The fridge door in door."
+},
+{
+"sentence": "Chairs eames design."
+},
+{
+"sentence": "The printer screen print."
+},
+{
+"sentence": "Spoons sugar tong."
+},
+{
+"sentence": "The clock shadow sundial."
+},
+{
+"sentence": "Windows dormer roof."
+},
+{
+"sentence": "The microwave built in."
+},
+{
+"sentence": "Books phone book."
+},
+{
+"sentence": "The kettle ibrik copper."
+},
+{
+"sentence": "Drawers media console."
+},
+{
+"sentence": "The fan USB powered."
+},
+{
+"sentence": "Pillows v shape."
+},
+{
+"sentence": "The dishwasher tall tub."
+},
+{
+"sentence": "Light bulbs disco ball."
+},
+{
+"sentence": "The iron press machine."
+},
+{
+"sentence": "Cups infuser mug."
+},
+{
+"sentence": "The oven keep warm."
+},
+{
+"sentence": "Shelves room divider."
+},
+{
+"sentence": "The blender frozen drink."
+},
+{
+"sentence": "Rugs gabbeh tribal."
+},
+{
+"sentence": "The alarm fitness tracker."
+},
+{
+"sentence": "Pans escargot dish."
+},
+{
+"sentence": "The fridge craft ice."
+},
+{
+"sentence": "Chairs chesterfield tuft."
+},
+{
+"sentence": "The printer offset press."
+},
+{
+"sentence": "Spoons mustard pot."
+},
+{
+"sentence": "The clock oil lamp."
+},
+{
+"sentence": "Windows jalousie louver."
+},
+{
+"sentence": "The microwave air fry."
+},
+{
+"sentence": "Books atlas map."
+},
+{
+"sentence": "The kettle samovar Russian."
+},
+{
+"sentence": "Drawers armoire wardrobe."
+},
+{
+"sentence": "The fan stroller clip."
+},
+{
+"sentence": "Pillows maternity support."
+},
+{
+"sentence": "The dishwasher adjustable rack."
+},
+{
+"sentence": "Light bulbs lava lamp."
+},
+{
+"sentence": "The iron mangle press."
+},
+{
+"sentence": "Cups yerba mate."
+},
+{
+"sentence": "The oven steam bake."
+},
+{
+"sentence": "Shelves shadow box."
+},
+{
+"sentence": "The blender spice grind."
+},
+{
+"sentence": "Rugs flokati wool."
+},
+{
+"sentence": "The alarm puzzle solve."
+},
+{
+"sentence": "Pans cataplana Portuguese."
+},
+{
+"sentence": "The fridge slim fit."
+},
+{
+"sentence": "Chairs windsor spindle."
+},
+{
+"sentence": "The printer flexo print."
+},
+{
+"sentence": "Spoons bone china."
+},
+{
+"sentence": "The clock atomic clock."
+},
+{
+"sentence": "Windows lancet tall."
+},
+{
+"sentence": "The microwave speed cook."
+},
+{
+"sentence": "Books year book."
+},
+{
+"sentence": "The kettle kyusu Japanese."
+},
+{
+"sentence": "Drawers hope chest."
+},
+{
+"sentence": "The fan car seat."
+},
+{
+"sentence": "Pillows ring bearer."
+},
+{
+"sentence": "The dishwasher power scrub."
+},
+{
+"sentence": "Light bulbs neon sign."
+},
+{
+"sentence": "The iron rotary press."
+},
+{
+"sentence": "Cups tulip glass."
+},
+{
+"sentence": "The oven sous vide."
+},
+{
+"sentence": "Shelves vitrine case."
+},
+{
+"sentence": "The blender emulsifier wand."
+},
+{
+"sentence": "Rugs aubusson tapestry."
+},
+{
+"sentence": "The alarm math problem."
+},
+{
+"sentence": "Pans terracotta bake."
+},
+{
+"sentence": "The fridge insta view."
+},
+{
+"sentence": "Chairs klismos curve."
+},
+{
+"sentence": "The printer gravure roll."
+},
+{
+"sentence": "Spoons spork hybrid."
+},
+{
+"sentence": "The clock metronome tick."
+},
+{
+"sentence": "Windows oculus round."
+},
+{
+"sentence": "The microwave smart inverter."
+},
+{
+"sentence": "Books ledger account."
+},
+{
+"sentence": "The kettle hobnail cast."
+},
+{
+"sentence": "Drawers chifferobe combo."
+},
+{
+"sentence": "The fan hand held."
+},
+{
+"sentence": "Pillows knee support."
+},
+{
+"sentence": "The dishwasher zone wash."
+},
+{
+"sentence": "Light bulbs fiber optic."
+},
+{
+"sentence": "The iron trouser press."
+},
+{
+"sentence": "Cups snifter brandy."
+},
+{
+"sentence": "The oven turbo convection."
+},
+{
+"sentence": "Shelves alcove built."
+},
+{
+"sentence": "The blender citrus juicer."
+},
+{
+"sentence": "Rugs savonnerie pile."
+},
+{
+"sentence": "The alarm QR scan."
+},
+{
+"sentence": "Pans raclette grill."
+},
+{
+"sentence": "The fridge linear compressor."
+},
+{
+"sentence": "Chairs bergere enclosed."
+},
+{
+"sentence": "The printer letterpress type."
+},
+{
+"sentence": "Spoons runcible spoon."
+},
+{
+"sentence": "The clock clepsydra water."
+},
+{
+"sentence": "Windows rose window."
+},
+{
+"sentence": "The microwave turbo defrost."
+},
+{
+"sentence": "Books incunabula ancient."
+},
+{
+"sentence": "The kettle yixing clay."
+},
+{
+"sentence": "Drawers bombe curved."
+},
+{
+"sentence": "The fan mist fan."
+},
+{
+"sentence": "Pillows donut seat."
+},
+{
+"sentence": "The dishwasher smart diagnose."
+},
+{
+"sentence": "Light bulbs plasma ball."
+},
+{
+"sentence": "The iron calender roll."
+},
+{
+"sentence": "Cups coupe champagne."
+},
+{
+"sentence": "The oven smart wifi."
+},
+{
+"sentence": "Shelves barrister bookcase."
+},
+{
+"sentence": "The blender grain mill."
+},
+{
+"sentence": "Rugs axminster cut."
+},
+{
+"sentence": "The alarm captcha solve."
+},
+{
+"sentence": "Pans cloche bake."
+},
+{
+"sentence": "The fridge knock knock."
+},
+{
+"sentence": "Chairs savonarola fold."
+},
+{
+"sentence": "The printer mimeograph stencil."
+},
+{
+"sentence": "Spoons apostle spoon."
+},
+{
+"sentence": "The clock gnomon shadow."
+},
+{
+"sentence": "Windows palladian arch."
+},
+{
+"sentence": "The microwave cyclonic wave."
+},
+{
+"sentence": "Books vellum bound."
+},
+{
+"sentence": "The kettle chagama iron."
+},
+{
+"sentence": "Drawers semainier weekly."
+},
+{
+"sentence": "The fan vortex air."
+},
+{
+"sentence": "Pillows boppy nursing."
+},
+{
+"sentence": "The dishwasher smart rack."
+},
+{
+"sentence": "Light bulbs tesla coil."
+},
+{
+"sentence": "The iron mangler box."
+},
+{
+"sentence": "Cups highball glass."
+},
+{
+"sentence": "The oven steam inject."
+},
+{
+"sentence": "Shelves etagere tiered."
+},
+{
+"sentence": "The blender meat grind."
+},
+{
+"sentence": "Rugs wilton weave."
+},
+{
+"sentence": "The alarm barcode scan."
+},
+{
+"sentence": "Pans tajine conical."
+},
+{
+"sentence": "The fridge linear cool."
+},
+{
+"sentence": "Chairs caquetoire gossip."
+},
+{
+"sentence": "The printer hectograph jelly."
+},
+{
+"sentence": "Spoons caddy spoon."
+},
+{
+"sentence": "The clock obelisk Egyptian."
+},
+{
+"sentence": "Windows fanlight semi."
+},
+{
+"sentence": "The microwave genius sensor."
+},
+{
+"sentence": "Books codex manuscript."
+},
+{
+"sentence": "The kettle tetsubin cast."
+},
+{
+"sentence": "Drawers highboy tall."
+},
+{
+"sentence": "The fan cyclonic blade."
+},
+{
+"sentence": "Pillows sobakawa buckwheat."
+},
+{
+"sentence": "The dishwasher storm wash."
+},
+{
+"sentence": "Light bulbs kirlian photo."
+},
+{
+"sentence": "The iron sad iron."
+},
+{
+"sentence": "Cups old fashioned."
+},
+{
+"sentence": "The oven true convection."
+},
+{
+"sentence": "Shelves whatnot stand."
+},
+{
+"sentence": "The blender pasta maker."
+},
+{
+"sentence": "Rugs tufted wool."
+},
+{
+"sentence": "The alarm riddle solve."
+},
+{
+"sentence": "Pans karahi wok."
+},
+{
+"sentence": "The fridge craft beer."
+},
+{
+"sentence": "Chairs faldstool fold."
+},
+{
+"sentence": "The printer spirit duplicator."
+},
+{
+"sentence": "Spoons mote spoon."
+},
+{
+"sentence": "The clock astrolabe star."
+},
+{
+"sentence": "Windows oeil de boeuf."
+},
+{
+"sentence": "The microwave even cook."
+},
+{
+"sentence": "Books scroll roll."
+},
+{
+"sentence": "The kettle kamjove glass."
+},
+{
+"sentence": "Drawers lowboy short."
+},
+{
+"sentence": "The fan axial flow."
+},
+{
+"sentence": "Pillows roho air."
+},
+{
+"sentence": "The dishwasher linear wash."
+},
+{
+"sentence": "Light bulbs geissler tube."
+},
+{
+"sentence": "The iron goffering frill."
+},
+{
+"sentence": "Cups collins glass."
+},
+{
+"sentence": "The oven glide rack."
+},
+{
+"sentence": "Shelves pier glass."
+},
+{
+"sentence": "The blender sausage stuffer."
+},
+{
+"sentence": "Rugs chenille soft."
+},
+{
+"sentence": "The alarm labyrinth maze."
+},
+{
+"sentence": "Pans comal flat."
+},
+{
+"sentence": "The fridge twin chill."
+},
+{
+"sentence": "Chairs sgabello stool."
+},
+{
+"sentence": "The printer linotype machine."
+},
+{
+"sentence": "Spoons anointing spoon."
+},
+{
+"sentence": "The clock quadrant angle."
+},
+{
+"sentence": "Windows diocletian bath."
+},
+{
+"sentence": "The microwave turbo fan."
+},
+{
+"sentence": "Books palimpsest reuse."
+},
+{
+"sentence": "The kettle hojicha roast."
+},
+{
+"sentence": "Drawers commode chest."
+},
+{
+"sentence": "The fan centrifugal blower."
+},
+{
+"sentence": "Pillows tempur pedic."
+},
+{
+"sentence": "The dishwasher quad wash."
+},
+{
+"sentence": "Light bulbs crookes tube."
+},
+{
+"sentence": "The iron charcoal filled."
+},
+{
+"sentence": "Cups pilsner glass."
+},
+{
+"sentence": "The oven split rack."
+},
+{
+"sentence": "Shelves console table."
+},
+{
+"sentence": "The blender ice cream."
+},
+{
+"sentence": "Rugs broadloom wall."
+},
+{
+"sentence": "The alarm captcha image."
+},
+{
+"sentence": "Pans tava Indian."
+},
+{
+"sentence": "The fridge slim ice."
+},
+{
+"sentence": "Chairs voyeuse watch."
+},
+{
+"sentence": "The printer monotype cast."
+},
+{
+"sentence": "Spoons coronation spoon."
+},
+{
+"sentence": "The clock nocturnal star."
+},
+{
+"sentence": "Windows thermal pane."
+},
+{
+"sentence": "The microwave voice control."
+},
+{
+"sentence": "Books illuminated manuscript."
+},
+{
+"sentence": "The kettle neti pot."
+},
+{
+"sentence": "Drawers secretaire desk."
+},
+{
+"sentence": "The fan radial blade."
+},
+{
+"sentence": "Pillows coccyx cutout."
+},
+{
+"sentence": "The dishwasher true steam."
+},
+{
+"sentence": "Light bulbs nixie display."
+},
+{
+"sentence": "The iron box iron."
+},
+{
+"sentence": "Cups hurricane glass."
+},
+{
+"sentence": "The oven glide out."
+},
+{
+"sentence": "Shelves demilune half."
+},
+{
+"sentence": "The blender tofu press."
+},
+{
+"sentence": "Rugs needlepoint stitch."
+},
+{
+"sentence": "The alarm brain wave."
+},
+{
+"sentence": "Pans wok ring."
+},
+{
+"sentence": "The fridge dual ice."
+},
+{
+"sentence": "Chairs prie dieu."
+},
+{
+"sentence": "The printer pantograph engrave."
+},
+{
+"sentence": "Spoons caudle cup."
+},
+{
+"sentence": "The clock equinoctial dial."
+},
+{
+"sentence": "Windows quarry tile."
+},
+{
+"sentence": "The microwave smart cook."
+},
+{
+"sentence": "Books bestiary animal."
+},
+{
+"sentence": "The kettle balti dish."
+},
+{
+"sentence": "Drawers tallboy chest."
+},
+{
+"sentence": "The fan mixed flow."
+},
+{
+"sentence": "Pillows zafu meditation."
+},
+{
+"sentence": "The dishwasher dynamic dry."
+},
+{
+"sentence": "Light bulbs dewar flask."
+},
+{
+"sentence": "The iron flat iron."
+},
+{
+"sentence": "Cups weizen glass."
+},
+{
+"sentence": "The oven easy clean."
+},
+{
+"sentence": "Shelves pier mirror."
+},
+{
+"sentence": "The blender salad dressing."
+},
+{
+"sentence": "Rugs petit point."
+},
+{
+"sentence": "The alarm sleep cycle."
+},
+{
+"sentence": "Pans plancha grill."
+},
+{
+"sentence": "The fridge smart diagnosis."
+},
+{
+"sentence": "Chairs farthingale skirt."
+},
+{
+"sentence": "The printer intaglio plate."
+},
+{
+"sentence": "Spoons loving spoon."
+},
+{
+"sentence": "The clock analemma curve."
+},
+{
+"sentence": "Windows bullion gold."
+},
+{
+"sentence": "The microwave even heat."
+},
+{
+"sentence": "Books psalter prayer."
+},
+{
+"sentence": "The kettle jezva Turkish."
+},
+{
+"sentence": "Drawers chiffonier tall."
+},
+{
+"sentence": "The fan tangential blower."
+},
+{
+"sentence": "Pillows dakimakura body."
+},
+{
+"sentence": "The dishwasher auto release."
+},
+{
+"sentence": "Light bulbs moore tube."
+},
+{
+"sentence": "The iron tailors clapper."
+},
+{
+"sentence": "Cups nick and nora."
+},
+{
+"sentence": "The oven hidden bake."
+},
+{
+"sentence": "Shelves breakfront china."
+},
+{
+"sentence": "The blender dry grind."
+},
+{
+"sentence": "Rugs soumak flat."
+},
+{
+"sentence": "The alarm light flash."
+},
+{
+"sentence": "Pans cataplana clamp."
+},
+{
+"sentence": "The fridge craft water."
+},
+{
+"sentence": "Chairs x frame."
+},
+{
+"sentence": "The printer lithography stone."
+},
+{
+"sentence": "Spoons Welsh love."
+},
+{
+"sentence": "The clock scaphe dial."
+},
+{
+"sentence": "Windows tracery gothic."
+},
+{
+"sentence": "The microwave zero clearance."
+},
+{
+"sentence": "Books book of hours."
+},
+{
+"sentence": "The kettle brikka espresso."
+},
+{
+"sentence": "Drawers Wellington chest."
+},
+{
+"sentence": "The fan propeller blade."
+},
+{
+"sentence": "Pillows ombracio travel."
+},
+{
+"sentence": "The dishwasher crystal dry."
+},
+{
+"sentence": "Light bulbs swan incandescent."
+},
+{
+"sentence": "The iron sleeve board."
+},
+{
+"sentence": "Cups zombie glass."
+},
+{
+"sentence": "The oven french door."
+},
+{
+"sentence": "Shelves vitrine display."
+},
+{
+"sentence": "The blender milling blade."
+},
+{
+"sentence": "Rugs ryijy Finnish."
+},
+{
+"sentence": "The alarm aroma wake."
+},
+{
+"sentence": "Pans tatin tart."
+},
+{
+"sentence": "The fridge slim design."
+},
+{
+"sentence": "Chairs curule seat."
+},
+{
+"sentence": "The printer rotary press."
+},
+{
+"sentence": "Spoons christening gift."
+},
+{
+"sentence": "The clock armillary sphere."
+},
+{
+"sentence": "Windows mullion divide."
+},
+{
+"sentence": "The microwave turbo steam."
+},
+{
+"sentence": "Books missal mass."
+},
+{
+"sentence": "The kettle cafetiere French."
+},
+{
+"sentence": "Drawers cassone marriage."
+},
+{
+"sentence": "The fan aerofoil blade."
+},
+{
+"sentence": "Pillows zabuton cushion."
+},
+{
+"sentence": "The dishwasher power dry."
+},
+{
+"sentence": "Light bulbs audion tube."
+},
+{
+"sentence": "The iron puff sleeve."
+},
+{
+"sentence": "Cups coupe glass."
+},
+{
+"sentence": "The oven smart slide."
+},
+{
+"sentence": "Shelves secretaire bookcase."
+},
+{
+"sentence": "The blender disc emulsify."
+},
+{
+"sentence": "Rugs rya knot."
+},
+{
+"sentence": "The alarm puzzle lock."
+},
+{
+"sentence": "Pans bain marie."
+},
+{
+"sentence": "The fridge turbo cool."
+},
+{
+"sentence": "Chairs gondola sofa."
+},
+{
+"sentence": "The printer serigraph screen."
+},
+{
+"sentence": "Spoons bombilla straw."
+},
+{
+"sentence": "The clock torquetum instrument."
+},
+{
+"sentence": "Windows lancet window."
+},
+{
+"sentence": "The microwave smart vent."
+},
+{
+"sentence": "Books grimoire spell."
+},
+{
+"sentence": "The kettle percolator drip."
+},
+{
+"sentence": "Drawers vargueno desk."
+},
+{
+"sentence": "The fan plenum chamber."
+},
+{
+"sentence": "Pillows futon mat."
+},
+{
+"sentence": "The dishwasher smart leak."
+},
+{
+"sentence": "Light bulbs nernst glower."
+},
+{
+"sentence": "The iron tailor ham."
+},
+{
+"sentence": "Cups glencairn whisky."
+},
+{
+"sentence": "The oven pro bake."
+},
+{
+"sentence": "Shelves tambour door."
+},
+{
+"sentence": "The blender whipping disc."
+},
+{
+"sentence": "Rugs navajo weave."
+},
+{
+"sentence": "The alarm vibration motor."
+},
+{
+"sentence": "Pans sabatier knife."
+},
+{
+"sentence": "The fridge linear inverter."
+},
+{
+"sentence": "Chairs brewer chair."
+},
+{
+"sentence": "The printer collotype plate."
+},
+{
+"sentence": "Spoons porringer bowl."
+},
+{
+"sentence": "The clock verge escapement."
+},
+{
+"sentence": "Windows oriel projecting."
+},
+{
+"sentence": "The microwave genius reheat."
+},
+{
+"sentence": "Books incunable early."
+},
+{
+"sentence": "The kettle stovetop whistle."
+},
+{
+"sentence": "Drawers bureau plat."
+},
+{
+"sentence": "The fan squirrel cage."
+},
+{
+"sentence": "Pillows makura Japanese."
+},
+{
+"sentence": "The dishwasher auto dose."
+},
+{
+"sentence": "Light bulbs tantalum filament."
+},
+{
+"sentence": "The iron mitt press."
+},
+{
+"sentence": "Cups chalice goblet."
+},
+{
+"sentence": "The oven turbo boil."
+},
+{
+"sentence": "Shelves bonnier case."
+},
+{
+"sentence": "The blender spiralizer attach."
+},
+{
+"sentence": "Rugs boucherouite rag."
+},
+{
+"sentence": "The alarm circadian rhythm."
+},
+{
+"sentence": "Pans cocotte enamel."
+},
+{
+"sentence": "The fridge smart thinq."
+},
+{
+"sentence": "Chairs fauteuil arm."
+},
+{
+"sentence": "The printer aquatint etch."
+},
+{
+"sentence": "Spoons quenelle shape."
+},
+{
+"sentence": "The clock foliot balance."
+},
+{
+"sentence": "Windows fanlight door."
+},
+{
+"sentence": "The microwave cyclonic inverter."
+},
+{
+"sentence": "Books antiphonary chant."
+},
+{
+"sentence": "The kettle nettle tea."
+},
+{
+"sentence": "Drawers tall chest."
+},
+{
+"sentence": "The fan impeller wheel."
+},
+{
+"sentence": "Pillows hugger body."
+},
+{
+"sentence": "The dishwasher true clean."
+},
+{
+"sentence": "Light bulbs limelight stage."
+},
+{
+"sentence": "The iron point press."
+},
+{
+"sentence": "Cups riedel stem."
+},
+{
+"sentence": "The oven easy glide."
+},
+{
+"sentence": "Shelves secretaire abattant."
+},
+{
+"sentence": "The blender slicer shredder."
+},
+{
+"sentence": "Rugs zapotec Mexican."
+},
+{
+"sentence": "The alarm jet lag."
+},
+{
+"sentence": "Pans poele fry."
+},
+{
+"sentence": "The fridge smart grid."
+},
+{
+"sentence": "Chairs tete a tete."
+},
+{
+"sentence": "The printer mezzotint rock."
+},
+{
+"sentence": "Spoons toddy ladle."
+},
+{
+"sentence": "The clock anchor escapement."
+},
+{
+"sentence": "Windows sidelight flank."
+},
+{
+"sentence": "The microwave even defrost."
+},
+{
+"sentence": "Books bestiarium medieval."
+},
+{
+"sentence": "The kettle billy can."
+},
+{
+"sentence": "Drawers cassapanca bench."
+},
+{
+"sentence": "The fan volute casing."
+},
+{
+"sentence": "Pillows tempur neck."
+},
+{
+"sentence": "The dishwasher auto clean."
+},
+{
+"sentence": "Light bulbs arc lamp."
+},
+{
+"sentence": "The iron seam buster."
+},
+{
+"sentence": "Cups tasting cup."
+},
+{
+"sentence": "The oven insta bake."
+},
+{
+"sentence": "Shelves chiffonier side."
+},
+{
+"sentence": "The blender juicer attach."
+},
+{
+"sentence": "Rugs rag rug."
+},
+{
+"sentence": "The alarm nap timer."
+},
+{
+"sentence": "Pans sautoir jump."
+},
+{
+"sentence": "The fridge smart view."
+},
+{
+"sentence": "Chairs confessional box."
+},
+{
+"sentence": "The printer drypoint needle."
+},
+{
+"sentence": "Spoons punch ladle."
+},
+{
+"sentence": "The clock deadbeat escapement."
+},
+{
+"sentence": "Windows lunette half."
+},
+{
+"sentence": "The microwave smart sensor."
+},
+{
+"sentence": "Books herbarium plant."
+},
+{
+"sentence": "The kettle dixie whistle."
+},
+{
+"sentence": "Drawers commode night."
+},
+{
+"sentence": "The fan cross flow."
+},
+{
+"sentence": "Pillows snuggle pedic."
+},
+{
+"sentence": "The dishwasher power zone."
+},
+{
+"sentence": "Light bulbs yablochkov candle."
+},
+{
+"sentence": "The iron tailor point."
+},
+{
+"sentence": "Cups grappa glass."
+},
+{
+"sentence": "The oven smart probe."
+},
+{
+"sentence": "Shelves tambour roll."
+},
+{
+"sentence": "The blender food chop."
+},
+{
+"sentence": "Rugs hooked rug."
+},
+{
+"sentence": "The alarm power nap."
+},
+{
+"sentence": "Pans rondeau pot."
+},
+{
+"sentence": "The fridge fresh zone."
+},
+{
+"sentence": "Chairs duchesse brisee."
+},
+{
+"sentence": "The printer engraving burin."
+},
+{
+"sentence": "Spoons christening spoon."
+},
+{
+"sentence": "The clock grasshopper escapement."
+},
+{
+"sentence": "Windows ogee arch."
+},
+{
+"sentence": "The microwave genius cook."
+},
+{
+"sentence": "Books lapidary gem."
+},
+{
+"sentence": "The kettle campfire pot."
+},
+{
+"sentence": "Drawers lingerie dresser."
+},
+{
+"sentence": "The fan forward curve."
+},
+{
+"sentence": "Pillows my pillow."
+},
+{
+"sentence": "The dishwasher true rinse."
+},
+{
+"sentence": "Light bulbs limelight gas."
+},
+{
+"sentence": "The iron clapper board."
+},
+{
+"sentence": "Cups absinthe glass."
+},
+{
+"sentence": "The oven smart bake."
+},
+{
+"sentence": "Shelves pier table."
+},
+{
+"sentence": "The blender slicer disc."
+},
+{
+"sentence": "Rugs patchwork quilt."
+},
+{
+"sentence": "The alarm sleep coach."
+},
+{
+"sentence": "Pans braiser low."
+},
+{
+"sentence": "The fridge moisture control."
+},
+{
+"sentence": "Chairs voltaire arm."
+},
+{
+"sentence": "The printer woodcut block."
+},
+{
+"sentence": "Spoons tea caddy."
+},
+{
+"sentence": "The clock remontoire rewind."
+},
+{
+"sentence": "Windows quatrefoil four."
+},
+{
+"sentence": "The microwave turbo cook."
+},
+{
+"sentence": "Books physiologus beast."
+},
+{
+"sentence": "The kettle copper bottom."
+},
+{
+"sentence": "Drawers bowfront curve."
+},
+{
+"sentence": "The fan backward curve."
+},
+{
+"sentence": "Pillows coop home."
+},
+{
+"sentence": "The dishwasher smart cycle."
+},
+{
+"sentence": "Light bulbs hewitt mercury."
+},
+{
+"sentence": "The iron needle point."
+},
+{
+"sentence": "Cups cordial small."
+},
+{
+"sentence": "The oven true european."
+},
+{
+"sentence": "Shelves canterbury magazine."
+},
+{
+"sentence": "The blender shredder disc."
+},
+{
+"sentence": "Rugs rag braid."
+},
+{
+"sentence": "The alarm dream diary."
+},
+{
+"sentence": "Pans sauteuse slope."
+},
+{
+"sentence": "The fridge glide bin."
+},
+{
+"sentence": "Chairs banquette bench."
+},
+{
+"sentence": "The printer etching acid."
+},
+{
+"sentence": "Spoons stilton scoop."
+},
+{
+"sentence": "The clock turret tower."
+},
+{
+"sentence": "Windows trefoil three."
+},
+{
+"sentence": "The microwave smart grill."
+},
+{
+"sentence": "Books florilegium flower."
+},
+{
+"sentence": "The kettle billy tea."
+},
+{
+"sentence": "Drawers serpentine front."
+},
+{
+"sentence": "The fan aero dynamic."
+},
+{
+"sentence": "Pillows snore relief."
+},
+{
+"sentence": "The dishwasher power wash."
+},
+{
+"sentence": "Light bulbs cooper hewitt."
+},
+{
+"sentence": "The iron sleeve roll."
+},
+{
+"sentence": "Cups pony glass."
+},
+{
+"sentence": "The oven smart convection."
+},
+{
+"sentence": "Shelves nest table."
+},
+{
+"sentence": "The blender dough hook."
+},
+{
+"sentence": "Rugs locker hook."
+},
+{
+"sentence": "The alarm lucid dream."
+},
+{
+"sentence": "Pans poelon copper."
+},
+{
+"sentence": "The fridge fresh air."
+},
+{
+"sentence": "Chairs chauffeuse low."
+},
+{
+"sentence": "The printer linocut gouge."
+},
+{
+"sentence": "Spoons marrow scoop."
+},
+{
+"sentence": "The clock equation time."
+},
+{
+"sentence": "Windows cinquefoil five."
+},
+{
+"sentence": "The microwave smart defrost."
+},
+{
+"sentence": "Books armorial herald."
+},
+{
+"sentence": "The kettle campfire billy."
+},
+{
+"sentence": "Drawers bombé swell."
+},
+{
+"sentence": "The fan plenum fan."
+},
+{
+"sentence": "Pillows cervical support."
+},
+{
+"sentence": "The dishwasher true wash."
+},
+{
+"sentence": "Light bulbs davy lamp."
+},
+{
+"sentence": "The iron tailor shears."
+},
+{
+"sentence": "Cups pousse cafe."
+},
+{
+"sentence": "The oven pro style."
+},
+{
+"sentence": "Shelves what not."
+},
+{
+"sentence": "The blender julienne disc."
+},
+{
+"sentence": "Rugs locker hooked."
+},
+{
+"sentence": "The alarm rem sleep."
+},
+{
+"sentence": "Pans fait tout."
+},
+{
+"sentence": "The fridge smart pull."
+},
+{
+"sentence": "Chairs confidente sofa."
+},
+{
+"sentence": "The printer photogravure."
+},
+{
+"sentence": "Spoons anointing oil."
+},
+{
+"sentence": "The clock tidal dial."
+},
+{
+"sentence": "Windows lights sash."
+},
+{
+"sentence": "The microwave smart reheat."
+},
+{
+"sentence": "Books enchiridion handbook."
+},
+{
+"sentence": "The kettle cowboy coffee."
+},
+{
+"sentence": "Drawers block front."
+},
+{
+"sentence": "The fan vane axial."
+},
+{
+"sentence": "Pillows side sleeper."
+},
+{
+"sentence": "The dishwasher auto dry."
+},
+{
+"sentence": "Light bulbs limelight block."
+},
+{
+"sentence": "The iron seam roll."
+},
+{
+"sentence": "Cups rocks glass."
+},
+{
+"sentence": "The oven smart range."
+},
+{
+"sentence": "Shelves torcheres stand."
+},
+{
+"sentence": "The blender grating disc."
+},
+{
+"sentence": "Rugs rag woven."
+},
+{
+"sentence": "The alarm delta wave."
+},
+{
+"sentence": "Pans rondeau braise."
+},
+{
+"sentence": "The fridge glide shelf."
+},
+{
+"sentence": "Chairs duchesse boat."
+},
+{
+"sentence": "The printer heliogravure."
+},
+{
+"sentence": "Spoons asparagus tong."
+},
+{
+"sentence": "The clock perpetual calendar."
+},
+{
+"sentence": "Windows muntin bar."
+},
+{
+"sentence": "The microwave genius grill."
+},
+{
+"sentence": "Books lapidarium stone."
+},
+{
+"sentence": "The kettle bush tea."
+},
+{
+"sentence": "Drawers broken pediment."
+},
+{
+"sentence": "The fan tube axial."
+},
+{
+"sentence": "Pillows back support."
+},
+{
+"sentence": "The dishwasher smart rinse."
+},
+{
+"sentence": "Light bulbs rush light."
+},
+{
+"sentence": "The iron clapper tool."
+},
+{
+"sentence": "Cups julep cup."
+},
+{
+"sentence": "The oven insta heat."
+},
+{
+"sentence": "Shelves canterbury music."
+},
+{
+"sentence": "The blender french fry."
+},
+{
+"sentence": "Rugs penny rug."
+},
+{
+"sentence": "The alarm theta wave."
+},
+{
+"sentence": "Pans splayed saute."
+},
+{
+"sentence": "The fridge smart hub."
+},
+{
+"sentence": "Chairs marquise seat."
+},
+{
+"sentence": "The printer pochoir stencil."
+},
+{
+"sentence": "Spoons ice tong."
+},
+{
+"sentence": "The clock repeater chime."
+},
+{
+"sentence": "Windows divided light."
+},
+{
+"sentence": "The microwave turbo grill."
+},
+{
+"sentence": "Books formulary recipe."
+},
+{
+"sentence": "The kettle trail pot."
+},
+{
+"sentence": "Drawers linen press."
+},
+{
+"sentence": "The fan plug in."
+},
+{
+"sentence": "Pillows leg spacer."
+},
+{
+"sentence": "The dishwasher true dry."
+},
+{
+"sentence": "Light bulbs betty lamp."
+},
+{
+"sentence": "The iron ham sleeve."
+},
+{
+"sentence": "Cups martini glass."
+},
+{
+"sentence": "The oven smart grill."
+},
+{
+"sentence": "Shelves pier cabinet."
+},
+{
+"sentence": "The blender waffle batter."
+},
+{
+"sentence": "Rugs candlewick tuft."
+},
+{
+"sentence": "The alarm alpha wave."
+},
+{
+"sentence": "Pans poele pan."
+},
+{
+"sentence": "The fridge fresh filter."
+},
+{
+"sentence": "Chairs causeuse love."
+},
+{
+"sentence": "The printer cliché verre."
+},
+{
+"sentence": "Spoons sugar nipper."
+},
+{
+"sentence": "The clock tourbillon spin."
+},
+{
+"sentence": "Windows sidelight door."
+},
+{
+"sentence": "The microwave smart bake."
+},
+{
+"sentence": "Books cartulary charter."
+},
+{
+"sentence": "The kettle camp percolator."
+},
+{
+"sentence": "Drawers linen chest."
+},
+{
+"sentence": "The fan wall mount."
+},
+{
+"sentence": "Pillows wedge acid."
+},
+{
+"sentence": "The dishwasher auto wash."
+},
+{
+"sentence": "Light bulbs argand lamp."
+},
+{
+"sentence": "The iron point sleeve."
+},
+{
+"sentence": "Cups coupe saucer."
+},
+{
+"sentence": "The oven pro convection."
+},
+{
+"sentence": "Shelves canterbury stand."
+},
+{
+"sentence": "The blender slicing disc."
+},
+{
+"sentence": "Rugs rag braided."
+},
+{
+"sentence": "The alarm beta wave."
+},
+{
+"sentence": "Pans blini pan."
+},
+{
+"sentence": "The fridge glide drawer."
+},
+{
+"sentence": "Chairs vis a vis."
+},
+{
+"sentence": "The printer collagraph plate."
+},
+{
+"sentence": "Spoons salt spoon."
+},
+{
+"sentence": "The clock equation clock."
+},
+{
+"sentence": "Windows fan light."
+},
+{
+"sentence": "The microwave genius defrost."
+},
+{
+"sentence": "Books cartographer map."
+},
+{
+"sentence": "The kettle trail billy."
+},
+{
+"sentence": "Drawers linen fold."
+},
+{
+"sentence": "The fan hand crank."
+},
+{
+"sentence": "Pillows acid reflux."
+},
+{
+"sentence": "The dishwasher power rinse."
+},
+{
+"sentence": "Light bulbs crusie lamp."
+},
+{
+"sentence": "The iron ham press."
+},
+{
+"sentence": "Cups tulip pint."
+},
+{
+"sentence": "The oven smart steam."
+},
+{
+"sentence": "Shelves torchere lamp."
+},
+{
+"sentence": "The blender kneading blade."
+},
+{
+"sentence": "Rugs rag hook."
+},
+{
+"sentence": "The alarm gamma wave."
+},
+{
+"sentence": "Pans chestnut pan."
+},
+{
+"sentence": "The fridge smart chill."
+},
+{
+"sentence": "Chairs indiscret three."
+},
+{
+"sentence": "The printer planographic flat."
+},
+{
+"sentence": "Spoons egg spoon."
+},
+{
+"sentence": "The clock repeater pocket."
+},
+{
+"sentence": "Windows light sash."
+},
+{
+"sentence": "The microwave smart convection."
+},
+{
+"sentence": "Books lapbook fold."
+},
+{
+"sentence": "The kettle cowboy pot."
+},
+{
+"sentence": "Drawers linen drawer."
+},
+{
+"sentence": "The fan punkah pull."
+},
+{
+"sentence": "Pillows heartburn relief."
+},
+{
+"sentence": "The dishwasher true cycle."
+},
+{
+"sentence": "Light bulbs phoebe lamp."
+},
+{
+"sentence": "The iron tailor mitt."
+},
+{
+"sentence": "Cups irish coffee."
+},
+{
+"sentence": "The oven insta convection."
+},
+{
+"sentence": "Shelves canterbury rack."
+},
+{
+"sentence": "The blender dicing kit."
+},
+{
+"sentence": "Rugs rag weave."
+},
+{
+"sentence": "The alarm sleep wave."
+},
+  
+  {
+    "sentence": "Only the second sock understands true loss."
+  },
+  {
+    "sentence": "You can peel the sky, but don’t expect the stars to applaud."
+  },
+  {
+    "sentence": "He danced because the sidewalk told him the truth."
+  },
+  {
+    "sentence": "Don’t trust a clock that blinks during a full moon."
+  },
+  {
+    "sentence": "She carried the key, but no one ever questioned the bowl of fog."
+  },
+  {
+    "sentence": "The truth is heavier when carried in a watermelon."
+  },
+  {
+    "sentence": "By the third echo, the mountains had already decided."
   },
   {
     "sentence": "I guess I didn't feel comfortable talking about my history yet."
@@ -15502,7 +20247,7 @@
     "sentence": "How does that play out with taking it a step further, like, beyond survival to becoming a productive nonconformist?."
   },
   {
-    "sentence": "Now I'm very confident."
+    "sentence": "Now I'm very confident. that we will make it "
   },
   {
     "sentence": "Now I know that I can do things and I have the confidence to speak and start a podcast."
@@ -15535,7 +20280,7 @@
     "sentence": "Cuz that violates now a principle that we've established."
   },
   {
-    "sentence": "We've set a higher threshold."
+    "sentence": "We've set a higher threshold. then what we had before. it's now or never you know "
   },
   {
     "sentence": "We're not gonna go backwards on that."
@@ -15556,7 +20301,7 @@
     "sentence": "Hopefully that answered your question somewhere in there."
   },
   {
-    "sentence": "I think it was as early as 1960."
+    "sentence": "I think it was as early as 1960. when we developed the thought about the world"
   },
   {
     "sentence": "to ensure that it stays alive during the Atlantic crossing is to sequentially insert it into the bodies of these orphaned boys."
@@ -15577,7 +20322,7 @@
     "sentence": "-based PayPal to hand over details about its business accounts, customers to Canadian tax authorities,."
   },
   {
-    "sentence": "But it was extremely delicious."
+    "sentence": "But it was extremely delicious. that strawberry mindset"
   },
   {
     "sentence": "And, um, actually put a dash of hot sauce and a dash of French dressing in there, too."
@@ -15613,7 +20358,7 @@
     "sentence": "Right? And then we kind of go, go, go through that process."
   },
   {
-    "sentence": "And so, it, it, it is, it, it, it is a tension that we see all the time."
+    "sentence": "And so, it, a tension that we see all the time."
   },
   {
     "sentence": "I also want to talk about this."
@@ -15676,7 +20421,7 @@
     "sentence": "have multiple pathways and ability to reroute on, on demand."
   },
   {
-    "sentence": "It's, it's super fascinating."
+    "sentence": "It's, it's super fascinating, how the brain works"
   },
   {
     "sentence": "You just talked about with that example."
@@ -15697,7 +20442,7 @@
     "sentence": "totally disrupting, uh, the traffic."
   },
   {
-    "sentence": "Yes, but what I'm asking is,."
+    "sentence": "Yes, but what I'm asking is, that you help me with my mindet before it's to late "
   },
   {
     "sentence": "And we know where that leads."
@@ -15733,7 +20478,7 @@
     "sentence": "The song, specifically."
   },
   {
-    "sentence": "Um, I was thinking about us."
+    "sentence": "Um, I was thinking about us. the other night "
   },
   {
     "sentence": "Um, but I'm not gonna be exclusive just to them."
@@ -15751,7 +20496,7 @@
     "sentence": "She also wrote, um, entries for the, uh, Encyclopedia Britannica."
   },
   {
-    "sentence": "So, did some journalism."
+    "sentence": "So, did some journalism and he became obsessed ."
   },
   {
     "sentence": "The, the, and I think Janet Nolan is, eh, her servants for the poor."
@@ -15775,7 +20520,7 @@
     "sentence": "I'm that, I am the other."
   },
   {
-    "sentence": "And I understand that a lot."
+    "sentence": "And I understand that a lot. life is not easy"
   },
   {
     "sentence": "Like, I've, I've thought about that in making this project and then having these conversations that I've realized my impetus is."
@@ -15793,7 +20538,7 @@
     "sentence": "It's just seems, it's a lot to, to deal with."
   },
   {
-    "sentence": "It's a lot to, to juggle."
+    "sentence": "It's a lot to, to juggle. when people talk like that "
   },
   {
     "sentence": "Uh, I'll say combat at the risk of overstating the case, which is that the term disruption, I think, has come to be used far too frequently."
@@ -15829,7 +20574,7 @@
     "sentence": "So, we were, we sort of started already talking about some of this research you've done into hearing."
   },
   {
-    "sentence": "Before we do that, I would love to just talk maybe some general tips about."
+    "sentence": "Before we do that, I would love to just talk maybe some general tips about. mindset"
   },
   {
     "sentence": "Might make me likely to get toxoplasma."
@@ -15847,7 +20592,7 @@
     "sentence": "So I was a CPA for several years, uh, just before the even blog."
   },
   {
-    "sentence": "Um, but to complete that story."
+    "sentence": "Um, but to complete that story. the motivational thought about it "
   },
   {
     "sentence": "So I had like two or three blogs over that first year and I, I helped my friends start a, a sports podcast."
@@ -15892,7 +20637,7 @@
     "sentence": "and neighbor, female education was particularly important."
   },
   {
-    "sentence": "According to the rule,."
+    "sentence": "According to the rule, you must think about yourself ."
   },
   {
     "sentence": "But I don't think any of the coaches realized there's an app that."
@@ -41286,6 +46031,7 @@
   {
     "sentence": "The public shareholders."
   },
+  
   {
     "sentence": "And you must have, that's exactly right."
   },
@@ -113545,10 +118291,10 @@
     "sentence": "guess that you haven't heard of the show before."
   },
   {
-    "sentence": "It's a show?"
+    "sentence": "It's a show? and the mind tells me noo but my body "
   },
   {
-    "sentence": "Yes."
+    "sentence": "Yes. day in and day out"
   },
   {
     "sentence": "Is this what we call Jubal?"
@@ -113563,13 +118309,13 @@
     "sentence": "Do you guys talk about stuff?"
   },
   {
-    "sentence": "No."
+    "sentence": "No. life is a disaster sometimes but can also be very good"
   },
   {
-    "sentence": "What?"
+    "sentence": "What? mindset is here, success is not easy"
   },
   {
-    "sentence": "It's not."
+    "sentence": "It's not. happiness all the time its"
   },
   {
     "sentence": "I mean, it's just a regular morning radio show."
@@ -113581,10 +118327,10 @@
     "sentence": "phone calls and things like that, you know?"
   },
   {
-    "sentence": "Are you pranking me?"
+    "sentence": "Are you pranking me? yes i am how did you know "
   },
   {
-    "sentence": "No."
+    "sentence": "No. my mindset is unbreakable"
   },
   {
     "sentence": "I'm not pranking you right now."
@@ -113596,7 +118342,7 @@
     "sentence": "about something, though, if you have a moment."
   },
   {
-    "sentence": "Okay."
+    "sentence": "Okay think about this "
   },
   {
     "sentence": "I guess depending on what it is."
@@ -122440,9 +127186,6 @@
     "sentence": "Would have"
   },
   {
-    "sentence": "Fucking"
-  },
-  {
     "sentence": "Actually finished"
   },
   {
@@ -122476,22 +127219,22 @@
     "sentence": "Doing content too"
   },
   {
-    "sentence": "I just started"
+    "sentence": "I just started today and got this email"
   },
   {
-    "sentence": "Fucking making"
+    "sentence": "Fucking making everything but "
   },
   {
-    "sentence": "Videos"
+    "sentence": "Videos is so fun to watch"
   },
   {
     "sentence": "This is all"
   },
   {
-    "sentence": "Kind of new"
+    "sentence": "Kind of new state of "
   },
   {
-    "sentence": "Yeah"
+    "sentence": "Yeah that was fun i remember"
   },
   {
     "sentence": "So you probably"
@@ -122500,7 +127243,7 @@
     "sentence": "Is still stealing"
   },
   {
-    "sentence": "Alright"
+    "sentence": "Alright lets go now"
   },
   {
     "sentence": "Just a little"
@@ -122512,7 +127255,7 @@
     "sentence": "So it's probably"
   },
   {
-    "sentence": "Just"
+    "sentence": "Just wake up and "
   },
   {
     "sentence": "It's probably"
@@ -122521,25 +127264,25 @@
     "sentence": "Just leaving now"
   },
   {
-    "sentence": "Yeah bro"
+    "sentence": "Yeah bro, this is my life"
   },
   {
     "sentence": "Just take a chair"
   },
   {
-    "sentence": "And like"
+    "sentence": "And like when you think about"
   },
   {
-    "sentence": "Yeah"
+    "sentence": "Yeah mindset is important but "
   },
   {
     "sentence": "That explains it all"
   },
   {
-    "sentence": "To see like"
+    "sentence": "To see like the world"
   },
   {
-    "sentence": "Just"
+    "sentence": "Just think about life that way "
   },
   {
     "sentence": "We were first texting"
@@ -122548,7 +127291,7 @@
     "sentence": "We started to know"
   },
   {
-    "sentence": "Your content"
+    "sentence": "Your content is on the internet "
   },
   {
     "sentence": "Like pretty recently"
@@ -122563,7 +127306,7 @@
     "sentence": "A fucking joker"
   },
   {
-    "sentence": "And then you"
+    "sentence": "And then you do all the "
   },
   {
     "sentence": "We hit you up"
@@ -122578,10 +127321,10 @@
     "sentence": "Yeah I'm an engineer"
   },
   {
-    "sentence": "I'm on"
+    "sentence": "I'm on my phone all day "
   },
   {
-    "sentence": "I'm on"
+    "sentence": "I'm on work all day "
   },
   {
     "sentence": "I'm on a work"
@@ -122605,10 +127348,10 @@
     "sentence": "Bro I was on a"
   },
   {
-    "sentence": "Teams call"
+    "sentence": "Teams call and i have to pick it up"
   },
   {
-    "sentence": "Yeah"
+    "sentence": "Yeah this is how we do it "
   },
   {
     "sentence": "Had like a drawing"

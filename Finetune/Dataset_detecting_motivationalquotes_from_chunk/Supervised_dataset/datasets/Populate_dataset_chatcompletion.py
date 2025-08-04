@@ -82,27 +82,27 @@ def preprocess_with_filler_balanced(example, idx, filler_sentences, used_filler_
     global count_single_quote_natural
     global Count_double_quotes
     system_prompt = """
-        You are a quote‐detection assistant for creating motivational shorts. Your task is to carefully analyze and read a timestamped chunk and extract any standalone motivational quotes or advice or motivational passages that are complete and self‐contained, and could be used for a short inspirational video, If quotes are found, save them using the appropriate function. If none are found, return a final response indicating that.
+           You are a quote‐detection assistant for creating motivational shorts. Your task is to carefully analyze and read a timestamped chunk and extract any standalone motivational quotes or advice or motivational passages that are complete and self‐contained, and could be used for a short inspirational video, If quotes are found, save them using the appropriate function. If none are found, return a final response indicating that.
         You are to Save standalone motivational quotes, advice, inspiring messages, that are  complete  and does not lack context if isolated from the rest of the chunk.
         Analyze the chunk/text between [chunk start] and [chunk end].
         Objective: Your job is to extract motivational quotes from the input text chunk. These are typically short, self-contained passages that offer encouragement, life advice, or inspiration.
         Reasoning: Always begin with a `Thought:` statement explaining your reasoning — for example, whether you identified quotes, and how many.
         Instructions --- Your Expected Output Format:
         - If two quote, Advice or motivational complete message is found in the chunk you analyze, output:
-            Thought: I found 2 standalone motivational passages that meet the criteria, so I’m saving them.
+            Thought: I found 2 standalone motivational passages that meet the criteria of being a self-contained motivational quote, piece of advice, or inspirational message. Each can stand on its own, even when isolated from the rest of the text, without lacking context at the beginning or end. Therefore, I’m saving them.
             <code>
             SaveMotivationalText(text="[start - end] Quote 1", text_file=text_file)
             SaveMotivationalText(text="[start - end] Quote 2", text_file=text_file)
             final_answer("im done analyzing chunk")
             </code>
         - If one  quote, Advice or motivational complete message is found in the chunk you analyze, output:
-            Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it.
+            Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
             <code>
             SaveMotivationalText(text="[start - end] Quote", text_file=text_file)
             final_answer("im done analyzing chunk")
             </code>    
         - If no quotes, Advice or motivational complete message is found in the chunk you analyze, output:
-            Thought: I carefully scanned every timestamped line in this chunk, looking for a short, self‑contained motivational passage. I considered whether any sentence offered clear encouragement or life advice on its own, without relying on surrounding context. None of the lines met the criteria of a standalone inspirational quote—they were either filler commentary, generic statements, or fragments. Since there isn’t a complete motivational statement I can save, I will not call SaveMotivationalText. and only provide `final_answer`
+            Thought: I carefully scanned every timestamped line in this chunk, looking for a short, self-contained motivational passage. I evaluated each line on its own and also explored whether merging or combining adjacent lines might produce a meaningful, standalone inspirational message. Despite these efforts, none of the sentences—individually or in combination—met the criteria for a clear, context-independent motivational quote. They were either filler commentary, incomplete thoughts, or too dependent on surrounding context. Since there isn’t a complete motivational statement I can save, I will not call SaveMotivationalText and will only provide `final_answer`.
             <code>
             final_answer("After carefully analyzing the chunk/text, I have concluded nothing can be saved.")
             </code>
@@ -113,8 +113,7 @@ def preprocess_with_filler_balanced(example, idx, filler_sentences, used_filler_
         - Do not return quotes that are incomplete or unclear.
         - Do not create multiple SaveMotivationalText() calls for each line in a single quote.
         - Do not alter or guess missing timestamps — use the exact start and end values provided in the lines that contain the quote.
-        - Quote text should appear as a single, continuous string, even if it was originally split across 2–3 lines.         
-        -It’s very important that the quote, advice, or personal growth message you identify forms a complete thought — one that, if isolated from the rest of the text, still makes complete sense on its own. Saving incomplete thoughts will result in failure.
+        - Quote text should appear as a single, continuous string, even if it was originally split across 2–3 lines.   
         Timestamp Handling:
              When a quote spans multiple lines (each line containing a separate timestamp):
                 - Merge the lines into a single quote.
@@ -132,17 +131,36 @@ def preprocess_with_filler_balanced(example, idx, filler_sentences, used_filler_
         [chunk end]
 
         Your output should be:
-            Thought: I found 1 standalone motivational passages that meet the criteria, so I’m saving them.
-            <code>SaveMotivationalText(text="[623.70s - 628.00s] You will encounter many challenges in life  [627.12s - 628.00s] But you must never be defeated by the challenges", text_file=text_file) final_answer("Im done analyzing the chunk")</code>\n
+            Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+            <code>SaveMotivationalText(text="[623.70s - 628.00s] You will encounter many challenges in life  [627.12s - 628.00s] But you must never be defeated by the challenges", text_file=text_file) 
+            final_answer("im done analyzing chunk")
+            </code>
+
+
+    Types of Qualifying Motivational Text/Quotes:
+        - Passages that encourage perseverance, PersonalGrowth, Quotes, Inspiring, resilience, or overcoming challenges (e.g., "You will encounter many challenges in life, but you must never be defeated by them"), A complete text that does not lack context isolated.
+        - Action-oriented advice that inspires immediate steps toward improvement (e.g., "You don’t need perfect conditions to make progress. You just need to move").
+        - Messages promoting self-belief, confidence, or personal growth (e.g., "The difference between who you are and who you want to be is in the choices you make every day").
+        - Universal life advice that is concise and impactful (e.g., "Discipline is choosing what you want most over what you want now").
+        - Inspirational statements that evoke hope or determination (e.g., "Fear is loud, but your future deserves to be louder").
+        Notes on Qualifying Quotes:
+        - Quotes must be self-contained, meaning they convey a complete thought without needing surrounding context.
+        - Avoid generic statements (e.g., "Life is hard") or fragments that lack clear motivational intent.
+        - Ensure the passage is concise enough for a short inspirational video (typically 1–6 sentences).
+
+    Here are the rules you should always follow to solve your task or you will fail the task:
+     -Always provide a 'Thought:' sequence, and a '<code>' sequence ending with '</code>', else you will fail.
+     -Do not save text that does not form a complete thought. If it lacks context when isolated from the rest of the transcript, do not save it. You must understand the overall meaning of the quote to judge whether it stands on its own. If it's not a self-contained quote, you will fail.    
+
     """
    
     instruction = """
         Here is the chunk you will analyze:\n
     """
 
-    if random.random() < 0.2:
+    if random.random() < 0.1:
         count_only_filler += 1
-        n_fillers = random.randint(5, 10)
+        n_fillers = random.randint(4, 7)
         selected_fillers = sample_unique_fillers(n_fillers, filler_sentences, used_filler_sentences)
         if selected_fillers is None:
             return None
@@ -150,7 +168,7 @@ def preprocess_with_filler_balanced(example, idx, filler_sentences, used_filler_
 
         chunk_text = "[chunk start]\n" + add_timestamps_and_filler([], selected_fillers, []) + "[chunk end]\n"
         label_text = (
-            'Thought: I carefully scanned every timestamped line in this chunk, looking for a short, self‑contained motivational passage. I considered whether any sentence offered clear encouragement or life advice on its own, without relying on surrounding context. None of the lines met the criteria of a standalone inspirational quote—they were either filler commentary, generic statements, or fragments. Since there isn’t a complete motivational statement I can save, I will not call SaveMotivationalText. and only provide `final_answer` '
+            'Thought: I carefully scanned every timestamped line in this chunk, looking for a short, self-contained motivational passage. I evaluated each line on its own and also explored whether merging or combining adjacent lines might produce a meaningful, standalone inspirational message. Despite these efforts, none of the sentences—individually or in combination—met the criteria for a clear, context-independent motivational quote. They were either filler commentary, incomplete thoughts, or too dependent on surrounding context. Since there isn’t a complete motivational statement I can save, I will not call SaveMotivationalText and will only provide `final_answer`.'
             '<code>\n'
             'final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved.")\n'
             '</code>'
@@ -159,7 +177,7 @@ def preprocess_with_filler_balanced(example, idx, filler_sentences, used_filler_
     else:
         quote_filler_mix_bool = False
         quote_filler_mix_chance = 0.5
-        double_quote_chance = 0.5
+        double_quote_chance = 0.3
   
         if dataset_quotes is None:
             dataset_quotes = [example["text"]]
@@ -203,7 +221,7 @@ def preprocess_with_filler_balanced(example, idx, filler_sentences, used_filler_
 
                     #slå sammen filler og første quote-linje
                     randomkChance = 0.5
-                    only_start = 0.5
+                    #only_start = 0.5
                     #if random.random() < only_start:
 
                     if random.random() < randomkChance:
@@ -254,18 +272,18 @@ def preprocess_with_filler_balanced(example, idx, filler_sentences, used_filler_
 
             #Vis det er flere enn en quote legg til random fillers mellom dem
             if i < len(quotes) - 1:
-                n_fillers_mid = random.randint(5, 10)
+                n_fillers_mid = random.randint(1, 3)
                 fillers_mid = sample_unique_fillers(n_fillers_mid, filler_sentences, used_filler_sentences)
                 if fillers_mid is None:
                     return None
                 all_sentences.extend(fillers_mid)
 
-        filler_before = sample_unique_fillers(random.randint(1, 15), filler_sentences, used_filler_sentences)
+        filler_before = sample_unique_fillers(random.randint(1, 6), filler_sentences, used_filler_sentences)
         if filler_before is None or len(filler_before) == 0:
             log(f"[Warning] Ran out of filler sentences for filler_before at idx {idx}")
 
             return None
-        filler_after = sample_unique_fillers(random.randint(1, 15), filler_sentences, used_filler_sentences)
+        filler_after = sample_unique_fillers(random.randint(1, 6), filler_sentences, used_filler_sentences)
         if filler_after is None or len(filler_after) == 0:
             log(f"[Warning] Ran out of filler sentences for filler_before at idx {idx}")
             return None
@@ -355,7 +373,7 @@ def preprocess_with_filler_balanced(example, idx, filler_sentences, used_filler_
             print(f"full quote with timestamps: {full_quote_with_timestamps}")
 
             label_text = (
-                'Thought: I found 1 standalone motivational passage that meet the criteria, so I’m saving it.\n' +
+                'Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.\n' +
                 '<code>\n'
                 f'SaveMotivationalText(text="{full_quote_with_timestamps}", text_file=text_file)\n'
                 'final_answer("Im done analyzing the chunk")\n'
@@ -371,7 +389,7 @@ def preprocess_with_filler_balanced(example, idx, filler_sentences, used_filler_
                     parts.append(text)
             full_quote_with_timestamps = " ".join(parts).replace('"', '\\"')
             label_text = (
-                'Thought: I found 1 standalone motivational passage that meet the criteria, so I’m saving it.\n' +
+                'Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.\n' +
                 '<code>\n'
                 f'SaveMotivationalText(text="{full_quote_with_timestamps}", text_file=text_file)\n'
                 'final_answer("Im done analyzing the chunk")\n'
@@ -392,7 +410,7 @@ def preprocess_with_filler_balanced(example, idx, filler_sentences, used_filler_
                         parts.append(text)
                 combined_text = " ".join(parts).replace('"', '\\"')
                 save_calls.append(f'SaveMotivationalText(text="{combined_text}", text_file=text_file)')
-            Thought = f"I found {len(save_calls)} standalone motivational passage{'s' if len(save_calls) > 1 else ''} that meet the criteria, so I’m saving {'them' if len(save_calls)>1 else 'it'}."
+            Thought = f"I found {len(save_calls)} standalone motivational passage{'s' if len(save_calls) > 1 else ''} that meet the criteria of being a self-contained motivational quote, piece of advice, or inspirational message. Each can stand on its own, even when isolated from the rest of the text, without lacking context at the beginning or end. Therefore, I’m saving {'them' if len(save_calls) > 1 else 'it'}."
             label_text = (
                 f"Thought: {Thought}\n"
                 "<code>\n" + "\n".join(save_calls) + "\n"

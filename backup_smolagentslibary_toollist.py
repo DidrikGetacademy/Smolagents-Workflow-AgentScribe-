@@ -598,7 +598,7 @@ class SpeechToTextTool(PipelineTool):
 
 
 
-class SpeechToTextTool(PipelineTool):
+class SpeechToTextTool_timestamp(PipelineTool):
     default_checkpoint = r"c:\Users\didri\Desktop\LLM-models\Audio-Models\faster-whisper-large-v3-turbo-int8float16"
     description = "Fast tool that transcribes audio into text using faster-whisper. It returns the matched words with timestamps."
     name = "transcriber"
@@ -994,5 +994,6 @@ __all__ = [
     "SpeechToTextToolCPU",
     "SpeechToTextTool_viral_agent",
     "SpeechToTextToolCPU_Custom",
-    "SpeechToTextToolTranscribe"
+    "SpeechToTextToolTranscribe",
+    "SpeechToTextTool_timestamp",
 ]

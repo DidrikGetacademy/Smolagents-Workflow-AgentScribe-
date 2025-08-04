@@ -127,14 +127,14 @@ def supervised_Finetune():
             gradient_accumulation_steps=4,
             per_device_eval_batch_size=1,
             learning_rate=1e-4,
-            max_length=4000,
+            max_length=3050,
             #bf16=True,
             fp16=True,
             logging_steps=100,
-            dataset_num_proc=4,
+            dataset_num_proc=5,
             save_strategy="steps",
             eval_strategy="steps",
-            save_steps=150,
+            save_steps=200,
             eval_steps=100,
             warmup_ratio=0.1,
             save_total_limit=2,
@@ -182,7 +182,7 @@ def supervised_Finetune():
 
 
    
-    run_eval_comparison_test(trainer,sft_config,model,tokenizer, eval_dataset=validation_set, num_samples=5, max_new_tokens=500,phase="Before Training")
+    run_eval_comparison_test(trainer,sft_config,model,tokenizer, eval_dataset=validation_set, num_samples=50, max_new_tokens=500,phase="Before Training")
     print("clearing cache after validation test")
     gc.collect()
     torch.cuda.empty_cache()
@@ -217,7 +217,7 @@ def supervised_Finetune():
     gc.collect()
     torch.cuda.empty_cache()
 
-    run_eval_comparison_test(trainer,sft_config,model,tokenizer, eval_dataset=validation_set, num_samples=5, max_new_tokens=500,phase="After Training")
+    run_eval_comparison_test(trainer,sft_config,model,tokenizer, eval_dataset=validation_set, num_samples=50, max_new_tokens=500,phase="After Training")
 
 
     log("Successfully done finetuning!")

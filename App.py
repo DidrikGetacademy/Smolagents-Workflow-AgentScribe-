@@ -13,7 +13,7 @@ from smolagents import TransformersModel, FinalAnswerTool, CodeAgent, tool
 from Custom_Agent_Tools import SpeechToTextToolCUDA, SpeechToTextToolCPU, SpeechToText_short_creation_thread
 import tempfile
 import gc
-from log import log
+from log import log,log_Stage
 import yaml
 import torchvision.transforms.functional as F
 sys.modules['torchvision.transforms.functional_tensor'] = F
@@ -64,33 +64,45 @@ gpu_lock = threading.Lock()
 transcript_queue = queue.Queue()
 count_lock = threading.Lock()
 
+_current_audio_url: str = None
 _current_video_url: str = None
+current_Youtube_channel: str = None
+
+
+def get_current_audio_path() -> str:
+     return _current_audio_url
+
+def get_current_videourl() -> str:
+    return _current_video_url
+
+def get_current_yt_channel()-> str:
+     return current_Youtube_channel
+
+def get_current_textfile() -> str:
+    return _current_agent_saving_file
+
+
+def set_current_yt_channel(youtube_channel: str):
+    global current_Youtube_channel
+    current_Youtube_channel = youtube_channel
+
 def set_current_videourl(url: str):
     global _current_video_url
     _current_video_url = url
-
-def get_current_videourl() -> str:
-    global _current_video_url
-    return _current_video_url
 
 def set_current_textfile(url: str):
     global _current_agent_saving_file
     _current_agent_saving_file = url
 
-def get_current_textfile() -> str:
-    return _current_agent_saving_file
-
-_current_audio_url: str = None
-
-
 def set_current_audio_path(url: str):
      global _current_audio_url
      _current_audio_url = url
-     log(f"[set_current_audio_path]: {_current_audio_url}")
 
-def get_current_audio_path() -> str:
-     global _current_audio_url
-     return _current_audio_url
+
+global count
+global Video_count 
+count = 0
+Video_count = 0
 
 
 def clean_up_Memory():
@@ -98,18 +110,19 @@ def clean_up_Memory():
      torch.cuda.empty_cache()
      log("cleaned up memory!")
 
+
 def Reload_and_change_model(model):
      if model == "Qwen7b":
             model = TransformersModel(
-                model_id = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-7B-Instruct",
+            model_id = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-7B-Instruct",
                 load_in_4bit=True,
                 trust_remote_code=True,
                 device_map="auto",
                 torch_dtype="auto",
                 do_sample=False,
-                max_new_tokens=10000,
+                max_new_tokens=2500,
                 use_flash_attn=True
-                 )
+            )
             return model
      elif model == "Qwen3b":
             global Global_model
@@ -118,7 +131,7 @@ def Reload_and_change_model(model):
                     load_in_4bit=True,
                     device_map="auto",
                     torch_dtype="auto",
-                    max_new_tokens=3000,
+                    max_new_tokens=2000,
                     do_sample=False,
                     use_flash_attn=True     
                     )
@@ -196,9 +209,11 @@ class MyProgressLogger(ProgressBarLogger):
             
 
 def create_short_video(video_path, start_time, end_time, video_name, subtitle_text):
+    YT_channel = get_current_yt_channel()
     background_audio = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\onerepublic I aint worried tiktok whistle loop - slowed reverb [mp3].mp3"
     change_on_saturation = "Decrease"
     logger = MyProgressLogger()
+    log(f"YT_channel: {YT_channel}")
     probe = ffmpeg.probe(video_path)
     log(probe)
     format_info = probe.get('format', {})
@@ -426,9 +441,6 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 
 
 
-
-
-
 # ###########################
 # ##---------------------###
 # ## Enchance & detailed sharpening
@@ -442,15 +454,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 #          log(f"[enhance_detail_and_sharpness] appending enchanced frame ...")
 #          enchanced_rgb_frame = cv2.cvtColor(enchanced_frame,cv2.COLOR_BGR2RGB)
 #          enchanced_frames.append(enchanced_rgb_frame)
-
 #     log(f"[enhance_detail_and_sharpness] Successfully done!\n\n")
-
-
-
-
-
-
-
 
 
 
@@ -498,8 +502,6 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 # # ##---------------------##
 # # ##########################
 #     log(f"\n\n[FACEENCHACEMENT] PROCCESS starting...")
-
-    
 #     class Args:
 #         model = 'GPEN-BFR-512'
 #         task = 'FaceEnhancement'
@@ -550,8 +552,6 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 #             log(f"[FaceEnhancement] Error: {str(e)}")
     
 
-
-
 # # # #####################
 # # # ##--------------.--##
 # # # # color/ADJUSTMENT
@@ -565,11 +565,15 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 #             FaceEnhancement_frames = [change_saturation(frame,mode=change_on_saturation, amount=0.2) for frame in FaceEnhancement_frames]
 
 
-# # ##############################
-# # ##--------------------------##
-# # # MAKING videoclip from frames
-# # ##--------------------------##
-# # ##############################
+
+
+
+
+##############################
+##--------------------------##
+# MAKING videoclip from frames
+##--------------------------##
+##############################
 
     log(f"\n\n[CREATING VIDEOCLIP] PROCCESS starting...")
     try:
@@ -595,7 +599,24 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 
 
     try:
-        overlay_clip = VideoFileClip(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\88b982b54e551acb3040aa5742acf803.mp4",has_mask=True)
+        if YT_channel == "LR_Youtube":
+                overlay_clip = VideoFileClip(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\YT_logo\LR_logo.mp4",has_mask=True)
+        
+        elif YT_channel == "LRS_Youtube":
+                 overlay_clip = VideoFileClip(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\YT_logo\LRS_logo.mp4",has_mask=True)
+
+        elif YT_channel == "MR_Youtube":
+            overlay_clip = VideoFileClip(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\YT_logo\MR_logo.mp4",has_mask=True)
+
+        elif YT_channel == "LM_Youtube":
+             overlay_clip = VideoFileClip(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\YT_logo\LM_Logo.mp4",has_mask=True)
+        else:
+             raise ValueError(f"Error No {YT_channel} exists.")
+
+
+
+            
+
         overlay_clip = overlay_clip.subclipped(0, clip.duration)
         logo_mask = overlay_clip.to_mask()
         logo_with_mask = overlay_clip.with_mask(logo_mask) 
@@ -706,7 +727,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
         
         get_gpu_memory()
         Global_model = Reload_and_change_model(model="Qwen7b")
-        social_media = upload_video(model=Global_model,file_path=output_video)
+        social_media = upload_video(model=Global_model,file_path=output_video,YT_channel=YT_channel)
         log(f"Done with uploading to {social_media}")
     except Exception as e:
          log(f"error during uploading: {str(e)}")
@@ -736,13 +757,10 @@ def truncate_audio(audio_path, start_time, end_time, output_path):
     return output_path
 
 
-global count
-count = 0
-
 def run_video_short_creation_thread(video_url,start_time,end_time,subtitle_text):
-        global count
-        count += 1
-        current_count = count
+        global Video_count#didrik
+        Video_count += 1
+        current_count = Video_count
         try:
             log(f"RUNNING --> [run_video_short_creation_thead]: video_url: {video_url}, start_time: {start_time}, end_time: {end_time}")
             text_video_path = video_url
@@ -988,10 +1006,12 @@ def create_motivationalshort(text: str) -> None:
         video_url = get_current_videourl()
         try:
             log(f"\n Original text: {text} \n \n now Added work to QUEUE: \n {video_url}, \n {start_time}s \n {end_time}s\n")
+            set_current_yt_channel("MR_Youtube") #Endre til dynamisk/automatisk valg av youtube channel hver 4 video ellerno
             video_task_que.put((video_url, start_time, end_time, new_text))
             Delete_rejected_line(text)
-            global count 
+            global count #didrik
             count +=1
+
             
         except Exception as e:
              log(f"Error addng to queue: {str(e)}")
@@ -1029,6 +1049,11 @@ def Delete_rejected_line(text: str) -> None:
 
         log(f"[Delete_rejected_line] Deleted {num_subs} block(s) containing the text.")
 
+
+
+
+
+
 def verify_saved_text_agent(agent_saving_path):
     set_current_textfile(agent_saving_path)
     log(f"agent_saving_path: {agent_saving_path}")
@@ -1047,8 +1072,8 @@ def verify_saved_text_agent(agent_saving_path):
                 code = text.split("Code:")[1].strip()
             else:
                 code = text.strip()
-            
             reasoning_log.append(f"Thought:\n{thought}\n\nCode:\n{code}\n\n")
+
     final_answer = FinalAnswerTool()
     create_motivational_short_agent = CodeAgent(
         model=Global_model,
@@ -1068,7 +1093,7 @@ def verify_saved_text_agent(agent_saving_path):
              saved_quotes_text = f.read()
              if not saved_quotes_text.strip():
                   log("empty, break")
-                  return 
+                  return
 
     task = f"""
     Make sure your python structure when executing tools with <code>...</code> that they are structured correctly like this 
@@ -1078,13 +1103,6 @@ def verify_saved_text_agent(agent_saving_path):
     create_motivationalshort(text="....")
     Delete_rejected_line(text="...")
     final_answer("...")
-    </code>
-    ---
-    #Invalid 
-    <code>
-    create_motivationalshort(text="....")
-    Delete_rejected_line(text="...")
-      final_answer("...")
     </code>
     --------------------------------------------
 
@@ -1116,7 +1134,7 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
         model=Global_model,
         tools=[SaveMotivationalText,final_answer],
         max_steps=1,
-        verbosity_level=1,
+       #verbosity_level=1,
         stream_outputs=True,
         prompt_templates=Prompt_template
  
@@ -1140,7 +1158,6 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
                 code = text.split("Code:")[1].strip()
             else:
                 code = text.strip()
-            
             reasoning_log.append(f"Thought:\n{thought}\n\nCode:\n{code}\n\n")
 
    
@@ -1155,20 +1172,21 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
         except Exception as e:
                 log(f"Error during chunking from file {transcripts_path}: {e}")
                 break
-       
+
+
+        log(f"[The current ModelCountRun]: {ModelCountRun}")
+        if  ModelCountRun >= 5 or not chunk.strip():
+                 del Reasoning_Text_Agent
+                 verify_saved_text_agent(agent_txt_saving_path)
+                 wait_for_proccessed_video_complete(video_task_que)
+                 ModelCountRun = 0
        
         if not chunk.strip():
                 log("Finished processing current transcript. Now exiting func [Transcript Reasoning Agent]")
                 del Reasoning_Text_Agent
                 break
         
-   
-        log(f"[The current ModelCountRun]: {ModelCountRun}")
-        if  ModelCountRun >= 6 or not chunk.strip():
-                 del Reasoning_Text_Agent
-                 verify_saved_text_agent(agent_txt_saving_path)
-                 wait_for_proccessed_video_complete(video_task_que)
-                 ModelCountRun = 0
+
 
         task = f"""
                 Here is the chunk you will analyze:
@@ -1301,7 +1319,7 @@ def gpu_worker():
             trust_remote_code=True,
             device_map="auto",
             torch_dtype="auto",
-            max_new_tokens=5000,
+            max_new_tokens=1500,
             do_sample=False,
             use_flash_attn=True     
      )
@@ -1330,6 +1348,7 @@ def gpu_worker():
         log(f"GPU lock acquired by gpu_worker for {video_path_url}")
 
         try:
+            log_Stage(f"Stage 2 -Complete\n LLM model loaded --> Item retrieved from Queue")
             Transcript_Reasoning_AGENT(transcript_text_path, agent_txt_saving_path)
             log(f"Transcript_Reasoning_AGENT has exited...")
         finally:
@@ -1355,6 +1374,7 @@ if __name__ == "__main__":
 
     video_paths = [
         r"c:\Users\didri\Documents\Ed Mylett ON： Watch These 37 Minutes To COMPLETELY CHANGE Your Life ｜ Jay Shetty.mp4",
+        r"c:\Users\didri\Documents\The Hidden Art Of Reinventing Yourself - Matthew McConaughey (4K).mp4"
     ]
     log(f"Video_paths: {len(video_paths)}")
 
@@ -1368,7 +1388,8 @@ if __name__ == "__main__":
         start_time = time.time()
         for video_path, device in video_device_pairs:
             futures.append(executor.submit(transcribe_single_video, video_path, device))
-
+            
+        log_Stage("Stage 1 - Complete\n- Video path ---> Audio path ---> Text path")
         for future in futures:
             future.result() 
             end_time = time.time()

@@ -1,116 +1,442 @@
-[2025-07-26 13:55:54] 
+[2025-08-01 21:01:16] 
 📊 Running Evaluation Test – Before Training
-[2025-07-26 13:57:01] 
+[2025-08-01 21:02:15] 
 
 
 🔹 Example 1
-[2025-07-26 13:57:01] 🎯 Expected: Thought: I found 2 standalone motivational passages that meet the criteria, so I’m saving them.
+[2025-08-01 21:02:15] 🎯 Expected: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
 <code>
-SaveMotivationalText(text="[1194.42s - 1197.96s] Struggle breeds resilience and resilience [1198.06s - 1201.41s] paves the way for [1201.51s - 1204.19s] triumph", text_file=text_file)
-SaveMotivationalText(text="[1231.67s - 1234.13s] What is the worst [1234.23s - 1237.49s] advice you have ever heard [1237.59s - 1240.30s] or received? Try to get [1240.40s - 1242.96s] it perfect because nothing's [1243.06s - 1245.96s] ever perfect", text_file=text_file)
+SaveMotivationalText(text="[327.93s - 330.80s] When you [330.90s - 333.56s] feel all alone [333.66s - 337.20s] and in the dark never [337.30s - 340.29s] give up When the time [340.39s - 342.97s] is right life will grant [343.07s - 346.44s] you great rewards", text_file=text_file)
 final_answer("Im done analyzing the chunk")
 </code>
-[2025-07-26 13:57:01] 🧠 Generated: Thought: I found 2 standalone motivational passages that meet the criteria, so I’m saving them.
+[2025-08-01 21:02:15] 🧠 Generated: Thought: I found 1 standalone motivational passage that meet the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
 <code>
-SaveMotivationalText(text="[1194.42s - 1197.96s] Struggle breeds resilience and resilience [1198.06s - 1201.41s] paves the way for [1201.51s - 1204.19s] triumph", text_file=text_file)
-SaveMotivationalText(text="[1231.67s - 1234.13s] What is the worst [1234.23s - 1237.49s] advice you have ever heard [1237.59s - 1240.30s] or received? Try to get [1240.40s - 1242.96s] it perfect because nothing's [1243.06s - 1245.96s] ever perfect", text_file=text_file)
-final_answer("Im done analyzing the chunk")
+SaveMotivationalText(text="[327.93s - 330.80s] When you [330.90s - 333.56s] feel all alone [333.66s - 337.20s] and in the dark never [337.30s - 340.29s] give up When the time [340.39s - 342.97s] is right life will grant [343.07s - 346.44s] you great rewards", text_file=text_file) 
+final_answer("im done analyzing chunk")
 </code>
-[2025-07-26 13:57:01] ✅ Similarity: 1.00 -> ✔️
-[2025-07-26 13:57:01] ------------------------------------------------------------
-[2025-07-26 13:57:01] 
+[2025-08-01 21:02:15] ✅ Similarity: 0.99 -> ✔️
+[2025-08-01 21:02:15] ------------------------------------------------------------
+[2025-08-01 21:02:15] 
 
 
 
 
-[2025-07-26 13:57:30] 
+[2025-08-01 21:02:42] 
 
 
 🔹 Example 2
-[2025-07-26 13:57:30] 🎯 Expected: Thought: I found 2 standalone motivational passages that meet the criteria, so I’m saving them.
+[2025-08-01 21:02:42] 🎯 Expected: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
 <code>
-SaveMotivationalText(text="[1174.40s - 1177.81s] A diamond shines brightest [1177.91s - 1180.31s] after enduring immense pressure", text_file=text_file)
-SaveMotivationalText(text="[1205.89s - 1208.39s] Life is quite short do [1208.49s - 1211.07s] not cut it short [1211.17s - 1213.76s] by associating with those who [1213.86s - 1216.96s] make you feel small", text_file=text_file)
+SaveMotivationalText(text="[317.63s - 320.59s] When [320.69s - 323.65s] you rewrite the story [323.75s - 326.37s] of your life make sure [326.47s - 329.73s] the new chapters are better than [329.83s - 333.22s] the old ones", text_file=text_file)
 final_answer("Im done analyzing the chunk")
 </code>
-[2025-07-26 13:57:30] 🧠 Generated: Thought: I found 2 standalone motivational passages that meet the criteria, so I’m saving them.
+[2025-08-01 21:02:42] 🧠 Generated: Thought: I found 1 standalone motivational passage that meet the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
 <code>
-SaveMotivationalText(text="[1174.40s - 1177.81s] A diamond shines brightest [1177.91s - 1180.31s] after enduring immense pressure", text_file=text_file)
-SaveMotivationalText(text="[1205.89s - 1208.39s] Life is quite short do [1208.49s - 1211.07s] not cut it short [1211.17s - 1213.76s] by associating with those who [1213.86s - 1216.96s] make you feel small", text_file=text_file)
-final_answer("Im done analyzing the chunk")
+SaveMotivationalText(text="[317.63s - 320.59s] When [320.69s - 323.65s] you rewrite the story [323.75s - 326.37s] of your life make sure [326.47s - 329.73s] the new chapters are better than [329.83s - 333.22s] the old ones", text_file=text_file) 
+final_answer("im done analyzing chunk")
 </code>
-[2025-07-26 13:57:30] ✅ Similarity: 1.00 -> ✔️
-[2025-07-26 13:57:30] ------------------------------------------------------------
-[2025-07-26 13:57:30] 
+[2025-08-01 21:02:42] ✅ Similarity: 0.99 -> ✔️
+[2025-08-01 21:02:42] ------------------------------------------------------------
+[2025-08-01 21:02:42] 
 
 
 
 
-[2025-07-26 13:57:47] 
+[2025-08-01 21:03:09] 
 
 
 🔹 Example 3
-[2025-07-26 13:57:47] 🎯 Expected: Thought: I found 2 standalone motivational passages that meet the criteria, so I’m saving them.
+[2025-08-01 21:03:09] 🎯 Expected: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
 <code>
-SaveMotivationalText(text="[1182.69s - 1185.40s] Within every struggle lies an [1185.50s - 1188.66s] opportunity for growth and [1188.76s - 1191.21s] self-discovery", text_file=text_file)
-SaveMotivationalText(text="[1218.90s - 1222.49s] Time: lifes inexorable weapon of humiliation", text_file=text_file)
+SaveMotivationalText(text="[320.94s - 324.43s] When you rewrite the [324.53s - 326.97s] story of your life [327.07s - 329.54s] make sure the new chapters [329.64s - 332.16s] are much better than the [332.26s - 334.94s] old ones", text_file=text_file)
 final_answer("Im done analyzing the chunk")
 </code>
-[2025-07-26 13:57:47] 🧠 Generated: Thought: I found 1 standalone motivational passage that meet the criteria, so I’m saving it.
+[2025-08-01 21:03:09] 🧠 Generated: Thought: I found 1 standalone motivational passage that meet the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
 <code>
-SaveMotivationalText(text="[1182.69s - 1185.40s] Within every struggle lies an [1185.50s - 1188.66s] opportunity for growth and [1188.76s - 1191.21s] self-discovery", text_file=text_file)
-final_answer("Im done analyzing the chunk")
+SaveMotivationalText(text="[320.94s - 324.43s] When you rewrite the [324.53s - 326.97s] story of your life [327.07s - 329.54s] make sure the new chapters [329.64s - 332.16s] are much better than the [332.26s - 334.94s] old ones", text_file=text_file) 
+final_answer("im done analyzing chunk")
 </code>
-[2025-07-26 13:57:47] ✅ Similarity: 0.84 -> ❌
-[2025-07-26 13:57:47] ------------------------------------------------------------
-[2025-07-26 13:57:47] 
+[2025-08-01 21:03:09] ✅ Similarity: 0.99 -> ✔️
+[2025-08-01 21:03:09] ------------------------------------------------------------
+[2025-08-01 21:03:09] 
 
 
 
 
-[2025-07-26 13:58:05] 
+[2025-08-01 21:03:32] 
 
 
 🔹 Example 4
-[2025-07-26 13:58:05] 🎯 Expected: Thought: I found 1 standalone motivational passage that meet the criteria, so I’m saving it.
+[2025-08-01 21:03:32] 🎯 Expected: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
 <code>
-SaveMotivationalText(text="[1207.52s - 1210.64s] The struggle is not a [1210.74s - 1214.17s] sign of weakness but [1214.27s - 1217.19s] a testament to your determination", text_file=text_file)
+SaveMotivationalText(text="[313.89s - 316.99s] Work hard now so that [317.09s - 320.24s] in the evening of [320.34s - 322.78s] your life you can still [322.88s - 325.67s] enjoy the sunrise", text_file=text_file)
 final_answer("Im done analyzing the chunk")
 </code>
-[2025-07-26 13:58:06] 🧠 Generated: Thought: I found 1 standalone motivational passage that meet the criteria, so I’m saving it.
+[2025-08-01 21:03:32] 🧠 Generated: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
 <code>
-SaveMotivationalText(text="[1207.52s - 1210.64s] The struggle is not a [1210.74s - 1214.17s] sign of weakness but [1214.27s - 1217.19s] a testament to your determination", text_file=text_file)
-final_answer("Im done analyzing the chunk")
+SaveMotivationalText(text="[313.89s - 316.99s] Work hard now so that [317.09s - 320.24s] in the evening of [320.34s - 322.78s] your life you can still [322.88s - 325.67s] enjoy the sunrise", text_file=text_file)
+final_answer("im done analyzing chunk")
 </code>
-[2025-07-26 13:58:06] ✅ Similarity: 1.00 -> ✔️
-[2025-07-26 13:58:06] ------------------------------------------------------------
-[2025-07-26 13:58:06] 
+[2025-08-01 21:03:32] ✅ Similarity: 0.99 -> ✔️
+[2025-08-01 21:03:32] ------------------------------------------------------------
+[2025-08-01 21:03:32] 
 
 
 
 
-[2025-07-26 13:58:26] 
+[2025-08-01 21:04:07] 
 
 
 🔹 Example 5
-[2025-07-26 13:58:26] 🎯 Expected: Thought: I found 1 standalone motivational passage that meet the criteria, so I’m saving it.
+[2025-08-01 21:04:07] 🎯 Expected: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
 <code>
-SaveMotivationalText(text="[1174.22s - 1176.80s] Embrace the struggle [1176.90s - 1180.50s] for it [1180.60s - 1183.23s] molds you into the person you [1183.33s - 1186.63s] are meant to be", text_file=text_file)
+SaveMotivationalText(text="[311.56s - 314.10s] You know you have [314.20s - 317.07s] mastered the art of [317.17s - 320.74s] life when you refuse [320.84s - 323.96s] to be the one [324.06s - 326.54s] who points fingers and [326.64s - 329.18s] decide to be the [329.28s - 332.52s] one who helps find [332.62s - 335.69s] the right answers", text_file=text_file)
 final_answer("Im done analyzing the chunk")
 </code>
-[2025-07-26 13:58:26] 🧠 Generated: Thought: I found 1 standalone motivational passage that meet the criteria, so I’m saving it.
+[2025-08-01 21:04:07] 🧠 Generated: Thought: I found 1 standalone motivational passage that meet the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
 <code>
-SaveMotivationalText(text="[1174.22s - 1176.80s] Embrace the struggle [1176.90s - 1180.50s] for it [1180.60s - 1183.23s] molds you into the person you [1183.33s - 1186.63s] are meant to be", text_file=text_file)
+SaveMotivationalText(text="[311.56s - 314.10s] You know you have [314.20s - 317.07s] mastered the art of [317.17s - 320.74s] life when you refuse [320.84s - 323.96s] to be the one [324.06s - 326.54s] who points fingers and [326.64s - 329.18s] decide to be the [329.28s - 332.52s] one who helps find [332.62s - 335.69s] the right answers", text_file=text_file)
+final_answer("im done analyzing chunk")
+</code>
+[2025-08-01 21:04:07] ✅ Similarity: 0.99 -> ✔️
+[2025-08-01 21:04:07] ------------------------------------------------------------
+[2025-08-01 21:04:07] 
+
+
+
+
+[2025-08-01 21:04:39] 
+
+
+🔹 Example 6
+[2025-08-01 21:04:39] 🎯 Expected: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+<code>
+SaveMotivationalText(text="[323.37s - 325.83s] Your [325.93s - 328.46s] life is your business Take [328.56s - 331.60s] care of it and treat it like [331.70s - 334.11s] serious business Do not get [334.21s - 336.87s] too involved in other peoples [336.97s - 339.60s] businesses and neglect yours in the [339.70s - 342.86s] process", text_file=text_file)
 final_answer("Im done analyzing the chunk")
 </code>
-[2025-07-26 13:58:26] ✅ Similarity: 1.00 -> ✔️
-[2025-07-26 13:58:26] ------------------------------------------------------------
-[2025-07-26 13:58:26] 
+[2025-08-01 21:04:39] 🧠 Generated: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+<code>
+SaveMotivationalText(text="[323.37s - 325.83s] Yourself [325.93s - 328.46s] life is your business Take [328.56s - 331.60s] care of it and treat it like [331.70s - 334.11s] serious business Do not get [334.21s - 336.87s] too involved in other peoples [336.97s - 339.60s] businesses and neglect yours in the [339.70s - 342.86s] process", text_file=text_file)
+final_answer("im done analyzing chunk")
+</code>
+[2025-08-01 21:04:39] ✅ Similarity: 0.99 -> ✔️
+[2025-08-01 21:04:39] ------------------------------------------------------------
+[2025-08-01 21:04:39] 
 
 
 
 
-[2025-07-26 13:58:26] 
-📈 Eval Accuracy (Before Training): 4/5 = 80.00%
-[2025-07-26 13:58:26] ❌ Wrong count: 1
+[2025-08-01 21:05:21] 
+
+
+🔹 Example 7
+[2025-08-01 21:05:21] 🎯 Expected: Thought: I found 2 standalone motivational passages that meet the criteria of being a self-contained motivational quote, piece of advice, or inspirational message. Each can stand on its own, even when isolated from the rest of the text, without lacking context at the beginning or end. Therefore, I’m saving them.
+<code>
+SaveMotivationalText(text="[314.17s - 317.19s] It takes some time to succeed [317.29s - 319.99s] in life because true success [320.09s - 322.73s] is not just about the money [322.83s - 326.42s] but also about the great lessons [326.52s - 329.08s] learned on the path to [329.18s - 332.00s] success", text_file=text_file)
+SaveMotivationalText(text="[334.62s - 337.38s] Enthusiasm is excitement with inspirationmotivation [337.48s - 341.01s] and a pinch of [341.11s - 343.55s] creativity", text_file=text_file)
+final_answer("Im done analyzing the chunk")
+</code>
+[2025-08-01 21:05:21] 🧠 Generated: Thought: I found 2 standalone motivational passages that meet the criteria of being a self-contained motivational quote, piece of advice, or inspirational message. Each can stand on its own, even when isolated from the rest of the text, without lacking context at the beginning or end. Therefore, I’m saving them.
+<code>
+SaveMotivationalText(text="[314.17s - 317.19s] It takes some time to succeed [317.29s - 319.99s] in life because true success [320.09s - 322.73s] is not just about the money [322.83s - 326.42s] but also about the great lessons [326.52s - 329.08s] learned on the path to [329.18s - 332.00s] success", text_file=text_file)
+SaveMotivationalText(text="[334.62s - 337.38s] Enthusiasm is excitement with inspirationmotivation [337.48s - 341.01s] and a pinch of [341.11s - 343.55s] creativity", text_file=text_file)
+final_answer("im done analyzing chunk")
+</code>
+[2025-08-01 21:05:21] ✅ Similarity: 1.00 -> ✔️
+[2025-08-01 21:05:21] ------------------------------------------------------------
+[2025-08-01 21:05:21] 
+
+
+
+
+[2025-08-01 21:05:54] 
+
+
+🔹 Example 8
+[2025-08-01 21:05:54] 🎯 Expected: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+<code>
+SaveMotivationalText(text="[326.84s - 329.67s] Identify [329.77s - 332.39s] your top three goals and [332.49s - 335.26s] demolish the number one [335.36s - 338.01s] obstacle Stay laser-focused and [338.11s - 341.57s] fiercely determined on your [341.67s - 345.13s] objective and success will be [345.23s - 347.87s] yours for the taking", text_file=text_file)
+final_answer("Im done analyzing the chunk")
+</code>
+[2025-08-01 21:05:54] 🧠 Generated: Thought: I found 1 standalone motivational passage that meet the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+<code>
+SaveMotivationalText(text="[326.84s - 329.67s] Identify [329.77s - 332.39s] your top three goals and [332.49s - 335.26s] demolish the number one [335.36s - 338.01s] obstacle Stay laser-focused and [338.11s - 341.57s] fiercely determined on your [341.67s - 345.13s] objective and success will be [345.23s - 347.87s] yours for the taking", text_file=text_file)
+final_answer("im done analyzing chunk")
+</code>
+[2025-08-01 21:05:54] ✅ Similarity: 0.99 -> ✔️
+[2025-08-01 21:05:54] ------------------------------------------------------------
+[2025-08-01 21:05:54] 
+
+
+
+
+[2025-08-01 21:06:23] 
+
+
+🔹 Example 9
+[2025-08-01 21:06:23] 🎯 Expected: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+<code>
+SaveMotivationalText(text="[326.04s - 329.06s] Whether [329.16s - 331.67s] you want to [331.77s - 334.86s] double down on previous successes [334.96s - 338.25s] address significant challenges or embark [338.35s - 341.60s] on new endeavors identify your [341.70s - 344.64s] top three goals", text_file=text_file)
+final_answer("Im done analyzing the chunk")
+</code>
+[2025-08-01 21:06:23] 🧠 Generated: Thought: I found 1 standalone motivational passage that meet the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+<code>
+SaveMotivationalText(text="[326.04s - 329.06s] Whether [329.16s - 331.67s] you want to [331.77s - 334.86s] double down on previous successes [334.96s - 338.25s] address significant challenges or embark [338.35s - 341.60s] on new endeavors identify your [341.70s - 344.64s] top three goals", text_file=text_file)
+final_answer("im done analyzing chunk")
+</code>
+[2025-08-01 21:06:23] ✅ Similarity: 0.99 -> ✔️
+[2025-08-01 21:06:23] ------------------------------------------------------------
+[2025-08-01 21:06:23] 
+
+
+
+
+[2025-08-01 21:06:44] 
+
+
+🔹 Example 10
+[2025-08-01 21:06:44] 🎯 Expected: Thought: I carefully scanned every timestamped line in this chunk, looking for a short, self-contained motivational passage. I evaluated each line on its own and also explored whether merging or combining adjacent lines might produce a meaningful, standalone inspirational message. Despite these efforts, none of the sentences—individually or in combination—met the criteria for a clear, context-independent motivational quote. They were either filler commentary, incomplete thoughts, or too dependent on surrounding context. Since there isn’t a complete motivational statement I can save, I will not call SaveMotivationalText and will only provide `final_answer`.<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved.")
+</code>
+[2025-08-01 21:06:44] 🧠 Generated: Thought: I carefully scanned every timestamped line in this chunk, looking for a short, self-contained motivational passage. I evaluated each line on its own and also explored whether merging or combining adjacent lines might produce a meaningful, standalone inspirational message. Despite these efforts, none of the sentences—individually or in combination—met the criteria for a clear, context-independent motivational quote. They were either filler commentary, incomplete thoughts, or too dependent on surrounding context. Since there isn’t a complete motivational statement I can save, I will not call SaveMotivationalText and will only provide `final_answer`. <code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved.")
+</code>
+[2025-08-01 21:06:44] ✅ Similarity: 1.00 -> ✔️
+[2025-08-01 21:06:44] ------------------------------------------------------------
+[2025-08-01 21:06:44] 
+
+
+
+
+[2025-08-01 21:07:08] 
+
+
+🔹 Example 11
+[2025-08-01 21:07:08] 🎯 Expected: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+<code>
+SaveMotivationalText(text="[320.35s - 323.34s] Dont let unfinished business weigh you [323.44s - 325.84s] down [325.94s - 329.06s] Finish what you started and unlock [329.16s - 332.74s] the door to limitless possibilities", text_file=text_file)
+final_answer("Im done analyzing the chunk")
+</code>
+[2025-08-01 21:07:08] 🧠 Generated: Thought: I found 1 standalone motivational passage that meet the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+<code>
+SaveMotivationalText(text="[320.35s - 323.34s] Dont let unfinished business weigh you [323.44s - 325.84s] down [325.94s - 329.06s] Finish what you started and unlock [329.16s - 332.74s] the door to limitless possibilities", text_file=text_file)
+final_answer("im done analyzing chunk")
+</code>
+[2025-08-01 21:07:08] ✅ Similarity: 0.99 -> ✔️
+[2025-08-01 21:07:08] ------------------------------------------------------------
+[2025-08-01 21:07:08] 
+
+
+
+
+[2025-08-01 21:07:29] 
+
+
+🔹 Example 12
+[2025-08-01 21:07:29] 🎯 Expected: Thought: I carefully scanned every timestamped line in this chunk, looking for a short, self-contained motivational passage. I evaluated each line on its own and also explored whether merging or combining adjacent lines might produce a meaningful, standalone inspirational message. Despite these efforts, none of the sentences—individually or in combination—met the criteria for a clear, context-independent motivational quote. They were either filler commentary, incomplete thoughts, or too dependent on surrounding context. Since there isn’t a complete motivational statement I can save, I will not call SaveMotivationalText and will only provide `final_answer`.<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved.")
+</code>
+[2025-08-01 21:07:29] 🧠 Generated: Thought: I carefully scanned every timestamped line in this chunk, looking for a short, self-contained motivational passage. I evaluated each line on its own and also explored whether merging or combining adjacent lines might produce a meaningful, standalone inspirational message. Despite these efforts, none of the sentences—individually or in combination—met the criteria for a clear, context-independent motivational quote. They were either filler commentary, incomplete thoughts, or too dependent on surrounding context. Since there isn’t a complete motivational statement I can save, I will not call SaveMotivationalText and will only provide `final_answer`.
+<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved.")
+</code>
+[2025-08-01 21:07:29] ✅ Similarity: 1.00 -> ✔️
+[2025-08-01 21:07:29] ------------------------------------------------------------
+[2025-08-01 21:07:29] 
+
+
+
+
+[2025-08-01 21:07:53] 
+
+
+🔹 Example 13
+[2025-08-01 21:07:53] 🎯 Expected: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+<code>
+SaveMotivationalText(text="[320.37s - 323.17s] Time is the fuel [323.27s - 326.22s] of life Use it wisely [326.32s - 329.91s] prioritize your tasks and [330.01s - 332.53s] unlock your full potential", text_file=text_file)
+final_answer("Im done analyzing the chunk")
+</code>
+[2025-08-01 21:07:53] 🧠 Generated: Thought: I found 1 standalone motivational passage that meet the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+<code>
+SaveMotivationalText(text="[320.37s - 323.17s] Time is the fuel [323.27s - 326.22s] of life Use it wisely [326.32s - 329.91s] prioritize your tasks and [330.01s - 332.53s] unlock your full potential", text_file=text_file) 
+final_answer("im done analyzing chunk")
+</code>
+[2025-08-01 21:07:53] ✅ Similarity: 0.99 -> ✔️
+[2025-08-01 21:07:53] ------------------------------------------------------------
+[2025-08-01 21:07:53] 
+
+
+
+
+[2025-08-01 21:08:17] 
+
+
+🔹 Example 14
+[2025-08-01 21:08:17] 🎯 Expected: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+<code>
+SaveMotivationalText(text="[317.66s - 321.16s] Transform your life one [321.26s - 324.67s] habit at a time [324.77s - 327.18s] Develop daily practices that align with your [327.28s - 330.61s] goals stay consistent and become unstoppable", text_file=text_file)
+final_answer("Im done analyzing the chunk")
+</code>
+[2025-08-01 21:08:17] 🧠 Generated: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+<code>
+SaveMotivationalText(text="[317.66s - 321.16s] Transform your life one [321.26s - 324.67s] habit at a time [324.77s - 327.18s] Develop daily practices that align with your [327.28s - 330.61s] goals stay consistent and become unstoppable", text_file=text_file) 
+final_answer("im done analyzing chunk")
+</code>
+[2025-08-01 21:08:17] ✅ Similarity: 0.99 -> ✔️
+[2025-08-01 21:08:17] ------------------------------------------------------------
+[2025-08-01 21:08:17] 
+
+
+
+
+[2025-08-01 21:08:45] 
+
+
+🔹 Example 15
+[2025-08-01 21:08:45] 🎯 Expected: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+<code>
+SaveMotivationalText(text="[311.73s - 315.03s] Obstacles are opportunities in disguise [315.13s - 318.55s] Stay motivated stay productive and hold yourself [318.65s - 321.32s] accountable for your success With every challenge [321.42s - 324.45s] you grow stronger and closer to [324.55s - 327.90s] your goals", text_file=text_file)
+final_answer("Im done analyzing the chunk")
+</code>
+[2025-08-01 21:08:45] 🧠 Generated: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+<code>
+SaveMotivationalText(text="[311.73s - 315.03s] Obstacles are opportunities in disguise [315.13s - 318.55s] Stay motivated stay productive and hold yourself [318.65s - 321.32s] accountable for your success With every challenge [321.42s - 324.45s] you grow stronger and closer to [324.55s - 327.90s] your goals", text_file=text_file) 
+final_answer("im done analyzing chunk")
+</code>
+[2025-08-01 21:08:45] ✅ Similarity: 0.99 -> ✔️
+[2025-08-01 21:08:45] ------------------------------------------------------------
+[2025-08-01 21:08:45] 
+
+
+
+
+[2025-08-01 21:09:06] 
+
+
+🔹 Example 16
+[2025-08-01 21:09:06] 🎯 Expected: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+<code>
+SaveMotivationalText(text="[319.88s - 323.44s] In the depths of struggle [323.54s - 326.38s] we discover the true strength [326.48s - 329.43s] that resides within us", text_file=text_file)
+final_answer("Im done analyzing the chunk")
+</code>
+[2025-08-01 21:09:06] 🧠 Generated: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+<code>
+SaveMotivationalText(text="[319.88s - 323.44s] In the depths of struggle [323.54s - 326.38s] we discover the true strength [326.48s - 329.43s] that resides within us", text_file=text_file)
+final_answer("im done analyzing chunk")
+</code>
+[2025-08-01 21:09:06] ✅ Similarity: 0.99 -> ✔️
+[2025-08-01 21:09:06] ------------------------------------------------------------
+[2025-08-01 21:09:06] 
+
+
+
+
+[2025-08-01 21:09:44] 
+
+
+🔹 Example 17
+[2025-08-01 21:09:44] 🎯 Expected: Thought: I found 2 standalone motivational passages that meet the criteria of being a self-contained motivational quote, piece of advice, or inspirational message. Each can stand on its own, even when isolated from the rest of the text, without lacking context at the beginning or end. Therefore, I’m saving them.
+<code>
+SaveMotivationalText(text="[326.82s - 329.97s] The struggle you face [330.07s - 333.60s] today is the strength you [333.70s - 336.88s] will carry tomorrow", text_file=text_file)
+SaveMotivationalText(text="[339.91s - 342.55s] Wisdom is available to [342.65s - 346.11s] those who can labor [346.21s - 348.84s] for her she is [348.94s - 351.70s] expensive and hidden to [351.80s - 354.28s] the lazy mind", text_file=text_file)
+final_answer("Im done analyzing the chunk")
+</code>
+[2025-08-01 21:09:44] 🧠 Generated: Thought: I found 2 standalone motivational passages that meet the criteria of being a self-contained motivational quote, piece of advice, or inspirational message. Each can stand on its own, even when isolated from the rest of the text, without lacking context at the beginning or end. Therefore, I’m saving them.
+<code>
+SaveMotivationalText(text="[326.82s - 329.97s] The struggle you face [330.07s - 333.60s] today is the strength you [333.70s - 336.88s] will carry tomorrow", text_file=text_file)
+SaveMotivationalText(text="[339.91s - 342.55s] Wisdom is available to [342.65s - 346.11s] those who can labor [346.21s - 348.84s] for her she is [348.94s - 351.70s] expensive and hidden to [351.80s - 354.28s] the lazy mind", text_file=text_file)
+final_answer("im done analyzing chunk")
+</code>
+[2025-08-01 21:09:44] ✅ Similarity: 1.00 -> ✔️
+[2025-08-01 21:09:44] ------------------------------------------------------------
+[2025-08-01 21:09:44] 
+
+
+
+
+[2025-08-01 21:10:14] 
+
+
+🔹 Example 18
+[2025-08-01 21:10:14] 🎯 Expected: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+<code>
+SaveMotivationalText(text="[317.67s - 321.09s] Make it your sole [321.19s - 323.98s] intention to be part [324.08s - 326.67s] of the solution When [326.77s - 329.79s] you learn how to efficiently [329.89s - 333.01s] solve problems you will attract [333.11s - 336.10s] many opportunities", text_file=text_file)
+final_answer("Im done analyzing the chunk")
+</code>
+[2025-08-01 21:10:14] 🧠 Generated: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+<code>
+SaveMotivationalText(text="[317.67s - 321.09s] Make it your sole [321.19s - 323.98s] intention to be part [324.08s - 326.67s] of the solution When [326.77s - 329.79s] you learn how to efficiently [329.89s - 333.01s] solve problems you will attract [333.11s - 336.10s] many opportunities", text_file=text_file) 
+final_answer("im done analyzing chunk")
+</code>
+[2025-08-01 21:10:14] ✅ Similarity: 0.99 -> ✔️
+[2025-08-01 21:10:14] ------------------------------------------------------------
+[2025-08-01 21:10:14] 
+
+
+
+
+[2025-08-01 21:10:39] 
+
+
+🔹 Example 19
+[2025-08-01 21:10:39] 🎯 Expected: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+<code>
+SaveMotivationalText(text="[321.76s - 324.16s] In life some questions do not [324.26s - 327.65s] require you to get answers from outside [327.75s - 331.03s] They need you to search on [331.13s - 333.84s] the inside", text_file=text_file)
+final_answer("Im done analyzing the chunk")
+</code>
+[2025-08-01 21:10:39] 🧠 Generated: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+<code>
+SaveMotivationalText(text="[321.76s - 324.16s] In life some questions do not [324.26s - 327.65s] require you to get answers from outside [327.75s - 331.03s] They need you to search on [331.13s - 333.84s] the inside", text_file=text_file) 
+final_answer("im done analyzing chunk")
+</code>
+[2025-08-01 21:10:39] ✅ Similarity: 0.99 -> ✔️
+[2025-08-01 21:10:39] ------------------------------------------------------------
+[2025-08-01 21:10:39] 
+
+
+
+
+[2025-08-01 21:11:16] 
+
+
+🔹 Example 20
+[2025-08-01 21:11:16] 🎯 Expected: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+<code>
+SaveMotivationalText(text="[316.05s - 318.82s] In recent years [318.92s - 322.34s] it [322.44s - 325.67s] has become increasingly difficult [325.77s - 328.85s] to digest some situations [328.95s - 332.17s] because of people who make [332.27s - 335.09s] assumptions about life's conditions based [335.19s - 338.13s] solely on screenshots oblivious to [338.23s - 340.89s] what occurred before those [340.99s - 343.77s] screenshots", text_file=text_file)
+final_answer("Im done analyzing the chunk")
+</code>
+[2025-08-01 21:11:16] 🧠 Generated: Thought: I found 1 standalone motivational passage that meet the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+<code>
+SaveMotivationalText(text="[316.05s - 318.82s] In recent years [318.92s - 322.34s] it [322.44s - 325.67s] has become increasingly difficult [325.77s - 328.85s] to digest some situations [328.95s - 332.17s] because of people who make [332.27s - 335.09s] assumptions about life's conditions based [335.19s - 338.13s] solely on screenshots oblivious to [338.23s - 340.89s] what occurred before those [340.99s - 343.77s] screenshots", text_file=text_file) 
+final_answer("im done analyzing chunk")
+</code>
+[2025-08-01 21:11:16] ✅ Similarity: 0.99 -> ✔️
+[2025-08-01 21:11:16] ------------------------------------------------------------
+[2025-08-01 21:11:16] 
+
+
+
+
+[2025-08-01 21:12:06] 
+
+
+🔹 Example 21
+[2025-08-01 21:12:06] 🎯 Expected: Thought: I found 2 standalone motivational passages that meet the criteria of being a self-contained motivational quote, piece of advice, or inspirational message. Each can stand on its own, even when isolated from the rest of the text, without lacking context at the beginning or end. Therefore, I’m saving them.
+<code>
+SaveMotivationalText(text="[316.85s - 319.95s] It is hard to define life entirely [320.05s - 323.57s] but what I know [323.67s - 326.09s] about life is that it will [326.19s - 328.93s] give you a chance to define yourself [329.03s - 332.36s] So do your level best to put [332.46s - 335.52s] yourself out there", text_file=text_file)
+SaveMotivationalText(text="[344.60s - 347.61s] Celebrate your life and [347.71s - 350.15s] remember that you were [350.25s - 352.80s] given a chance that [352.90s - 356.07s] many aborted babies were [356.17s - 359.11s] denied", text_file=text_file)
+final_answer("Im done analyzing the chunk")
+</code>
+[2025-08-01 21:12:06] 🧠 Generated: Thought: I found 2 standalone motivational passages that meet the criteria of being a self-contained motivational quote, piece of advice, or inspirational message. Each can stand on its own, even when isolated from the rest of the text, without lacking context at the beginning or end. Therefore, I’m saving them.
+<code>
+SaveMotivationalText(text="[316.85s - 319.95s] It is hard to define life entirely [320.05s - 323.57s] but what I know [323.67s - 326.09s] about life is that it will [326.19s - 328.93s] give you a chance to define yourself [329.03s - 332.36s] So do your level best to put [332.46s - 335.52s] yourself out there", text_file=text_file)
+SaveMotivationalText(text="[344.60s - 347.61s] Celebrate your life and [347.71s - 350.15s] remember that you were [350.25s - 352.80s] given a chance that [352.90s - 356.07s] many aborted babies were [356.17s - 359.11s] denied", text_file=text_file)
+final_answer("im done analyzing chunk")
+</code>
+[2025-08-01 21:12:06] ✅ Similarity: 1.00 -> ✔️
+[2025-08-01 21:12:06] ------------------------------------------------------------
+[2025-08-01 21:12:06] 
+
+
+
 

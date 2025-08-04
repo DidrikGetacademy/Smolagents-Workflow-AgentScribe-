@@ -69,8 +69,8 @@ def Fetch_top_trending_youtube_videos(Search_Query: str) -> dict:
             q=Search_Query,
             type="video",
             regionCode="US",
-            order="viewCount",   # Sort by most viewed = trending within the query
-            maxResults=1
+            order="viewCount", 
+            maxResults=4
         ).execute()
 
 
@@ -281,8 +281,6 @@ class Chunk_line_LimiterTool(Tool):
 
 
 
-
-
 @tool
 def ExtractAudioFromVideo(video_path: str) -> str:
     """Extracts  mono 16kHz WAV audio from a video using ffmpeg.
@@ -317,6 +315,9 @@ def ExtractAudioFromVideo(video_path: str) -> str:
             frames = f.getnframes()
             rate = f.getframerate()
             duration = frames / float(rate)
+            import gc
+            gc.collect()
+            torch.cuda.empty_cache()
 
         log(f"[LOG] Extracted audio duration: {duration:.2f} seconds (~{duration/60:.2f} minutes)")
 
@@ -393,8 +394,17 @@ def Read_transcript(transcript_path: str, start_count: int = 0) -> str:
 
 
 
+
+
+
+
+
+
+
+
+
+
 class SpeechToTextTool(PipelineTool):
- 
     default_checkpoint = r"c:\Users\didri\Desktop\LLM-models\Audio-Models\faster-whisper-large-v3-turbo-int8float16"
     description = "Fast tool that transcribes audio into text using faster-whisper. It returns the path to the transcript file"
     name = "transcriber"
@@ -464,9 +474,22 @@ class SpeechToTextTool(PipelineTool):
 
 
 
-class SpeechToTextTool_viral_agent(PipelineTool):
 
-    default_checkpoint = r"c:\Users\didri\Desktop\LLM-models\Audio-Models\faster-whisper-large-v3-turbo-int8float16"
+
+
+
+
+
+
+
+
+
+
+
+
+
+class SpeechToTextTool_viral_agent(PipelineTool):
+    default_checkpoint = r"c:\Users\didri\Desktop\LLM-models\Audio-Models\faster-whisper-large-int8-ct2"
     description = "Fast tool that transcribes audio into text using faster-whisper. It returns the path to the transcript file"
     name = "transcriber"
     inputs = {
@@ -481,7 +504,7 @@ class SpeechToTextTool_viral_agent(PipelineTool):
         self.model = WhisperModel(
                 model_size_or_path=self.default_checkpoint,
                 device="cpu",
-                compute_type="int8_float16",
+                compute_type="int8",
     
                     )              
 
@@ -489,7 +512,7 @@ class SpeechToTextTool_viral_agent(PipelineTool):
 
     def forward(self, inputs):
         audio_path = inputs["audio"]
-        segments = self.model.transcribe(
+        segments,_ = self.model.transcribe(
             audio_path,
             vad_filter=True,
             vad_parameters={"min_silence_duration_ms": 500}
@@ -500,20 +523,38 @@ class SpeechToTextTool_viral_agent(PipelineTool):
             result = []
             for segment in segments:
                     result.append(f"{segment.text.strip()}\n")
+          
+
         except Exception as e:
-            log(f"error during transcribing")      
+            log(f"error during transcribing: {str(e)}")      
         finally:
             del self.model 
-            if self.device == "cuda":
+            if self.device == "cpu":
+                del self.device
                 torch.cuda.empty_cache()
-
-        return result
+            else:
+                import gc
+                gc.collect()
+                
+        return " ".join(result)
 
     def encode(self, audio):
         return {"audio": audio}
 
     def decode(self, outputs):
         return outputs
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -533,7 +574,7 @@ class SpeechToTextToolCPU_Custom(PipelineTool):
     def setup(self):
         self.model = WhisperModel(
                 model_size_or_path=self.default_checkpoint,
-                device="cuda",
+                device="auto",
                 compute_type="int8_float16",
     
                     )              
@@ -577,6 +618,17 @@ class SpeechToTextToolCPU_Custom(PipelineTool):
 
     def decode(self, outputs):
         return outputs
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -654,6 +706,19 @@ class SpeechToTextToolCPU(PipelineTool):
         return outputs
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 class SpeechToTextToolCUDA(PipelineTool):
     default_checkpoint = r"c:\Users\didri\Desktop\LLM-models\Audio-Models\faster-whisper-large-v3-turbo-int8float16"
     description = "Fast tool that transcribes audio into text using faster-whisper. It returns the path to the transcript file"
@@ -716,6 +781,11 @@ class SpeechToTextToolCUDA(PipelineTool):
     def decode(self, outputs):
         return outputs
     
+
+
+
+
+
 
 
 

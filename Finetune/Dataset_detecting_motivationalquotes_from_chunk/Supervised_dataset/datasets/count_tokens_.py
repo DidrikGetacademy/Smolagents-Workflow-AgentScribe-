@@ -2,7 +2,7 @@ from transformers import AutoTokenizer
 import json
 
 # Path to your local tokenizer/model directory
-model_path = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-3B-Instruct"
+model_path = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-3B-Instruct-MERGED"
 
 tokenizer = AutoTokenizer.from_pretrained(model_path)
 
