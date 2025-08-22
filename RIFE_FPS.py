@@ -191,6 +191,7 @@ def run_rife(input_video):
                 "--exp", str(exp),
                 "--ext", "mp4",
                 "--scale", "1",
+
             ],
         )
         process.wait()
@@ -218,4 +219,4 @@ if __name__ == "__main__":
     import torch
     torch.cuda.empty_cache()
     gc.collect()
-    run_rife(input_video=r"GPEN/output_true_lossless_x264.mov")   
+    run_rife(input_video=r"c:\Users\didri\AppData\Local\CapCut\Videos\1.mp4")   

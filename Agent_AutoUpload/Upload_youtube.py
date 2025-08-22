@@ -22,8 +22,8 @@ from log import log
 already_uploaded_videos = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\already_uploaded.txt"     
 latest_published_video_file = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\latest_publishedAt.txt"           
 # Scopes required to upload video
-SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
 
+SCOPES = ["https://www.googleapis.com/auth/youtube"] 
 def get_single_playlist_id(youtube):
     try:
           request = youtube.playlists().list(
@@ -45,6 +45,8 @@ def get_single_playlist_id(youtube):
                return
     except HttpError as e:
         log(f"Error retrieving playlist_id : {e}")
+
+
 
 def get_authenticated_service(YT_channel):
     if YT_channel == "LR_Youtube":
@@ -81,7 +83,7 @@ def get_authenticated_service(YT_channel):
 
 
 
-def upload_video(model,file_path, YT_channel="LM_Youtube"):
+def upload_video(model,file_path, YT_channel="MR_Youtube"):
     try:
       log("Autenchiating now..")
       youtube = get_authenticated_service(YT_channel)
@@ -222,7 +224,7 @@ def get_automatic_data_from_agent(model,input_video):
                   Google_Websearch,
                   ], 
             max_steps=4,
-            #verbosity_level=1,
+            verbosity_level=1,
             prompt_templates=Manager_Agent_prompt_templates,
             stream_outputs=True,
             additional_authorized_imports=['datetime','timedelta']
@@ -287,7 +289,7 @@ if __name__ == "__main__":
     )
     try:
   
-             upload_video(model=model,file_path=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\klipp(1).mp4",YT_channel="LM_Youtube")
+             upload_video(model=model,file_path=r"c:\Users\didri\AppData\Local\CapCut\Videos\Exaucstedalloptions.mp4",YT_channel="MR_Youtube")
              test_log_list.clear()
              log(f"Count Of successful Uploads: {count}")
 

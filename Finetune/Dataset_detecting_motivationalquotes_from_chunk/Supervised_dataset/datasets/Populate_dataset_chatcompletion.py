@@ -6,7 +6,7 @@ from transformers import AutoTokenizer
 import re
 
 CONFIG = {
-    'model_name': r'C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-3B-Instruct-MERGED',
+    'model_name': r'C:\Users\didri\Desktop\LLM-models\LLM-Models\microsoft\unsloth\Phi-4-mini-instruct',
 }
 count_only_filler = 0
 count_single_Quote_mix = 0
@@ -15,7 +15,7 @@ Count_double_quotes = 0
 def log(msg):
     print(msg)
 
-def add_timestamps_and_filler(sentences, filler_before, filler_after, base_start=random.uniform(300.0, 1200.0), avg_sentence_duration=3.0):
+def add_timestamps_and_filler(sentences, filler_before, filler_after, base_start=random.uniform(300.0, 1200.0), avg_sentence_duration=4.0):
     all_sents = filler_before + sentences + filler_after
     timestamped_text = ""
     current_time = base_start
@@ -47,7 +47,7 @@ def load_filler_sentences():
     path = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\Dataset_detecting_motivationalquotes_from_chunk\Supervised_dataset\datasets\filler_sentence_dataset.json"
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
-        filler_sentences = [entry["sentence"].strip() for entry in data if 20 < len(entry["sentence"].strip()) < 150]
+        filler_sentences = [entry["sentence"].strip() for entry in data if 10 < len(entry["sentence"].strip()) < 150]
     log(f"[Dataset Load] Loaded {len(filler_sentences)} filler sentences from local JSON")
     return filler_sentences
 
@@ -82,85 +82,131 @@ def preprocess_with_filler_balanced(example, idx, filler_sentences, used_filler_
     global count_single_quote_natural
     global Count_double_quotes
     system_prompt = """
-           You are a quote‐detection assistant for creating motivational shorts. Your task is to carefully analyze and read a timestamped chunk and extract any standalone motivational quotes or advice or motivational passages that are complete and self‐contained, and could be used for a short inspirational video, If quotes are found, save them using the appropriate function. If none are found, return a final response indicating that.
-        You are to Save standalone motivational quotes, advice, inspiring messages, that are  complete  and does not lack context if isolated from the rest of the chunk.
-        Analyze the chunk/text between [chunk start] and [chunk end].
-        Objective: Your job is to extract motivational quotes from the input text chunk. These are typically short, self-contained passages that offer encouragement, life advice, or inspiration.
-        Reasoning: Always begin with a `Thought:` statement explaining your reasoning — for example, whether you identified quotes, and how many.
-        Instructions --- Your Expected Output Format:
-        - If two quote, Advice or motivational complete message is found in the chunk you analyze, output:
-            Thought: I found 2 standalone motivational passages that meet the criteria of being a self-contained motivational quote, piece of advice, or inspirational message. Each can stand on its own, even when isolated from the rest of the text, without lacking context at the beginning or end. Therefore, I’m saving them.
-            <code>
-            SaveMotivationalText(text="[start - end] Quote 1", text_file=text_file)
-            SaveMotivationalText(text="[start - end] Quote 2", text_file=text_file)
-            final_answer("im done analyzing chunk")
-            </code>
-        - If one  quote, Advice or motivational complete message is found in the chunk you analyze, output:
-            Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
-            <code>
-            SaveMotivationalText(text="[start - end] Quote", text_file=text_file)
-            final_answer("im done analyzing chunk")
-            </code>    
-        - If no quotes, Advice or motivational complete message is found in the chunk you analyze, output:
-            Thought: I carefully scanned every timestamped line in this chunk, looking for a short, self-contained motivational passage. I evaluated each line on its own and also explored whether merging or combining adjacent lines might produce a meaningful, standalone inspirational message. Despite these efforts, none of the sentences—individually or in combination—met the criteria for a clear, context-independent motivational quote. They were either filler commentary, incomplete thoughts, or too dependent on surrounding context. Since there isn’t a complete motivational statement I can save, I will not call SaveMotivationalText and will only provide `final_answer`.
-            <code>
-            final_answer("After carefully analyzing the chunk/text, I have concluded nothing can be saved.")
-            </code>
-        Notes:
-        - Quotes must be motivational and standalone — avoid fragments or generic sentences.
-        - Always include both `Thought:` and `<code>` blocks.
-        - Use exact function names and punctuation as shown.
-        - Do not return quotes that are incomplete or unclear.
-        - Do not create multiple SaveMotivationalText() calls for each line in a single quote.
-        - Do not alter or guess missing timestamps — use the exact start and end values provided in the lines that contain the quote.
-        - Quote text should appear as a single, continuous string, even if it was originally split across 2–3 lines.   
-        Timestamp Handling:
-             When a quote spans multiple lines (each line containing a separate timestamp):
-                - Merge the lines into a single quote.
-                - Include the **start time from the first line** and the **end time from the last line**.
-                - Preserve original spacing and punctuation.
-                - Output the full quote like:
-        Exsample identified quote from chunk:
-        [chunk start]
-        [620.10s - 622.40s] In today's episode, we'll cover some important updates about mental clarity
-        [622.41s - 623.69s] But before that, thank you for supporting the channel
-        [623.70s - 627.11s] You will encounter many challenges in life  
-        [627.12s - 628.00s] But you must never be defeated by the challenges
-        [628.01s - 629.55s] That was a quote I heard recently and it really stuck with me
-        [629.56s - 631.00s] Anyway, let’s move on to the main topic of today’s discussion
-        [chunk end]
+You are an attentive assistant who reads everything carefully. Your primary goal is to identify self-contained text for creating motivational shorts by identifying short-form motivational or self-improvement statements and anecdotes that inspire personal growth, resilience, and self-reflection — often using contrasts, memorable insights, or real-life stories to encourage positive mindset, discipline, and perseverance. Your task is to carefully analyze and read a timestamped chunk and extract any Qualifying motivational texts, inspirational passages, or self-contained statements that offer encouragement, life advice, or inspiration and could be used for a 15 - 20 seconds short video. If such texts are found, save them using the appropriate function. If none are found, return a final response indicating that.
+You are to save standalone Qualifying motivational texts, advice, inspiring messages, or passages that are complete and do not lack context or would confuse a listener if isolated from the rest of the chunk.
+Analyze the chunk/transcript between [chunk start] and [chunk end].
+Objective: Your job is to extract motivational qualifying texts from the input text chunk/transcript. 
+These are typically short, self-contained passages that offer encouragement, life advice, or inspiration — including inspiring messages, anecdotes, or insights (not limited to direct quotes).
+Reasoning: Always begin with a Thought: statement explaining your reasoning — for example, summarize the intent of the chunk, indicate whether you identified any motivational texts (and how many), or explain why none qualified.
+ABSOLUTE OUTPUT FORMAT RULE
+YOU must output exactly:
+    Thought: [your reasoning text here]  
+    <code>  
+    [one or more SaveMotivationalText(...) calls if any found]  
+    [exactly one final_answer(...) call]  
+    </code>
 
-        Your output should be:
-            Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
-            <code>SaveMotivationalText(text="[623.70s - 628.00s] You will encounter many challenges in life  [627.12s - 628.00s] But you must never be defeated by the challenges", text_file=text_file) 
-            final_answer("im done analyzing chunk")
-            </code>
+Your output format rules:
+    1. Thought: must always be outside <code>.
+    2. <code> must contain nothing except function calls.
+    3. Always provide a 'Thought:' sequence, and a '<code>' sequence ending with '</code>', else you will fail.
+    4. The Thought: sequence must always provide a short reasoning over the overall intent of the chunk, describing what the speaker/text is mainly doing (e.g., telling a story, joking, giving advice, reflecting, describing an event). Then, based on that intent, explain whether any qualifying motivational texts were found or not. If qualifying texts were found, explain briefly why those specific passages qualify (mention their motivational themes like effort, discipline, resilience, growth, mindset shift, etc.), why other parts of the chunk were excluded (e.g., anecdotal, casual, off-topic), and explicitly confirm that the saved motivational texts are complete, self-contained, and do not lack context when isolated. If no qualifying texts were found, explain that the chunk’s intent (story, casual chat, filler, incomplete thought, etc.) did not contain any standalone motivational passages suitable for a short video.
+
+After analyzing chunk:
+    -If one or more qualifying motivational texts are found: Output one SaveMotivationalText(...) call for each self-contained qualifying text.
+    -After the last SaveMotivationalText(...) call, output exactly one final_answer("im done").
+    -If none qualifying motivational texts  are found: 
+        -Output only one line: final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, No text had a clear beginning & end or a profound overall intent/meaning that is suitable for a motivational shorts. Nothing that would provide any interest for a listener.")
+
+Here are 3 examples of correct output:
+Exsample 1.  If two qualifying motivational texts are found in the chunk you analyze, You must output:
+Thought: [Your reasoning here...]
+<code>
+    SaveMotivationalText(text="[623.70s - 627.11s] The magic you are looking for [627.11s - 640.14s]  is in the work you are avoiding", text_file=text_file)  
+    SaveMotivationalText(text="[500.00s - 502.34s] You don't need perfect conditions to make progress. [502.34s - 505.22s] You just need to move", text_file=text_file)    
+    final_answer("im done")
+</code>
+
+Exsample 2.  If one qualifying motivational text is found in the chunk/transcript that you analyze, You must output:
+Thought: [your reasoning here...]
+<code>
+    SaveMotivationalText(text="[617.70s - 627.11s] You will encounter many challenges in life  [627.12s - 628.00s] But you must never be defeated by [628.01s - 629.55s] the challenges", text_file=text_file)
+    final_answer("im done")
+</code>    
+
+Exsample 3. If no qualifying motivational texts are found in the chunk you analyze, You should output the reason in the The 'Thought' sequence, a short reason of the intent and noting that that the chunk (inferred as non-motivational or lacks a clear intent):
+Thought: [your reasoning here...]
+<code>
+    final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code>
+
+Timestamp Handling when saving qualifying text:
+- When a motivational text spans multiple lines (each line containing a separate timestamp):
+- Merge the lines into a single text.
+- Include the start time from the first line and all timestamps up to and including the end time from the last line, Example: SaveMotivationalText(text="[617.70s - 627.11s] You will encounter many challenges in life [627.12s - 628.00s] But you must never be defeated by [628.01s - 629.55s] the challenges", text_file=text_file).
+- Preserve original spacing and punctuation exactly.
+- Example output: SaveMotivationalText("[start - end] Qualifying text line 1 [start - end] Qualifying text line 2 [start - end]", text_file=text_file) if the qualifying text spans multiple lines.
+- The timestamps in the format [SSSS.SSs - SSSS.SSs] represent the time in seconds for when the words are spoken in the video transcript.
+
+Here you have Important Rules/instructions to follow:
+- Motivational texts must be inspirational and standalone — avoid fragments or generic sentences.
+- Always include both `Thought:` and `<code>` blocks.
+- Use exact function names and punctuation as shown.
+- Do not return texts that are incomplete or unclear.
+- Do not create multiple SaveMotivationalText() calls for each line in a single text.
+- Do not alter or guess missing timestamps — use the exact start and end values provided in the lines that contain the text.
+- Text should appear as a single, continuous string, even if it was originally split across 1-8 lines.   
+- Each line in a chunk has a timestamp ([start - end]) that represent the time of those words spoken, the transcript you are analyzing is text from a video transcribed from a audio.
+- The chunks you analyze may vary in size. Always analyze the entire chunk and identify any qualifying text if any before providing <code>.
+
+Types of Qualifying Motivational Texts:
+- Passages that encourage perseverance, personal growth, resilience, mindset shift, success, discipline, consistency, or overcoming challenges (e.g., "You will encounter many challenges in life, but you must never be defeated by them"). A complete text that does not lack context when isolated.
+- Action-oriented advice that inspires immediate steps toward improvement (e.g., "You don’t need perfect conditions to make progress. You just need to move").
+- Messages promoting self-belief, confidence, or personal growth (e.g., "The difference between who you are and who you want to be is in the choices you make every day").
+- Universal life advice that is concise and impactful (e.g., "Discipline is choosing what you want most over what you want now").
+- Inspirational statements that evoke hope or determination (e.g., "Fear is loud, but your future deserves to be louder").
+- Anecdotes or stories that illustrate growth, resilience, or lessons (e.g., short, self-contained real-life examples from temp.txt-like files).
+
+Notes on Qualifying Texts:
+- Texts must be self-contained, meaning they convey a complete thought without needing surrounding context.
+- Avoid generic statements (e.g., "Life is hard" or "mindset is good") or fragments that lack clear motivational intent and would not grab a listener's attention.
+- Ensure the passage is concise enough for a motivational shorts video.
+- Do not save text that does not form a complete thought. If it lacks context when isolated from the rest of the transcript, do not save it. You must understand the overall meaning of the text to judge whether it stands on its own. If it's not a self-contained motivational passage, you will fail.
+
+Here are 5 few-shot examples of qualifying texts, and If you identify similar texts like these that qualifies in a transcript or chunk that you analyze, save it with SaveMotivationalText("...",text_file=text_file) as they are self-contained and suitable for  motivational shorts video:
+    -----------------
+    1. "always keep going there's been times particularly early in my career where it just feels like thisis the end but what i've come to find out is that no matter what happens the stormeventually ends and when the storm does end you want to make sure that you're ready"
+        Reason: Qualifies because it’s a self-contained motivational lesson about perseverance and resilience. It conveys a complete thought that encourages hope and preparation.
 
 
-    Types of Qualifying Motivational Text/Quotes:
-        - Passages that encourage perseverance, PersonalGrowth, Quotes, Inspiring, resilience, or overcoming challenges (e.g., "You will encounter many challenges in life, but you must never be defeated by them"), A complete text that does not lack context isolated.
-        - Action-oriented advice that inspires immediate steps toward improvement (e.g., "You don’t need perfect conditions to make progress. You just need to move").
-        - Messages promoting self-belief, confidence, or personal growth (e.g., "The difference between who you are and who you want to be is in the choices you make every day").
-        - Universal life advice that is concise and impactful (e.g., "Discipline is choosing what you want most over what you want now").
-        - Inspirational statements that evoke hope or determination (e.g., "Fear is loud, but your future deserves to be louder").
-        Notes on Qualifying Quotes:
-        - Quotes must be self-contained, meaning they convey a complete thought without needing surrounding context.
-        - Avoid generic statements (e.g., "Life is hard") or fragments that lack clear motivational intent.
-        - Ensure the passage is concise enough for a short inspirational video (typically 1–6 sentences).
+    2. "James Clear has this fucking unbelievable insight. It doesn't make sense to continue wanting something if you're not willing to do what it takes to get it. If you don't want to live the lifestyle, then release yourself from the desire. To crave the result, but not the process, is to guarantee disappointment"
+        Reason: Qualifies because it offers a profound motivational insight with complete context. It delivers actionable advice on aligning desires with actions, making it suitable as a standalone short.
+    
+    3. "The magic you are looking for is in the work you are avoiding"
+         Reason: Qualifies because it’s concise, memorable, and self-contained. It provides clear motivational advice about discipline and effort without requiring extra context.
 
-    Here are the rules you should always follow to solve your task or you will fail the task:
-     -Always provide a 'Thought:' sequence, and a '<code>' sequence ending with '</code>', else you will fail.
-     -Do not save text that does not form a complete thought. If it lacks context when isolated from the rest of the transcript, do not save it. You must understand the overall meaning of the quote to judge whether it stands on its own. If it's not a self-contained quote, you will fail.    
+    4. "Willpower is the key to success. Successful people strive no matter what they feel by applying their will to overcome apathy, doubt or fear."
+        Reason:  Qualifies because it presents a universal motivational principle about resilience and determination. It is self-contained and inspires immediate application.
+    
+    5. "Discipline isn't just about following rigid rules or punishing yourself for slip-ups; it's the bridge between your dreams and reality, where every small, consistent action you take today—like waking up early to work on your goals despite feeling tired—compounds into massive personal growth tomorrow, turning potential into achievement and weakness into unshakeable strength"
+        Reason: Qualifies because it’s a full motivational passage that explains discipline in a clear, actionable, and inspirational way. It has a strong beginning, middle, and end, making it suitable as a complete short.
+    
+Here are 5 few-shot examples of Texts that does not Qualify and that you must never save with SaveMotivationalText("...",text_file=text_file) Even if they appear motivational at first glance, they must be excluded. Below the texts is a (reason) that explain why the text does not qualify. Thought: must reflect why they fail to qualify: these texts are either incomplete, generic, dependent on prior context, or too vague to stand on their own as a motivational short. Saving them would confuse or disengage a listener because they lack a clear beginning, end, or a profound intent.
+    -----------------
+    1. "Life can be tough sometimes" 
+      Reason: excluded because Not qualifying text because Too generic, lacks insight or actionable advice, not engaging enough for a short video.
 
-    """
+    2. "And that's why you should keep trying" 
+        Reason: excluded because Depends on missing context (what was discussed before), incomplete if isolated.
+
+    3. "Like we discussed before, success is important" 
+        Reason: excluded because References prior discussion, cannot stand alone, vague and redundant.
+
+    4. "I got to push you back. I got to stop you from going that hard." 
+        Reason: excluded because Fragmented statement, lacks motivational theme or universal meaning, unclear intent.
+        
+    5. "But I said, at this point, I think I've been working out like crazy person" 
+        Reason: excluded because Personal anecdote without a motivational lesson, lacks self-contained insight.
+"""
    
     instruction = """
-        Here is the chunk you will analyze:\n
+        Your task is to Identify Qualifying Motivational Texts & Save them if any is found in the chunk.
+        Here is the chunk you must analyze: \n
     """
 
-    if random.random() < 0.1:
+    if random.random() < 0.3:
         count_only_filler += 1
-        n_fillers = random.randint(4, 7)
+        n_fillers = random.randint(4, 10)
         selected_fillers = sample_unique_fillers(n_fillers, filler_sentences, used_filler_sentences)
         if selected_fillers is None:
             return None
@@ -168,16 +214,16 @@ def preprocess_with_filler_balanced(example, idx, filler_sentences, used_filler_
 
         chunk_text = "[chunk start]\n" + add_timestamps_and_filler([], selected_fillers, []) + "[chunk end]\n"
         label_text = (
-            'Thought: I carefully scanned every timestamped line in this chunk, looking for a short, self-contained motivational passage. I evaluated each line on its own and also explored whether merging or combining adjacent lines might produce a meaningful, standalone inspirational message. Despite these efforts, none of the sentences—individually or in combination—met the criteria for a clear, context-independent motivational quote. They were either filler commentary, incomplete thoughts, or too dependent on surrounding context. Since there isn’t a complete motivational statement I can save, I will not call SaveMotivationalText and will only provide `final_answer`.'
-            '<code>\n'
-            'final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved.")\n'
-            '</code>'
+            'Thought:  \n' +
+            '<code>\n' +
+            'final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")\n' +
+            '</code>' 
         )
 
     else:
         quote_filler_mix_bool = False
         quote_filler_mix_chance = 0.5
-        double_quote_chance = 0.3
+        double_quote_chance = 0.2
   
         if dataset_quotes is None:
             dataset_quotes = [example["text"]]
@@ -272,18 +318,18 @@ def preprocess_with_filler_balanced(example, idx, filler_sentences, used_filler_
 
             #Vis det er flere enn en quote legg til random fillers mellom dem
             if i < len(quotes) - 1:
-                n_fillers_mid = random.randint(1, 3)
+                n_fillers_mid = random.randint(1, 2)
                 fillers_mid = sample_unique_fillers(n_fillers_mid, filler_sentences, used_filler_sentences)
                 if fillers_mid is None:
                     return None
                 all_sentences.extend(fillers_mid)
 
-        filler_before = sample_unique_fillers(random.randint(1, 6), filler_sentences, used_filler_sentences)
+        filler_before = sample_unique_fillers(random.randint(1, 3), filler_sentences, used_filler_sentences)
         if filler_before is None or len(filler_before) == 0:
             log(f"[Warning] Ran out of filler sentences for filler_before at idx {idx}")
 
             return None
-        filler_after = sample_unique_fillers(random.randint(1, 6), filler_sentences, used_filler_sentences)
+        filler_after = sample_unique_fillers(random.randint(1, 3), filler_sentences, used_filler_sentences)
         if filler_after is None or len(filler_after) == 0:
             log(f"[Warning] Ran out of filler sentences for filler_before at idx {idx}")
             return None
@@ -373,13 +419,14 @@ def preprocess_with_filler_balanced(example, idx, filler_sentences, used_filler_
             print(f"full quote with timestamps: {full_quote_with_timestamps}")
 
             label_text = (
-                'Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.\n' +
-                '<code>\n'
-                f'SaveMotivationalText(text="{full_quote_with_timestamps}", text_file=text_file)\n'
-                'final_answer("Im done analyzing the chunk")\n'
+                'Thought: \n' +
+                '<code>\n' +
+               f'SaveMotivationalText(text="{full_quote_with_timestamps}", text_file=text_file)\n' +
+                'final_answer("im done")\n' +
                 '</code>'
             )
             
+
         elif len(quotes) == 1 and not quote_filler_mix_bool:
             parts = []
             for start_t, end_t, text in matched_quote_lines:
@@ -389,10 +436,10 @@ def preprocess_with_filler_balanced(example, idx, filler_sentences, used_filler_
                     parts.append(text)
             full_quote_with_timestamps = " ".join(parts).replace('"', '\\"')
             label_text = (
-                'Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.\n' +
-                '<code>\n'
-                f'SaveMotivationalText(text="{full_quote_with_timestamps}", text_file=text_file)\n'
-                'final_answer("Im done analyzing the chunk")\n'
+                'Thought: \n' +
+                '<code>\n' +
+                f'SaveMotivationalText(text="{full_quote_with_timestamps}", text_file=text_file)\n' +
+                'final_answer("im done")\n'
                 '</code>'
             )
 
@@ -410,17 +457,21 @@ def preprocess_with_filler_balanced(example, idx, filler_sentences, used_filler_
                         parts.append(text)
                 combined_text = " ".join(parts).replace('"', '\\"')
                 save_calls.append(f'SaveMotivationalText(text="{combined_text}", text_file=text_file)')
-            Thought = f"I found {len(save_calls)} standalone motivational passage{'s' if len(save_calls) > 1 else ''} that meet the criteria of being a self-contained motivational quote, piece of advice, or inspirational message. Each can stand on its own, even when isolated from the rest of the text, without lacking context at the beginning or end. Therefore, I’m saving {'them' if len(save_calls) > 1 else 'it'}."
+            Thought = f""
+
+            
             label_text = (
-                f"Thought: {Thought}\n"
-                "<code>\n" + "\n".join(save_calls) + "\n"
-                'final_answer("Im done analyzing the chunk")\n</code>'
+                f"Thought: {Thought}\n" +
+                "<code>\n" + "\n".join(save_calls) +
+                'final_answer("im done")\n' +
+                '</code>'
             )
+            
 
     return {
         "messages": [
             {"role": "system", "content": system_prompt.strip()},
-            {"role": "user", "content": instruction.strip() + "\n\n" + chunk_text.strip()},
+            {"role": "user", "content": instruction.strip() + "\n" + chunk_text.strip()},
             {"role": "assistant", "content": label_text.strip()}
         ]
     }
@@ -459,7 +510,7 @@ def main():
 
 
 
-    train_data_path = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\Dataset_detecting_motivationalquotes_from_chunk\Supervised_dataset\datasets\train.jsonl"
+    train_data_path = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\Dataset_detecting_motivationalquotes_from_chunk\Supervised_dataset\datasets\traintest.jsonl"
     with open(train_data_path, "w", encoding="utf-8") as f:
         for item in train_data:
             f.write(json.dumps(item, ensure_ascii=False) + "\n")

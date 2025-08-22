@@ -20,21 +20,6 @@ class LossAndEvalloggingCallback(TrainerCallback):
         perplexity = exp(loss) if loss is not None else "N/A"
 
     
-        if loss is not None:
-            change = loss - self.prev_train_loss if self.prev_train_loss is not None else None
-            if change is None:
-                comment = "🚀 Starter opp!"
-            elif change < -0.1:
-                comment = "📉 Klar forbedring!"
-            elif abs(change) < 0.001:
-                comment = "😐 Står omtrent stille..."
-            elif change > 0.1:
-                comment = "⚠️ Loss øker mye!"
-            else:
-                comment = "🔄 Litt ustabilt..."
-            self.prev_train_loss = loss
-        else:
-            comment = "ℹ️ Ingen loss logget dette steget."
 
 
         token_acc_percent = f"{token_acc * 100:.2f}%" if token_acc is not None else "N/A"
@@ -48,7 +33,7 @@ class LossAndEvalloggingCallback(TrainerCallback):
         else:
             header = ""
 
-        row = f"{step:5} | {loss:.4f} | {perplexity:10.4f} | {grad_norm:10.4f} | {token_acc_percent:>9} | {comment}"
+        row = f"{step:5} | {loss:.4f} | {perplexity:10.4f} | {grad_norm:10.4f} | {token_acc_percent:>9} "
 
         explanation = f"""
                         📘 Forklaringer:
@@ -69,7 +54,6 @@ class LossAndEvalloggingCallback(TrainerCallback):
             f"🔹 Grad Norm: {grad_norm}\n"
             f"🔹 #Tokens: {num_tokens}\n"
             f"🔹 Token Acc: {token_acc}\n\n"
-            f"{comment}\n"
             + "-"*60
             + "\n\n\n"
         )
@@ -94,7 +78,7 @@ class LossAndEvalloggingCallback(TrainerCallback):
 
    
         if eval_loss is not None:
-            delta = eval_loss - self.prev_eval_loss if self.prev_eval_loss is not None else None
+            delta = eval_loss - self.prev_eval_loss if self.prev_eval_loss is not None else "N/A"
             self.prev_eval_loss = eval_loss
 
             if delta is None:
@@ -117,7 +101,12 @@ class LossAndEvalloggingCallback(TrainerCallback):
             f"\n{'Step':>5} | {'Eval Loss':>10} | {'Perplexity':>10} | {'Kommentar'}\n"
             + "-" * 60
         )
-        row = f"{step:5} | {eval_loss:.4f}    | {eval_perplexity:10.4f} | {eval_comment}"
+        row = f"{step:5} | "
+        row += f"{eval_loss:.4f}" if eval_loss is not None else "   N/A   "
+        row += "    | "
+        row += f"{eval_perplexity:10.4f}" if isinstance(eval_perplexity, (float,int)) else "      N/A   "
+        row += f" | {eval_comment}"
+
 
       
         explanation = f"""

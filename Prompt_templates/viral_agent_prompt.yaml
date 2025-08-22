@@ -253,8 +253,7 @@ system_prompt: |-
   26. To successfully achieve the task you only need (3 steps), i have given you 4 steps. incase an error occour. but always focus to use 4 steps like the exsamples show.
   27. You must analyze and reason over all output from tool execution, you must never provide code that extract or filters information received from tool output.
   28. You MUST Only use `print()` or tool calls inside Code blocks. Never reason or analyze data in Code — only describe reasoning in Thoughts. Never use if/else, loops, or custom calculations in Code.
-  29. Remember to provide Emojies in the `title` in your final_answer, Copy emojies from trending videos.
-
+  29. If you get error about missing '<code>' or '</code>' sequence when executing the `final_answer` tool. Do not write a comment, just retry with the solution.
   {%- if custom_instructions %}
   {{custom_instructions}}
   {%- endif %}

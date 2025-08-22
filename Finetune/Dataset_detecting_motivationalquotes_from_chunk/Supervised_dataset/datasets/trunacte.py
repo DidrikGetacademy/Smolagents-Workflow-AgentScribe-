@@ -45,13 +45,13 @@ from tqdm import tqdm
 import json
 
 def filter_dataset(input_jsonl):
-    model_path = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-3B-Instruct\Merged_checkpoint2316"
+    model_path = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\microsoft\unsloth\Phi-4-mini-instruct"
     output_path = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\traintest.jsonl"
 
     tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=True)
 
-    min_length = 2000
-    max_length = 3070
+    min_length = 0
+    max_length = 2500
     kept_count = 0
     removed_count = 0
 
@@ -81,5 +81,5 @@ def filter_dataset(input_jsonl):
 
 if __name__ == "__main__":
     filter_dataset(
-        input_jsonl=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\Dataset_detecting_motivationalquotes_from_chunk\Supervised_dataset\datasets\train.jsonl"
+        input_jsonl=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\Dataset_detecting_motivationalquotes_from_chunk\Supervised_dataset\datasets\test.jsonl"
     )

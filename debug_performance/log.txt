@@ -1,0 +1,107 @@
+
+
+ 
+
+[2025-08-21 22:43:35][Video_creation(THREAD)] Retrieved WORK: c:\Users\didri\Documents\The Best Moments Of Modern Wisdom (2024).webm
+ 1388.48
+ 1498.28
+ [1388.48s - 1391.90s] You have the audience, you have all of these other things that are behind you, but at the
+[1391.90s - 1395.44s] beginning, it's just you with a stick against a bear.
+[1396.00s - 1401.50s] And arguably that fight is a harder fight to win than beating a dragon when you have a
+[1401.50s - 1403.86s] nuclear bomb and six nations behind you.
+[1403.98s - 1406.92s] And so it's not even like the, the size of the hardship.
+[1406.92s - 1411.54s] It's just also the resources and how few of them you have and how so much of the beginning
+[1411.54s - 1415.82s] is literally burning the one thing you have, which is time, because you have no leverage.
+[1415.82s - 1417.78s] You don't have the money to pay other people to help you.
+[1417.78s - 1423.34s] You don't have the resources to go like get someone to, to no one can learn it for you.
+[1423.60s - 1426.32s] It's like, there's a lot of the things that, that we care about a lot.
+[1426.38s - 1428.28s] Like no one can work out for you.
+[1428.34s - 1429.36s] It doesn't matter how much money you have.
+[1429.46s - 1431.20s] No one can learn skills for you.
+[1431.28s - 1435.54s] And so in the early days, like it feels so painful because you're like, you look around
+[1435.54s - 1436.42s] to see who can help you.
+[1436.44s - 1438.10s] And then you're like, fuck, it's me again.
+[1438.76s - 1443.50s] And I think getting comfortable with the idea that each of these things kind of like slum
+[1443.50s - 1444.04s] dog millionaire.
+[1444.04s - 1448.36s] If you've seen that movie where he, I'll give you the TLDR, he goes through his entire
+[1448.36s - 1451.98s] life of randomness and he gets on the, who wants to be a millionaire version in India.
+[1452.12s - 1454.60s] And from only 12 random experiences in his life that seemed meaningless at the time, was
+[1459.92s - 1462.06s] he able to answer all of the questions and then ultimately win.
+[1462.74s - 1467.32s] The skills that you develop along the way, like Steve jobs, learning calligraphy that then
+[1467.32s - 1473.04s] became Apple fonts that, you know, transformed how we type those early days, that little
+[1473.04s - 1478.80s] trench winning in the weeds oftentimes gives you these huge advantages later on because
+[1478.80s - 1480.18s] you have more context than anyone else.
+[1480.18s - 1486.32s] And so rather than lament them and hate the fact that you're going through it, remembering
+[1486.32s - 1489.48s] that these will be arrows that you put in the quiver that you're going to be using to
+[1489.48s - 1490.98s] slay the future, bigger dragons.
+[1490.98s - 1498.28s] And so expecting it to be easy is what makes it much harder than it ever is.
+
+
+[2025-08-21 22:43:35][Video_creation(THREAD)] 
+[video_creation_worker] Current work being proccessed...[ video_url: c:\Users\didri\Documents\The Best Moments Of Modern Wisdom (2024).webm, start_time: 1388.48, end_time: 1498.28, text: [1388.48s - 1391.90s] You have the audience, you have all of these other things that are behind you, but at the
+[1391.90s - 1395.44s] beginning, it's just you with a stick against a bear.
+[1396.00s - 1401.50s] And arguably that fight is a harder fight to win than beating a dragon when you have a
+[1401.50s - 1403.86s] nuclear bomb and six nations behind you.
+[1403.98s - 1406.92s] And so it's not even like the, the size of the hardship.
+[1406.92s - 1411.54s] It's just also the resources and how few of them you have and how so much of the beginning
+[1411.54s - 1415.82s] is literally burning the one thing you have, which is time, because you have no leverage.
+[1415.82s - 1417.78s] You don't have the money to pay other people to help you.
+[1417.78s - 1423.34s] You don't have the resources to go like get someone to, to no one can learn it for you.
+[1423.60s - 1426.32s] It's like, there's a lot of the things that, that we care about a lot.
+[1426.38s - 1428.28s] Like no one can work out for you.
+[1428.34s - 1429.36s] It doesn't matter how much money you have.
+[1429.46s - 1431.20s] No one can learn skills for you.
+[1431.28s - 1435.54s] And so in the early days, like it feels so painful because you're like, you look around
+[1435.54s - 1436.42s] to see who can help you.
+[1436.44s - 1438.10s] And then you're like, fuck, it's me again.
+[1438.76s - 1443.50s] And I think getting comfortable with the idea that each of these things kind of like slum
+[1443.50s - 1444.04s] dog millionaire.
+[1444.04s - 1448.36s] If you've seen that movie where he, I'll give you the TLDR, he goes through his entire
+[1448.36s - 1451.98s] life of randomness and he gets on the, who wants to be a millionaire version in India.
+[1452.12s - 1454.60s] And from only 12 random experiences in his life that seemed meaningless at the time, was
+[1459.92s - 1462.06s] he able to answer all of the questions and then ultimately win.
+[1462.74s - 1467.32s] The skills that you develop along the way, like Steve jobs, learning calligraphy that then
+[1467.32s - 1473.04s] became Apple fonts that, you know, transformed how we type those early days, that little
+[1473.04s - 1478.80s] trench winning in the weeds oftentimes gives you these huge advantages later on because
+[1478.80s - 1480.18s] you have more context than anyone else.
+[1480.18s - 1486.32s] And so rather than lament them and hate the fact that you're going through it, remembering
+[1486.32s - 1489.48s] that these will be arrows that you put in the quiver that you're going to be using to
+[1489.48s - 1490.98s] slay the future, bigger dragons.
+[1490.98s - 1498.28s] And so expecting it to be easy is what makes it much harder than it ever is. to que]
+
+  Amount of added videowork to queue: 2
+ 
+
+[2025-08-21 22:43:35][Agent_Run(THREAD)] Current videos added to que for proccessing: 2
+
+
+
+
+
+
+[2025-08-21 22:43:36][Video_creation(THREAD)] Temp dir created:C:\Users\didri\AppData\Local\Temp\tmpcaeuyrb1
+
+[2025-08-21 22:43:36][Video_creation(THREAD)] Truncated audio clip: C:\Users\didri\AppData\Local\Temp\tmpcaeuyrb1\temp_audio_1.wav
+
+[2025-08-21 22:43:36][Video_creation(THREAD)] start_ms: 1388480, end_ms: 1498280
+
+[2025-08-21 22:43:36][Video_creation(THREAD)] subtitletext cleaned: You have the audience, you have all of these other things that are behind you, but at the beginning, it's just you with a stick against a bear. And arguably that fight is a harder fight to win than beating a dragon when you have a nuclear bomb and six nations behind you. And so it's not even like the, the size of the hardship. It's just also the resources and how few of them you have and how so much of the beginning is literally burning the one thing you have, which is time, because you have no leverage. You don't have the money to pay other people to help you. You don't have the resources to go like get someone to, to no one can learn it for you. It's like, there's a lot of the things that, that we care about a lot. Like no one can work out for you. It doesn't matter how much money you have. No one can learn skills for you. And so in the early days, like it feels so painful because you're like, you look around to see who can help you. And then you're like, fuck, it's me again. And I think getting comfortable with the idea that each of these things kind of like slum dog millionaire. If you've seen that movie where he, I'll give you the TLDR, he goes through his entire life of randomness and he gets on the, who wants to be a millionaire version in India. And from only 12 random experiences in his life that seemed meaningless at the time, was he able to answer all of the questions and then ultimately win. The skills that you develop along the way, like Steve jobs, learning calligraphy that then became Apple fonts that, you know, transformed how we type those early days, that little trench winning in the weeds oftentimes gives you these huge advantages later on because you have more context than anyone else. And so rather than lament them and hate the fact that you're going through it, remembering that these will be arrows that you put in the quiver that you're going to be using to slay the future, bigger dragons. And so expecting it to be easy is what makes it much harder than it ever is.
+
+[2025-08-21 22:43:37][Video_creation(THREAD)] [INFO] Audio Duration: 109.80 seconds Detected Language: en (confidence: 1.00)
+
+[2025-08-21 22:43:43][Video_creation(THREAD)] Subtitle tokens: ['you', 'have', 'the', 'audience', 'you', 'have', 'all', 'of', 'these', 'other', 'things', 'that', 'are', 'behind', 'you', 'but', 'at', 'the', 'beginning', "it's", 'just', 'you', 'with', 'a', 'stick', 'against', 'a', 'bear', 'and', 'arguably', 'that', 'fight', 'is', 'a', 'harder', 'fight', 'to', 'win', 'than', 'beating', 'a', 'dragon', 'when', 'you', 'have', 'a', 'nuclear', 'bomb', 'and', 'six', 'nations', 'behind', 'you', 'and', 'so', "it's", 'not', 'even', 'like', 'the', 'the', 'size', 'of', 'the', 'hardship', "it's", 'just', 'also', 'the', 'resources', 'and', 'how', 'few', 'of', 'them', 'you', 'have', 'and', 'how', 'so', 'much', 'of', 'the', 'beginning', 'is', 'literally', 'burning', 'the', 'one', 'thing', 'you', 'have', 'which', 'is', 'time', 'because', 'you', 'have', 'no', 'leverage', 'you', "don't", 'have', 'the', 'money', 'to', 'pay', 'other', 'people', 'to', 'help', 'you', 'you', "don't", 'have', 'the', 'resources', 'to', 'go', 'like', 'get', 'someone', 'to', 'to', 'no', 'one', 'can', 'learn', 'it', 'for', 'you', "it's", 'like', "there's", 'a', 'lot', 'of', 'the', 'things', 'that', 'that', 'we', 'care', 'about', 'a', 'lot', 'like', 'no', 'one', 'can', 'work', 'out', 'for', 'you', 'it', "doesn't", 'matter', 'how', 'much', 'money', 'you', 'have', 'no', 'one', 'can', 'learn', 'skills', 'for', 'you', 'and', 'so', 'in', 'the', 'early', 'days', 'like', 'it', 'feels', 'so', 'painful', 'because', "you're", 'like', 'you', 'look', 'around', 'to', 'see', 'who', 'can', 'help', 'you', 'and', 'then', "you're", 'like', 'fuck', "it's", 'me', 'again', 'and', 'i', 'think', 'getting', 'comfortable', 'with', 'the', 'idea', 'that', 'each', 'of', 'these', 'things', 'kind', 'of', 'like', 'slum', 'dog', 'millionaire', 'if', "you've", 'seen', 'that', 'movie', 'where', 'he', "i'll", 'give', 'you', 'the', 'tldr', 'he', 'goes', 'through', 'his', 'entire', 'life', 'of', 'randomness', 'and', 'he', 'gets', 'on', 'the', 'who', 'wants', 'to', 'be', 'a', 'millionaire', 'version', 'in', 'india', 'and', 'from', 'only', '12', 'random', 'experiences', 'in', 'his', 'life', 'that', 'seemed', 'meaningless', 'at', 'the', 'time', 'was', 'he', 'able', 'to', 'answer', 'all', 'of', 'the', 'questions', 'and', 'then', 'ultimately', 'win', 'the', 'skills', 'that', 'you', 'develop', 'along', 'the', 'way', 'like', 'steve', 'jobs', 'learning', 'calligraphy', 'that', 'then', 'became', 'apple', 'fonts', 'that', 'you', 'know', 'transformed', 'how', 'we', 'type', 'those', 'early', 'days', 'that', 'little', 'trench', 'winning', 'in', 'the', 'weeds', 'oftentimes', 'gives', 'you', 'these', 'huge', 'advantages', 'later', 'on', 'because', 'you', 'have', 'more', 'context', 'than', 'anyone', 'else', 'and', 'so', 'rather', 'than', 'lament', 'them', 'and', 'hate', 'the', 'fact', 'that', "you're", 'going', 'through', 'it', 'remembering', 'that', 'these', 'will', 'be', 'arrows', 'that', 'you', 'put', 'in', 'the', 'quiver', 'that', "you're", 'going', 'to', 'be', 'using', 'to', 'slay', 'the', 'future', 'bigger', 'dragons', 'and', 'so', 'expecting', 'it', 'to', 'be', 'easy', 'is', 'what', 'makes', 'it', 'much', 'harder', 'than', 'it', 'ever', 'is']
+
+
+[2025-08-21 22:43:43][Video_creation(THREAD)] transcribed tokens: ['you', 'have', 'the', 'audience', 'you', 'have', 'all', 'of', 'these', 'other', 'things', 'that', 'are', 'behind', 'you', 'but', 'in', 'the', 'beginning', "it's", 'just', 'you', 'with', 'a', 'stick', 'against', 'a', 'bear', 'and', 'arguably', 'that', 'fight', 'is', 'a', 'harder', 'fight', 'to', 'win', 'than', 'beating', 'a', 'dragon', 'when', 'you', 'have', 'a', 'nuclear', 'bomb', 'and', 'six', 'nations', 'behind', 'you', 'and', 'so', "it's", 'not', 'even', 'like', 'the', 'size', 'of', 'the', 'hardship', "it's", 'just', 'also', 'the', 'resources', 'and', 'how', 'few', 'of', 'them', 'you', 'have', 'and', 'how', 'so', 'much', 'of', 'the', 'beginning', 'is', 'literally', 'burning', 'the', 'one', 'thing', 'you', 'have', 'which', 'is', 'time', 'because', 'you', 'have', 'no', 'leverage', 'you', "don't", 'have', 'the', 'money', 'to', 'pay', 'other', 'people', 'to', 'help', 'you', 'you', "don't", 'have', 'the', 'resources', 'to', 'go', 'like', 'get', 'someone', 'to', 'no', 'one', 'can', 'learn', 'it', 'for', 'you', "it's", 'like', "there's", 'a', 'lot', 'of', 'the', 'things', 'that', 'we', 'care', 'about', 'a', 'lot', 'like', 'no', 'one', 'can', 'work', 'out', 'for', 'you', "doesn't", 'matter', 'how', 'much', 'money', 'you', 'have', 'no', 'one', 'can', 'learn', 'skills', 'for', 'you', 'and', 'so', 'in', 'the', 'early', 'days', 'like', 'it', 'feels', 'so', 'painful', 'because', "you're", 'like', 'you', 'look', 'around', 'to', 'see', 'who', 'can', 'help', 'you', 'and', 'then', "you're", 'like', 'fuck', "it's", 'me', 'again', 'and', 'i', 'think', 'getting', 'comfortable', 'with', 'the', 'idea', 'that', 'each', 'of', 'these', 'things', 'kind', 'of', 'like', 'slumdog', 'millionaire', 'if', "you've", 'seen', 'that', 'movie', 'where', 'he', "i'll", 'give', 'you', 'the', 'tldr', 'he', 'goes', 'through', 'his', 'entire', 'life', 'of', 'randomness', 'and', 'he', 'gets', 'on', 'the', 'who', 'wants', 'to', 'be', 'a', 'millionaire', 'version', 'in', 'india', 'and', 'it', 'has', '12', 'questions', 'to', 'make', 'a', 'million', 'dollars', 'and', 'from', 'only', '12', 'random', 'experiences', 'in', 'his', 'life', 'that', 'seemed', 'meaningless', 'at', 'the', 'time', 'was', 'he', 'able', 'to', 'answer', 'all', 'of', 'the', 'questions', 'and', 'then', 'ultimately', 'win', 'the', 'skills', 'that', 'you', 'develop', 'along', 'the', 'way', 'like', 'steve', 'jobs', 'learning', 'calligraphy', 'that', 'then', 'became', 'apple', 'fonts', 'that', 'you', 'know', 'transformed', 'how', 'we', 'type', 'those', 'early', 'days', 'that', 'little', 'trench', 'winning', 'in', 'the', 'weeds', 'oftentimes', 'gives', 'you', 'these', 'huge', 'advantages', 'later', 'on', 'because', 'you', 'have', 'more', 'context', 'than', 'anyone', 'else', 'and', 'so', 'rather', 'than', 'lament', 'them', 'and', 'hate', 'the', 'fact', 'that', "you're", 'going', 'through', 'it', 'remembering', 'that', 'these', 'will', 'be', 'arrows', 'that', 'you', 'put', 'in', 'the', 'quiver', 'that', "you're", 'going', 'to', 'be', 'using', 'to', 'slay', 'the', 'future', 'bigger', 'dragons', 'and', 'so', 'expecting', 'it', 'to', 'be', 'easy', 'is', 'what', 'makes', 'it', 'much', 'harder', 'than', 'it', 'ever', 'is']
+
+
+[2025-08-21 22:43:43][Video_creation(THREAD)] error during matching: No exact match found.
+
+[2025-08-21 22:43:43][Video_creation(THREAD)] Transcription complete | device: cuda
+
+[2025-08-21 22:43:43][Video_creation(THREAD)] [ERROR] during execution: 'NoneType' object is not subscriptable
+
+[2025-08-21 22:43:43][Video_creation(THREAD)] Done Creating Video 
+
+
+[2025-08-21 22:43:43][Video_creation(THREAD)] Video Successfully Done!

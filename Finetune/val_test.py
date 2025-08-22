@@ -6,7 +6,6 @@ from difflib import SequenceMatcher
 def run_eval_comparison_test(trainer, sft_config, model, tokenizer, eval_dataset, num_samples=15, max_new_tokens=150, phase="Before Training"):
     model.eval()
     validation_logger(f"\n📊 Running Evaluation Test – {phase}")
-
     prepared_eval_dataset = trainer._prepare_dataset(
         dataset=eval_dataset,
         processing_class=tokenizer,
@@ -15,6 +14,10 @@ def run_eval_comparison_test(trainer, sft_config, model, tokenizer, eval_dataset
         formatting_func=None,
         dataset_name=f"eval_{phase.lower().replace(' ', '_')}",
     )
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = "<|endoftext|>"
+    
+    tokenizer.eos_token = "<|end|>"
 
     correct_count = 0
     wrong_count = 0
@@ -24,6 +27,7 @@ def run_eval_comparison_test(trainer, sft_config, model, tokenizer, eval_dataset
         example = prepared_eval_dataset[i]
         input_ids_list = example["input_ids"]
         assistant_mask = example.get("assistant_masks", None)
+      
 
         first_assistant_idx = next((idx for idx, m in enumerate(assistant_mask) if m == 1), len(input_ids_list)) if assistant_mask else len(input_ids_list)
         user_input_ids = input_ids_list[:first_assistant_idx]
@@ -39,10 +43,10 @@ def run_eval_comparison_test(trainer, sft_config, model, tokenizer, eval_dataset
                 continue
 
         # Modellens svar
-        generated_text = tokenizer.decode(output_ids[0][input_ids.shape[-1]:], skip_special_tokens=True).strip()
+        generated_text = tokenizer.decode(output_ids[0][input_ids.shape[-1]:],skip_special_tokens=False ).strip()
 
         # Ground truth svar
-        expected_text = tokenizer.decode(gt_assistant_ids, skip_special_tokens=True).strip()
+        expected_text = tokenizer.decode(gt_assistant_ids, add_special_tokens=False ).strip()
 
         # Sammenlign likhet
         similarity = SequenceMatcher(None, generated_text, expected_text).ratio()

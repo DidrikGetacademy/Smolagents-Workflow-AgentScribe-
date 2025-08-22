@@ -19,7 +19,7 @@ from faster_whisper import WhisperModel
 import torch 
 import time
 from log import log 
-
+import Global_state
 
 
 
@@ -61,7 +61,7 @@ def Fetch_top_trending_youtube_videos(Search_Query: str) -> dict:
     Api_key = os.getenv("YOUTUBE_API_KEY")
     youtube = build("youtube", "v3", developerKey=Api_key)
     if not Api_key:
-        raise ValueError(f"error api key is not in enviorment variables: {str(e)}")
+        raise ValueError(f"error api key is not in enviorment variables")
 
     #Searches for videos related too the (search query) retrieves basic info of each video. (20 results)
     search_resp = youtube.search().list(
@@ -475,7 +475,142 @@ class SpeechToTextTool(PipelineTool):
 
 
 
+@tool
+def create_motivationalshort(text: str) -> None:
+        """
+        Tool that creates a motivational shorts video.
+        Args:
+            text (str): The complete input text for the motivational short.
+                The text must include the entire message — as one complete 
+                thought, quote, or motivational statement — along with 
+                timestamps for each line. The text must be enclosed within 
+                the markers (===START_TEXT===) and (===END_TEXT===) in the 
+                following format:
 
+                    ===START_TEXT===
+                    ...
+                    [start_time - end_time] Line 1
+                    [start_time - end_time] Line 2
+                    ...
+                    ===END_TEXT===
+                    
+                All content between START_TEXT and END_TEXT will be treated 
+                as a single cohesive message and analyzed as one unit.
+        """
+        def parse_multiline_block(block_text):
+            """
+            1) Splitter blokken i linjer.
+            2) Finner ALLE '[start - end] tekst' — uansett hvordan de står.
+            3) Bygger NY tekst med én linje per subtitle.
+            4) Returnerer start_time (første), end_time (siste) OG den nye teksten.
+            """
+            import re
+            log(f"block_text: {block_text}")
+
+            pattern = re.compile(r"\[(\d+\.\d+)s\s*-\s*(\d+\.\d+)s\]\s*([^\[]+)")
+            matches = pattern.findall(block_text)
+
+            if not matches:
+                return None, None, ""
+            new_text = "\n".join(
+                f"[{start}s - {end}s] {text.strip()}"
+                for start, end, text in matches  
+            )
+            Video_start_time = float(matches[0][0])
+            Video_end_time = float(matches[-1][1])
+            log(f"[parse_multiline_block] start_time: {Video_start_time}, [parse_multiline_block] end_time: {Video_end_time},[parse_multiline_block] new_text: {new_text}")
+
+            return Video_start_time, Video_end_time, new_text
+
+
+        try:
+            audio_path = Global_state.get_current_audio_path()
+            log(f"\naudio_path: \n{audio_path}\n")
+            start_time, end_time, new_text = parse_multiline_block(text)
+        except Exception as e:
+             log(f"Error during [parse_multiline_block]: {str(e)}")
+
+                
+        if start_time is None or end_time is None:
+             raise ValueError(f"start_time or end_time is None, start_time: {start_time}, end_time: {end_time}")
+        
+        video_url = Global_state.get_current_videourl()
+        try:
+            log(f"\n Original text: {text} \n \n now Added work to QUEUE: \n video url: {video_url}\n, audio_path: {audio_path} \n start_time: {start_time}s \n end_time {end_time}s\n")
+            Global_state.set_current_yt_channel("MR_Youtube") #Endre til dynamisk/automatisk valg av youtube channel hver 4 video ellerno
+            
+            Global_state.video_task_que.put((video_url, start_time, end_time, new_text))
+            count = Global_state.get_current_count()
+            count +=1
+            log(f"Added VideoWork to videotask Queue:\n {video_url}\n {start_time}\n {end_time}\n {new_text}\n  Amount of added videowork to queue: {count}\n ")
+            Delete_rejected_line(text)
+            log(f"Current videos added to que for proccessing: {count}")
+            Global_state.set_current_count(count)
+
+            
+        except Exception as e:
+             log(f"Error addng to queue: {str(e)}")
+
+
+
+
+@tool
+def SaveMotivationalText(text: str, text_file: str) -> None:
+    """Save motivational text for motivational shorts video, the text that meets task criteria  to a file with a timestamp.
+       You must include ALL timestamps for every connected line exactly as they appear from the chunk,  
+
+    For security: Read the text that you choose to save one more time, ask yourself does it provide a complete message? if not don't save it.
+    Args:
+         text (str): The text to save. Wrap the entire block in triple quotes if it has commas, quotes, or line breaks
+                        Example:
+                        text = \"\"\"[00.23s - 00.40s] This is line one [00.40s - 00.60s] This is line two.\"\"\"
+                        Make sure to keep ALL timestamps for the entire quote.
+
+
+
+         text_file (str): The path to the file where the quote will be saved, you have access to the variable, just write text_file=text_file.
+    """
+
+         
+    with open(text_file, "a", encoding="utf-8") as f:
+                f.write("===START_TEXT===")
+                f.write(text.strip())
+                f.write("===END_TEXT===\n")
+                log(f"text: {text}")
+
+
+@tool
+def Delete_rejected_line(text: str) -> None:
+        """  Deletes a block from the text file that contains the given inner text,
+             by removing the whole block: ===START_TEXT=== text... ===END_TEXT===
+        Args:
+            text: The line to delete (i.e., considered rejected/not valid) Format: 
+              ===START_TEXT=== 
+              [start_time - end_time] actual text here... [start_time - end_time] .... 
+              ===END_TEXT===      
+        """
+        import re 
+        log(f"\n[Delete_rejected_line] text into func: {text}")
+        text_file = Global_state.get_current_textfile()
+        log(f"[Delete_rejected_line] path to textfile: {text_file}")
+
+        with open(text_file, 'r', encoding="utf-8") as f:
+                    content = f.read()
+
+        escaped_text = re.escape(text.strip())
+        
+        pattern = rf'===START_TEXT\s*.*?{escaped_text}.*?\s*===END_TEXT===\s*'
+
+        new_content, num_subs = re.subn(pattern, '', content, flags=re.DOTALL)
+
+        if num_subs == 0:
+            log("[Delete_rejected_line] No matching block found — nothing deleted.")
+            return
+
+        with open(text_file, 'w', encoding="utf-8") as f:
+            f.write(new_content)
+
+        log(f"[Delete_rejected_line] Deleted {num_subs} block(s) containing the text.")
 
 
 
@@ -507,8 +642,6 @@ class SpeechToTextTool_viral_agent(PipelineTool):
                 compute_type="int8",
     
                     )              
-
-
 
     def forward(self, inputs):
         audio_path = inputs["audio"]
@@ -586,7 +719,7 @@ class SpeechToTextToolCPU_Custom(PipelineTool):
         segments = self.model.transcribe(
             audio_path,
             vad_filter=True,
-            vad_parameters={"min_silence_duration_ms": 100},
+            vad_parameters={"min_silence_duration_ms": 500},
             word_timestamps=True 
         )
 
@@ -660,10 +793,8 @@ class SpeechToTextToolCPU(PipelineTool):
                 model_size_or_path=self.default_checkpoint,
                 device="cpu",
                 compute_type="int8",
-                cpu_threads=4 
+                cpu_threads=6
                     )              
-
-
 
     def forward(self, inputs):
         audio_path = inputs["audio"]
@@ -714,11 +845,6 @@ class SpeechToTextToolCPU(PipelineTool):
 
 
 
-
-
-
-
-
 class SpeechToTextToolCUDA(PipelineTool):
     default_checkpoint = r"c:\Users\didri\Desktop\LLM-models\Audio-Models\faster-whisper-large-v3-turbo-int8float16"
     description = "Fast tool that transcribes audio into text using faster-whisper. It returns the path to the transcript file"
@@ -751,20 +877,26 @@ class SpeechToTextToolCUDA(PipelineTool):
         video_path = inputs["video_path"]
         segments, info = self.model.transcribe(
             audio_path,
+            language="en", # specify it to lock the model to that language, avoiding detection errors and improving word precision.
+            beam_size=7, #Increases the number of hypotheses explored during decoding. Higher values (e.g., 7-10) improve accuracy by considering more possible transcriptions, especially for noisy or ambiguous speech in long videos.
+            best_of=7, #Samples multiple outputs and selects the best. Higher values (e.g., 5-10) enhance accuracy by choosing the most likely transcription, similar to beam search but complementary.
+            condition_on_previous_text=True, #for long audio—it conditions new segments on prior text, maintaining context and reducing errors across the full video.
+            temperature=0, #Controls output randomness. Set to a low value like 0.0 for deterministic, accurate results (reduces "creative" errors).
             vad_filter=True,
-            vad_parameters={"min_silence_duration_ms": 500}
+            vad_parameters={"min_silence_duration_ms": 1000}
         )
         print(f"\n🔊 Using Whisper on device: {self.device}, \ntranscribing video: {video_path} \n   with inputs: {self.inputs}")
         print(f"[INFO] Detected Language: {info.language} (confidence: {info.language_probability:.2f})")
         print(f"[INFO] Audio Duration: {info.duration:.2f} seconds")
         
         try:
-            with open(text_path, "w", encoding="utf-8") as f:
+            with open(text_path, "a", encoding="utf-8") as f:
                 print(f"opening txt_path on: {text_path} device: {self.device}")
               
                 try:
                     for segment in segments:
                          f.write(f"[{segment.start:.2f}s - {segment.end:.2f}s] {segment.text.strip()}\n")
+                    f.write("\n\n\n\n\n\n\n\n\n DONE\n\n\n\n\n")
                 except Exception as e:
                     print(f"error during segments: {str(e)}")
         
@@ -785,6 +917,68 @@ class SpeechToTextToolCUDA(PipelineTool):
 
 
 
+class SpeechToTextToolTEST(PipelineTool):
+    default_checkpoint = r"c:\Users\didri\Desktop\LLM-models\Audio-Models\faster-whisper-large-v3-turbo-int8float16"
+    description = "Fast tool that transcribes audio into text using faster-whisper. It returns the path to the transcript file"
+    name = "transcriber"
+    inputs = {
+        "audio": {
+            "type": "audio",
+            "description": "The audio to transcribe. Can be a local path, a URL, or a tensor.",
+        },
+        "count": {
+            "type": "number",
+            "description": "a count"
+        }
+
+    }
+    output_type = "string"
+    def setup(self):
+
+        self.model = WhisperModel(
+                model_size_or_path=self.default_checkpoint,
+                device="cuda",
+                compute_type="int8_float16"
+                )
+    def forward(self, inputs):
+        audio_path = inputs["audio"]
+        count = inputs["count"]
+
+        segments, info = self.model.transcribe(
+            audio_path,
+            #vad_filter=True,
+            #vad_parameters={"min_silence_duration_ms": 500}
+            #initial_prompt=
+        )
+
+        print(f"[INFO] Detected Language: {info.language} (confidence: {info.language_probability:.2f})")
+        print(f"[INFO] Audio Duration: {info.duration:.2f} seconds")
+        
+        try:
+            with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\temp.txt", "a", encoding="utf-8") as f: 
+                try:
+                    for segment in segments:
+                            f.write('{ "sentence": " ')
+                            f.write(f"{segment.text.strip()}" + " ")
+                            f.write(' " }, \n\n')
+                except Exception as e:
+                    print(f"error during segments: {str(e)}")
+        
+        finally:
+            print(f"transcription complete ! device  {self.device}")
+            if self.device == "cuda":
+                torch.cuda.empty_cache()
+                import gc
+                gc.collect()
+   
+        return segments
+
+    def encode(self, audio):
+        return {"audio": audio}
+
+    def decode(self, outputs):
+        return outputs
+    
 
 
 
@@ -803,6 +997,20 @@ class SpeechToText_short_creation_thread(PipelineTool):
         "subtitle_text": {
             "type": "string",
             "description": "The correct subtitle text to match to",
+        },
+        "padding": {
+            "type": "number",
+            "description": "padding"
+        },
+        "original_start_time":
+        {
+            "type": "number",
+            "description": "Extended end time for video"
+        },
+
+        "original_end_time": {
+            "type": "number",
+            "description": "extended start time for video"
         }
     }
     output_type = "string"
@@ -820,79 +1028,76 @@ class SpeechToText_short_creation_thread(PipelineTool):
         return re.sub(r"[^\w']", "", word).lower()
 
     def forward(self, inputs):
+        #input variables
         audio_path = inputs["audio"]
         subtitle_text = inputs["subtitle_text"]
-        from log import log
+        original_start_time = round(inputs["original_start_time"],2)
 
         try:
             segments, info = self.model.transcribe(
                 audio_path,
-                word_timestamps=True
+                word_timestamps=True,
+                beam_size=7,
+                best_of=7,
             )
 
-            print(f"[INFO] Detected Language: {info.language} (confidence: {info.language_probability:.2f})")
-            print(f"[INFO] Audio Duration: {info.duration:.2f} seconds")
+            log(f"[INFO] Audio Duration: {info.duration:.2f} seconds Detected Language: {info.language} (confidence: {info.language_probability:.2f})")
 
-            # Flatten all words
-            last_word_match = False
             all_words = []
             for segment in segments:
                 all_words.extend(segment.words)
 
-            # Cleaned text
+            
             subtitle_tokens = [self.clean_word(w) for w in subtitle_text.replace("\n", " ").split()]
             transcribed_tokens = [self.clean_word(w.word) for w in all_words]
+            log(f"Subtitle tokens: {subtitle_tokens}\n")
+            log(f"transcribed tokens: {transcribed_tokens}\n")
 
-            # Sliding window exact match
+
             match_start = -1
             for i in range(len(transcribed_tokens) - len(subtitle_tokens) + 1):
                 window = transcribed_tokens[i:i + len(subtitle_tokens)]
                 if window == subtitle_tokens:
                     match_start = i
                     break
+            try:
 
-            if match_start != -1:
-                match_end = match_start + len(subtitle_tokens)
-                matched_words = [
-                    {
-                        "word": all_words[i].word,
-                        "start": float(all_words[i].start),
-                        "end": float(all_words[i].end)
-                    }
-                    for i in range(match_start, match_end)
-                ]
-                print(f"[MATCH] Found exact match: {[w['word'] for w in matched_words]}")
+                if match_start == -1:
+                    raise ValueError("No exact match found.")
 
-                new_video_start_time = float(matched_words[0]["start"])
-                new_video_end_time = float(matched_words[-1]["end"])
+                if match_start != -1:
+                    match_end = match_start + len(subtitle_tokens)
+                    matched_words = [
+                        {
+                            "word": all_words[i].word,
+                            "start": float(all_words[i].start),
+                            "end": float(all_words[i].end),
+                        }
+                        for i in range(match_start, match_end)
+                    ]
 
-                subtitle_last_word  = self.clean_word(subtitle_tokens[-1])
-                audio_transcript_last_word = self.clean_word(transcribed_tokens[-1])
-
-
-
-                if subtitle_last_word == audio_transcript_last_word:
-                   last_word_match = True
-
-            else:
-                raise ValueError("ERRROOOOOOOOOOOOOORR")
-
-            log(f"Matched words from speectotexttool: {matched_words}\n\n")
-            return {
-                "matched_words": matched_words,
-                "video_start_time": new_video_start_time,
-                "video_end_time": new_video_end_time,
-                "last_word_match": last_word_match
-            }
+                    log(f"[MATCH] Found exact match: {[w['word'] for w in matched_words]}")
+                
+                    final_start_time = original_start_time + float(all_words[match_start].start) 
+                    log(f"final_start_time: {final_start_time}")
+        
+                    final_end_time = final_start_time + float(matched_words[-1]["end"]) + 0.07
+                    log(f"final_end_time: {final_end_time}")
+                        
+                return {
+                    "matched_words": matched_words,
+                    "video_start_time": final_start_time,
+                    "video_end_time": final_end_time,
+                   }
+                                    
+ 
+            except Exception as e:####ERROR
+                log(f"error during matching: {str(e)}")
 
         except Exception as e:
             log(f"[ERROR] during transcription: {str(e)}")
-            return {
-                "matched_words": [],
-                "video_start_time": None,
-                "video_end_time": None,
-                "last_word_match": False
-            }
+            raise ValueError(f"Logic in speectotext_short_creation_thread NEEDS FIXING")
+        
         finally:
             log(f"Transcription complete | device: {self.device}")
 
@@ -904,3 +1109,4 @@ class SpeechToText_short_creation_thread(PipelineTool):
 
     def decode(self, outputs):
         return outputs 
+    

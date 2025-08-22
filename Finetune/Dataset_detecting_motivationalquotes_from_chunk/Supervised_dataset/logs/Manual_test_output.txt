@@ -1,441 +1,987 @@
-[2025-08-01 21:01:16] 
-📊 Running Evaluation Test – Before Training
-[2025-08-01 21:02:15] 
+
+
+
+[2025-08-19 16:32:16] 
+📊 Running Evaluation Test – After Training
+[2025-08-19 16:33:00] 
 
 
 🔹 Example 1
-[2025-08-01 21:02:15] 🎯 Expected: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+[2025-08-19 16:33:00] 🎯 Expected: Thought: The chunk primarily discusses a mix of topics, including a vague reference to achieving results, a personal reflection on seeing the speaker's book mentioned, and encouragement to persist in creative endeavors. The intent appears to be a blend of personal anecdote and motivational advice. One passage qualifies as motivational: 'Seeing my book mentioned in various interviews and posts is an indescribable feeling Ill never take this love for grantedWhatever youre creating right now keep going Its never too late'. This text is self-contained, combining a personal anecdote with a universal call to perseverance, making it suitable for a motivational short video. It conveys gratitude and encourages persistence, resonating with themes of effort and resilience. The rest of the chunk, such as 'getting results from this thing' or 'nothing is quitting unless you stop,' is either too vague, fragmented, or lacks a complete motivational thought, making them unsuitable for a short video. The saved text can be interpreted as a motivational message that stands alone, inspiring listeners to continue their creative pursuits without needing additional context. 
 <code>
-SaveMotivationalText(text="[327.93s - 330.80s] When you [330.90s - 333.56s] feel all alone [333.66s - 337.20s] and in the dark never [337.30s - 340.29s] give up When the time [340.39s - 342.97s] is right life will grant [343.07s - 346.44s] you great rewards", text_file=text_file)
-final_answer("Im done analyzing the chunk")
-</code>
-[2025-08-01 21:02:15] 🧠 Generated: Thought: I found 1 standalone motivational passage that meet the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+SaveMotivationalText(text="[727.66s - 731.28s] Seeing my book mentioned [731.38s - 735.13s] in various interviews and [735.23s - 738.64s] posts is an indescribable [738.74s - 742.66s] feeling Ill never take [742.76s - 746.23s] this love for grantedWhatever [746.33s - 749.55s] youre creating right now [749.65s - 753.37s] keep going Its never [753.47s - 757.95s] too late", text_file=text_file)
+final_answer("im done")
+</code><|end|>
+[2025-08-19 16:33:00] 🧠 Generated: Thought: The text discusses the importance of perseverance and continuous effort, but it lacks a clear, concise, and impactful message suitable for a short video. The text is fragmented, vague, and dependent on prior context, making it unsuitable for a standalone motivational short.
 <code>
-SaveMotivationalText(text="[327.93s - 330.80s] When you [330.90s - 333.56s] feel all alone [333.66s - 337.20s] and in the dark never [337.30s - 340.29s] give up When the time [340.39s - 342.97s] is right life will grant [343.07s - 346.44s] you great rewards", text_file=text_file) 
-final_answer("im done analyzing chunk")
-</code>
-[2025-08-01 21:02:15] ✅ Similarity: 0.99 -> ✔️
-[2025-08-01 21:02:15] ------------------------------------------------------------
-[2025-08-01 21:02:15] 
+ final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code><|end|>
+[2025-08-19 16:33:00] ✅ Similarity: 0.08 -> ❌
+[2025-08-19 16:33:00] ------------------------------------------------------------
+[2025-08-19 16:33:00] 
 
 
 
 
-[2025-08-01 21:02:42] 
+[2025-08-19 16:33:11] 
 
 
 🔹 Example 2
-[2025-08-01 21:02:42] 🎯 Expected: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+[2025-08-19 16:33:11] 🎯 Expected: Thought: The chunk is a disjointed mix of casual conversation, including references to a seafood boil, neuroscience, friendships, and trauma, with no clear central theme. The intent appears to be a casual discussion with fragmented thoughts, lacking a cohesive motivational narrative. No passages qualify as motivational because they are either incomplete, such as 'Saying that you want money,' or lack a clear, standalone inspirational message, like the neuroscience or trauma references. These fragments do not convey a complete thought or motivational intent suitable for a short video. The text can be interpreted as conversational filler, with no self-contained passages that inspire perseverance, discipline, or growth, resulting in nothing being saved. 
 <code>
-SaveMotivationalText(text="[317.63s - 320.59s] When [320.69s - 323.65s] you rewrite the story [323.75s - 326.37s] of your life make sure [326.47s - 329.73s] the new chapters are better than [329.83s - 333.22s] the old ones", text_file=text_file)
-final_answer("Im done analyzing the chunk")
-</code>
-[2025-08-01 21:02:42] 🧠 Generated: Thought: I found 1 standalone motivational passage that meet the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code><|end|>
+[2025-08-19 16:33:11] 🧠 Generated: Thought: The text discusses the emotional impact of a quote and its correlation with trauma, but it lacks a clear, concise, and inspirational message suitable for a motivational shorts video. It is too vague, fragmented, and dependent on prior context, making it unsuitable for a standalone motivational passage.
 <code>
-SaveMotivationalText(text="[317.63s - 320.59s] When [320.69s - 323.65s] you rewrite the story [323.75s - 326.37s] of your life make sure [326.47s - 329.73s] the new chapters are better than [329.83s - 333.22s] the old ones", text_file=text_file) 
-final_answer("im done analyzing chunk")
-</code>
-[2025-08-01 21:02:42] ✅ Similarity: 0.99 -> ✔️
-[2025-08-01 21:02:42] ------------------------------------------------------------
-[2025-08-01 21:02:42] 
+ final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code><|end|>
+[2025-08-19 16:33:11] ✅ Similarity: 0.32 -> ❌
+[2025-08-19 16:33:11] ------------------------------------------------------------
+[2025-08-19 16:33:11] 
 
 
 
 
-[2025-08-01 21:03:09] 
+[2025-08-19 16:33:22] 
 
 
 🔹 Example 3
-[2025-08-01 21:03:09] 🎯 Expected: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+[2025-08-19 16:33:22] 🎯 Expected: Thought: The chunk is a scattered mix of casual remarks, promotional content, and vague references to personal experiences, with no clear motivational focus. The intent seems to be a conversational ramble, touching on unrelated topics like social media promotion, recency bias, and a comedian's performance. No passages qualify as motivational because they lack a complete, standalone thought that inspires personal growth, resilience, or discipline. For example, 'I don't want to do all these hard things because as a proxy, it makes my mood sad' is a personal sentiment that lacks a positive or actionable message. The text can be interpreted as informal and unfocused, with no self-contained motivational statements suitable for a short video, so nothing is saved. 
 <code>
-SaveMotivationalText(text="[320.94s - 324.43s] When you rewrite the [324.53s - 326.97s] story of your life [327.07s - 329.54s] make sure the new chapters [329.64s - 332.16s] are much better than the [332.26s - 334.94s] old ones", text_file=text_file)
-final_answer("Im done analyzing the chunk")
-</code>
-[2025-08-01 21:03:09] 🧠 Generated: Thought: I found 1 standalone motivational passage that meet the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code><|end|>
+[2025-08-19 16:33:22] 🧠 Generated: Thought: The text discusses sharing content and receiving positive feedback, but it lacks a clear, concise, and impactful message suitable for a motivational shorts video. It is fragmented, vague, and dependent on prior context, making it unsuitable for a standalone motivational passage.
 <code>
-SaveMotivationalText(text="[320.94s - 324.43s] When you rewrite the [324.53s - 326.97s] story of your life [327.07s - 329.54s] make sure the new chapters [329.64s - 332.16s] are much better than the [332.26s - 334.94s] old ones", text_file=text_file) 
-final_answer("im done analyzing chunk")
-</code>
-[2025-08-01 21:03:09] ✅ Similarity: 0.99 -> ✔️
-[2025-08-01 21:03:09] ------------------------------------------------------------
-[2025-08-01 21:03:09] 
+ final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code><|end|>
+[2025-08-19 16:33:22] ✅ Similarity: 0.33 -> ❌
+[2025-08-19 16:33:22] ------------------------------------------------------------
+[2025-08-19 16:33:22] 
 
 
 
 
-[2025-08-01 21:03:32] 
+[2025-08-19 16:33:35] 
 
 
 🔹 Example 4
-[2025-08-01 21:03:32] 🎯 Expected: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+[2025-08-19 16:33:35] 🎯 Expected: Thought: The chunk contains a mix of casual conversation and a brief motivational statement. The intent appears to be a casual discussion with a fleeting moment of encouragement. The passage 'If someone else can do it why can't you?' qualifies as a motivational text because it is concise, self-contained, and promotes self-belief and action, encouraging the listener to overcome self-doubt. It stands alone without needing additional context and is suitable for a short video due to its direct and universal message. Other parts, such as 'a walk and have food and like go pee pee' or 'then you wouldn't even need to say you were worthy,' are either casual or incomplete, lacking a clear motivational theme. The saved text can be interpreted as a powerful, standalone challenge to the listener's mindset, inspiring immediate action and confidence. 
 <code>
-SaveMotivationalText(text="[313.89s - 316.99s] Work hard now so that [317.09s - 320.24s] in the evening of [320.34s - 322.78s] your life you can still [322.88s - 325.67s] enjoy the sunrise", text_file=text_file)
-final_answer("Im done analyzing the chunk")
-</code>
-[2025-08-01 21:03:32] 🧠 Generated: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+SaveMotivationalText(text="[719.41s - 722.78s] If someone [722.88s - 726.12s] else can [726.22s - 730.87s] do it why can't [730.97s - 734.26s] you?", text_file=text_file)
+final_answer("im done")
+</code><|end|>
+[2025-08-19 16:33:35] 🧠 Generated: Thought: The text discusses a child's simplistic view of life and a brief conversation about someone's worthiness, but it lacks a clear, inspirational, or actionable message suitable for a motivational shorts video. It is too vague, dependent on prior context, and does not convey a complete thought or a profound intent. The text is also fragmented and unclear, making it unsuitable for a short video aimed at inspiring or motivating listeners.
 <code>
-SaveMotivationalText(text="[313.89s - 316.99s] Work hard now so that [317.09s - 320.24s] in the evening of [320.34s - 322.78s] your life you can still [322.88s - 325.67s] enjoy the sunrise", text_file=text_file)
-final_answer("im done analyzing chunk")
-</code>
-[2025-08-01 21:03:32] ✅ Similarity: 0.99 -> ✔️
-[2025-08-01 21:03:32] ------------------------------------------------------------
-[2025-08-01 21:03:32] 
+ final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code><|end|>
+[2025-08-19 16:33:35] ✅ Similarity: 0.08 -> ❌
+[2025-08-19 16:33:35] ------------------------------------------------------------
+[2025-08-19 16:33:35] 
 
 
 
 
-[2025-08-01 21:04:07] 
+[2025-08-19 16:33:46] 
 
 
 🔹 Example 5
-[2025-08-01 21:04:07] 🎯 Expected: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+[2025-08-19 16:33:46] 🎯 Expected: Thought: The chunk appears to be a fragmented conversation touching on personal reflection, collaboration, and an anecdote about friends. The intent is a mix of casual storytelling and vague commentary, lacking a clear motivational focus. The line 'we are ultimately in control of how we want to perceive' ([716.08s - 720.05s]) seems motivational but is incomplete and lacks context, making it unsuitable as a standalone short. Similarly, 'something and be miserable there and at least have something to show for it' ([723.86s - 727.54s]) is vague and lacks a clear inspirational message. The mention of 'lots of minds working together' ([727.64s - 732.17s]) suggests collaboration but is not self-contained or motivational enough for a short video. The remaining lines about friends and a servant ([732.27s - 740.44s]) are anecdotal and lack motivational intent. The text can be interpreted as a disjointed discussion, but no passage forms a complete, inspirational thought with themes like resilience or discipline suitable for a motivational short. Thus, nothing was saved. 
 <code>
-SaveMotivationalText(text="[311.56s - 314.10s] You know you have [314.20s - 317.07s] mastered the art of [317.17s - 320.74s] life when you refuse [320.84s - 323.96s] to be the one [324.06s - 326.54s] who points fingers and [326.64s - 329.18s] decide to be the [329.28s - 332.52s] one who helps find [332.62s - 335.69s] the right answers", text_file=text_file)
-final_answer("Im done analyzing the chunk")
-</code>
-[2025-08-01 21:04:07] 🧠 Generated: Thought: I found 1 standalone motivational passage that meet the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code><|end|>
+[2025-08-19 16:33:46] 🧠 Generated: Thought: The text discusses personal perceptions, mistakes, and relationships, but lacks a clear, concise, and impactful message suitable for a motivational shorts video. It is too vague, fragmented, and dependent on prior context, making it unsuitable for a standalone motivational passage.
 <code>
-SaveMotivationalText(text="[311.56s - 314.10s] You know you have [314.20s - 317.07s] mastered the art of [317.17s - 320.74s] life when you refuse [320.84s - 323.96s] to be the one [324.06s - 326.54s] who points fingers and [326.64s - 329.18s] decide to be the [329.28s - 332.52s] one who helps find [332.62s - 335.69s] the right answers", text_file=text_file)
-final_answer("im done analyzing chunk")
-</code>
-[2025-08-01 21:04:07] ✅ Similarity: 0.99 -> ✔️
-[2025-08-01 21:04:07] ------------------------------------------------------------
-[2025-08-01 21:04:07] 
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code><|end|>
+[2025-08-19 16:33:46] ✅ Similarity: 0.27 -> ❌
+[2025-08-19 16:33:46] ------------------------------------------------------------
+[2025-08-19 16:33:46] 
 
 
 
 
-[2025-08-01 21:04:39] 
+[2025-08-19 16:33:56] 
 
 
 🔹 Example 6
-[2025-08-01 21:04:39] 🎯 Expected: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+[2025-08-19 16:33:56] 🎯 Expected: Thought: The chunk includes a mix of personal reflection, promotional content, and a single motivational statement. The intent appears to be a casual conversation with a promotional plug for a show and a brief anecdote about moving. The passage 'Discipline is choosing what you want most over what you want now' ([727.99s - 731.82s]) is a concise, self-contained, and universal piece of advice that emphasizes discipline and long-term thinking, making it ideal for a motivational short. It conveys a complete thought without needing additional context and aligns with themes of discipline and mindset shift. Other parts, like 'I used to think you had to be 40 years old to write a book' ([716.08s - 719.34s]) and 'tune in to poor minds' ([719.44s - 724.01s]), are either anecdotal or promotional, lacking motivational intent or standalone context. The text can be interpreted as a mix of personal storytelling and promotion, but only the discipline statement stands out as motivational and complete, so it was saved. 
 <code>
-SaveMotivationalText(text="[323.37s - 325.83s] Your [325.93s - 328.46s] life is your business Take [328.56s - 331.60s] care of it and treat it like [331.70s - 334.11s] serious business Do not get [334.21s - 336.87s] too involved in other peoples [336.97s - 339.60s] businesses and neglect yours in the [339.70s - 342.86s] process", text_file=text_file)
-final_answer("Im done analyzing the chunk")
-</code>
-[2025-08-01 21:04:39] 🧠 Generated: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code><|end|>
+[2025-08-19 16:33:56] 🧠 Generated: Thought: The text discusses a personal journey and a shift in perception, but it lacks a clear, concise, and impactful message suitable for a motivational shorts video. It is too vague and dependent on prior context, making it unsuitable for a standalone motivational passage.
 <code>
-SaveMotivationalText(text="[323.37s - 325.83s] Yourself [325.93s - 328.46s] life is your business Take [328.56s - 331.60s] care of it and treat it like [331.70s - 334.11s] serious business Do not get [334.21s - 336.87s] too involved in other peoples [336.97s - 339.60s] businesses and neglect yours in the [339.70s - 342.86s] process", text_file=text_file)
-final_answer("im done analyzing chunk")
-</code>
-[2025-08-01 21:04:39] ✅ Similarity: 0.99 -> ✔️
-[2025-08-01 21:04:39] ------------------------------------------------------------
-[2025-08-01 21:04:39] 
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code><|end|>
+[2025-08-19 16:33:56] ✅ Similarity: 0.28 -> ❌
+[2025-08-19 16:33:56] ------------------------------------------------------------
+[2025-08-19 16:33:56] 
 
 
 
 
-[2025-08-01 21:05:21] 
+[2025-08-19 16:34:33] 
 
 
 🔹 Example 7
-[2025-08-01 21:05:21] 🎯 Expected: Thought: I found 2 standalone motivational passages that meet the criteria of being a self-contained motivational quote, piece of advice, or inspirational message. Each can stand on its own, even when isolated from the rest of the text, without lacking context at the beginning or end. Therefore, I’m saving them.
+[2025-08-19 16:34:33] 🎯 Expected: Thought: The chunk appears to be a speaker reflecting on life experiences and transitioning into giving advice on personal growth, ending with a casual greeting. Based on this intent, one qualifying motivational text was found. The passage from [724.16s - 728.88s] to [771.25s - 775.27s] qualifies due to its themes of growth, discipline, resilience, and mindset shift through choosing depth, protecting energy, and intentional living for success. Other parts were excluded as they are incomplete thoughts, anecdotal reflections on life experience, or off-topic greetings that lack motivational depth. The saved text is complete, self-contained, and does not lack context when isolated, forming a cohesive inspirational message suitable for a short video. 
 <code>
-SaveMotivationalText(text="[314.17s - 317.19s] It takes some time to succeed [317.29s - 319.99s] in life because true success [320.09s - 322.73s] is not just about the money [322.83s - 326.42s] but also about the great lessons [326.52s - 329.08s] learned on the path to [329.18s - 332.00s] success", text_file=text_file)
-SaveMotivationalText(text="[334.62s - 337.38s] Enthusiasm is excitement with inspirationmotivation [337.48s - 341.01s] and a pinch of [341.11s - 343.55s] creativity", text_file=text_file)
-final_answer("Im done analyzing the chunk")
-</code>
-[2025-08-01 21:05:21] 🧠 Generated: Thought: I found 2 standalone motivational passages that meet the criteria of being a self-contained motivational quote, piece of advice, or inspirational message. Each can stand on its own, even when isolated from the rest of the text, without lacking context at the beginning or end. Therefore, I’m saving them.
+SaveMotivationalText(text="[724.16s - 728.88s] Personal growth flourishes when [728.98s - 733.48s] you choose depth over [733.58s - 738.10s] distraction in habits, relationships, [738.20s - 742.80s] and goals, disciplining yourself [742.90s - 746.72s] to protect your energy [746.82s - 750.73s] and focus, because treating [750.83s - 755.36s] every day as a [755.46s - 759.62s] canvas for intentional living [759.72s - 763.02s] ensures that your actions [763.12s - 767.70s] align with your mission, [767.80s - 771.15s] leading to profound success [771.25s - 775.27s] and clarity", text_file=text_file)
+final_answer("im done")
+</code><|end|>
+[2025-08-19 16:34:33] 🧠 Generated: Thought: The text discusses the importance of intentional living and aligning actions with one's mission for profound success and clarity. It qualifies as a motivational text because it provides a clear, actionable message about personal growth and discipline. The text is self-contained, concise, and inspiring, making it suitable for a short video. It does not rely on prior context and has a clear beginning, middle, and end, forming a complete thought that can stand alone. The text also emphasizes the value of depth over distraction in habits, relationships, and goals, which is a universal life lesson that can resonate with a wide audience. The text is saved using SaveMotivationalText("in order to have had enough life experience to be able to say things that are aspirational about how a situation like that it's like you really need to get to the root of the problem and i think the root of personal growth flourishes when you choose depth over distraction in habits, relationships, and goals, disciplining yourself to protect your energy and focus, because treating every day as a canvas for intentional living ensures that your actions align with your mission, leading to profound success and clarity. What is up, other muckers?", text_file=text_file)
 <code>
-SaveMotivationalText(text="[314.17s - 317.19s] It takes some time to succeed [317.29s - 319.99s] in life because true success [320.09s - 322.73s] is not just about the money [322.83s - 326.42s] but also about the great lessons [326.52s - 329.08s] learned on the path to [329.18s - 332.00s] success", text_file=text_file)
-SaveMotivationalText(text="[334.62s - 337.38s] Enthusiasm is excitement with inspirationmotivation [337.48s - 341.01s] and a pinch of [341.11s - 343.55s] creativity", text_file=text_file)
-final_answer("im done analyzing chunk")
-</code>
-[2025-08-01 21:05:21] ✅ Similarity: 1.00 -> ✔️
-[2025-08-01 21:05:21] ------------------------------------------------------------
-[2025-08-01 21:05:21] 
+SaveMotivationalText(text="[716.08s - 720.09s] in order to have had enough life experience to be able to say things that are aspirational about how a situation like that it's like you really need to get to the root of the problem and i think the root of personal growth flourishes when you choose depth over distraction in habits, relationships, and goals, disciplining yourself to protect your energy and focus, because treating every day as a canvas for intentional living ensures that your actions align with your mission, leading to profound success and clarity. What is up, other muckers?", text_file=text_file)
+final_answer("im done")
+</code><|end|>
+[2025-08-19 16:34:33] ✅ Similarity: 0.10 -> ❌
+[2025-08-19 16:34:33] ------------------------------------------------------------
+[2025-08-19 16:34:33] 
 
 
 
 
-[2025-08-01 21:05:54] 
+[2025-08-19 16:34:46] 
 
 
 🔹 Example 8
-[2025-08-01 21:05:54] 🎯 Expected: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+[2025-08-19 16:34:46] 🎯 Expected: Thought: The chunk mixes casual conversation about relationships with advice on daily routines and a statement on overcoming barriers, ending with fragmented thoughts on information intake. Based on this intent, two qualifying motivational texts were found. The first from [724.11s - 727.55s] to [759.68s - 763.06s] qualifies for its emphasis on discipline, growth, and mindset shift via intentional routines and creating inspiration. The second from [766.66s - 770.80s] to [784.17s - 787.89s] qualifies for themes of resilience and mindset shift by withdrawing power from barriers to achieve freedom. Other parts were excluded as casual chat, personal reflections, or incomplete ideas without standalone motivational value. Both saved texts are complete, self-contained, and do not lack context when isolated, offering clear, actionable inspiration for short videos. 
 <code>
-SaveMotivationalText(text="[326.84s - 329.67s] Identify [329.77s - 332.39s] your top three goals and [332.49s - 335.26s] demolish the number one [335.36s - 338.01s] obstacle Stay laser-focused and [338.11s - 341.57s] fiercely determined on your [341.67s - 345.13s] objective and success will be [345.23s - 347.87s] yours for the taking", text_file=text_file)
-final_answer("Im done analyzing the chunk")
-</code>
-[2025-08-01 21:05:54] 🧠 Generated: Thought: I found 1 standalone motivational passage that meet the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+SaveMotivationalText(text="[724.11s - 727.55s] Set your day up for [727.65s - 731.34s] success with intentional routines that [731.44s - 736.15s] center your thoughts on progress, [736.25s - 740.69s] pushing you to go [740.79s - 744.18s] higher through accountability and [744.28s - 748.79s] focused energy, because personal growth [748.89s - 752.31s] isn't about waiting for inspiration—it's [752.41s - 755.77s] about creating it through disciplined [755.87s - 759.58s] habits that elevate your mindset [759.68s - 763.06s] and actions", text_file=text_file)
+SaveMotivationalText(text="[766.66s - 770.80s] Barriers only enjoy the power [770.90s - 775.39s] we WILL to it [775.49s - 779.75s] the moment you decide to [779.85s - 784.07s] withdraw the power you [784.17s - 787.89s] will surely become a free man", text_file=text_file)final_answer("im done")
+</code><|end|>
+[2025-08-19 16:34:46] 🧠 Generated: Thought: The text discusses the importance of discipline, personal growth, and mindset shift, but it lacks a clear, concise, and impactful message suitable for a short video. The text is fragmented, overly complex, and lacks a clear beginning, middle, and end, making it unsuitable for a motivational shorts video. The text also references Robert Glover's book, which is not directly motivational and does not fit the criteria for a standalone motivational passage. Therefore, no qualifying text was found in the chunk.
 <code>
-SaveMotivationalText(text="[326.84s - 329.67s] Identify [329.77s - 332.39s] your top three goals and [332.49s - 335.26s] demolish the number one [335.36s - 338.01s] obstacle Stay laser-focused and [338.11s - 341.57s] fiercely determined on your [341.67s - 345.13s] objective and success will be [345.23s - 347.87s] yours for the taking", text_file=text_file)
-final_answer("im done analyzing chunk")
-</code>
-[2025-08-01 21:05:54] ✅ Similarity: 0.99 -> ✔️
-[2025-08-01 21:05:54] ------------------------------------------------------------
-[2025-08-01 21:05:54] 
+final_answer("im done")
+</code><|end|>
+[2025-08-19 16:34:46] ✅ Similarity: 0.08 -> ❌
+[2025-08-19 16:34:46] ------------------------------------------------------------
+[2025-08-19 16:34:46] 
 
 
 
 
-[2025-08-01 21:06:23] 
+[2025-08-19 16:34:57] 
 
 
 🔹 Example 9
-[2025-08-01 21:06:23] 🎯 Expected: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+[2025-08-19 16:34:57] 🎯 Expected: Thought: The chunk includes humorous storytelling about bulldogs and platform discussions, interspersed with advice on discipline for personal mastery, and a partial quote on character vs. easy life, ending with a reference to procrastination. Based on this intent, one qualifying motivational text was found. The passage from [723.39s - 727.72s] to [753.83s - 757.66s] qualifies for its focus on discipline, resilience, and mindset shift by contrasting dreaming with doing and choosing purpose over excuses for achievement. Other parts were excluded as anecdotal jokes, incomplete quotes, or off-topic references lacking motivational intent. The saved text is complete, self-contained, and does not lack context when isolated, providing a full, impactful message on growth for a short video. 
 <code>
-SaveMotivationalText(text="[326.04s - 329.06s] Whether [329.16s - 331.67s] you want to [331.77s - 334.86s] double down on previous successes [334.96s - 338.25s] address significant challenges or embark [338.35s - 341.60s] on new endeavors identify your [341.70s - 344.64s] top three goals", text_file=text_file)
-final_answer("Im done analyzing the chunk")
-</code>
-[2025-08-01 21:06:23] 🧠 Generated: Thought: I found 1 standalone motivational passage that meet the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+SaveMotivationalText(text="[723.39s - 727.72s] The journey to personal mastery [727.82s - 732.19s] requires viewing discipline as [732.29s - 736.45s] the difference between dreaming and doing, [736.55s - 740.00s] where you delay instant comfort for [740.10s - 744.57s] long-term greatness by choosing purpose [744.67s - 749.06s] over passivity and action over excuses, [749.16s - 753.73s] because ordinary people achieve extraordinary things [753.83s - 757.66s] through this unwavering mindset", text_file=text_file)
+final_answer("im done")
+</code><|end|>
+[2025-08-19 16:34:57] 🧠 Generated: Thought: The text discusses the importance of discipline, mindset, and action over passivity and excuses, but it lacks a clear, concise, and impactful message suitable for a short video. It is too lengthy and fragmented, making it unsuitable for a motivational shorts video.
 <code>
-SaveMotivationalText(text="[326.04s - 329.06s] Whether [329.16s - 331.67s] you want to [331.77s - 334.86s] double down on previous successes [334.96s - 338.25s] address significant challenges or embark [338.35s - 341.60s] on new endeavors identify your [341.70s - 344.64s] top three goals", text_file=text_file)
-final_answer("im done analyzing chunk")
-</code>
-[2025-08-01 21:06:23] ✅ Similarity: 0.99 -> ✔️
-[2025-08-01 21:06:23] ------------------------------------------------------------
-[2025-08-01 21:06:23] 
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code><|end|>
+[2025-08-19 16:34:57] ✅ Similarity: 0.08 -> ❌
+[2025-08-19 16:34:57] ------------------------------------------------------------
+[2025-08-19 16:34:57] 
 
 
 
 
-[2025-08-01 21:06:44] 
+[2025-08-19 16:35:12] 
 
 
 🔹 Example 10
-[2025-08-01 21:06:44] 🎯 Expected: Thought: I carefully scanned every timestamped line in this chunk, looking for a short, self-contained motivational passage. I evaluated each line on its own and also explored whether merging or combining adjacent lines might produce a meaningful, standalone inspirational message. Despite these efforts, none of the sentences—individually or in combination—met the criteria for a clear, context-independent motivational quote. They were either filler commentary, incomplete thoughts, or too dependent on surrounding context. Since there isn’t a complete motivational statement I can save, I will not call SaveMotivationalText and will only provide `final_answer`.<code>
-final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved.")
-</code>
-[2025-08-01 21:06:44] 🧠 Generated: Thought: I carefully scanned every timestamped line in this chunk, looking for a short, self-contained motivational passage. I evaluated each line on its own and also explored whether merging or combining adjacent lines might produce a meaningful, standalone inspirational message. Despite these efforts, none of the sentences—individually or in combination—met the criteria for a clear, context-independent motivational quote. They were either filler commentary, incomplete thoughts, or too dependent on surrounding context. Since there isn’t a complete motivational statement I can save, I will not call SaveMotivationalText and will only provide `final_answer`. <code>
-final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved.")
-</code>
-[2025-08-01 21:06:44] ✅ Similarity: 1.00 -> ✔️
-[2025-08-01 21:06:44] ------------------------------------------------------------
-[2025-08-01 21:06:44] 
-
-
-
-
-[2025-08-01 21:07:08] 
-
-
-🔹 Example 11
-[2025-08-01 21:07:08] 🎯 Expected: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+[2025-08-19 16:35:12] 🎯 Expected: Thought: The chunk contains personal denials and discussions on open-mindedness in language, followed by advice on continuous learning, and ends with fragmented thoughts on agreement and fascination with space. Based on this intent, one qualifying motivational text was found. The passage from [723.80s - 728.55s] to [757.87s - 761.65s] qualifies for themes of growth, discipline, and mindset shift through committing to learning, feedback, and adaptability for achievement and fulfillment. Other parts were excluded as casual personal statements, ego-related reflections, or incomplete ideas without standalone inspiration. The saved text is complete, self-contained, and does not lack context when isolated, delivering concise, action-oriented advice suitable for a short video. 
 <code>
-SaveMotivationalText(text="[320.35s - 323.34s] Dont let unfinished business weigh you [323.44s - 325.84s] down [325.94s - 329.06s] Finish what you started and unlock [329.16s - 332.74s] the door to limitless possibilities", text_file=text_file)
-final_answer("Im done analyzing the chunk")
-</code>
-[2025-08-01 21:07:08] 🧠 Generated: Thought: I found 1 standalone motivational passage that meet the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+SaveMotivationalText(text="[723.80s - 728.55s] Unlock your potential by [728.65s - 731.96s] committing to continuous learning and improvement, seeking [732.06s - 735.78s] feedback and challenging old practices daily, [735.88s - 739.75s] because a growth mindset keeps you [739.85s - 743.81s] adaptable in the face of new obstacles, [743.91s - 748.38s] turning discipline into the tool that consistently [748.48s - 753.03s] propels you toward higher [753.13s - 757.77s] levels of achievement and [757.87s - 761.65s] self-fulfillment", text_file=text_file)
+final_answer("im done")
+</code><|end|>
+[2025-08-19 16:35:12] 🧠 Generated: Thought: The text discusses the importance of a growth mindset, continuous learning, and discipline in achieving personal growth and self-fulfillment. It also touches on the idea of embracing new challenges and the fascination with space as a metaphor for the unknown. However, the text is fragmented and lacks a clear, concise, and impactful message suitable for a short video. It also references a previous discussion, making it incomplete and dependent on context. Therefore, it does not qualify as a standalone motivational text.
 <code>
-SaveMotivationalText(text="[320.35s - 323.34s] Dont let unfinished business weigh you [323.44s - 325.84s] down [325.94s - 329.06s] Finish what you started and unlock [329.16s - 332.74s] the door to limitless possibilities", text_file=text_file)
-final_answer("im done analyzing chunk")
-</code>
-[2025-08-01 21:07:08] ✅ Similarity: 0.99 -> ✔️
-[2025-08-01 21:07:08] ------------------------------------------------------------
-[2025-08-01 21:07:08] 
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code><|end|>
+[2025-08-19 16:35:12] ✅ Similarity: 0.06 -> ❌
+[2025-08-19 16:35:12] ------------------------------------------------------------
+[2025-08-19 16:35:12] 
 
 
 
 
-[2025-08-01 21:07:29] 
+[2025-08-19 16:35:12] 
+📈 Eval Accuracy (After Training): 0/10 = 0.00%
+[2025-08-19 16:35:12] ❌ Wrong count: 10
+
+[2025-08-19 19:30:05] 
+📊 Running Evaluation Test – After Training
+[2025-08-19 19:31:32] 
 
 
-🔹 Example 12
-[2025-08-01 21:07:29] 🎯 Expected: Thought: I carefully scanned every timestamped line in this chunk, looking for a short, self-contained motivational passage. I evaluated each line on its own and also explored whether merging or combining adjacent lines might produce a meaningful, standalone inspirational message. Despite these efforts, none of the sentences—individually or in combination—met the criteria for a clear, context-independent motivational quote. They were either filler commentary, incomplete thoughts, or too dependent on surrounding context. Since there isn’t a complete motivational statement I can save, I will not call SaveMotivationalText and will only provide `final_answer`.<code>
-final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved.")
-</code>
-[2025-08-01 21:07:29] 🧠 Generated: Thought: I carefully scanned every timestamped line in this chunk, looking for a short, self-contained motivational passage. I evaluated each line on its own and also explored whether merging or combining adjacent lines might produce a meaningful, standalone inspirational message. Despite these efforts, none of the sentences—individually or in combination—met the criteria for a clear, context-independent motivational quote. They were either filler commentary, incomplete thoughts, or too dependent on surrounding context. Since there isn’t a complete motivational statement I can save, I will not call SaveMotivationalText and will only provide `final_answer`.
+🔹 Example 1
+[2025-08-19 19:31:32] 🎯 Expected: Thought: The chunk primarily discusses a mix of topics, including a vague reference to achieving results, a personal reflection on seeing the speaker's book mentioned, and encouragement to persist in creative endeavors. The intent appears to be a blend of personal anecdote and motivational advice. One passage qualifies as motivational: 'Seeing my book mentioned in various interviews and posts is an indescribable feeling Ill never take this love for grantedWhatever youre creating right now keep going Its never too late'. This text is self-contained, combining a personal anecdote with a universal call to perseverance, making it suitable for a motivational short video. It conveys gratitude and encourages persistence, resonating with themes of effort and resilience. The rest of the chunk, such as 'getting results from this thing' or 'nothing is quitting unless you stop,' is either too vague, fragmented, or lacks a complete motivational thought, making them unsuitable for a short video. The saved text can be interpreted as a motivational message that stands alone, inspiring listeners to continue their creative pursuits without needing additional context. 
 <code>
-final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved.")
-</code>
-[2025-08-01 21:07:29] ✅ Similarity: 1.00 -> ✔️
-[2025-08-01 21:07:29] ------------------------------------------------------------
-[2025-08-01 21:07:29] 
-
-
-
-
-[2025-08-01 21:07:53] 
-
-
-🔹 Example 13
-[2025-08-01 21:07:53] 🎯 Expected: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+SaveMotivationalText(text="[727.66s - 731.28s] Seeing my book mentioned [731.38s - 735.13s] in various interviews and [735.23s - 738.64s] posts is an indescribable [738.74s - 742.66s] feeling Ill never take [742.76s - 746.23s] this love for grantedWhatever [746.33s - 749.55s] youre creating right now [749.65s - 753.37s] keep going Its never [753.47s - 757.95s] too late", text_file=text_file)
+final_answer("im done")
+</code><|end|>
+[2025-08-19 19:31:32] 🧠 Generated: Thought: The chunk discusses vigilance, getting results, and mentions a book, but the speaker is mainly reflecting on personal experiences and advice. One qualifying motivational text was found: '[723.75s - 727.56s] Because that's where I am.' This passage qualifies as it is a self-contained, reflective statement that encourages self-awareness and acceptance, aligning with themes of personal growth and resilience. It can be interpreted as a call to embrace one's current state, which is inspiring for a short video. Other parts of the chunk, such as discussions about book mentions or teetering edges, are either anecdotal, incomplete, or lack a clear motivational intent, so they were not saved. The saved text is complete, self-contained, and does not lack context when isolated. 
 <code>
-SaveMotivationalText(text="[320.37s - 323.17s] Time is the fuel [323.27s - 326.22s] of life Use it wisely [326.32s - 329.91s] prioritize your tasks and [330.01s - 332.53s] unlock your full potential", text_file=text_file)
-final_answer("Im done analyzing the chunk")
-</code>
-[2025-08-01 21:07:53] 🧠 Generated: Thought: I found 1 standalone motivational passage that meet the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+SaveMotivationalText(text="[723.75s - 727.56s] Because that's where I am.", text_file=text_file)
+final_answer("im done")
+</code>  
+Answer after the last SaveMotivationalText call: 
 <code>
-SaveMotivationalText(text="[320.37s - 323.17s] Time is the fuel [323.27s - 326.22s] of life Use it wisely [326.32s - 329.91s] prioritize your tasks and [330.01s - 332.53s] unlock your full potential", text_file=text_file) 
-final_answer("im done analyzing chunk")
-</code>
-[2025-08-01 21:07:53] ✅ Similarity: 0.99 -> ✔️
-[2025-08-01 21:07:53] ------------------------------------------------------------
-[2025-08-01 21:07:53] 
-
-
-
-
-[2025-08-01 21:08:17] 
-
-
-🔹 Example 14
-[2025-08-01 21:08:17] 🎯 Expected: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code>  
+Answer after the last final_answer call: 
 <code>
-SaveMotivationalText(text="[317.66s - 321.16s] Transform your life one [321.26s - 324.67s] habit at a time [324.77s - 327.18s] Develop daily practices that align with your [327.28s - 330.61s] goals stay consistent and become unstoppable", text_file=text_file)
-final_answer("Im done analyzing the chunk")
-</code>
-[2025-08-01 21:08:17] 🧠 Generated: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+im done
+</code>  
+Answer after the last final_answer call: 
 <code>
-SaveMotivationalText(text="[317.66s - 321.16s] Transform your life one [321.26s - 324.67s] habit at a time [324.77s - 327.18s] Develop daily practices that align with your [327.28s - 330.61s] goals stay consistent and become unstoppable", text_file=text_file) 
-final_answer("im done analyzing chunk")
-</code>
-[2025-08-01 21:08:17] ✅ Similarity: 0.99 -> ✔️
-[2025-08-01 21:08:17] ------------------------------------------------------------
-[2025-08-01 21:08:17] 
-
-
-
-
-[2025-08-01 21:08:45] 
-
-
-🔹 Example 15
-[2025-08-01 21:08:45] 🎯 Expected: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+im done
+</code>  
+Answer after the last final_answer call: 
 <code>
-SaveMotivationalText(text="[311.73s - 315.03s] Obstacles are opportunities in disguise [315.13s - 318.55s] Stay motivated stay productive and hold yourself [318.65s - 321.32s] accountable for your success With every challenge [321.42s - 324.45s] you grow stronger and closer to [324.55s - 327.90s] your goals", text_file=text_file)
-final_answer("Im done analyzing the chunk")
-</code>
-[2025-08-01 21:08:45] 🧠 Generated: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+im done
+</code>  
+Answer after the last final_answer call: 
 <code>
-SaveMotivationalText(text="[311.73s - 315.03s] Obstacles are opportunities in disguise [315.13s - 318.55s] Stay motivated stay productive and hold yourself [318.65s - 321.32s] accountable for your success With every challenge [321.42s - 324.45s] you grow stronger and closer to [324.55s - 327.90s] your goals", text_file=text_file) 
-final_answer("im done analyzing chunk")
-</code>
-[2025-08-01 21:08:45] ✅ Similarity: 0.99 -> ✔️
-[2025-08-01 21:08:45] ------------------------------------------------------------
-[2025-08-01 21:08:45] 
-
-
-
-
-[2025-08-01 21:09:06] 
-
-
-🔹 Example 16
-[2025-08-01 21:09:06] 🎯 Expected: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+im done
+</code>  
+Answer after the last final_answer call: 
 <code>
-SaveMotivationalText(text="[319.88s - 323.44s] In the depths of struggle [323.54s - 326.38s] we discover the true strength [326.48s - 329.43s] that resides within us", text_file=text_file)
-final_answer("Im done analyzing the chunk")
-</code>
-[2025-08-01 21:09:06] 🧠 Generated: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+im done
+</code>  
+Answer after the last final_answer call: 
 <code>
-SaveMotivationalText(text="[319.88s - 323.44s] In the depths of struggle [323.54s - 326.38s] we discover the true strength [326.48s - 329.43s] that resides within us", text_file=text_file)
-final_answer("im done analyzing chunk")
-</code>
-[2025-08-01 21:09:06] ✅ Similarity: 0.99 -> ✔️
-[2025-08-01 21:09:06] ------------------------------------------------------------
-[2025-08-01 21:09:06] 
-
-
-
-
-[2025-08-01 21:09:44] 
-
-
-🔹 Example 17
-[2025-08-01 21:09:44] 🎯 Expected: Thought: I found 2 standalone motivational passages that meet the criteria of being a self-contained motivational quote, piece of advice, or inspirational message. Each can stand on its own, even when isolated from the rest of the text, without lacking context at the beginning or end. Therefore, I’m saving them.
+im done
+</code>  
+Answer after the last final_answer call: 
 <code>
-SaveMotivationalText(text="[326.82s - 329.97s] The struggle you face [330.07s - 333.60s] today is the strength you [333.70s - 336.88s] will carry tomorrow", text_file=text_file)
-SaveMotivationalText(text="[339.91s - 342.55s] Wisdom is available to [342.65s - 346.11s] those who can labor [346.21s - 348.84s] for her she is [348.94s - 351.70s] expensive and hidden to [351.80s - 354.28s] the lazy mind", text_file=text_file)
-final_answer("Im done analyzing the chunk")
-</code>
-[2025-08-01 21:09:44] 🧠 Generated: Thought: I found 2 standalone motivational passages that meet the criteria of being a self-contained motivational quote, piece of advice, or inspirational message. Each can stand on its own, even when isolated from the rest of the text, without lacking context at the beginning or end. Therefore, I’m saving them.
+im done
+</code>  
+Answer after the last final_answer call: 
 <code>
-SaveMotivationalText(text="[326.82s - 329.97s] The struggle you face [330.07s - 333.60s] today is the strength you [333.70s - 336.88s] will carry tomorrow", text_file=text_file)
-SaveMotivationalText(text="[339.91s - 342.55s] Wisdom is available to [342.65s - 346.11s] those who can labor [346.21s - 348.84s] for her she is [348.94s - 351.70s] expensive and hidden to [351.80s - 354.28s] the lazy mind", text_file=text_file)
-final_answer("im done analyzing chunk")
-</code>
-[2025-08-01 21:09:44] ✅ Similarity: 1.00 -> ✔️
-[2025-08-01 21:09:44] ------------------------------------------------------------
-[2025-08-01 21:09:44] 
-
-
-
-
-[2025-08-01 21:10:14] 
-
-
-🔹 Example 18
-[2025-08-01 21:10:14] 🎯 Expected: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+im done
+</code>  
+Answer after the last final_answer call: 
 <code>
-SaveMotivationalText(text="[317.67s - 321.09s] Make it your sole [321.19s - 323.98s] intention to be part [324.08s - 326.67s] of the solution When [326.77s - 329.79s] you learn how to efficiently [329.89s - 333.01s] solve problems you will attract [333.11s - 336.10s] many opportunities", text_file=text_file)
-final_answer("Im done analyzing the chunk")
-</code>
-[2025-08-01 21:10:14] 🧠 Generated: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+im done
+</code>  
+Answer after the last final_answer call: 
 <code>
-SaveMotivationalText(text="[317.67s - 321.09s] Make it your sole [321.19s - 323.98s] intention to be part [324.08s - 326.67s] of the solution When [326.77s - 329.79s] you learn how to efficiently [329.89s - 333.01s] solve problems you will attract [333.11s - 336.10s] many opportunities", text_file=text_file) 
-final_answer("im done analyzing chunk")
-</code>
-[2025-08-01 21:10:14] ✅ Similarity: 0.99 -> ✔️
-[2025-08-01 21:10:14] ------------------------------------------------------------
-[2025-08-01 21:10:14] 
-
-
-
-
-[2025-08-01 21:10:39] 
-
-
-🔹 Example 19
-[2025-08-01 21:10:39] 🎯 Expected: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+im done
+</code>  
+Answer after the last final_answer call: 
 <code>
-SaveMotivationalText(text="[321.76s - 324.16s] In life some questions do not [324.26s - 327.65s] require you to get answers from outside [327.75s - 331.03s] They need you to search on [331.13s - 333.84s] the inside", text_file=text_file)
-final_answer("Im done analyzing the chunk")
-</code>
-[2025-08-01 21:10:39] 🧠 Generated: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+im done
+</code>  
+Answer after the last final_answer call: 
 <code>
-SaveMotivationalText(text="[321.76s - 324.16s] In life some questions do not [324.26s - 327.65s] require you to get answers from outside [327.75s - 331.03s] They need you to search on [331.13s - 333.84s] the inside", text_file=text_file) 
-final_answer("im done analyzing chunk")
-</code>
-[2025-08-01 21:10:39] ✅ Similarity: 0.99 -> ✔️
-[2025-08-01 21:10:39] ------------------------------------------------------------
-[2025-08-01 21:10:39] 
-
-
-
-
-[2025-08-01 21:11:16] 
-
-
-🔹 Example 20
-[2025-08-01 21:11:16] 🎯 Expected: Thought: I found 1 standalone motivational passage that meets the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+im done
+</code>  
+Answer after the last final_answer call: 
 <code>
-SaveMotivationalText(text="[316.05s - 318.82s] In recent years [318.92s - 322.34s] it [322.44s - 325.67s] has become increasingly difficult [325.77s - 328.85s] to digest some situations [328.95s - 332.17s] because of people who make [332.27s - 335.09s] assumptions about life's conditions based [335.19s - 338.13s] solely on screenshots oblivious to [338.23s - 340.89s] what occurred before those [340.99s - 343.77s] screenshots", text_file=text_file)
-final_answer("Im done analyzing the chunk")
-</code>
-[2025-08-01 21:11:16] 🧠 Generated: Thought: I found 1 standalone motivational passage that meet the criteria, so I’m saving it — because isolated from the rest, it is a complete thought that would not confuse the listener and would make clear sense in a motivational shorts video.
+im done
+</code>  
+Answer after the last final_answer call: 
 <code>
-SaveMotivationalText(text="[316.05s - 318.82s] In recent years [318.92s - 322.34s] it [322.44s - 325.67s] has become increasingly difficult [325.77s - 328.85s] to digest some situations [328.95s - 332.17s] because of people who make [332.27s - 335.09s] assumptions about life's conditions based [335.19s - 338.13s] solely on screenshots oblivious to [338.23s - 340.89s] what occurred before those [340.99s - 343.77s] screenshots", text_file=text_file) 
-final_answer("im done analyzing chunk")
-</code>
-[2025-08-01 21:11:16] ✅ Similarity: 0.99 -> ✔️
-[2025-08-01 21:11:16] ------------------------------------------------------------
-[2025-08-01 21:11:16] 
-
-
-
-
-[2025-08-01 21:12:06] 
-
-
-🔹 Example 21
-[2025-08-01 21:12:06] 🎯 Expected: Thought: I found 2 standalone motivational passages that meet the criteria of being a self-contained motivational quote, piece of advice, or inspirational message. Each can stand on its own, even when isolated from the rest of the text, without lacking context at the beginning or end. Therefore, I’m saving them.
+im done
+</code>  
+Answer after the last final_answer call: 
 <code>
-SaveMotivationalText(text="[316.85s - 319.95s] It is hard to define life entirely [320.05s - 323.57s] but what I know [323.67s - 326.09s] about life is that it will [326.19s - 328.93s] give you a chance to define yourself [329.03s - 332.36s] So do your level best to put [332.46s - 335.52s] yourself out there", text_file=text_file)
-SaveMotivationalText(text="[344.60s - 347.61s] Celebrate your life and [347.71s - 350.15s] remember that you were [350.25s - 352.80s] given a chance that [352.90s - 356.07s] many aborted babies were [356.17s - 359.11s] denied", text_file=text_file)
-final_answer("Im done analyzing the chunk")
-</code>
-[2025-08-01 21:12:06] 🧠 Generated: Thought: I found 2 standalone motivational passages that meet the criteria of being a self-contained motivational quote, piece of advice, or inspirational message. Each can stand on its own, even when isolated from the rest of the text, without lacking context at the beginning or end. Therefore, I’m saving them.
+im done
+</code>  
+Answer after the last final_answer call: 
 <code>
-SaveMotivationalText(text="[316.85s - 319.95s] It is hard to define life entirely [320.05s - 323.57s] but what I know [323.67s - 326.09s] about life is that it will [326.19s - 328.93s] give you a chance to define yourself [329.03s - 332.36s] So do your level best to put [332.46s - 335.52s] yourself out there", text_file=text_file)
-SaveMotivationalText(text="[344.60s - 347.61s] Celebrate your life and [347.71s - 350.15s] remember that you were [350.25s - 352.80s] given a chance that [352.90s - 356.07s] many aborted babies were [356.17s - 359.11s] denied", text_file=text_file)
-final_answer("im done analyzing chunk")
-</code>
-[2025-08-01 21:12:06] ✅ Similarity: 1.00 -> ✔️
-[2025-08-01 21:12:06] ------------------------------------------------------------
-[2025-08-01 21:12:06] 
+im done
+</code>  
+Answer after the last final_answer call: 
+<code>
+im done
+</code>  
+Answer after the last final_answer call: 
+<code>
+im done
+</code>  
+Answer after the last final_answer call: 
+<code>
+im done
+</code>  
+Answer after the last final_answer call: 
+<code>
+im done
+</code>  
+Answer after the last final_answer call: 
+<code>
+im done
+</code>  
+Answer after the last final_answer call: 
+<code>
+im done
+</code>  
+Answer after the last final_answer call: 
+<code>
+im done
+</code>  
+Answer after the last final_answer call: 
+<code>
+im done
+</code>  
+Answer after the last final_answer call: 
+<code>
+im done
+</code>  
+Answer after the last final_answer call: 
+<code>
+im done
+</code>  
+Answer after the last final_answer call: 
+<code>
+im done
+</code>  
+Answer after the last final_answer call: 
+<code>
+im done
+</code>  
+Answer after the last final_answer call: 
+<code>
+im done
+</code>  
+Answer after the last final_answer call: 
+<code>
+im done
+</code>  
+Answer after the last final_answer call: 
+<code>
+im done
+</code>  
+Answer after the last final_answer call: 
+<code>
+im done
+</code>  
+Answer after the last final_answer call: 
+<code>
+im done
+</code>  
+Answer after the last final_answer call: 
+<code>
+im done
+</code>  
+Answer after the last final_answer call: 
+<code>
+im done
+</code>  
+Answer after the last final_answer call: 
+<code>
+im done
+</code>  
+Answer after the last final_answer call: 
+<code>
+im done
+</code>  
+Answer after the last final_answer call: 
+<code>
+im done
+</code>  
+Answer after the last final_answer call: 
+<code>
+im done
+</code>  
+Answer after the last final_answer
+[2025-08-19 19:31:32] ✅ Similarity: 0.06 -> ❌
+[2025-08-19 19:31:32] ------------------------------------------------------------
+[2025-08-19 19:31:32] 
+
+
+
+
+[2025-08-19 19:31:47] 
+
+
+🔹 Example 2
+[2025-08-19 19:31:47] 🎯 Expected: Thought: The chunk is a disjointed mix of casual conversation, including references to a seafood boil, neuroscience, friendships, and trauma, with no clear central theme. The intent appears to be a casual discussion with fragmented thoughts, lacking a cohesive motivational narrative. No passages qualify as motivational because they are either incomplete, such as 'Saying that you want money,' or lack a clear, standalone inspirational message, like the neuroscience or trauma references. These fragments do not convey a complete thought or motivational intent suitable for a short video. The text can be interpreted as conversational filler, with no self-contained passages that inspire perseverance, discipline, or growth, resulting in nothing being saved. 
+<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code><|end|>
+[2025-08-19 19:31:47] 🧠 Generated: Thought: The chunk primarily consists of fragmented, casual conversation touching on personal changes, food descriptions, neuroscience, friendships, teaching, email, trauma, and money, with no clear motivational intent. The text can be interpreted as a mix of casual dialogue and vague references to trauma and money, but it lacks self-contained, inspirational passages suitable for a motivational short video. No text forms a complete, motivational thought with themes like resilience, discipline, or self-growth, and the content is too disjointed or context-dependent to engage a listener. 
+<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code><|end|>
+[2025-08-19 19:31:47] ✅ Similarity: 0.31 -> ❌
+[2025-08-19 19:31:47] ------------------------------------------------------------
+[2025-08-19 19:31:47] 
+
+
+
+
+[2025-08-19 19:33:14] 
+
+
+🔹 Example 3
+[2025-08-19 19:33:14] 🎯 Expected: Thought: The chunk is a scattered mix of casual remarks, promotional content, and vague references to personal experiences, with no clear motivational focus. The intent seems to be a conversational ramble, touching on unrelated topics like social media promotion, recency bias, and a comedian's performance. No passages qualify as motivational because they lack a complete, standalone thought that inspires personal growth, resilience, or discipline. For example, 'I don't want to do all these hard things because as a proxy, it makes my mood sad' is a personal sentiment that lacks a positive or actionable message. The text can be interpreted as informal and unfocused, with no self-contained motivational statements suitable for a short video, so nothing is saved. 
+<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code><|end|>
+[2025-08-19 19:33:14] 🧠 Generated: Thought: The chunk appears to be a fragmented conversation, possibly from a casual discussion or interview, touching on topics like personal experiences, brand protection, biases, and social interactions. The intent is largely anecdotal and conversational, with no clear, standalone motivational message. Lines like 'you could say eat fried chicken every day and people would buy your' or 'you're protected by Elon and his brand' are vague and lack motivational depth or universal appeal. Other parts, such as 'I don't want to do all these hard things because as a proxy, it makes my mood sad,' are incomplete and context-dependent, failing to form a complete, inspiring thought. No text stands out as a self-contained, motivational passage suitable for a short video, as the chunk lacks a profound, actionable insight or emotional intent that would engage a listener. 
+<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code>  
+<code>
+SaveMotivationalText(text="[726.99s - 731.01s] you could say a shredded God, you could say eat fried chicken every day and people would buy your", text_file=text_file)
+SaveMotivationalText(text="[731.11s - 735.47s] Because if you share something, Elon says you're protected by Elon and his brand.", text_file=text_file)
+final_answer("im done")
+</code>  
+<code>
+SaveMotivationalText(text="[739.43s - 742.89s] about the recency bias. And of all of them, I have to say it's my favorite one. So you see this new", text_file=text_file)
+SaveMotivationalText(text="[742.99s - 746.31s] I don't want to do all these hard things because as a proxy, it makes my mood sad", text_file=text_file)
+SaveMotivationalText(text="[746.41s - 749.98s] does a good i can kick it with you but you still go yeah she don't get it done she don't get it", text_file=text_file)
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code>  
+<code>
+SaveMotivationalText(text="[716.08s - 719.46s] so ever since then it's like i really do because some people we come across that love us might", text_file=text_file)
+SaveMotivationalText(text="[719.56s - 723.20s] in the right way. But then share those. I was thinking a moment ago, I wanted your opinion on", text_file=text_file)
+SaveMotivationalText(text="[723.30s - 726.89s] button so you never miss out on any of our new releases. We're dedicated to bringing you the", text_file=text_file)
+SaveMotivationalText(text="[726.99s - 731.01s] looked like a shredded God, you could say eat fried chicken every day and people would buy your", text_file=text_file)
+SaveMotivationalText(text="[731.11s - 735.47s] Because if you share something, Elon says you're protected by Elon and his brand.", text_file=text_file)
+SaveMotivationalText(text="[735.57s - 739.33s] about the recency bias. And of all of them, I have to say it's my favorite one. So you see this new", text_file=text_file)
+SaveMotivationalText(text="[739.43s - 742.89s] around, I don't want to do all these hard things because as a proxy, it makes my mood sad", text_file=text_file)
+SaveMotivationalText(text="[742.99s - 746.31s] and then got probably the best roast comedian in the UK to come on and annihilate him for", text_file=text_file)
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code>  
+<code>
+final_answer("im done")
+</code>  
+<code>
+SaveMotivationalText(text="[716.08s - 719.46s] so ever since then it's like i really do because some people we come across that love us might", text_file=text_file)
+SaveMotivationalText(text="[719.56s - 723.20s] in the right way. But then share those. I was thinking a moment ago, I wanted your opinion on", text_file=text_file)
+SaveMotivationalText(text="[723.30s - 726.
+[2025-08-19 19:33:14] ✅ Similarity: 0.15 -> ❌
+[2025-08-19 19:33:14] ------------------------------------------------------------
+[2025-08-19 19:33:14] 
+
+
+
+
+[2025-08-19 19:34:39] 
+
+
+🔹 Example 4
+[2025-08-19 19:34:39] 🎯 Expected: Thought: The chunk contains a mix of casual conversation and a brief motivational statement. The intent appears to be a casual discussion with a fleeting moment of encouragement. The passage 'If someone else can do it why can't you?' qualifies as a motivational text because it is concise, self-contained, and promotes self-belief and action, encouraging the listener to overcome self-doubt. It stands alone without needing additional context and is suitable for a short video due to its direct and universal message. Other parts, such as 'a walk and have food and like go pee pee' or 'then you wouldn't even need to say you were worthy,' are either casual or incomplete, lacking a clear motivational theme. The saved text can be interpreted as a powerful, standalone challenge to the listener's mindset, inspiring immediate action and confidence. 
+<code>
+SaveMotivationalText(text="[719.41s - 722.78s] If someone [722.88s - 726.12s] else can [726.22s - 730.87s] do it why can't [730.97s - 734.26s] you?", text_file=text_file)
+final_answer("im done")
+</code><|end|>
+[2025-08-19 19:34:39] 🧠 Generated: Thought: The chunk appears to be a fragmented mix of casual conversation, possibly about personal habits and a brief mention of brain areas, with a standalone motivational statement. The intent is unclear, with no coherent narrative or advice. The text [742.00s - 746.38s] 'you wouldn't even need to say you were worthy because you'd already fucking have it' qualifies as a motivational passage. It is self-contained, concise, and promotes self-belief and confidence, making it suitable for a short video. The rest of the chunk, including references to walking, pee, or brain areas, is either incomplete, anecdotal, or lacks motivational intent, so it was not saved. 
+<code>
+SaveMotivationalText(text="[742.00s - 746.38s] you wouldn't even need to say you were worthy because you'd already fucking have it", text_file=text_file)
+final_answer("im done")
+</code>  
+<|endoftext|><gh_stars>0
+/*
+ * Copyright (c) 2014-2015, The Trustees of Indiana University.
+ * All rights reserved.
+ *
+ * This code is derived from the original work of the
+ * University of Illinois/NCSA AT&T ATLAS Project.
+ * Portions adapted from the following sources:
+ *   - ATLAS:  http://atlas.cs.illinois.edu/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.illinois.edu/~matt/atlas/
+ *   - ATLAS:  http://www.cs.ill
+[2025-08-19 19:34:39] ✅ Similarity: 0.10 -> ❌
+[2025-08-19 19:34:39] ------------------------------------------------------------
+[2025-08-19 19:34:39] 
+
+
+
+
+[2025-08-19 19:36:04] 
+
+
+🔹 Example 5
+[2025-08-19 19:36:04] 🎯 Expected: Thought: The chunk appears to be a fragmented conversation touching on personal reflection, collaboration, and an anecdote about friends. The intent is a mix of casual storytelling and vague commentary, lacking a clear motivational focus. The line 'we are ultimately in control of how we want to perceive' ([716.08s - 720.05s]) seems motivational but is incomplete and lacks context, making it unsuitable as a standalone short. Similarly, 'something and be miserable there and at least have something to show for it' ([723.86s - 727.54s]) is vague and lacks a clear inspirational message. The mention of 'lots of minds working together' ([727.64s - 732.17s]) suggests collaboration but is not self-contained or motivational enough for a short video. The remaining lines about friends and a servant ([732.27s - 740.44s]) are anecdotal and lack motivational intent. The text can be interpreted as a disjointed discussion, but no passage forms a complete, inspirational thought with themes like resilience or discipline suitable for a motivational short. Thus, nothing was saved. 
+<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code><|end|>
+[2025-08-19 19:36:04] 🧠 Generated: Thought: The chunk primarily consists of fragmented statements and incomplete thoughts, with no clear, self-contained motivational passages. The text includes a brief reflection on perception, a negative remark about being wrong, a vague reference to misery, a mention of collaborative minds, and disjointed anecdotes about friends and a servant. None of these segments form a complete, inspirational message suitable for a motivational short video. The text lacks a profound, standalone intent that would engage a listener, as it is either too generic, incomplete, or context-dependent to qualify. 
+<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code>  
+
+<|endoftext|><gh_stars>0
+-- Create a temporary table to store the results of the query
+CREATE TEMP TABLE temp_table AS
+SELECT
+    id,
+    name,
+    value
+FROM
+    my_table;
+
+-- Use the temporary table to perform a join with another table
+SELECT
+    temp_table.id,
+    temp_table.name,
+    temp_table.value,
+    other_table.other_value
+FROM
+    temp_table
+JOIN
+    other_table ON temp_table.id = other_table.id;
+
+-- Drop the temporary table
+DROP TABLE temp_table;
+<|endoftext|><gh_stars>0
+-- Create a temporary table to store the results of the query
+CREATE TEMP TABLE temp_table AS
+-- Select the required columns from the table
+SELECT
+    id,
+    name,
+    value
+FROM
+    my_table;
+
+-- Drop the temporary table
+DROP TABLE temp_table;
+-- Add a new column to the table
+ALTER TABLE my_table ADD COLUMN new_column VARCHAR(255);
+-- Update the new column with values from another table
+UPDATE my_table
+SET new_column = other_table.column_name
+FROM other_table;
+-- Drop the new column from the table
+ALTER TABLE my_table DROP COLUMN new_column;
+-- Add a new column to the table
+ALTER TABLE my_table ADD COLUMN new_column2 INT;
+-- Update the new column with values from another table
+UPDATE my_table
+SET new_column2 = other_table.column_name2
+FROM other_table;
+-- Drop the new column from the table
+ALTER TABLE my_table DROP COLUMN new_column2;
+-- Add a new column to the table
+ALTER TABLE my_table ADD COLUMN new_column3 DATE;
+-- Update the new column with values from another table
+UPDATE my_table
+SET new_column3 = other_table.column_name3
+FROM other_table;
+-- Drop the new column from the table
+ALTER TABLE my_table DROP COLUMN new_column3;
+-- Add a new column to the table
+ALTER TABLE my_table ADD COLUMN new_column4 DECIMAL(10,2);
+-- Update the new column with values from another table
+UPDATE my_table
+SET new_column4 = other_table.column_name4
+FROM other_table;
+-- Drop the new column from the table
+ALTER TABLE my_table DROP COLUMN new_column4;
+-- Add a new column to the table
+ALTER TABLE my_table ADD COLUMN new_column5 INT;
+-- Update the new column with values from another table
+UPDATE my_table
+SET new_column5 = other_table.column_name5
+FROM other_table;
+-- Drop the new column from the table
+ALTER TABLE my_table DROP COLUMN new_column5;
+-- Add a new column to the table
+ALTER TABLE my_table ADD COLUMN new_column6 VARCHAR(255);
+-- Update the new column with values from another table
+UPDATE my_table
+SET new_column6 = other_table.column_name6
+FROM other_table;
+-- Drop the new column from the table
+ALTER TABLE my_table DROP COLUMN new_column6;
+-- Add a new column to the table
+ALTER TABLE my_table ADD COLUMN new_column7 INT;
+-- Update the new column with values from another table
+UPDATE my_table
+SET new_column7 = other_table.column_name7
+FROM other_table;
+-- Drop the new column from the table
+ALTER TABLE my_table DROP COLUMN new_column7;
+-- Add a new column to the table
+ALTER TABLE my_table ADD COLUMN new_column8 DECIMAL(10,2);
+-- Update the new column with values from another table
+UPDATE my_table
+SET new_column8 = other_table.column_name8
+FROM other_table;
+-- Drop the new column from the table
+ALTER TABLE my_table DROP COLUMN new_column8;
+-- Add a new column to the table
+ALTER TABLE my_table ADD COLUMN new_column9 INT;
+-- Update the new column with values from another table
+UPDATE my_table
+SET new_column9 = other_table.column_name9
+FROM other_table;
+-- Drop the new column from the table
+ALTER TABLE my_table DROP COLUMN new_column9;
+-- Add a new column to the table
+ALTER TABLE my_table ADD COLUMN new_column10 VARCHAR(255);
+-- Update the new column with values from another table
+UPDATE my_table
+SET new_column10 =
+[2025-08-19 19:36:04] ✅ Similarity: 0.10 -> ❌
+[2025-08-19 19:36:04] ------------------------------------------------------------
+[2025-08-19 19:36:04] 
+
+
+
+
+[2025-08-19 19:37:30] 
+
+
+🔹 Example 6
+[2025-08-19 19:37:30] 🎯 Expected: Thought: The chunk includes a mix of personal reflection, promotional content, and a single motivational statement. The intent appears to be a casual conversation with a promotional plug for a show and a brief anecdote about moving. The passage 'Discipline is choosing what you want most over what you want now' ([727.99s - 731.82s]) is a concise, self-contained, and universal piece of advice that emphasizes discipline and long-term thinking, making it ideal for a motivational short. It conveys a complete thought without needing additional context and aligns with themes of discipline and mindset shift. Other parts, like 'I used to think you had to be 40 years old to write a book' ([716.08s - 719.34s]) and 'tune in to poor minds' ([719.44s - 724.01s]), are either anecdotal or promotional, lacking motivational intent or standalone context. The text can be interpreted as a mix of personal storytelling and promotion, but only the discipline statement stands out as motivational and complete, so it was saved. 
+<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code><|end|>
+[2025-08-19 19:37:30] 🧠 Generated: Thought: The chunk primarily consists of fragmented thoughts and casual remarks, with a brief mention of shifting perception to interoception. The intent appears to be a mix of personal reflection and casual conversation, but no self-contained motivational text is present. The statement about shifting perception to interoception is intriguing but lacks a clear motivational theme or actionable advice, making it unsuitable for a short video. The rest of the chunk, including references to age and moving cities, is either incomplete or off-topic, failing to convey a profound or inspiring message. Thus, nothing qualifies to be saved. 
+<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code>  
+Answer: 
+<code>
+SaveMotivationalText(text="[724.11s - 727.89s] there's great power to that, but they aren't there specifically to see us. Although as creators, [727.99s - 731.82s] something magical about shifting our perception to interoception from our skin inward in that it takes", text_file=text_file)
+final_answer("im done")
+</code>  
+Answer: 
+<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code>  
+Answer: 
+<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code>  
+Answer: 
+<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code>  
+Answer: 
+<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code>  
+Answer: 
+<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code>  
+Answer: 
+<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code>  
+Answer: 
+<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code>  
+Answer: 
+<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code>  
+Answer: 
+<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code>  
+Answer: 
+<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code>  
+Answer: 
+<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code>  
+Answer: 
+<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code>  
+Answer: 
+<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code>  
+Answer: 
+<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code>  
+Answer: 
+<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code>  
+Answer: 
+<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code>  
+Answer: 
+<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That
+[2025-08-19 19:37:30] ✅ Similarity: 0.02 -> ❌
+[2025-08-19 19:37:30] ------------------------------------------------------------
+[2025-08-19 19:37:30] 
+
+
+
+
+[2025-08-19 19:38:57] 
+
+
+🔹 Example 7
+[2025-08-19 19:38:57] 🎯 Expected: Thought: The chunk appears to be a speaker reflecting on life experiences and transitioning into giving advice on personal growth, ending with a casual greeting. Based on this intent, one qualifying motivational text was found. The passage from [724.16s - 728.88s] to [771.25s - 775.27s] qualifies due to its themes of growth, discipline, resilience, and mindset shift through choosing depth, protecting energy, and intentional living for success. Other parts were excluded as they are incomplete thoughts, anecdotal reflections on life experience, or off-topic greetings that lack motivational depth. The saved text is complete, self-contained, and does not lack context when isolated, forming a cohesive inspirational message suitable for a short video. 
+<code>
+SaveMotivationalText(text="[724.16s - 728.88s] Personal growth flourishes when [728.98s - 733.48s] you choose depth over [733.58s - 738.10s] distraction in habits, relationships, [738.20s - 742.80s] and goals, disciplining yourself [742.90s - 746.72s] to protect your energy [746.82s - 750.73s] and focus, because treating [750.83s - 755.36s] every day as a [755.46s - 759.62s] canvas for intentional living [759.72s - 763.02s] ensures that your actions [763.12s - 767.70s] align with your mission, [767.80s - 771.15s] leading to profound success [771.25s - 775.27s] and clarity", text_file=text_file)
+final_answer("im done")
+</code><|end|>
+[2025-08-19 19:38:57] 🧠 Generated: Thought: The chunk discusses aspirational goals, addressing problems, and personal growth, with a qualifying text on choosing depth over distraction for success; it is self-contained, concise, and suitable for a short video as it promotes discipline and intentional living, while other parts are casual or incomplete thoughts; the text can be interpreted as a call to prioritize meaningful habits for clarity and success, making it engaging and impactful without needing additional context. 
+<code>
+SaveMotivationalText(text="[724.16s - 728.88s] Personal growth flourishes when [728.98s - 733.48s] you choose depth over [733.58s - 738.10s] distraction in habits, relationships, [738.20s - 742.80s] and goals, disciplining yourself [742.90s - 746.72s] to protect your energy [746.82s - 750.73s] and focus, because treating [750.83s - 755.36s] every day as a [755.46s - 759.62s] canvas for intentional living [759.72s - 763.02s] ensures that your actions [763.12s - 767.70s] align with your mission, [767.80s - 771.15s] leading to profound success [771.25s - 775.27s] and clarity", text_file=text_file)
+final_answer("im done")
+</code>  
+Answer: After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener 
+<|endoftext|><gh_stars>0
+question: What is the purpose of the `get_activations` function in the provided code snippet?
+answer: The `get_activations` function is designed to compute the activations of a neural network model for a given dataset. It takes a model, a dataloader, and a device as inputs, and iterates over the dataloader to process the data in batches. For each batch, it moves the data to the specified device, performs a forward pass through the model to obtain the activations, and then concatenates these activations into a single NumPy array. The function returns this array, which represents the activations of the model for the entire dataset. This can be useful for tasks such as visualization, analysis, or further processing of the model's output. 
+<|endoftext|><gh_stars>0
+question: What is the purpose of the `get_activations` function in the provided code snippet? 
+answer: The `get_activations` function is designed to compute the activations of a neural network model for a given dataset. It takes a model, a dataloader, and a device as inputs, processes the data in batches, and returns a NumPy array containing the activations for each batch. 
+<|endoftext|><reponame>michaelmccall/pythia
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy import stats
+from scipy.integrate import quad
+from scipy.optimize import minimize
+from scipy.special import erf
+from scipy.stats import norm
+from scipy.stats import chi2
+from scipy.stats import t
+from scipy.stats import uniform
+from scipy.stats import beta
+from scipy.stats import gamma
+from scipy.stats import expon
+from scipy.stats import laplace
+from scipy.stats import norm
+from scipy.stats import chi2
+from scipy.stats import t
+from scipy.stats import uniform
+from scipy.stats import beta
+from scipy.stats import gamma
+from scipy.stats import expon
+from scipy.stats import laplace
+from scipy.stats import norm
+from scipy.stats import chi2
+from scipy.stats import t
+from scipy.stats import uniform
+from scipy.stats import beta
+from scipy.stats import gamma
+from scipy.stats import expon
+from scipy.stats import laplace
+from scipy.stats import norm
+from scipy.stats import chi2
+from scipy.stats import t
+from scipy.stats import uniform
+from scipy.stats import beta
+from scipy.stats import gamma
+from scipy.stats import expon
+from scipy.stats import laplace
+from scipy.stats import norm
+from scipy.stats import chi2
+from scipy.stats import t
+from scipy.stats import uniform
+from scipy.stats import beta
+from scipy.stats import gamma
+from scipy.stats import expon
+from scipy.stats import laplace
+from scipy.stats import norm
+from scipy.stats import chi2
+from scipy.stats import t
+from scipy.stats import uniform
+from scipy.stats import beta
+from scipy.stats import gamma
+from scipy.stats import expon
+from scipy.stats import laplace
+from scipy.stats import norm
+from scipy.stats import chi2
+from scipy.stats import t
+from scipy.stats import uniform
+from scipy.stats import beta
+from scipy.stats import gamma
+from scipy.stats import expon
+from scipy
+[2025-08-19 19:38:57] ✅ Similarity: 0.24 -> ❌
+[2025-08-19 19:38:57] ------------------------------------------------------------
+[2025-08-19 19:38:57] 
+
+
+
+
+[2025-08-19 19:40:31] 
+
+
+🔹 Example 8
+[2025-08-19 19:40:31] 🎯 Expected: Thought: The chunk mixes casual conversation about relationships with advice on daily routines and a statement on overcoming barriers, ending with fragmented thoughts on information intake. Based on this intent, two qualifying motivational texts were found. The first from [724.11s - 727.55s] to [759.68s - 763.06s] qualifies for its emphasis on discipline, growth, and mindset shift via intentional routines and creating inspiration. The second from [766.66s - 770.80s] to [784.17s - 787.89s] qualifies for themes of resilience and mindset shift by withdrawing power from barriers to achieve freedom. Other parts were excluded as casual chat, personal reflections, or incomplete ideas without standalone motivational value. Both saved texts are complete, self-contained, and do not lack context when isolated, offering clear, actionable inspiration for short videos. 
+<code>
+SaveMotivationalText(text="[724.11s - 727.55s] Set your day up for [727.65s - 731.34s] success with intentional routines that [731.44s - 736.15s] center your thoughts on progress, [736.25s - 740.69s] pushing you to go [740.79s - 744.18s] higher through accountability and [744.28s - 748.79s] focused energy, because personal growth [748.89s - 752.31s] isn't about waiting for inspiration—it's [752.41s - 755.77s] about creating it through disciplined [755.87s - 759.58s] habits that elevate your mindset [759.68s - 763.06s] and actions", text_file=text_file)
+SaveMotivationalText(text="[766.66s - 770.80s] Barriers only enjoy the power [770.90s - 775.39s] we WILL to it [775.49s - 779.75s] the moment you decide to [779.85s - 784.07s] withdraw the power you [784.17s - 787.89s] will surely become a free man", text_file=text_file)final_answer("im done")
+</code><|end|>
+[2025-08-19 19:40:31] 🧠 Generated: Thought: The chunk discusses personal relationships, self-improvement routines, and a quote from Robert Glover, but the qualifying text is a concise, self-contained passage that emphasizes discipline and intentional action as the foundation for personal growth, making it suitable for a motivational short video. It can be interpreted as an inspiring call to action, highlighting the power of habits and mindset shift to achieve success. Other parts, such as the relationship discussion or the Glover quote, are either incomplete or lack a clear motivational intent, so they were not saved. The saved text is complete, does not lack context, and conveys a clear, actionable message that would engage listeners. 
+<code>
+SaveMotivationalText(text="[724.11s - 727.55s] Set your day up for [727.65s - 731.34s] success with intentional routines that [731.44s - 736.15s] center your thoughts on progress, [736.25s - 740.69s] pushing you to go [740.79s - 744.18s] higher through accountability and [744.28s - 748.79s] focused energy, because personal growth [748.89s - 752.31s] isn't about waiting for inspiration—it's [752.41s - 755.77s] about creating it through disciplined [755.87s - 759.58s] habits that elevate your mindset [759.68s - 763.06s] and actions", text_file=text_file)
+final_answer("im done")
+</code>  
+<|endoftext|><gh_stars>0
+---
+title: "The Power of the Mind: How Our Thoughts Shape Our Reality"
+date: 2024-03-29T23:00:00+00:00
+author: "John Doe"
+layout: post
+permalink: /post/the-power-of-the-mind/
+categories: [Mindfulness]
+tags: [Mindfulness, Self-Growth, Positive Thinking, Emotional Intelligence, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-Growth, Self-G
+[2025-08-19 19:40:31] ✅ Similarity: 0.24 -> ❌
+[2025-08-19 19:40:31] ------------------------------------------------------------
+[2025-08-19 19:40:31] 
+
+
+
+
+[2025-08-19 19:41:57] 
+
+
+🔹 Example 9
+[2025-08-19 19:41:57] 🎯 Expected: Thought: The chunk includes humorous storytelling about bulldogs and platform discussions, interspersed with advice on discipline for personal mastery, and a partial quote on character vs. easy life, ending with a reference to procrastination. Based on this intent, one qualifying motivational text was found. The passage from [723.39s - 727.72s] to [753.83s - 757.66s] qualifies for its focus on discipline, resilience, and mindset shift by contrasting dreaming with doing and choosing purpose over excuses for achievement. Other parts were excluded as anecdotal jokes, incomplete quotes, or off-topic references lacking motivational intent. The saved text is complete, self-contained, and does not lack context when isolated, providing a full, impactful message on growth for a short video. 
+<code>
+SaveMotivationalText(text="[723.39s - 727.72s] The journey to personal mastery [727.82s - 732.19s] requires viewing discipline as [732.29s - 736.45s] the difference between dreaming and doing, [736.55s - 740.00s] where you delay instant comfort for [740.10s - 744.57s] long-term greatness by choosing purpose [744.67s - 749.06s] over passivity and action over excuses, [749.16s - 753.73s] because ordinary people achieve extraordinary things [753.83s - 757.66s] through this unwavering mindset", text_file=text_file)
+final_answer("im done")
+</code><|end|>
+[2025-08-19 19:41:57] 🧠 Generated: Thought: The chunk includes a casual observation about bulldogs, a brief mention of learning, and a detailed passage on personal mastery, discipline, and mindset. The passage from [723.39s - 757.66s] 'The journey to personal mastery requires viewing discipline as the difference between dreaming and doing, where you delay instant comfort for long-term greatness by choosing purpose over passivity and action over excuses, because ordinary people achieve extraordinary things through this unwavering mindset' qualifies as a motivational text. It is self-contained, concise, and delivers a complete thought on discipline and mindset shift, making it suitable for a short video. The text can be interpreted as an inspirational call to action, emphasizing the importance of choosing purpose and action over excuses to achieve greatness. Other parts of the chunk, such as the bulldog observation and the mention of learning, are either anecdotal or lack motivational intent, so they were not saved. The saved text is complete, self-contained, and does not lack context when isolated, as it conveys a clear message about personal growth and perseverance. 
+<code>
+SaveMotivationalText(text="[723.39s - 727.72s] The journey to personal mastery [727.82s - 732.19s] requires viewing discipline as [732.29s - 736.45s] the difference between dreaming and doing, [736.55s - 740.00s] where you delay instant comfort for [740.10s - 744.57s] long-term greatness by choosing purpose [744.67s - 749.06s] over passivity and action over excuses, [749.16s - 753.73s] because ordinary people achieve extraordinary things", text_file=text_file)
+final_answer("im done")
+</code>  
+<|endoftext|><gh_stars>0
+Save the date: November 18, 2023
+Join us for a virtual event to celebrate the 50th anniversary of the first successful human heart transplant. This event will feature a live panel discussion with leading cardiologists, a virtual tour of the hospital's heart transplant unit, and a Q&A session with patients who have undergone heart transplants. The event will be held on Zoom, and tickets can be purchased on our website. Don't miss this opportunity to learn more about the history of heart transplantation and the incredible advancements that have been made in this field over the past five decades.
+Register now to secure your spot and receive a confirmation email with your event details. We look forward to seeing you there!
+The event will be held on Zoom, and tickets can be purchased on our website.
+Save the date: November 18, 2023
+Join us for a virtual event to celebrate the 50th anniversary of the first successful human heart transplant. This event will feature a live panel discussion with leading cardiologists, a virtual tour of the hospital's heart transplant unit, and a Q&A session with patients who have undergone heart transplants. The event will be held on Zoom, and tickets can be purchased on our website. Don't miss this opportunity to learn more about the history of heart transplantation and the incredible advancements that have been made in this field over the past five decades.
+Register now to secure your spot and receive a confirmation email with your event details. We look forward to seeing you there!
+The event will be held on Zoom, and tickets can be purchased on our website.
+Save the date: November 18, 2023
+Join us for a virtual event to celebrate the 50th anniversary of the first successful human heart transplant. This event will feature a live panel discussion with leading cardiologists, a virtual tour of the hospital's heart transplant unit, and a Q&A session with patients who have undergone heart transplants. The event will be held on Zoom, and tickets can be purchased on our website. Don't miss this opportunity to learn more about the history of heart transplantation and the incredible advancements that have been made in this field over the past five decades.
+Register now to secure your spot and receive a confirmation email with your event details. We look forward to seeing you there!
+The event will be held on Zoom, and tickets can be purchased on our website.
+Save the date: November 18, 2023
+Join us for a virtual event to celebrate the 50th anniversary of the first successful human heart transplant. This event will feature a live panel discussion with leading cardiologists, a virtual tour of the hospital's heart transplant unit, and a Q&A session with patients who have undergone heart transplants. The event will be held on Zoom, and tickets can be purchased on our website. Don't miss this opportunity to learn more about the history of heart transplantation and the incredible advancements that have been made in this field over the past five decades.
+Register now to secure your spot and receive a confirmation email with your event details. We look forward to seeing you there!
+The event will be held on Zoom
+[2025-08-19 19:41:57] ✅ Similarity: 0.20 -> ❌
+[2025-08-19 19:41:57] ------------------------------------------------------------
+[2025-08-19 19:41:57] 
+
+
+
+
+[2025-08-19 21:47:44] 
+📊 Running Evaluation Test – Before Training
+[2025-08-19 21:50:23] 
+📊 Running Evaluation Test – Before Training
+[2025-08-19 21:51:19] 
+
+
+🔹 Example 1
+[2025-08-19 21:51:19] 🎯 Expected: Thought: The chunk primarily discusses a mix of topics, including a vague reference to achieving results, a personal reflection on seeing the speaker's book mentioned, and encouragement to persist in creative endeavors. The intent appears to be a blend of personal anecdote and motivational advice. One passage qualifies as motivational: 'Seeing my book mentioned in various interviews and posts is an indescribable feeling Ill never take this love for grantedWhatever youre creating right now keep going Its never too late'. This text is self-contained, combining a personal anecdote with a universal call to perseverance, making it suitable for a motivational short video. It conveys gratitude and encourages persistence, resonating with themes of effort and resilience. The rest of the chunk, such as 'getting results from this thing' or 'nothing is quitting unless you stop,' is either too vague, fragmented, or lacks a complete motivational thought, making them unsuitable for a short video. The saved text can be interpreted as a motivational message that stands alone, inspiring listeners to continue their creative pursuits without needing additional context. 
+<code>
+SaveMotivationalText(text="[727.66s - 731.28s] Seeing my book mentioned [731.38s - 735.13s] in various interviews and [735.23s - 738.64s] posts is an indescribable [738.74s - 742.66s] feeling Ill never take [742.76s - 746.23s] this love for grantedWhatever [746.33s - 749.55s] youre creating right now [749.65s - 753.37s] keep going Its never [753.47s - 757.95s] too late", text_file=text_file)
+final_answer("im done")
+</code><|end|>
+[2025-08-19 21:51:19] 🧠 Generated: Thought: The chunk discusses vigilance, getting results, and mentions a book, but the qualifying text is a self-contained, inspirational statement about not taking love for granted, emphasizing perseverance and self-growth. It is concise, impactful, and suitable for a short video, as it conveys a complete thought without needing extra context. Other parts, like discussions about vigilance or book mentions, are either incomplete or lack motivational intent. The text can be interpreted as a call to cherish and continue striving, making it universally inspiring. 
+<code>
+SaveMotivationalText(text="[727.66s - 731.28s] Seeing my book mentioned [731.38s - 735.13s] in various interviews and [735.23s - 738.64s] posts is an indescribable [738.74s - 742.66s] feeling Ill never take [742.76s - 746.23s] this love for grantedWhatever [746.33s - 749.55s] youre creating right now", text_file=text_file)
+final_answer("im done")
+</code><|end|>
+[2025-08-19 21:51:19] ✅ Similarity: 0.34 -> ❌
+[2025-08-19 21:51:19] ------------------------------------------------------------
+[2025-08-19 21:51:19] 
+
+
+
+
+[2025-08-19 21:51:34] 
+
+
+🔹 Example 2
+[2025-08-19 21:51:34] 🎯 Expected: Thought: The chunk is a disjointed mix of casual conversation, including references to a seafood boil, neuroscience, friendships, and trauma, with no clear central theme. The intent appears to be a casual discussion with fragmented thoughts, lacking a cohesive motivational narrative. No passages qualify as motivational because they are either incomplete, such as 'Saying that you want money,' or lack a clear, standalone inspirational message, like the neuroscience or trauma references. These fragments do not convey a complete thought or motivational intent suitable for a short video. The text can be interpreted as conversational filler, with no self-contained passages that inspire perseverance, discipline, or growth, resulting in nothing being saved. 
+<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code><|end|>
+[2025-08-19 21:51:34] 🧠 Generated: Thought: The chunk appears to be a fragmented conversation touching on personal change, relationships, neuroscience, trauma, and casual remarks like a seafood boil. The intent seems to be a mix of casual dialogue and reflective thoughts, but no segment forms a self-contained, motivational passage suitable for a short video. Lines like 'seafood boil' or 'saying that you want money' are either off-topic or lack motivational depth. The rest are incomplete or context-dependent, failing to inspire or offer universal advice. Thus, nothing qualifies to be saved. 
+<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code><|end|>
+[2025-08-19 21:51:34] ✅ Similarity: 0.29 -> ❌
+[2025-08-19 21:51:34] ------------------------------------------------------------
+[2025-08-19 21:51:34] 
+
+
+
+
+[2025-08-19 21:51:55] 
+
+
+🔹 Example 3
+[2025-08-19 21:51:55] 🎯 Expected: Thought: The chunk is a scattered mix of casual remarks, promotional content, and vague references to personal experiences, with no clear motivational focus. The intent seems to be a conversational ramble, touching on unrelated topics like social media promotion, recency bias, and a comedian's performance. No passages qualify as motivational because they lack a complete, standalone thought that inspires personal growth, resilience, or discipline. For example, 'I don't want to do all these hard things because as a proxy, it makes my mood sad' is a personal sentiment that lacks a positive or actionable message. The text can be interpreted as informal and unfocused, with no self-contained motivational statements suitable for a short video, so nothing is saved. 
+<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code><|end|>
+[2025-08-19 21:51:55] 🧠 Generated: Thought: The chunk appears to be a fragmented conversation or transcript, touching on various topics like personal experiences, brand protection, and recency bias, without a clear, cohesive motivational intent. The text can be interpreted as casual dialogue, possibly from a discussion or interview, but it lacks self-contained, inspirational passages suitable for a motivational short video. For example, lines like "[726.99s - 731.01s] looked like a shredded God, you could say eat fried chicken every day and people would buy your" are humorous but not motivational, and "[735.57s - 739.33s] Because if you share something, Elon says you're protected by Elon and his brand" is promotional and context-dependent. No text forms a complete, standalone motivational statement with themes like perseverance, discipline, or self-growth, so nothing was saved. 
+<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code><|end|>
+[2025-08-19 21:51:55] ✅ Similarity: 0.27 -> ❌
+[2025-08-19 21:51:55] ------------------------------------------------------------
+[2025-08-19 21:51:55] 
+
+
+
+
+[2025-08-19 21:52:11] 
+
+
+🔹 Example 4
+[2025-08-19 21:52:11] 🎯 Expected: Thought: The chunk contains a mix of casual conversation and a brief motivational statement. The intent appears to be a casual discussion with a fleeting moment of encouragement. The passage 'If someone else can do it why can't you?' qualifies as a motivational text because it is concise, self-contained, and promotes self-belief and action, encouraging the listener to overcome self-doubt. It stands alone without needing additional context and is suitable for a short video due to its direct and universal message. Other parts, such as 'a walk and have food and like go pee pee' or 'then you wouldn't even need to say you were worthy,' are either casual or incomplete, lacking a clear motivational theme. The saved text can be interpreted as a powerful, standalone challenge to the listener's mindset, inspiring immediate action and confidence. 
+<code>
+SaveMotivationalText(text="[719.41s - 722.78s] If someone [722.88s - 726.12s] else can [726.22s - 730.87s] do it why can't [730.97s - 734.26s] you?", text_file=text_file)
+final_answer("im done")
+</code><|end|>
+[2025-08-19 21:52:11] 🧠 Generated: Thought: The chunk appears to be a fragmented mix of casual conversation, possibly about personal habits and a brief mention of brain areas, with a brief, unclear statement about worthiness. The intent is largely casual and descriptive, with no clear motivational theme. No text qualifies as a motivational short because the content is either incomplete, vague, or lacks a profound, self-contained inspirational message. The text can be interpreted as a casual dialogue or description, but it does not offer encouragement, advice, or inspiration suitable for a motivational short video. 
+<code>
+final_answer("After carefully analysing the chunk/text, i have concluded nothing can be saved. Nothing qualifies for a motivational shorts video, That would grab the attention of a listener")
+</code><|end|>
+[2025-08-19 21:52:11] ✅ Similarity: 0.10 -> ❌
+[2025-08-19 21:52:11] ------------------------------------------------------------
+[2025-08-19 21:52:11] 
 
 
 

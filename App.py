@@ -10,10 +10,10 @@ if GPEN_PATH not in sys.path:
 import GPEN.__init_paths
 from GPEN.face_enhancement import FaceEnhancement
 from smolagents import TransformersModel, FinalAnswerTool, CodeAgent, tool
-from Custom_Agent_Tools import SpeechToTextToolCUDA, SpeechToTextToolCPU, SpeechToText_short_creation_thread
+from Custom_Agent_Tools import SpeechToTextToolCUDA, SpeechToTextToolCPU, SpeechToText_short_creation_thread,Delete_rejected_line,SaveMotivationalText,create_motivationalshort
 import tempfile
 import gc
-from log import log,log_Stage
+from log import log
 import yaml
 import torchvision.transforms.functional as F
 sys.modules['torchvision.transforms.functional_tensor'] = F
@@ -21,7 +21,6 @@ import torch.nn.functional as F
 import subprocess
 from moviepy.audio.fx import MultiplyVolume
 from moviepy import VideoFileClip, ImageSequenceClip, TextClip, CompositeVideoClip,vfx,AudioFileClip,afx,CompositeAudioClip,afx
-import threading
 import cv2
 import ffmpeg
 from typing import List
@@ -35,7 +34,7 @@ import pynvml
 import time
 import numpy as np
 import cv2
-from clean_memory import get_gpu_memory
+from clean_memory import clean_get_gpu_memory
 import torch
 from moviepy.video.fx.FadeIn import FadeIn
 from moviepy.video.fx.FadeOut import FadeOut
@@ -45,11 +44,28 @@ import torch
 from pydub import AudioSegment
 import datetime
 import re 
+from proglog import ProgressBarLogger
+import Global_state
 from queue import Queue
 pynvml.nvmlInit()
 handle = pynvml.nvmlDeviceGetHandleByIndex(0)
 mem_info = pynvml.nvmlDeviceGetMemoryInfo(handle)
 log(f"Total Used: {mem_info.used/1e9:.1f}GB")
+
+#---------------------------------------#
+# Cleans all the log files Automatically
+#---------------------------------------#
+def Clean_log_onRun():
+    with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\debug_performance\log.txt", "w", encoding="UTF-8") as w:
+            w.write("") 
+    with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\debug_performance\VerifyAgentRun_data.txt", "w", encoding="UTF-8") as w:
+            w.write("")
+    with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\debug_performance\Token_logpath", "w", encoding="UTF-8") as w:
+            w.write("")
+
+#----------------------------------#
+# Full file Path's 
+#----------------------------------#
 Chunk_saving_text_file = r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Logging_and_filepaths\saved_transcript_storage.txt"
 Final_saving_text_file=r"C:\Users\didri\Desktop\Programmering\Full-Agent-Flow_VideoEditing\Logging_and_filepaths\final_saving_motivational.txt"
 model_path_SwinIR_color_denoise15_pth = r"c:\Users\didri\Desktop\LLM-models\Video-upscale-models\SwinIR-M_noise15.pth"
@@ -58,59 +74,32 @@ model_path_Swin_BSRGAN_X4_pth = r"c:\Users\didri\Desktop\LLM-models\Video-upscal
 model_path_Swin_BSRGAN_X4_onnx = r"c:\Users\didri\Desktop\LLM-models\Video-upscale-models\BSRGAN_DFOWMFC_s64w8_SwinIR-L_x4_GAN.onnx"
 model_path_realesgran_x2_pth = r"c:\Users\didri\Desktop\LLM-models\Video-upscale-models\RealESRGAN_x2plus.pth"
 
-#Threading
-video_task_que = queue.Queue()
-gpu_lock = threading.Lock()
-transcript_queue = queue.Queue()
-count_lock = threading.Lock()
 
-_current_audio_url: str = None
-_current_video_url: str = None
-current_Youtube_channel: str = None
-
-
-def get_current_audio_path() -> str:
-     return _current_audio_url
-
-def get_current_videourl() -> str:
-    return _current_video_url
-
-def get_current_yt_channel()-> str:
-     return current_Youtube_channel
-
-def get_current_textfile() -> str:
-    return _current_agent_saving_file
-
-
-def set_current_yt_channel(youtube_channel: str):
-    global current_Youtube_channel
-    current_Youtube_channel = youtube_channel
-
-def set_current_videourl(url: str):
-    global _current_video_url
-    _current_video_url = url
-
-def set_current_textfile(url: str):
-    global _current_agent_saving_file
-    _current_agent_saving_file = url
-
-def set_current_audio_path(url: str):
-     global _current_audio_url
-     _current_audio_url = url
-
-
-global count
-global Video_count 
+            
+#---------------------------------#
+#Global Variables
+#----------------------------------#
 count = 0
 Video_count = 0
+Global_model = None
+ActiveProgress=False
+Upload_YT_count = 0  
+
+#---------------------------------------#
+# Queue / Threads / Functions /  Variables
+#---------------------------------------#
+def  clear_queue(q: Queue):
+     with q.mutex:
+          q.queue.clear()
+          q.all_tasks_done.notify_all()
+          q.unfinished_tasks = 0
 
 
-def clean_up_Memory():
-     gc.collect()
-     torch.cuda.empty_cache()
-     log("cleaned up memory!")
 
 
+#-----------------------------------#
+# Reloading&Changing LLM-model
+#-----------------------------------#
 def Reload_and_change_model(model):
      if model == "Qwen7b":
             model = TransformersModel(
@@ -120,31 +109,60 @@ def Reload_and_change_model(model):
                 device_map="auto",
                 torch_dtype="auto",
                 do_sample=False,
-                max_new_tokens=2500,
                 use_flash_attn=True
             )
             return model
-     elif model == "Qwen3b":
+     elif model == "phi-4":
             global Global_model
             Global_model = TransformersModel(
-                    model_id = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-3B-Instruct-MERGED",
+                    model_id = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\microsoft\Merged_model",
                     load_in_4bit=True,
                     device_map="auto",
                     torch_dtype="auto",
-                    max_new_tokens=2000,
                     do_sample=False,
                     use_flash_attn=True     
                     )
             return Global_model
           
 
-def  clear_queue(q: Queue):
-     with q.mutex:
-          q.queue.clear()
-          q.all_tasks_done.notify_all()
-          q.unfinished_tasks = 0
+
+#---------------------------------#
+# Classes
+#----------------------------------#
+class MyProgressLogger(ProgressBarLogger):
+    def callback(self, **changes):
+        for param, value in changes.items():
+            log(f"{param}: {value}")
+            log(f"{param}: {value}")
 
 
+
+
+class Face_enchance_Args:
+        model = 'GPEN-BFR-512'
+        task = 'FaceEnhancement'
+        key = None
+        in_size = 512
+        out_size = None
+        channel_multiplier = 2
+        narrow = 1
+        alpha = 0.5
+        use_sr = False
+        use_cuda = True
+        save_face = False
+        aligned = False
+        sr_model = 'realesrnet'
+        sr_scale = 1
+        tile_size = 0
+        ext = '.jpg'
+
+
+
+
+
+#-----------------------------------#
+# Shorts Video Creation/Functions
+#-----------------------------------#
 def change_saturation(frame ,mode="Increase", amount=0.2):
      if mode == "Increase":
         hsv = cv2.cvtColor(frame, cv2.COLOR_RGB2HSV).astype(np.float32)
@@ -199,99 +217,25 @@ def sharpen_frame_naturally(frame_bgr):
             return sharpened_bgr
 
 
-from proglog import ProgressBarLogger
 
-class MyProgressLogger(ProgressBarLogger):
-    def callback(self, **changes):
-        for param, value in changes.items():
-            log(f"{param}: {value}")
-            log(f"{param}: {value}")
-            
+def mix_audio(original_audio, background_music_path, bg_music_volume=0.15):
+        bg_music = AudioFileClip(background_music_path)
 
-def create_short_video(video_path, start_time, end_time, video_name, subtitle_text):
-    YT_channel = get_current_yt_channel()
-    background_audio = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\onerepublic I aint worried tiktok whistle loop - slowed reverb [mp3].mp3"
-    change_on_saturation = "Decrease"
-    logger = MyProgressLogger()
-    log(f"YT_channel: {YT_channel}")
-    probe = ffmpeg.probe(video_path)
-    log(probe)
-    format_info = probe.get('format', {})
-    bitrate = int(format_info.get('bit_rate', 0))
-    video_streams = [s for s in probe['streams'] if s['codec_type'] == 'video']
-    video_codec = video_streams[0]['codec_name'] if video_streams else None
-    audio_streams = [s for s in probe['streams'] if s['codec_type'] == 'audio']
-    audio_codec = audio_streams[0]['codec_name'] if audio_streams else None
+        if bg_music.duration < original_audio.duration:
+            bg_music = afx.audio_loop(bg_music, duration=original_audio.duration)
+        else:
+            bg_music = bg_music.subclipped(0, original_audio.duration)
 
-    log(f"subtitle_text: {subtitle_text}")
-    log("Before loading YOLO model")
+        bg_music = bg_music.with_effects([MultiplyVolume(bg_music_volume)])
+        original_audio = original_audio.with_effects([MultiplyVolume(1.0)])
+
+        mixed_audio = CompositeAudioClip([original_audio, bg_music]) 
+
+        return mixed_audio
 
 
 
-    def group_subtitle_words_in_pairs(subtitle_words):
-         chunks = []
-         i = 0
-         offset = float(subtitle_words[0]['start']) if subtitle_words else 0.0
-         while i < len(subtitle_words):
-              pair = subtitle_words[i:i+2]
-
-              text_chunk = ''.join([w['word'].strip() + ' ' for w in pair]).strip().upper()
-
-              start = float(pair[0]['start']) - offset
-
-              end = float(pair[-1]['end']) - offset  
-              duration = end - start
-              start = max(0.0, start)
-              duration = max(0.0, duration)
-              
-              chunks.append({'text': text_chunk, 'start': start, 'duration': duration})
-
-              i += 2
-              log(f"[group_subtitle_words_in_pairs] CHUNKS: {chunks}")
-         return chunks 
-    
-    try:
-       log(f"[group_subtitle_words_in_pairs] Running now...")
-       pairs = group_subtitle_words_in_pairs(subtitle_text)
-       log(f"[group_subtitle_words_in_pairs] PAIRS: {pairs}")
-    except Exception as e:
-         log(f"[group_subtitle_words_in_pairs] Error during grouping of subtitles in pairs. {str(e)} ")
-  
-
-    def create_subtitles_from_pairs(pairs):
-        from moviepy.video.fx import FadeIn, FadeOut
-        text_clips = []
-        fade_duration = 0.05
-
-        for c in pairs:
-            log(f"text for c in pairs: {c}")
-            txt_clip = TextClip(
-                text=c['text'],
-                font=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Utils-Video_creation\Fonts\OpenSans-VariableFont_wdth,wght.ttf", 
-                font_size=50,
-                margin=(10, 10), 
-                text_align="center",
-                vertical_align="center",
-                horizontal_align="center",
-                color='white',
-                stroke_color="black",
-                stroke_width=8,
-                size=(1000, 300),
-                method="label",
-                duration=c['duration']
-               ).with_start(c['start']).with_position(('center', 0.60), relative=True)
-            txt_clip  = txt_clip.with_effects([FadeIn(fade_duration), FadeOut(fade_duration)])
-            text_clips.append(txt_clip)
-            log(f"[create_subtitles_from_pairs] Appending: {txt_clip}")
-            log(f"Text_clips: {text_clips}")
-        return text_clips
-
-        
-
-
-    #legge på tekst etter oppskalering
-
-    def detect_and_crop_frames_batch(frames, batch_size=8):
+def detect_and_crop_frames_batch(frames, batch_size=8):
         TARGET_W, TARGET_H = 1080, 1920
         alpha = 0.1
         prev_cx, prev_cy = None, None
@@ -399,24 +343,116 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 
 
 
-#########################################################################
-##--------------------------------------------------------------------###
-## CREATES THE (START & END) OF the currentclip from FULL ORIGINAL VIDEO
-##--------------------------------------------------------------------###
-#########################################################################
 
+
+
+
+#------------------------------------------------------------------------------------------------------------------------#
+# create_short_video --> Function takes (video, start time/end time for video, video name, subtitles for video) as input
+#------------------------------------------------------------------------------------------------------------------------#
+def create_short_video(video_path, start_time, end_time, video_name, subtitle_text):
+   # YT_channel = Global_state.get_current_yt_channel()
+    background_audio = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\onerepublic I aint worried tiktok whistle loop - slowed reverb [mp3].mp3"
+    change_on_saturation = "Decrease"
+    logger = MyProgressLogger()
+   # log(f"YT_channel: {YT_channel}")
+    probe = ffmpeg.probe(video_path)
+    log(probe)
+    format_info = probe.get('format', {})
+    bitrate = int(format_info.get('bit_rate', 0))
+    video_streams = [s for s in probe['streams'] if s['codec_type'] == 'video']
+    video_codec = video_streams[0]['codec_name'] if video_streams else None
+    audio_streams = [s for s in probe['streams'] if s['codec_type'] == 'audio']
+    audio_codec = audio_streams[0]['codec_name'] if audio_streams else None
+
+    log(f"subtitle_text: {subtitle_text}")
+    log("Before loading YOLO model")
+
+
+
+    def group_subtitle_words_in_pairs(subtitle_words):
+         chunks = []
+         i = 0
+         offset = float(subtitle_words[0]['start']) if subtitle_words else 0.0
+         while i < len(subtitle_words):
+              pair = subtitle_words[i:i+2]
+
+              text_chunk = ''.join([w['word'].strip() + ' ' for w in pair]).strip().upper()
+
+              start = float(pair[0]['start']) - offset
+
+              end = float(pair[-1]['end']) - offset  
+              duration = end - start
+              start = max(0.0, start)
+              duration = max(0.0, duration)
+              
+              chunks.append({'text': text_chunk, 'start': start, 'duration': duration})
+
+              i += 2
+              log(f"[group_subtitle_words_in_pairs] CHUNKS: {chunks}")
+         return chunks 
+    
+    try:
+       log(f"[group_subtitle_words_in_pairs] Running now...")
+       pairs = group_subtitle_words_in_pairs(subtitle_text)
+       log(f"[group_subtitle_words_in_pairs] PAIRS: {pairs}")
+    except Exception as e:
+         log(f"[group_subtitle_words_in_pairs] Error during grouping of subtitles in pairs. {str(e)} ")
+  
+
+    def create_subtitles_from_pairs(pairs):
+        from moviepy.video.fx import FadeIn, FadeOut
+        text_clips = []
+        fade_duration = 0.05
+
+        for c in pairs:
+            log(f"text for c in pairs: {c}")
+            txt_clip = TextClip(
+                text=c['text'],
+                font=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Utils-Video_creation\Fonts\OpenSans-VariableFont_wdth,wght.ttf", 
+                font_size=50,
+                margin=(10, 10), 
+                text_align="center",
+                vertical_align="center",
+                horizontal_align="center",
+                color='white',
+                stroke_color="black",
+                stroke_width=6,
+                size=(1000, 300),
+                method="label",
+                duration=c['duration']
+               ).with_start(c['start']).with_position(('center', 0.60), relative=True)
+            txt_clip  = txt_clip.with_effects([FadeIn(fade_duration), FadeOut(fade_duration)])
+            text_clips.append(txt_clip)
+            log(f"[create_subtitles_from_pairs] Appending: {txt_clip}")
+            log(f"Text_clips: {text_clips}")
+        return text_clips
+
+        
+
+
+
+
+
+#------------------------------------------------------------------------#
+# CREATES THE (START & END) OF the currentclip from FULL ORIGINAL VIDEO
+#------------------------------------------------------------------------#
     full_video = VideoFileClip(video_path)
     clip = full_video.subclipped(start_time, end_time)
     log(f"clip duration: {clip.duration}, clip fps: {clip.fps}, clip width: {clip.w}, clip height: {clip.h}, start_time: {start_time}, end_time: {end_time}, video_path: {video_path}")
 
 
 
-# ##############################################################
-# ##----------------------------------------------------------###
-# ## Extrcting frames from original video to a LIST
-# ##----------------------------------------------------------###
-# ##############################################################
-#     log(f"\n\n[Extracting original video frames]  PROCCESS starting...")
+
+
+
+
+
+#--------------------------------------------------#
+# Extrcting frames from original video to a LIST
+#--------------------------------------------------#
+
+    log(f"\n\n[Extracting original video frames]  PROCCESS starting...")
 
     frames = []
     for frame in clip.iter_frames():
@@ -429,11 +465,13 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 
 
 
-# ###############################
-# ##--------------------------###
-# ## Yolo8/facedetection + Cropping
-# ##--------------------------###
-# ###############################
+
+
+
+
+#--------------------------------#
+# Yolo8/facedetection + Cropping
+#--------------------------------#
     log(f"\n\n[detect_and_crop_frames_batch]  PROCCESS starting...")
     cropped_frames = detect_and_crop_frames_batch(frames=frames,batch_size=8)
     log(f"[detect_and_crop_frames_batch] Successfully complete. \n\n")
@@ -458,11 +496,10 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 
 
 
-# ###########################
-# ##---------------------###
-# #GFPGANER & REALESRGAN UPSCALING
-# ##---------------------##
-# ##########################
+
+# #--------------------------------#
+# # GFPGANER & REALESRGAN UPSCALING
+# #--------------------------------#
 #     log(f"\n\n[GFPGANER & REALESRGAN UPSCALING] PROCCESS starting...")
 #     from basicsr.utils.registry import ARCH_REGISTRY
 #     ARCH_REGISTRY._obj_map.pop('RRDBNet', None)
@@ -496,37 +533,17 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 
 
 
-# # ###########################
-# # ##---------------------###
-# # #FACEENCHANCEMENT
-# # ##---------------------##
-# # ##########################
+
+# #----------------------#
+# #   FACEENCHANCEMENT
+# #----------------------#
 #     log(f"\n\n[FACEENCHACEMENT] PROCCESS starting...")
-#     class Args:
-#         model = 'GPEN-BFR-512'
-#         task = 'FaceEnhancement'
-#         key = None
-#         in_size = 512
-#         out_size = None
-#         channel_multiplier = 2
-#         narrow = 1
-#         alpha = 0.5
-#         use_sr = False
-#         use_cuda = True
-#         save_face = False
-#         aligned = False
-#         sr_model = 'realesrnet'
-#         sr_scale = 1
-#         tile_size = 0
-#         ext = '.jpg'
-
-
 #     Skin_texture_enchancement = FaceEnhancement(
-#          Args,
-#         in_size=Args.in_size,
-#         model=Args.model,
-#         use_sr=Args.use_sr,
-#         device='cuda' if Args.use_cuda else 'cpu'
+#          Face_enchance_Args,
+#         in_size=Face_enchance_Args.in_size,
+#         model=Face_enchance_Args.model,
+#         use_sr=Face_enchance_Args.use_sr,
+#         device='cuda' if Face_enchance_Args.use_cuda else 'cpu'
 #     )
 
 #     FaceEnhancement_frames = []
@@ -552,11 +569,10 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 #             log(f"[FaceEnhancement] Error: {str(e)}")
     
 
-# # # #####################
-# # # ##--------------.--##
-# # # # color/ADJUSTMENT
-# # # ##-----------------##
-# # # #####################
+
+# #-----------------#
+# # color/Adjustment
+# #-----------------#
 #     log(f"\n\n[COLOR ADJUSTMENT] PROCCESS starting...")
 #     if change_on_saturation != None and change_saturation == "Increase":
 #             FaceEnhancement_frames = [change_saturation(frame,mode=change_on_saturation, amount=0.2) for frame in FaceEnhancement_frames]
@@ -569,12 +585,10 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 
 
 
-##############################
-##--------------------------##
-# MAKING videoclip from frames
-##--------------------------##
-##############################
 
+#-------------------------------#
+# Creating videoclip from frames
+#-------------------------------#
     log(f"\n\n[CREATING VIDEOCLIP] PROCCESS starting...")
     try:
        log(f"[processed_clip] proccessing frames now..")
@@ -585,12 +599,10 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 
 
 
-# ################################################
-# ##-------------------------------------------###
-# ## Subtitle creation of text and added on video
-# ##-------------------------------------------###
-# ################################################
 
+#-----------------------------------------------#
+# Subtitle creation of text and added on video
+#-----------------------------------------------#
     try:
         log(f"Creating subtitles from pairs now..")
         subtitle_clips = create_subtitles_from_pairs(pairs)
@@ -598,24 +610,41 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
             log(f"error during  creation of subtitleclips: {str(e)}")
 
 
+
+
+#-----------------------------------------------#
+#     Adds Logo/overlay for YT_channel
+#-----------------------------------------------#
+    YT_channel = None
+
     try:
+        global Upload_YT_count
+        Upload_YT_count += 1
+        if Upload_YT_count == 1:
+             YT_channel = "LR_Youtube"
+        elif Upload_YT_count == 2:
+             YT_channel = "LRS_Youtube"
+        elif Upload_YT_count == 3:
+             YT_channel = "MR_Youtube"
+        elif Upload_YT_count == 4:
+             YT_channel = "LM_Youtube"
+
         if YT_channel == "LR_Youtube":
-                overlay_clip = VideoFileClip(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\YT_logo\LR_logo.mp4",has_mask=True)
+                overlay_clip = VideoFileClip(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\YT_logo\LOGO_LR.mp4",has_mask=True)
         
         elif YT_channel == "LRS_Youtube":
-                 overlay_clip = VideoFileClip(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\YT_logo\LRS_logo.mp4",has_mask=True)
+                 overlay_clip = VideoFileClip(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\YT_logo\LOGO_LRS.mp4",has_mask=True)
 
         elif YT_channel == "MR_Youtube":
-            overlay_clip = VideoFileClip(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\YT_logo\MR_logo.mp4",has_mask=True)
+            overlay_clip = VideoFileClip(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\YT_logo\LOGO_MR.mp4",has_mask=True)
 
         elif YT_channel == "LM_Youtube":
-             overlay_clip = VideoFileClip(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\YT_logo\LM_Logo.mp4",has_mask=True)
+             overlay_clip = VideoFileClip(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\YT_logo\LOGO_LM.mp4",has_mask=True)
         else:
              raise ValueError(f"Error No {YT_channel} exists.")
-
-
-
-            
+        
+        if Upload_YT_count == 4:
+             Upload_YT_count = 0
 
         overlay_clip = overlay_clip.subclipped(0, clip.duration)
         logo_mask = overlay_clip.to_mask()
@@ -623,6 +652,11 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 
 
 
+
+
+#-----------------------------------------------#
+# Adds Subtitles + Logo to the video
+#-----------------------------------------------#
         log(f"Adding subtitle to the video....")
         final_clip = CompositeVideoClip(
                     [processed_clip.with_position('center')] + subtitle_clips + [logo_with_mask.with_position('center','bottom')],
@@ -632,32 +666,10 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
     except Exception as e:
          log(f"Error during: finalizing clip with subtitle_clips:  {str(e)}")
 
-# ###############################
-# ##--------------------------###
-# ## Audio creation
-# ##--------------------------###
-# ###############################
 
-
-    def mix_audio(original_audio, background_music_path, bg_music_volume=0.15):
-        bg_music = AudioFileClip(background_music_path)
-
-        if bg_music.duration < original_audio.duration:
-            bg_music = afx.audio_loop(bg_music, duration=original_audio.duration)
-        else:
-            bg_music = bg_music.subclipped(0, original_audio.duration)
-
-        # Apply volume multipliers via with_effects, passing MultiplyVolume instances:
-        bg_music = bg_music.with_effects([MultiplyVolume(bg_music_volume)])
-        original_audio = original_audio.with_effects([MultiplyVolume(1.0)])
-
-        mixed_audio = CompositeAudioClip([original_audio, bg_music]) 
-
-        return mixed_audio
-
-
-
-        
+#-------------------------------#
+# Adds Background Music to video
+#-------------------------------#
     if background_audio != None:
         background_music_path = background_audio
         final_clip.audio = mix_audio(clip.audio, background_music_path, bg_music_volume=0.15)
@@ -667,24 +679,32 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
         log(f"keeping original audio")
 
 
-##################################################
-##----------------------------------------------###
-## Final ADJUSTMENT before finalizing clip
-##----------------------------------------------###
-###################################################
+
+
+
+#-----------------------------------------------------#
+#    Adds fade in/out to the video and sets the FPS
+#------------------------------------------------------#
     final_clip = FadeIn(duration=0.1).apply(final_clip)
     final_clip = FadeOut(duration=0.1).apply(final_clip)
     final_clip.fps = clip.fps
+    log(f"Final clip fps: {final_clip.fps}")
 
-    log(f"video original fps: {clip.fps}")
-    log(f"video now fps: {final_clip.fps}")
-    output_dir = "./Video_clips"
 
+#-----------------------------------------------------#
+#    Cleans cpu/gpu memory & Frames
+#------------------------------------------------------#
     del frames
-    del cropped_frames
+    #del cropped_frames
+    clean_get_gpu_memory()
     #del enchanced_frames
-    torch.cuda.empty_cache()
-    gc.collect()
+
+
+
+#-----------------------------------------------------#
+#    Writes the final Video
+#------------------------------------------------------#
+    output_dir = "./Video_clips"
     os.makedirs(output_dir, exist_ok=True)
     out_path = os.path.join(output_dir, f"{video_name}.mp4")
     final_clip.write_videofile(
@@ -693,16 +713,28 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
         codec="h264_nvenc",
         preset="p7",
         audio_codec=audio_codec or "aac",
-        bitrate="4000k",
         threads=6,
         fps=final_clip.fps,
         ffmpeg_params=[
-             "-crf", "10",
-             "-vf", "eq=brightness=0.05, format=yuv420p"],
+            "-crf", "5",
+            "-rc:v", "vbr_hq",
+            "-vf", "eq=brightness=0.08",
+            "-pix_fmt", "yuv420p",
+            "-profile:v", "high",
+            "-b:a", "192k",  
+        ],
+
         remove_temp=True
     )
     full_video.close()
     clip.close()
+
+
+
+
+#-----------------------------------------------------#
+#    Boosts x2 FPS on full video
+#------------------------------------------------------#
     from RIFE_FPS import run_rife
     try:
       output_video = run_rife(out_path)
@@ -715,6 +747,15 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
     log(f"video is completed: output path : {out_path}, video name: {video_name} video_fps: {clip.fps}, codec: {video_codec}, bitrate: {bitrate}, audio_codec: {audio_codec}, subtitles: {subtitle_text}")
     log(f"Final video resolution (width x height): {final_clip.size[0]} x {final_clip.size[1]}") 
 
+
+
+
+
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
+# A Agent creates optimized (Title, Description, Hashtags, Tags, category, publishAt) after analyzing similar trending videos related to input video &  Uploads the video to Youtube
+# - Reloads the Global Model
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
     try:
         from Agent_AutoUpload.Upload_youtube import upload_video
         log(f"\n\n\n\n\n\n\n\n\n-------------------------------------------------------------------\n\n\n\n")
@@ -725,7 +766,7 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
         except NameError:
                 pass
         
-        get_gpu_memory()
+        clean_get_gpu_memory()
         Global_model = Reload_and_change_model(model="Qwen7b")
         social_media = upload_video(model=Global_model,file_path=output_video,YT_channel=YT_channel)
         log(f"Done with uploading to {social_media}")
@@ -734,114 +775,77 @@ def create_short_video(video_path, start_time, end_time, video_name, subtitle_te
 
     finally:
          del Global_model
-         get_gpu_memory()
-         Reload_and_change_model("Qwen3b")
+         clean_get_gpu_memory()
+         Reload_and_change_model("phi-4")
  
 
 
 
-def truncate_audio(audio_path, start_time, end_time, output_path):
-    """
-    Truncate an audio file from start_time to end_time and save it to output_path.
-
-    start_time, end_time: in seconds (float or int)
-    """
-    audio = AudioSegment.from_file(audio_path)
-    
-    start_ms = int(start_time * 1000)
-    end_ms = int(end_time * 1000)
-    
-    truncated = audio[start_ms:end_ms]
-    truncated.export(output_path, format="wav") 
-
-    return output_path
-
+#-----------------------------------------------------#
+# Verifies subtitles & video start time/video end time
+#-----------------------------------------------------#
 
 def run_video_short_creation_thread(video_url,start_time,end_time,subtitle_text):
-        global Video_count#didrik
+        global Video_count
         Video_count += 1
         current_count = Video_count
+
+
+        def truncate_audio(audio_path, start_time, end_time, output_path):
+            """
+            Truncate an audio file from start_time to end_time and save it to output_path.
+
+            start_time, end_time: in seconds (float or int)
+            """
+            audio = AudioSegment.from_file(audio_path)
+            
+            start_ms = int(start_time * 1000)
+            end_ms = int(end_time * 1000)
+            log(f"start_ms: {start_ms}, end_ms: {end_ms}")
+
+            truncated = audio[start_ms:end_ms]
+            truncated.export(output_path, format="wav") 
+            return output_path
+        
         try:
             log(f"RUNNING --> [run_video_short_creation_thead]: video_url: {video_url}, start_time: {start_time}, end_time: {end_time}")
             text_video_path = video_url
             video_start_time = start_time
             video_end_time = end_time
-            absoloute_start_time = 0
-            absoloute_end_time = 0
 
+      
+            device = "cuda"
+            tool = SpeechToText_short_creation_thread(device=device)
+            tool.setup()
 
-            
-            try:
-                device = "cuda"
-                tool = SpeechToText_short_creation_thread(device=device)
-                tool.setup()
+            audio_path = Global_state.get_current_audio_path()
+            with tempfile.TemporaryDirectory() as temp_dir:
+                log(f"Temp dir created:{temp_dir}")
+                truncated_audio_path = os.path.join(temp_dir, f"temp_audio_{current_count}.wav")
+                log(f"Truncated audio clip: {truncated_audio_path}")
+                audio_for_clip = truncate_audio(audio_path, video_start_time, video_end_time, truncated_audio_path)
 
-                audio_path = get_current_audio_path()
-                with tempfile.TemporaryDirectory() as temp_dir:
-                    log(f"Temp dir created:{temp_dir}")
-                    truncated_audio_path = os.path.join(temp_dir, f"temp_audio_{current_count}.wav")
-                    log(f"Truncated audio clip: {truncated_audio_path}")
-                    audio_for_clip = truncate_audio(audio_path, video_start_time, video_end_time, truncated_audio_path)
-
-                    subtitle_text = re.sub(r"\[\d+\.\d+s\s*-\s*\d+\.\d+s\]", "", subtitle_text)
-                    subtitle_text = re.sub(r"\s+", " ",subtitle_text).strip()
-                    log(f"subtitletext cleaned: {subtitle_text}")
+                subtitle_text = re.sub(r"\[\d+\.\d+s\s*-\s*\d+\.\d+s\]", "", subtitle_text)
+                subtitle_text = re.sub(r"\s+", " ",subtitle_text).strip()
+                log(f"subtitletext cleaned: {subtitle_text}")
         
-                    result = tool.forward({"audio": audio_for_clip,"subtitle_text": subtitle_text})
-                    crafted_Subtitle_text = result["matched_words"]
-                    new_video_start_time = result["video_start_time"]
-                    new_video_end_time = result["video_end_time"]
-                    last_word_match = result["last_word_match"]
-                    log(f"new_video_start_time: {new_video_start_time},new_video_end_time: {new_video_end_time}, subtitletext: {crafted_Subtitle_text}\n")
-                    
+                result = tool.forward({"audio": audio_for_clip,"subtitle_text": subtitle_text, "original_start_time": video_start_time, "original_end_time:": video_end_time})
 
-                    
-                    if new_video_start_time == 0.0:
-                         new_video_start_time = None
+                crafted_Subtitle_text = result["matched_words"]
+                new_video_start_time = float(result["video_start_time"])
+                new_video_end_time = float(result["video_end_time"])
+                log(f"[run_video_short_creation_thread] creating video now... \n start_time: {new_video_start_time} \n end_time: {new_video_end_time},  \n subtitle_text: {crafted_Subtitle_text}")
 
-                    if last_word_match == True:
-                         new_video_end_time = None
                 
-                    if new_video_start_time is not None and new_video_end_time is not None:
-                         absoloute_start_time = video_start_time + new_video_start_time
-                         absoloute_end_time = video_start_time + new_video_end_time
-                         log(f"Changed both absoloute_start_time: {absoloute_start_time} \n absoloute_end_time: {absoloute_end_time}")
-
-                    elif new_video_start_time is not None and new_video_end_time is None:
-                         absoloute_start_time = video_start_time + new_video_start_time
-                         absoloute_end_time = video_end_time
-                         log(f" changed new absoloute_start_time: {absoloute_start_time} \n")
-
-                    elif new_video_start_time is None and new_video_end_time is not None:
-                         absoloute_start_time = video_start_time
-                         absoloute_end_time = absoloute_start_time + new_video_end_time
-                         log(f"changed new absoloute_end_time: {absoloute_end_time}\n")
-
-                    else:
-                         absoloute_start_time = video_start_time
-                         absoloute_end_time = video_end_time
-                         log(f"Did not need to change time on videoclip: absoloute_start_time: {absoloute_start_time} \n absoloute_end_time: {absoloute_end_time}")
 
 
-            except Exception as e:
+
+                text_video_title = "short1" + str(current_count)
+                create_short_video(video_path=text_video_path, start_time=new_video_start_time, end_time = new_video_end_time, video_name = text_video_title, subtitle_text=crafted_Subtitle_text)
+
+        except Exception as e:
                 log(f"[ERROR] during execution: {str(e)}")
 
-            text_video_title = "short1" + str(current_count)
-   
-
-            try:
-                  log(f"[run_video_short_creation_thread] creating video now... \n start_time: {absoloute_start_time} \n end_time: {absoloute_end_time}, \n video_name: {text_video_title}, \n subtitle_text: {crafted_Subtitle_text}")
-                  create_short_video(video_path=text_video_path, start_time=absoloute_start_time, end_time = absoloute_end_time, video_name = text_video_title,subtitle_text=crafted_Subtitle_text)
-            except Exception as e:
-                log(f"[run_video_short_creation_thread] error during creation of video : {str(e)}")
-                text_video_path = ""
-                video_start_time = None
-                video_end_time = None
-                text_video_title = ""
-        except Exception as e:
-          import traceback
-          log("[run_video_short_creation_thread][ERROR] in run_video_short_creation_thread:")
-          traceback.log_exc()
 
 
 
@@ -849,89 +853,38 @@ def run_video_short_creation_thread(video_url,start_time,end_time,subtitle_text)
 
 
 
-
-
-def parse_multiline_block(block_text):
-    """
-    1) Splitter blokken i linjer.
-    2) Finner ALLE '[start - end] tekst' — uansett hvordan de står.
-    3) Bygger NY tekst med én linje per subtitle.
-    4) Returnerer start_time (første), end_time (siste) OG den nye teksten.
-    """
-    import re
-    log(f"block_text: {block_text}")
-
-    pattern = re.compile(r"\[(\d+\.\d+)s\s*-\s*(\d+\.\d+)s\]\s*([^\[]+)")
-    matches = pattern.findall(block_text)
-
-    if not matches:
-         return None, None, ""
-    new_text = "\n".join(
-         f"[{start}s - {end}s] {text.strip()}"
-         for start, end, text in matches 
-         
-    )
-
-    Video_start_time = float(matches[0][0])
-    Video_end_time = float(matches[-1][1])
-
-    log(f"[parse_multiline_block] start_time: {Video_start_time}, [parse_multiline_block] end_time: {Video_end_time},[parse_multiline_block] new_text: {new_text}")
-
-
-    return Video_start_time, Video_end_time, new_text
-
-
-@tool
-def SaveMotivationalText(text: str, text_file: str) -> None:
-    """Save motivational text for motivational shorts video, the text that meets task criteria  to a file with a timestamp.
-       You must include ALL timestamps for every connected line exactly as they appear from the chunk,  
-
-    For security: Read the text that you choose to save one more time, ask yourself does it provide a complete message? if not don't save it.
-    Args:
-         text (str): The text to save. Wrap the entire block in triple quotes if it has commas, quotes, or line breaks
-                        Example:
-                        text = \"\"\"[00.23s - 00.40s] This is line one [00.40s - 00.60s] This is line two.\"\"\"
-                        Make sure to keep ALL timestamps for the entire quote.
-
-
-
-         text_file (str): The path to the file where the quote will be saved, you have access to the variable, just write text_file=text_file.
-    """
-
-         
-    with open(text_file, "a", encoding="utf-8") as f:
-                f.write("===START_TEXT===")
-                f.write(text.strip())
-                f.write("===END_TEXT===\n")
-                log(f"text: {text}")
-
-ActiveProgress=False
-
+#---------------------------------------------------------------------------#
+# Retrieves Video Creation tasks from a Queue & runs creation of that video
+#---------------------------------------------------------------------------#
 def video_creation_worker():
      global ActiveProgress
-
      while True:
           try:
-             video_url,  final_start_time, final_end_time, subtitle_text = video_task_que.get()
+             video_url,  final_start_time, final_end_time, subtitle_text = Global_state.video_task_que.get()
+             log(f"Retrieved WORK: {video_url}\n {final_start_time}\n {final_end_time}\n {subtitle_text}\n")
           except queue.Empty:
                 log(f"[video_creation_worker] Que empty!")
                 break 
           try:
-             log(f"\n\n\n\n\n\n\n\n\n\n[video_creation_worker] Current work being proccessed...[ video_url: {video_url}, start_time: {final_start_time}, end_time: {final_end_time}, text: {subtitle_text} to que]")
+             log(f"\n[video_creation_worker] Current work being proccessed...[ video_url: {video_url}, start_time: {final_start_time}, end_time: {final_end_time}, text: {subtitle_text} to que]")
              log(f"[video_creation_worker] Processing video task: {video_url}, {final_start_time}-{final_end_time}")
              ActiveProgress = True
              run_video_short_creation_thread(video_url, final_start_time, final_end_time, subtitle_text)
-             log(f"Done Creating Video \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+             log(f"Done Creating Video \n")
              ActiveProgress=False
           except Exception as e:
                log(f"[video_creation_worker] error during video_creation_worker: {str(e)}")
                raise ValueError(f"[video_creation_worker]Error during video creation")
           finally:
                log("Video Successfully Done!")
-               video_task_que.task_done()
+               Global_state.video_task_que.task_done()
     
 
 
+
+#-------------------------------------------------------------------------------------------#
+# Listens & waits for a queue to be empty before procceeding with Transcript Reasoning Agent
+#-------------------------------------------------------------------------------------------#
 def wait_for_proccessed_video_complete(queue: Queue, check_interval=30):
     global ActiveProgress
     """Blocks until the queue is empty, checking every `check_interval` seconds."""
@@ -947,7 +900,9 @@ def wait_for_proccessed_video_complete(queue: Queue, check_interval=30):
 
 
 
-
+#-------------------------------------------------------------------------------------------#
+#           Writes Information/logging outputs from Agent Runs to a text file.
+#-------------------------------------------------------------------------------------------#
 def save_full_io_to_file(modelname: str, input_chunk: str, reasoning_steps: list[str], model_response: str, file_path: str) -> None:
     with open(file_path, "a", encoding="utf-8") as f:
         f.write(f"Model running: {modelname}")
@@ -962,100 +917,21 @@ def save_full_io_to_file(modelname: str, input_chunk: str, reasoning_steps: list
 
         f.write("===MODEL RESPONSE START===\n")
         f.write(model_response.strip() + "\n")
-        f.write("===MODEL RESPONSE END===\n\n")
+        f.write("===MODEL RESPONSE END===\n")
         f.write("------------------------------------------------------------------------\n\n\n")
 
 
 
-@tool
-def create_motivationalshort(text: str) -> None:
-        """
-        Tool that creates a motivational shorts video.
-        Args:
-            text (str): The complete input text for the motivational short.
-                The text must include the entire message — as one complete 
-                thought, quote, or motivational statement — along with 
-                timestamps for each line. The text must be enclosed within 
-                the markers (===START_TEXT===) and (===END_TEXT===) in the 
-                following format:
-
-                    ===START_TEXT===
-                    [start_time - end_time] Line 1
-                    [start_time - end_time] Line 2
-                    ...
-                    ===END_TEXT===
-
-                All content between START_TEXT and END_TEXT will be treated 
-                as a single cohesive message and analyzed as one unit.
-        """
-        try:
-          
-            audio_path = get_current_audio_path()
-            log(f"\naudio_path: \n{audio_path}\n")
-            start_time, end_time, new_text = parse_multiline_block(text)
-
-        except Exception as e:
-             log(f"Error during [parse_multiline_block]: {str(e)}")
-
-                
-            
-        if start_time is None or end_time is None:
-             raise ValueError(f"start_time or end_time is None, start_time: {start_time}, end_time: {end_time}")
-        
-
-        video_url = get_current_videourl()
-        try:
-            log(f"\n Original text: {text} \n \n now Added work to QUEUE: \n {video_url}, \n {start_time}s \n {end_time}s\n")
-            set_current_yt_channel("MR_Youtube") #Endre til dynamisk/automatisk valg av youtube channel hver 4 video ellerno
-            video_task_que.put((video_url, start_time, end_time, new_text))
-            Delete_rejected_line(text)
-            global count #didrik
-            count +=1
-
-            
-        except Exception as e:
-             log(f"Error addng to queue: {str(e)}")
-
-
-@tool
-def Delete_rejected_line(text: str) -> None:
-        """  Deletes a block from the text file that contains the given inner text,
-             by removing the whole block: ===START_TEXT=== text... ===END_TEXT===
-        Args:
-            text: The line to delete (i.e., considered rejected/not valid) Format: 
-              ===START_TEXT=== 
-              [start_time - end_time] actual text here... [start_time - end_time] .... 
-              ===END_TEXT===      
-        """
-        log(f"\n[Delete_rejected_line] text into func: {text}")
-        text_file = get_current_textfile()
-        log(f"[Delete_rejected_line] path to textfile: {text_file}")
-
-        with open(text_file, 'r', encoding="utf-8") as f:
-                    content = f.read()
-
-        escaped_text = re.escape(text.strip())
-        
-        pattern = rf'===START_TEXT\s*.*?{escaped_text}.*?\s*===END_TEXT===\s*'
-
-        new_content, num_subs = re.subn(pattern, '', content, flags=re.DOTALL)
-
-        if num_subs == 0:
-            log("[Delete_rejected_line] No matching block found — nothing deleted.")
-            return
-
-        with open(text_file, 'w', encoding="utf-8") as f:
-            f.write(new_content)
-
-        log(f"[Delete_rejected_line] Deleted {num_subs} block(s) containing the text.")
 
 
 
 
 
-
+#-------------------------------------------------------------------------------------------------#
+# Agent that verifies that a Quote saved by (transcript_reasoning_Agent) is indeed a valid Quote
+#-------------------------------------------------------------------------------------------------#
 def verify_saved_text_agent(agent_saving_path):
-    set_current_textfile(agent_saving_path)
+    Global_state.set_current_textfile(agent_saving_path)
     log(f"agent_saving_path: {agent_saving_path}")
     global Global_model
 
@@ -1073,57 +949,62 @@ def verify_saved_text_agent(agent_saving_path):
             else:
                 code = text.strip()
             reasoning_log.append(f"Thought:\n{thought}\n\nCode:\n{code}\n\n")
-
+  
     final_answer = FinalAnswerTool()
     create_motivational_short_agent = CodeAgent(
         model=Global_model,
         tools=[create_motivationalshort,Delete_rejected_line,final_answer],
         max_steps=1,
+        prompt_templates=verify_system_prompt,
         stream_outputs=True,
-        verbosity_level=1,
-        prompt_templates=verify_system_prompt
-
+        verbosity_level=4,
     )
     reasoning_log = []
     create_motivational_short_agent.step_callbacks.append(save_thought_and_code)
 
 
-
+    
     with open(agent_saving_path, "r", encoding="utf-8") as f:
              saved_quotes_text = f.read()
              if not saved_quotes_text.strip():
                   log("empty, break")
                   return
+    
+    Blocks = re.findall(r"===START_TEXT===.*?===END_TEXT===", saved_quotes_text, re.DOTALL)
 
-    task = f"""
-    Make sure your python structure when executing tools with <code>...</code> that they are structured correctly like this 
-    --------------------------------------------
-    #Valid
-    <code>
-    create_motivationalshort(text="....")
-    Delete_rejected_line(text="...")
-    final_answer("...")
-    </code>
-    --------------------------------------------
+    chunk_size = 2
+    chunks = [Blocks[i:i+chunk_size] for i in range(0, len(Blocks), chunk_size)]
 
-    Analyze all the textblock's, reject those textblocks that does not qualify by deleting them using `Delete_rejected_line` tool that is not valid for a motivational short, and run `create_motivationalshort` tool for those that are valid.  
-    now start step by step chain of thought reasoning over textblock/textblock's:
-    here is the text to analyze:
-    [{saved_quotes_text}] 
-    """
+    for idx, chunk in enumerate(chunks,1):
+         combined_text = "\n".join(chunk)
+         print(f"CHUNK PRINT: {combined_text}")
 
-    model_response = create_motivational_short_agent.run(task=task)
-    save_full_io_to_file(modelname="VerifyAgent",input_chunk=saved_quotes_text,reasoning_steps=reasoning_log, model_response=model_response,  file_path=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\debug_performance\VerifyAgentRun_data.txt")
+         task = f"""
+                Analyze all the textblock's, reject those textblocks that does not qualify as a standalone Quote/Advice by deleting them using `Delete_rejected_line` tool that is not valid for a motivational short, and run `create_motivationalshort` tool for those that are valid.  
+                now start chain of thought reasoning over textblock/textblock's
+                here is the text to analyze:
+                    [{combined_text}] 
+                    """
+        
+         model_response = create_motivational_short_agent.run(task=task)
+         save_full_io_to_file(modelname="VerifyAgent",input_chunk=combined_text,reasoning_steps=reasoning_log, model_response=model_response,  file_path=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\debug_performance\VerifyAgentRun_data.txt")
+    
+    with open(agent_saving_path, "w", encoding="utf-8") as f:
+         f.write("")
 
+    log("All chunks processed. File has been emptied.")
     del create_motivational_short_agent
 
 
 
-#Agent som analyserer tekst  fra transkript ved og lese (chunk for chunk) --->  (lagrer teksten basert på (task)) #eksempel her er motiverende/quote/inspirerende
+
+#---------------------------------------------------------------------------------------------------------------------------------#
+#   Agent that analyzes text  from transcript by reading it (chunk for chunk) --->  (saves Quote identified in podcast transcript.
+#---------------------------------------------------------------------------------------------------------------------------------#
 def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
     from Custom_Agent_Tools import ChunkLimiterTool
     log(f"✅ Entered Transcript_Reasoning_AGENT() transcript_path: {transcripts_path}, agent_txt_saving_path: {agent_txt_saving_path}")
-    ModelCountRun = 0
+  
     global Global_model
     loaded_reasoning_agent_prompts = r'C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Prompt_templates\System_prompt_TranscriptReasoning.yaml'
     with open(loaded_reasoning_agent_prompts, 'r', encoding='utf-8') as f:
@@ -1133,11 +1014,8 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
     Reasoning_Text_Agent = CodeAgent(
         model=Global_model,
         tools=[SaveMotivationalText,final_answer],
-        max_steps=1,
-       #verbosity_level=1,
-        stream_outputs=True,
-        prompt_templates=Prompt_template
- 
+        max_steps=2,
+        prompt_templates=Prompt_template,
     )
     chunk_limiter = ChunkLimiterTool()
 
@@ -1168,30 +1046,26 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
         reasoning_log.clear()
         try:
             log(f"transcript_path for chunk tool : {transcripts_path}")
-            chunk = chunk_limiter.forward(file_path=transcripts_path, max_chars=3000)
+            chunk = chunk_limiter.forward(file_path=transcripts_path, max_chars=5000)
         except Exception as e:
                 log(f"Error during chunking from file {transcripts_path}: {e}")
                 break
 
 
-        log(f"[The current ModelCountRun]: {ModelCountRun}")
-        if  ModelCountRun >= 5 or not chunk.strip():
-                 del Reasoning_Text_Agent
-                 verify_saved_text_agent(agent_txt_saving_path)
-                 wait_for_proccessed_video_complete(video_task_que)
-                 ModelCountRun = 0
-       
+
         if not chunk.strip():
                 log("Finished processing current transcript. Now exiting func [Transcript Reasoning Agent]")
                 del Reasoning_Text_Agent
+                verify_saved_text_agent(agent_txt_saving_path)
+                wait_for_proccessed_video_complete(Global_state.video_task_que)
                 break
         
 
 
         task = f"""
                 Here is the chunk you will analyze:
-                [chunk start]
-                {chunk}
+                [chunk start]\n
+                {chunk}\n
                 [chunk end]
                 """
         
@@ -1199,7 +1073,7 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
                     task=task,
                     additional_args={"text_file": agent_txt_saving_path},
                 )
-        ModelCountRun += 1
+ 
         log(f"[Path to where the [1. reasoning agent ] saves the motivational quotes  ]: {agent_txt_saving_path}")
         log(f"Agent response: {result}\n")
         save_full_io_to_file(
@@ -1213,9 +1087,9 @@ def Transcript_Reasoning_AGENT(transcripts_path,agent_txt_saving_path):
 
 
 
-
-
-
+#------------------------------------------------------------------------------------------#
+# Extracts Audio from video path, Transcribes it. And adds information to transcript Queue
+#------------------------------------------------------------------------------------------#
 def transcribe_single_video(video_path, device):
     log("transcribe_single_video")
 
@@ -1241,8 +1115,9 @@ def transcribe_single_video(video_path, device):
 
     if os.path.isfile(audio_path) and os.path.isfile(txt_output_path):
         log(f"Transcript already exists: {txt_output_path}, audio exists: {audio_path}")
-        transcript_queue.put((video_path, txt_output_path,agent_text_saving_path))
-        set_current_audio_path(audio_path)
+        Global_state.transcript_queue.put((video_path, txt_output_path,agent_text_saving_path))
+        Global_state.set_current_audio_path(audio_path)
+        log(f"Global audio_path: {audio_path}")
         log(f"Enqueued existing transcript for GPU processing: {txt_output_path}")
         return
     
@@ -1252,11 +1127,13 @@ def transcribe_single_video(video_path, device):
             "-y",
             "-i", video_path,
             "-vn",
+            "-af", "afftdn=nr=20:nf=-30:tn=1"
             "-acodec", "pcm_s16le",
             audio_path
         ]
         subprocess.run(ffmpeg_cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        set_current_audio_path(audio_path)
+        Global_state.set_current_audio_path(audio_path)
+        log(f"Global audio_path: {audio_path}")
         log(f"Extracted audio → {audio_path}")
     except subprocess.CalledProcessError:
         log(f"❌ Audio extraction failed for {video_path}")
@@ -1265,7 +1142,7 @@ def transcribe_single_video(video_path, device):
     try:
         start_time = time.time()  
         if device == "cuda":
-                got_gpu = gpu_lock.acquire(blocking=False)
+                got_gpu = Global_state.gpu_lock.acquire(blocking=False)
                 if not got_gpu:
                     log(f"GPU busy, falling back to CPU for {video_path}")
                     device = "cpu"
@@ -1276,7 +1153,7 @@ def transcribe_single_video(video_path, device):
 
    
 
-        tool = SpeechToTextToolCUDA() if device == "cuda" else SpeechToTextToolCPU()
+        tool = SpeechToTextToolCUDA()
         tool.device = device
         tool.setup()
 
@@ -1298,8 +1175,8 @@ def transcribe_single_video(video_path, device):
 
         log(f"🔊 Transcription saved → {txt_output_path}")
 
-        transcript_queue.put((video_path, txt_output_path, agent_text_saving_path))
-        gpu_lock.release()
+        Global_state.transcript_queue.put((video_path, txt_output_path, agent_text_saving_path))
+        Global_state.gpu_lock.release()
         del tool     
         log(f"Released GPU lock after transcribing {video_path}\n")
         log(f"added video_path: {video_path}, transcript: {txt_output_path}, agent_saving_path: {agent_text_saving_path} to queue  for GPU processing")
@@ -1307,89 +1184,87 @@ def transcribe_single_video(video_path, device):
     except Exception as e:
         log(f"Transcription failed for {audio_path}: {e}")
 
+
+
+
+#------------------------------------------------------------------------------------------#
+# Retrieves Work/items from the Transcript queue & runs the transcript reasoning Agent
+#------------------------------------------------------------------------------------------#
+
 def gpu_worker():
     log("GPU worker started")
     torch.backends.cudnn.benchmark = True
-
- 
     global Global_model
     Global_model = TransformersModel(
-            model_id = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Qwen\Qwen2.5-Coder-3B-Instruct-MERGED",
+            model_id = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\microsoft\unsloth\phi-4-mini-instruct-FinedTuned_version2",
             load_in_4bit=True,
-            trust_remote_code=True,
             device_map="auto",
             torch_dtype="auto",
-            max_new_tokens=1500,
+            use_flash_attn=True,
+            max_new_tokens=30000,
             do_sample=False,
-            use_flash_attn=True     
      )
-
-
 
 
     log(f"Loaded Global_model on device")
     itemcount = 0
 
     while True:
-        item = transcript_queue.get()
+        item = Global_state.transcript_queue.get()
 
         log(f"item: {item}")
         if item is None and itemcount <= 0:
             log("Shutdown signal received, exiting GPU worker")
-            transcript_queue.task_done()
+            Global_state.transcript_queue.task_done()
             break
 
         itemcount += 1
 
         video_path_url, transcript_text_path,agent_txt_saving_path = item
-        set_current_videourl(video_path_url)
+        Global_state.set_current_videourl(video_path_url)
         log(f"Processing {video_path_url} & {transcript_text_path} in GPU worker, agent is using txt path to save: {agent_txt_saving_path}")
 
         log(f"GPU lock acquired by gpu_worker for {video_path_url}")
 
         try:
-            log_Stage(f"Stage 2 -Complete\n LLM model loaded --> Item retrieved from Queue")
             Transcript_Reasoning_AGENT(transcript_text_path, agent_txt_saving_path)
             log(f"Transcript_Reasoning_AGENT has exited...")
         finally:
             log(f"GPU lock released by gpu_worker for {video_path_url}")
-            transcript_queue.task_done()
+            Global_state.transcript_queue.task_done()
+
 
 
 
 
 if __name__ == "__main__":
-    import gc
-    torch.cuda.empty_cache()
-    gc.collect()
-    with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\debug_performance\log.txt", "w", encoding="UTF-8") as w:
-            w.write("") 
-    with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\debug_performance\VerifyAgentRun_data.txt", "w", encoding="UTF-8") as w:
-            w.write("")
-    with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\debug_performance\Token_logpath", "w", encoding="UTF-8") as w:
-            w.write("")
+    clean_get_gpu_memory()
+    Clean_log_onRun()
 
     worker_thread = threading.Thread(target=video_creation_worker,name="Video_creation(THREAD)")
     worker_thread.start()
 
+
     video_paths = [
-        r"c:\Users\didri\Documents\Ed Mylett ON： Watch These 37 Minutes To COMPLETELY CHANGE Your Life ｜ Jay Shetty.mp4",
-        r"c:\Users\didri\Documents\The Hidden Art Of Reinventing Yourself - Matthew McConaughey (4K).mp4"
+        r"c:\Users\didri\Documents\The Best Moments Of Modern Wisdom (2024).webm",
+
     ]
     log(f"Video_paths: {len(video_paths)}")
 
-    devices = ["cuda", "cpu"] 
-    video_device_pairs = [(video_paths[i], devices[i % len(devices)]) for i in range(len(video_paths))]
 
+
+    devices = ["cuda"] 
+    video_device_pairs = [(video_paths[i], devices[i % len(devices)]) for i in range(len(video_paths))]
     max_threads = 1
     start_time = time.time()
+
+
     with ThreadPoolExecutor(max_workers=max_threads) as executor:
         futures = []
         start_time = time.time()
         for video_path, device in video_device_pairs:
             futures.append(executor.submit(transcribe_single_video, video_path, device))
             
-        log_Stage("Stage 1 - Complete\n- Video path ---> Audio path ---> Text path")
         for future in futures:
             future.result() 
             end_time = time.time()
@@ -1397,12 +1272,11 @@ if __name__ == "__main__":
         log(f"start_time of threadpool: {start_time} & endtime of threadpool = {end_time}, total: {total_time}")
 
 
+
+
     gpu_thread = threading.Thread(target=gpu_worker, name="Agent_Run(THREAD)")
-
     gpu_thread.start()
-
-
-    transcript_queue.join() 
+    Global_state.transcript_queue.join() 
     gpu_thread.join()
     worker_thread.join()
 
