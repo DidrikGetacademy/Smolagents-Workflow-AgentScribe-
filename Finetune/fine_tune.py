@@ -30,8 +30,8 @@ def supervised_Finetune():
         bnb_4bit_compute_dtype=torch.bfloat16,
 
     )
-    model_id = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\microsoft\unsloth\Phi-4-mini-Instruct-finetuned-Motivational-text"
-    model = AutoModelForCausalLM.from_pretrained(model_id, device_map="auto", torch_dtype=torch.bfloat16, attn_implementation="sdpa", quantization_config=bnb_config, local_files_only=True,  use_cache=False)
+    model_id = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\microsoft\unsloth\phi-4-mini-instruct-FinedTuned_version2"
+    model = AutoModelForCausalLM.from_pretrained(model_id, device_map="auto", torch_dtype=torch.bfloat16, quantization_config=bnb_config, local_files_only=True,  use_cache=False)
     model.config.use_cache = False
     log(f"Model: {model}")
 
@@ -109,7 +109,7 @@ def supervised_Finetune():
     dataset = load_dataset(
         "json",
         data_files={
-            "train": r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\Dataset_detecting_motivationalquotes_from_chunk\Supervised_dataset\datasets\verify_agent_dataset.jsonl",
+            "train": r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\Dataset_detecting_motivationalquotes_from_chunk\hey.jsonl",
          #   "eval": r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\Dataset_detecting_motivationalquotes_from_chunk\Supervised_dataset\datasets\test.jsonl",
           # "validation": r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\Dataset_detecting_motivationalquotes_from_chunk\Supervised_dataset\datasets\validation.jsonl"
         }
@@ -131,24 +131,24 @@ def supervised_Finetune():
     sft_config = SFTConfig(
             output_dir=sft_output,
             assistant_only_loss=True,
-            num_train_epochs=2,
+            num_train_epochs=1,
             gradient_accumulation_steps=1,
             per_device_train_batch_size=1,
             learning_rate = 5e-5, 
-            max_seq_length=6700,
+            max_seq_length=5230,
             gradient_checkpointing= True,
             gradient_checkpointing_kwargs ={"use_reentrant": False},
             bf16=True,
             logging_steps=10,
-            dataset_num_proc=6,
+            dataset_num_proc=4,
             save_strategy="epoch",
             warmup_ratio=0.05,
             max_grad_norm = 1.0,
             weight_decay=0.01,
-            save_total_limit=2,
+            save_total_limit=1,
             lr_scheduler_type="cosine",
-            chat_template_path=r"C:\Users\didri\Desktop\LLM-models\LLM-Models\microsoft\unsloth\Phi-4-mini-Instruct-finetuned-Motivational-text",
-            dataloader_num_workers=6,
+            chat_template_path=r"C:\Users\didri\Desktop\LLM-models\LLM-Models\microsoft\unsloth\phi-4-mini-instruct-FinedTuned_version2",
+            dataloader_num_workers=4,
             greater_is_better=False,
             pad_token="<|endoftext|>",
             eos_token="<|end|>",

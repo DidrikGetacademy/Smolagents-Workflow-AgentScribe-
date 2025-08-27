@@ -11,7 +11,7 @@ from google.auth.transport.requests import Request
 import pickle
 from dotenv import load_dotenv
 from smolagents import CodeAgent, FinalAnswerTool, GoogleSearchTool, VisitWebpageTool, TransformersModel,PythonInterpreterTool
-from Custom_Agent_Tools import ExtractAudioFromVideo, Fetch_top_trending_youtube_videos,Read_already_uploaded_video_publishedat,SpeechToTextTool_viral_agent
+from Custom_Agent_Tools import ExtractAudioFromVideo, Fetch_top_trending_youtube_videos,SpeechToTextTool_viral_agent
 import gc
 from googleapiclient.errors import HttpError
 import torch
@@ -52,11 +52,11 @@ def get_authenticated_service(YT_channel):
     if YT_channel == "LR_Youtube":
         Client_secret = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Secrets\LR_Youtube\client_secret_849553263621-grvsfihl7lkocrt0qgs37iipuv5lbpkl.apps.googleusercontent.com.json"
     elif YT_channel == "LRS_Youtube":
-        Client_secret = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Secrets\LRS_Youtube\client_secret_631618294192-2maahe6qccmd7naepvd54i01ur33h1js.apps.googleusercontent.com.json"
+        Client_secret = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Secrets\LRS_Youtube\client_secret_2_631618294192-2maahe6qccmd7naepvd54i01ur33h1js.apps.googleusercontent.com.json"
     elif YT_channel == "MR_Youtube":
-        Client_secret = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Secrets\MR_Youtube\client_secret_69920788682-r76oarkr2q94p99k76svqacvtv66b24a.apps.googleusercontent.com.json"
+        Client_secret = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Secrets\MR_Youtube\client_secret_2_69920788682-r76oarkr2q94p99k76svqacvtv66b24a.apps.googleusercontent.com.json"
     elif YT_channel == "LM_Youtube":
-        Client_secret = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Secrets\LM_Youtube\client_secret_460945830865-u9g1codhuh14ht71rsdcdq7ip6dgb9cq.apps.googleusercontent.com.json"
+        Client_secret = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Secrets\LM_Youtube\client_secret_2_460945830865-u9g1codhuh14ht71rsdcdq7ip6dgb9cq.apps.googleusercontent.com.json"
     else:
          raise ValueError(f"Error No {YT_channel} exists.")
     
@@ -83,7 +83,7 @@ def get_authenticated_service(YT_channel):
 
 
 
-def upload_video(model,file_path, YT_channel="MR_Youtube"):
+def upload_video(model,file_path, YT_channel):
     try:
       log("Autenchiating now..")
       youtube = get_authenticated_service(YT_channel)
@@ -92,8 +92,9 @@ def upload_video(model,file_path, YT_channel="MR_Youtube"):
          log(f"error during autenciation from youtube service: {str(e)}")
          return
     try:
-      title, description, hashtags, tags, categoryId, publishAt = get_automatic_data_from_agent(model,file_path)
-      log(f"[get_authenticated_service]: title: {title}, descriptino: {description}, tags: {tags}, publishAt: {publishAt}")
+      title, description, hashtags, tags, categoryId, publishAt, background_music = get_automatic_data_from_agent(model,file_path)
+      log(f"[get_authenticated_service]: title: {title}, descriptino: {description}, tags: {tags}, publishAt: {publishAt}, backgroundmusic: {background_music}")
+
     except Exception as e:
          log(f"error during running [get_automatic_data_from_agent] message: {str(e)}")
          return
@@ -180,7 +181,7 @@ def save_full_io_to_file(modelname: str, input_chunk: str, reasoning_steps: list
         f.write("\n")
 
         f.write("===MODEL RESPONSE START===\n")
-        f.write(str(model_response.strip()) + "\n")
+        f.write(str(model_response).strip() + "\n")
         f.write("===MODEL RESPONSE END===\n\n")
         f.write("------------------------------------------------------------------------\n\n\n")
 
@@ -192,7 +193,7 @@ def get_automatic_data_from_agent(model,input_video):
         with open((r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Prompt_templates\viral_agent_prompt.yaml"), 'r') as stream:
                     Manager_Agent_prompt_templates = yaml.safe_load(stream)
         
-        #Tool initalization
+       
         final_answer = FinalAnswerTool()
         Extract_audio = ExtractAudioFromVideo
         fetch_youtube_video_information = Fetch_top_trending_youtube_videos
@@ -227,19 +228,19 @@ def get_automatic_data_from_agent(model,input_video):
             verbosity_level=1,
             prompt_templates=Manager_Agent_prompt_templates,
             stream_outputs=True,
-            additional_authorized_imports=['datetime','timedelta']
+            additional_authorized_imports=['datetime']
             
         )
         manager_agent.step_callbacks.append(save_thought_and_code)
         with open(latest_published_video_file, "r",encoding="utf-8") as  file:
              Previous_publishAt = file.read()
-             
+        emojies = "⚡🧠"
         context_vars = {
                "input_video": input_video,
                "previous_publishAt":Previous_publishAt, 
-             
+               "emojies": emojies
             }       
-        user_task = "You must generate SEO-optimized metadata including: `title`, `description`, `tags`, `hashtags`, `categoryId` and `publishAt` for my video.The goal is to create SEO-optimized metadata with high viral potential by leveraging current trends and analyzing successful videos in the same category as the input video I provide you. In your final answer, you MUST use the exact key names: `title`, `description`, `tags`, `hashtags`, `publishAt`. a valid JSON object in Your final response using the `final_answer` tool."
+        user_task = "You must generate SEO-optimized metadata including: `title`, `description`, `tags`, `hashtags`, `categoryId`, `background_music` and `publishAt` for my video. The goal is to create SEO-optimized metadata with high viral potential by leveraging current trends and analyzing successful videos in the same category as the input video I provide you. In your final answer, you MUST use the exact key names: `title`, `description`, `tags`, `hashtags`, `publishAt`. a valid JSON object in Your final response using the `final_answer` tool."
         try:
             Response = manager_agent.run(
                 task=user_task,
@@ -264,6 +265,7 @@ def get_automatic_data_from_agent(model,input_video):
         data.get("tags"),
         data.get("categoryId"),
         data.get("publishAt"),
+        data.get("background_music")
     )
 
 
@@ -284,12 +286,12 @@ if __name__ == "__main__":
             device_map="auto",
             torch_dtype="auto",
             do_sample=False,
-            max_new_tokens=2500,
+            max_new_tokens=10000,
             use_flash_attn=True
     )
     try:
   
-             upload_video(model=model,file_path=r"c:\Users\didri\AppData\Local\CapCut\Videos\Exaucstedalloptions.mp4",YT_channel="MR_Youtube")
+             upload_video(model=model,file_path=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\short11_rife.mp4",YT_channel="LR_Youtube")
              test_log_list.clear()
              log(f"Count Of successful Uploads: {count}")
 

@@ -4,9 +4,9 @@ from peft import PeftModel
 import gc
 
 # Paths
-model_id = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\microsoft\unsloth\Phi-4-mini-Instruct-finetuned-Motivational-text"
-lora_checkpoint_dir       = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\microsoft\unsloth\phi-4-mini-instruct-FinedTuned_version2\checkpoint-210"
-merged_model_output_path = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\microsoft\unsloth\phi-4-mini-instruct-FinedTuned_version2"
+model_id = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\microsoft\unsloth\phi-4-mini-instruct-FinedTuned_version2"
+lora_checkpoint_dir = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\microsoft\unsloth\phi-4-mini-instruct-FinedTuned_version2\checkpoint-5"
+merged_model_output_path = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\microsoft\unsloth\phi-4-mini-instruct-FinedTuned_version3"
 
 # Load tokenizer
 tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)

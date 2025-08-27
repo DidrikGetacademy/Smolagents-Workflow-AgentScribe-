@@ -3,7 +3,6 @@ import sys
 REPO_ROOT = os.path.abspath('.')
 if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
-
 from smolagents import tool,Tool,SpeechToTextTool
 from tkinter.scrolledtext import ScrolledText
 import os
@@ -20,27 +19,257 @@ import torch
 import time
 from log import log 
 import Global_state
+import gc
+import tempfile
+import yt_dlp
+import requests
+import json
+cookie_file_path = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Secrets\youtube.com_cookies.txt"
 
-
-
-
-@tool 
-def Read_already_uploaded_video_publishedat(file_path: str) -> str:
-    """A tool that returns information about all videos that are published already. data like (title, description, tags, PublishedAt).
-        This tool is useful too gather information about future video PublishedAt/Time scheduling .
-        Args:
-        file_path (str): The path to already_uploaded file
-        Returns: str "string"
-    """
-    try:
+# async def  detect_music_in_video(audio_file: str):
+#     from shazamio import Shazam
+#     shazam = Shazam()
+#     try:
+#         result = await shazam.recognize(audio_file)
+#         track = result.get('track')
         
-        with open(file_path, "r", encoding="utf-8") as f:
-            content = f.read()
-        return content
-    except FileNotFoundError as e:
-        return "No uploaded video data found."
-    except Exception as e:
-            return f"Error reading uploaded video data: {str(e)}"
+#         if track:
+#             title = track.get("title", "Unknown")
+#             artist = track.get("artist", "Unknown")
+#             log(f"shazam: Title: {title} \n Artist: {artist}")
+#             return title, artist
+        
+#         elif track is None or track.get("title") is None:
+#             log("SHAZAM failed, falling back to YouTube search using video title")
+#             music_title = "Unknown"
+#             music_artist = "Unknown"
+#             return music_title, music_artist
+#     except Exception as e:
+#         log(f"Error inside: [detect_music_in_video] -> {str(e)}")
+
+
+
+
+
+# def isolate_audiofile(audio_file: str, save_folder: str = None):
+#     """
+#     Demucs model that seperate the vocals and music, and returns the music 
+#     """
+#     from demucs.pretrained import get_model
+#     from demucs.audio import AudioFile
+#     from demucs.separate import apply_model
+#     import soundfile as sf
+#     import numpy as np
+#     model = get_model('mdx')
+#     model.cpu()
+#     model.eval()
+#     try:
+#         wav = AudioFile(audio_file).read(streams=0, samplerate=model.samplerate)
+#         wav = torch.tensor(wav, dtype=torch.float32).unsqueeze(0)
+
+#         with torch.no_grad():
+#             sources = apply_model(model, wav, device='cpu')
+
+#         accompaniment = sources[0, [0, 1, 2]].sum(dim=0).cpu().numpy()   
+#         output_file = os.path.join(save_folder,"accompaniment.wav")
+#         sf.write(output_file, accompaniment.T, model.samplerate)
+#     except Exception as e:
+#         log(f"Error inside [isolate_audiofile] -> {str(e)}")
+#     return output_file
+
+
+
+
+
+# def Download_Music_from_youtube(music_info: dict):
+#     if isinstance(music_info, tuple):
+#         title, artist = music_info
+#     else:
+#         title = music_info.get("title")
+#         artist = music_info.get("artist")
+
+#     if title == "Unknown":
+#         print("Shazam failed, skipping YouTube music download")
+#         return None
+
+#     query = title
+#     if artist:
+#         query += f" {artist}"
+    
+#     output_path = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio"
+#     ytdl =  {
+#             "outtmpl": f'{output_path}/%(title)s.%(ext)s',
+#             "cookiefile": cookie_file_path,
+#             'format': f"bestaudio/best",
+#             'nocheckcertificate': True,
+#             "restrictfilenames": True,
+#             'quiet': False,
+#             '--no-playlist': True,
+#             "default_search": "ytsearch1",
+#             'postprocessors': [{
+#             'key': 'FFmpegExtractAudio',
+#             'preferredcodec': 'wav',
+#             'preferredquality': '0',
+#         }]
+#         }
+#     try:
+#         with yt_dlp.YoutubeDL(ytdl) as ydl:
+#             info = ydl.extract_info(query, download=True)
+#             if 'requested_downloads' in info:
+
+#                  file_path = info['requested_downloads'][0]['filepath']
+#             elif 'entries' in info and len(info['entries']) > 0:
+#                 file_path = info['entries'][0]['requested_downloads'][0]['filepath']
+            
+#             else:
+#                 raise ValueError("Could not find downloaded file path ")
+#             log(f"Music downloaded from YouTube to: {file_path}")
+#             return file_path
+#     except yt_dlp.utils.DownloadError as e:
+#             log(f"[YT_dlp] ERROR: {str(e)}")
+#             return None
+
+
+# def detect_Music_with_Audd(audio_file: str,original_url = None, verbose: bool = True):
+#     load_dotenv()
+#     api_key = os.getenv("AAUDD_APIKEY") 
+#     if not api_key:
+#         raise ValueError("Api key is missing!")
+    
+#     url = "https://api.audd.io/"
+
+#     data = {
+#         'api_token': api_key,
+#         'return': 'apple_music,spotify,is_instrumental'
+#     }
+
+#     files = None
+#     if audio_file:
+#         files = {'file': open(audio_file, 'rb')}
+#     if original_url:
+#         data['url'] = original_url
+
+#     response = requests.post(url, data=data, files=files)
+#     result = response.json()
+
+#     if verbose:
+#         log("=== AUD raw response===")
+#         log(json.dumps(result, indent=2))
+
+#     if result['status'] == 'success' and result.get('result'):
+#         data = result['result']
+#         title = data.get('title', 'Unknown')
+#         artist = data.get('artist', 'Unknown')
+#         instrumental = data.get('is_instrumental', False)
+#         spotify_link = data.get('spotify', {}).get('external_urls', {}).get('spotify')
+#         apple_link = data.get('apple_music', {}).get('url')
+
+#         if verbose:
+#             log("=== AudD Parsed Result ===")
+#             log(f"Title: {title}")
+#             log(f"Artist: {artist}")
+#             log(f"Is instrumental? {instrumental}")
+#             log(f"Spotify: {spotify_link}")
+#             log(f"Apple Music: {apple_link}")
+#         return data
+#     else:
+#         if verbose:
+#            log("Song not found or recognition failed")
+#         return None
+
+
+
+
+
+# def download_youtube_Music_Audio(Youtube_url: str,save_folder: str):
+#     """Downloads the Audio file from a youtube video and detects the music name. Downloads the music and returns it
+#         Args:
+#             Youtube_url (str): Path to the youtube video
+    
+#     """
+#     ytdl =  {
+#             "outtmpl": os.path.join(save_folder, "%(title)s.%(ext)s"),
+#             "cookiefile": cookie_file_path,
+#             'format': f"bestaudio/best",
+#             "restrictfilenames": True,
+#             'nocheckcertificate': True,
+#             'postprocessors': [{
+#             'key': 'FFmpegExtractAudio',
+#             'preferredcodec': 'wav',
+#             'preferredquality': '0',
+#         }]
+#         }
+#     try:
+#         with yt_dlp.YoutubeDL(ytdl) as ydl:
+#                info = ydl.extract_info(Youtube_url,download=True)
+#                audio_file_path = info['requested_downloads'][0]['filepath']
+#                print(f"Video audio downloaded to: {audio_file_path}")
+#     except yt_dlp.utils.DownloadError as e:
+#             log(f"[YT_dlp] ERROR: {str(e)}")
+#             return None
+        
+#     try:
+#         accompaniment_path = isolate_audiofile(audio_file_path, save_folder)
+#         log(f"only music/intstrumental path: {accompaniment_path}")
+#     except Exception as e: 
+#         log(f"Error during: [isolate_audiofile]: {str(e)}")
+ 
+
+#     import asyncio
+#     log("Trying to detect music with Shazam.")
+#     try:
+#         music_title, music_artist = asyncio.run(detect_music_in_video(accompaniment_path)) 
+#     except Exception as e:
+#         log(f"Error during [detect_music_in_video]: {str(e)}")
+
+#     if not music_title:
+#         log("Shazam could not detect music. Skipping music download.")
+#         return audio_file_path, accompaniment_path, None
+#     else:
+#         music_info_dict = { "title": music_title, "music_artist": music_artist }
+
+
+#     try:
+#        music_file_path  = Download_Music_from_youtube(music_info_dict)
+#     except Exception as e:
+#         log(f"Error during [Download_Music_from_youtube]: {str(e)}")
+
+#     if music_file_path  is None:
+#         log("Trying to detect with (AUUD) now...")
+#         try:
+#             Auud_music = detect_Music_with_Audd(accompaniment_path,Youtube_url)
+#             if Auud_music is None:
+#                 music_file_path  = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\way down we go (instrumental) - kaleo [edit audio] [mp3].mp3"
+#         except Exception as e:
+#             log(f"Error during [detect_Music_with_Audd]: {str(e)}")
+#             music_file_path  = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\way down we go (instrumental) - kaleo [edit audio] [mp3].mp3"
+
+
+#     log(f"Final Music path: {music_file_path}")
+        
+#     return  music_file_path
+
+
+
+# @tool 
+# def Read_already_uploaded_video_publishedat(file_path: str) -> str:
+#     """A tool that returns information about all videos that are published already. data like (title, description, tags, PublishedAt).
+#         This tool is useful too gather information about future video PublishedAt/Time scheduling .
+#         Args:
+#         file_path (str): The path to already_uploaded file
+#         Returns: str "string"
+#     """
+#     try:
+        
+#         with open(file_path, "r", encoding="utf-8") as f:
+#             content = f.read()
+#         return content
+#     except FileNotFoundError as e:
+#         return "No uploaded video data found."
+#     except Exception as e:
+#             return f"Error reading uploaded video data: {str(e)}"
+
+
 
 
 ####FETCH MORE DETAILS TOO PROVIDE AGENT WITH MORE INFORMATION####
@@ -70,7 +299,7 @@ def Fetch_top_trending_youtube_videos(Search_Query: str) -> dict:
             type="video",
             regionCode="US",
             order="viewCount", 
-            maxResults=4
+            maxResults=3
         ).execute()
 
 
@@ -124,11 +353,11 @@ def Fetch_top_trending_youtube_videos(Search_Query: str) -> dict:
 
 
     enriched = []
+    count = 0
     for vid in stats_resp.get("items",[]):
         snippet = vid["snippet"]
         statistics = vid.get("statistics", {})
         content = vid.get("contentDetails", {})
-
         enriched.append({
             "videoId": vid["id"],
             "title": snippet.get("title"),
@@ -143,14 +372,8 @@ def Fetch_top_trending_youtube_videos(Search_Query: str) -> dict:
             "likeCount": statistics.get("likeCount"),
             "commentCount": statistics.get("commentCount"),
            })
+                
     return {"items": enriched}
-
-
-
-
-
-
-
 
 
 
@@ -212,18 +435,16 @@ class ChunkLimiterTool(Tool):
             line = lines[i]
             line_len = len(line)
 
-            # If adding this line would exceed the limit AND we already have at least one line, stop
+           
             if total_len + line_len > max_chars and chunk_lines:
                 break
-
-            # Otherwise, add the line
+       
             chunk_lines.append(line)
             total_len += line_len
             i += 1
 
         chunk = "".join(chunk_lines)
 
-        # Save remaining lines back to file
         remainder = "".join(lines[i:])
         with open(self.saved_file_path, "w", encoding="utf-8") as f:
             f.write(remainder)
@@ -344,14 +565,14 @@ def transcribe_audio_to_txt(video_paths):
         audio_path = os.path.join(folder, f"{base_name}.wav")
         txt_output_path = os.path.join(folder, f"{base_name}.txt")
 
-        # Extract audio using ffmpeg
+        
         try:
             ffmpeg_cmd = [
                 "ffmpeg",
-                "-y",  # Overwrite output if exists
+                "-y",  
                 "-i", video_path,
-                "-vn",  # No video
-                "-acodec", "pcm_s16le",  # WAV format
+                "-vn",  
+                "-acodec", "pcm_s16le", 
                 audio_path
             ]
             subprocess.run(ffmpeg_cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -360,15 +581,18 @@ def transcribe_audio_to_txt(video_paths):
             log(f"Failed to extract audio from {video_path}")
             continue
 
-        # Transcribe the audio
+    
         try:
             result_txt_path = tool.forward({"audio": audio_path})
-            # Optionally rename the transcript to desired name
+        
             if result_txt_path != txt_output_path:
                 os.rename(result_txt_path, txt_output_path)
             log(f"Transcript saved to: {txt_output_path}")
         except Exception as e:
             log(f"Transcription failed for {audio_path}: {e}")
+
+
+
 
 @tool 
 def Read_transcript(transcript_path: str, start_count: int = 0) -> str:
@@ -383,7 +607,7 @@ def Read_transcript(transcript_path: str, start_count: int = 0) -> str:
     chunk_size = 1000
     with open(transcript_path , "r") as file:
         file.seek(start_count)
-        content = file.read(chunk_size + 1)  # Read 1 extra char to check if more content exists
+        content = file.read(chunk_size + 1) 
 
         if len(content) > chunk_size:
             output = content[:chunk_size] + "\n\nThe transcript has more content please run the `Read_transcript` tool call again"
@@ -391,14 +615,6 @@ def Read_transcript(transcript_path: str, start_count: int = 0) -> str:
 
         return output
     
-
-
-
-
-
-
-
-
 
 
 
@@ -479,6 +695,13 @@ class SpeechToTextTool(PipelineTool):
 def create_motivationalshort(text: str) -> None:
         """
         Tool that creates a motivational shorts video.
+        You must Explicitly call correct Python syntax for string arguments in tool calls here is an exsample:
+
+        This is correct:
+            create_motivationalshort(text="....") 
+
+        This is invalid: 
+            create_motivationalshort(text="..."])
         Args:
             text (str): The complete input text for the motivational short.
                 The text must include the entire message — as one complete 
@@ -486,7 +709,6 @@ def create_motivationalshort(text: str) -> None:
                 timestamps for each line. The text must be enclosed within 
                 the markers (===START_TEXT===) and (===END_TEXT===) in the 
                 following format:
-
                     ===START_TEXT===
                     ...
                     [start_time - end_time] Line 1
@@ -496,6 +718,7 @@ def create_motivationalshort(text: str) -> None:
                     
                 All content between START_TEXT and END_TEXT will be treated 
                 as a single cohesive message and analyzed as one unit.
+                
         """
         def parse_multiline_block(block_text):
             """
@@ -543,7 +766,7 @@ def create_motivationalshort(text: str) -> None:
             count = Global_state.get_current_count()
             count +=1
             log(f"Added VideoWork to videotask Queue:\n {video_url}\n {start_time}\n {end_time}\n {new_text}\n  Amount of added videowork to queue: {count}\n ")
-            Delete_rejected_line(text)
+            #Delete_rejected_line(text)
             log(f"Current videos added to que for proccessing: {count}")
             Global_state.set_current_count(count)
 
@@ -553,23 +776,45 @@ def create_motivationalshort(text: str) -> None:
 
 
 
-
 @tool
 def SaveMotivationalText(text: str, text_file: str) -> None:
-    """Save motivational text for motivational shorts video, the text that meets task criteria  to a file with a timestamp.
-       You must include ALL timestamps for every connected line exactly as they appear from the chunk,  
+    """Save qualifying motivational text for motivational shorts video.
 
-    For security: Read the text that you choose to save one more time, ask yourself does it provide a complete message? if not don't save it.
+    Only save text that meets the following criteria:
+    - Short-form motivational or self-improvement statements and anecdotes.
+    - Encourages personal growth, resilience, self-reflection, discipline, or perseverance.
+    - Contains memorable insights, contrasts, or real-life stories that inspire.
+    - Self-contained: complete and understandable on its own; does not require additional context, 
+      would not confuse a listener, and the overall intent of the text must be clear.
+    - Text content must be saved exactly as it appears in the chunk; do not paraphrase or alter wording.
+
+
     Args:
-         text (str): The text to save. Wrap the entire block in triple quotes if it has commas, quotes, or line breaks
-                        Example:
-                        text = \"\"\"[00.23s - 00.40s] This is line one [00.40s - 00.60s] This is line two.\"\"\"
-                        Make sure to keep ALL timestamps for the entire quote.
+        text (str): The complete motivational text block to save. 
+            - Every line must include the exact timestamp range from the original chunk. 
+            - You must provide the text exactly as it appears in the chunk. Do not rephrase any words.
+            - If the saved text begins or ends in the middle of a line, the timestamp from that line 
+              must still be included. 
+            - The number of lines is not fixed; include all lines (with timestamps) that the text spans, 
+              whether it is one line or many. 
+            - Do not alter, omit, merge, split, or paraphrase text or timestamp ranges; always preserve 
+              them exactly as they appear in the chunk.
+            - Wrap the entire block in triple quotes if it contains commas, quotes, or line breaks.
 
+            Examples:
 
+            # Single-line text
+            text = \"\"\"[00.10s - 00.25s] Just keep going.\"\"\"
 
-         text_file (str): The path to the file where the quote will be saved, you have access to the variable, just write text_file=text_file.
+            # Multi-line text
+            text = \"\"\"[00.23s - 00.40s] This is line one
+            [00.40s - 00.60s] This is line two
+            [00.60s - 00.80s] This is line three.\"\"\"
+
+        text_file (str): Always pass exactly as:
+            text_file=text_file  or text_file='...'
     """
+
 
          
     with open(text_file, "a", encoding="utf-8") as f:
@@ -577,6 +822,11 @@ def SaveMotivationalText(text: str, text_file: str) -> None:
                 f.write(text.strip())
                 f.write("===END_TEXT===\n")
                 log(f"text: {text}")
+
+
+
+
+
 
 
 @tool
@@ -681,17 +931,6 @@ class SpeechToTextTool_viral_agent(PipelineTool):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 class SpeechToTextToolCPU_Custom(PipelineTool):
     default_checkpoint = r"c:\Users\didri\Desktop\LLM-models\Audio-Models\faster-whisper-large-v3-turbo-int8float16"
     description = "Fast tool that transcribes audio into text using faster-whisper. It returns the path to the transcript file"
@@ -755,21 +994,7 @@ class SpeechToTextToolCPU_Custom(PipelineTool):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 class SpeechToTextToolCPU(PipelineTool):
-
     default_checkpoint = r"c:\Users\didri\Desktop\LLM-models\Audio-Models\faster-whisper-large-int8-ct2"
     description = "Fast tool that transcribes audio into text using faster-whisper. It returns the path to the transcript file"
     name = "transcriber"
@@ -835,84 +1060,6 @@ class SpeechToTextToolCPU(PipelineTool):
 
     def decode(self, outputs):
         return outputs
-
-
-
-
-
-
-
-
-
-
-class SpeechToTextToolCUDA(PipelineTool):
-    default_checkpoint = r"c:\Users\didri\Desktop\LLM-models\Audio-Models\faster-whisper-large-v3-turbo-int8float16"
-    description = "Fast tool that transcribes audio into text using faster-whisper. It returns the path to the transcript file"
-    name = "transcriber"
-    inputs = {
-        "audio": {
-            "type": "audio",
-            "description": "The audio to transcribe. Can be a local path, a URL, or a tensor.",
-        },
-        "text_path": {
-            "type": "string",
-             "description": "The path to save the transcript to.",
-        },
-        "video_path": {
-            "type": "string",
-            "description": "The path to the video to transcribe. only for info printging",
-        }
-    }
-    output_type = "string"
-    def setup(self):
-
-        self.model = WhisperModel(
-                model_size_or_path=self.default_checkpoint,
-                device="cuda",
-                compute_type="int8_float16"
-                )
-    def forward(self, inputs):
-        audio_path = inputs["audio"]
-        text_path = inputs["text_path"] 
-        video_path = inputs["video_path"]
-        segments, info = self.model.transcribe(
-            audio_path,
-            language="en", # specify it to lock the model to that language, avoiding detection errors and improving word precision.
-            beam_size=7, #Increases the number of hypotheses explored during decoding. Higher values (e.g., 7-10) improve accuracy by considering more possible transcriptions, especially for noisy or ambiguous speech in long videos.
-            best_of=7, #Samples multiple outputs and selects the best. Higher values (e.g., 5-10) enhance accuracy by choosing the most likely transcription, similar to beam search but complementary.
-            condition_on_previous_text=True, #for long audio—it conditions new segments on prior text, maintaining context and reducing errors across the full video.
-            temperature=0, #Controls output randomness. Set to a low value like 0.0 for deterministic, accurate results (reduces "creative" errors).
-            vad_filter=True,
-            vad_parameters={"min_silence_duration_ms": 1000}
-        )
-        print(f"\n🔊 Using Whisper on device: {self.device}, \ntranscribing video: {video_path} \n   with inputs: {self.inputs}")
-        print(f"[INFO] Detected Language: {info.language} (confidence: {info.language_probability:.2f})")
-        print(f"[INFO] Audio Duration: {info.duration:.2f} seconds")
-        
-        try:
-            with open(text_path, "a", encoding="utf-8") as f:
-                print(f"opening txt_path on: {text_path} device: {self.device}")
-              
-                try:
-                    for segment in segments:
-                         f.write(f"[{segment.start:.2f}s - {segment.end:.2f}s] {segment.text.strip()}\n")
-                    f.write("\n\n\n\n\n\n\n\n\n DONE\n\n\n\n\n")
-                except Exception as e:
-                    print(f"error during segments: {str(e)}")
-        
-        finally:
-            print(f"transcription complete ! device  {self.device}")
-            if self.device == "cuda":
-                torch.cuda.empty_cache()
-
-        return text_path
-
-    def encode(self, audio):
-        return {"audio": audio}
-
-    def decode(self, outputs):
-        return outputs
-    
 
 
 
@@ -1036,9 +1183,12 @@ class SpeechToText_short_creation_thread(PipelineTool):
         try:
             segments, info = self.model.transcribe(
                 audio_path,
+                language="en",
                 word_timestamps=True,
-                beam_size=7,
-                best_of=7,
+                temperature=0,
+                beam_size=10,
+                vad_filter=True,
+                initial_prompt="Motivational podcast",
             )
 
             log(f"[INFO] Audio Duration: {info.duration:.2f} seconds Detected Language: {info.language} (confidence: {info.language_probability:.2f})")
@@ -1050,24 +1200,44 @@ class SpeechToText_short_creation_thread(PipelineTool):
             
             subtitle_tokens = [self.clean_word(w) for w in subtitle_text.replace("\n", " ").split()]
             transcribed_tokens = [self.clean_word(w.word) for w in all_words]
-            log(f"Subtitle tokens: {subtitle_tokens}\n")
-            log(f"transcribed tokens: {transcribed_tokens}\n")
+            log(f"S{subtitle_tokens}\n")
+            log(f"T{transcribed_tokens}\n")
+            start_phrase = subtitle_tokens[:3]
+            end_phrase = subtitle_tokens[-3:]
+            log(f"start_phrase subtitletokens: {start_phrase}\n end_phrase subtitletokens: {end_phrase}")
 
 
             match_start = -1
-            for i in range(len(transcribed_tokens) - len(subtitle_tokens) + 1):
-                window = transcribed_tokens[i:i + len(subtitle_tokens)]
-                if window == subtitle_tokens:
-                    match_start = i
-                    break
-            try:
+            for i in range(len(transcribed_tokens) - len(start_phrase) + 1):
+                    if transcribed_tokens[i:i+3] == start_phrase:
+                        match_start = i
+                        log(f"match start transcribetokens: {match_start}")
+                        break
 
-                if match_start == -1:
-                    raise ValueError("No exact match found.")
+            match_end = -1
+            for j in range(len(transcribed_tokens) - len(end_phrase) + 1):
+                    if transcribed_tokens[j:j+3] == end_phrase:
+                        match_end = j + 3
+                        log(f"match end transcribetokens: {match_end}")
+                        break
 
-                if match_start != -1:
-                    match_end = match_start + len(subtitle_tokens)
-                    matched_words = [
+            if match_start == -1 or match_end == -1 or match_end <= match_start:
+                    log("Did not find a start/end in transcript")
+                    raise ValueError("Did not find a start/end in transcript")
+
+               
+            window_tokens = transcribed_tokens[match_start:match_end]
+            log(f"[WINDOW] Index {match_start}-{match_end}: {' '.join(window_tokens)}")
+
+            commonwords = set(subtitle_tokens) & set(window_tokens)
+            similarity = len(commonwords) /len(set(subtitle_tokens)) if subtitle_tokens else 0
+            log(f"Word-based similarity: {similarity:.2f}")
+
+            if similarity < 0.6:
+                log(f"Match found but similarity is too low: {similarity:.2f}")
+                raise ValueError(f"Match found but similarity is too low: {similarity:.2f}")
+                    
+            matched_words = [
                         {
                             "word": all_words[i].word,
                             "start": float(all_words[i].start),
@@ -1076,23 +1246,21 @@ class SpeechToText_short_creation_thread(PipelineTool):
                         for i in range(match_start, match_end)
                     ]
 
-                    log(f"[MATCH] Found exact match: {[w['word'] for w in matched_words]}")
+            log(f"[MATCH] Found exact match: {[w['word'] for w in matched_words]}")
                 
-                    final_start_time = original_start_time + float(all_words[match_start].start) 
-                    log(f"final_start_time: {final_start_time}")
+            final_start_time = original_start_time + float(all_words[match_start].start) 
+            log(f"final_start_time: {final_start_time}")
         
-                    final_end_time = final_start_time + float(matched_words[-1]["end"]) + 0.07
-                    log(f"final_end_time: {final_end_time}")
+            final_end_time = final_start_time + float(matched_words[-1]["end"]) + 0.07
+            log(f"final_end_time: {final_end_time}")
                         
-                return {
+            return {
                     "matched_words": matched_words,
                     "video_start_time": final_start_time,
                     "video_end_time": final_end_time,
                    }
                                     
  
-            except Exception as e:####ERROR
-                log(f"error during matching: {str(e)}")
 
         except Exception as e:
             log(f"[ERROR] during transcription: {str(e)}")
@@ -1109,4 +1277,75 @@ class SpeechToText_short_creation_thread(PipelineTool):
 
     def decode(self, outputs):
         return outputs 
+
+
+class SpeechToTextToolCUDA(PipelineTool):
+    default_checkpoint = r"c:\Users\didri\Desktop\LLM-models\Audio-Models\faster-whisper-large-v3-turbo-int8float16"
+    description = "Fast tool that transcribes audio into text using faster-whisper. It returns the path to the transcript file"
+    name = "transcriber"
+    inputs = {
+        "audio": {
+            "type": "audio",
+            "description": "The audio to transcribe. Can be a local path, a URL, or a tensor.",
+        },
+        "text_path": {
+            "type": "string",
+             "description": "The path to save the transcript to.",
+        },
+        "video_path": {
+            "type": "string",
+            "description": "The path to the video to transcribe. only for info printging",
+        }
+    }
+    output_type = "string"
+    def setup(self):
+
+        self.model = WhisperModel(
+                model_size_or_path=self.default_checkpoint,
+                device="cuda",
+                compute_type="int8_float16"
+                )
+    def forward(self, inputs):
+        audio_path = inputs["audio"]
+        text_path = inputs["text_path"] 
+        video_path = inputs["video_path"]
+        segments, info = self.model.transcribe(
+            audio_path,
+            language="en", 
+            temperature=0.0,
+            vad_filter=True,
+            vad_parameters={"min_silence_duration_ms": 500},
+            initial_prompt="Motivational podcast",
+
+
+      
+        )
+        print(f"\n🔊 Using Whisper on device: {self.device}, \ntranscribing video: {video_path} \n   with inputs: {self.inputs}")
+        print(f"[INFO] Detected Language: {info.language} (confidence: {info.language_probability:.2f})")
+        print(f"[INFO] Audio Duration: {info.duration:.2f} seconds")
+        
+        try:
+            with open(text_path, "a", encoding="utf-8") as f:
+                print(f"opening txt_path on: {text_path} device: {self.device}")
+              
+                try:
+                    for segment in segments:
+                         f.write(f"[{segment.start:.2f}s - {segment.end:.2f}s] {segment.text.strip()}\n")
+                except Exception as e:
+                    print(f"error during segments: {str(e)}")
+        
+        finally:
+            print(f"transcription complete ! device  {self.device}")
+            if self.device == "cuda":
+                torch.cuda.empty_cache()
+                gc.collect()
+                del self.model
+
+        return text_path
+
+    def encode(self, audio):
+        return {"audio": audio}
+
+    def decode(self, outputs):
+        return outputs
     

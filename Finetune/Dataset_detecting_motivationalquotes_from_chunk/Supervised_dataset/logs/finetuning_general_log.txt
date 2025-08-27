@@ -2619,3 +2619,943 @@ SaveMotivationalText(text="[756.39s - 761.07s] You are not defined [761.17s - 76
 
 
 [2025-08-21 21:40:37] SUCCESS :D
+[2025-08-26 14:06:44] 
+----------------Loading/initalizing MODEL-------------
+
+[2025-08-26 14:17:29] 
+----------------Loading/initalizing MODEL-------------
+
+[2025-08-26 14:17:40] Model: Phi3ForCausalLM(
+  (model): Phi3Model(
+    (embed_tokens): Embedding(200064, 3072, padding_idx=200029)
+    (layers): ModuleList(
+      (0-31): 32 x Phi3DecoderLayer(
+        (self_attn): Phi3Attention(
+          (o_proj): Linear4bit(in_features=3072, out_features=3072, bias=False)
+          (qkv_proj): Linear4bit(in_features=3072, out_features=5120, bias=False)
+        )
+        (mlp): Phi3MLP(
+          (gate_up_proj): Linear4bit(in_features=3072, out_features=16384, bias=False)
+          (down_proj): Linear4bit(in_features=8192, out_features=3072, bias=False)
+          (activation_fn): SiLU()
+        )
+        (input_layernorm): Phi3RMSNorm((3072,), eps=1e-05)
+        (post_attention_layernorm): Phi3RMSNorm((3072,), eps=1e-05)
+        (resid_attn_dropout): Dropout(p=0.0, inplace=False)
+        (resid_mlp_dropout): Dropout(p=0.0, inplace=False)
+      )
+    )
+    (norm): Phi3RMSNorm((3072,), eps=1e-05)
+    (rotary_emb): Phi3RotaryEmbedding()
+  )
+  (lm_head): Linear(in_features=3072, out_features=200064, bias=False)
+)
+[2025-08-26 14:17:40] clearing cache after model loading...
+[2025-08-26 14:17:40] 
+----------------Loading tokenizer-------------
+
+[2025-08-26 14:17:41] tokenizer length: 200030
+[2025-08-26 14:17:41] tokenizer.pad token was None changed it to : <｜PAD▁TOKEN｜>
+[2025-08-26 14:17:41] Vocab length BEFORE training: 200030
+[2025-08-26 14:17:41] Tokenizer.pad_token already exist: <｜PAD▁TOKEN｜>
+[2025-08-26 14:17:41] clearing cache after tokenizer...
+[2025-08-26 14:17:41] clearing cache after prepare model for kbit training...
+[2025-08-26 14:17:41] 🟢 Trainable parameters: ['base_model.model.model.layers.0.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.0.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.0.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.0.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.0.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.0.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.1.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.1.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.1.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.1.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.1.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.1.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.2.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.2.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.2.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.2.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.2.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.2.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.3.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.3.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.3.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.3.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.3.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.3.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.4.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.4.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.4.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.4.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.4.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.4.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.5.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.5.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.5.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.5.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.5.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.5.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.6.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.6.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.6.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.6.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.6.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.6.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.7.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.7.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.7.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.7.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.7.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.7.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.8.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.8.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.8.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.8.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.8.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.8.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.9.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.9.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.9.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.9.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.9.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.9.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.10.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.10.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.10.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.10.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.10.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.10.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.11.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.11.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.11.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.11.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.11.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.11.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.12.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.12.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.12.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.12.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.12.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.12.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.13.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.13.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.13.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.13.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.13.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.13.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.14.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.14.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.14.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.14.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.14.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.14.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.15.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.15.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.15.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.15.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.15.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.15.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.16.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.16.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.16.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.16.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.16.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.16.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.17.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.17.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.17.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.17.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.17.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.17.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.18.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.18.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.18.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.18.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.18.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.18.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.19.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.19.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.19.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.19.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.19.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.19.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.20.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.20.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.20.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.20.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.20.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.20.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.21.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.21.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.21.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.21.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.21.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.21.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.22.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.22.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.22.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.22.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.22.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.22.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.23.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.23.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.23.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.23.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.23.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.23.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.24.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.24.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.24.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.24.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.24.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.24.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.25.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.25.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.25.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.25.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.25.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.25.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.26.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.26.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.26.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.26.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.26.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.26.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.27.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.27.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.27.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.27.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.27.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.27.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.28.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.28.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.28.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.28.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.28.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.28.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.29.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.29.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.29.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.29.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.29.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.29.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.30.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.30.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.30.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.30.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.30.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.30.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.31.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.31.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.31.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.31.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.31.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.31.mlp.down_proj.lora_B.default.weight']
+[2025-08-26 14:17:41] 
+⚪️ Frozen parameters: ['base_model.model.model.embed_tokens.weight', 'base_model.model.model.layers.0.self_attn.o_proj.base_layer.weight', 'base_model.model.model.layers.0.self_attn.qkv_proj.base_layer.weight', 'base_model.model.model.layers.0.mlp.gate_up_proj.weight', 'base_model.model.model.layers.0.mlp.down_proj.base_layer.weight']
+[2025-08-26 14:17:41] Perft_config: LoraConfig(task_type=None, peft_type=<PeftType.LORA: 'LORA'>, auto_mapping=None, base_model_name_or_path='C:\\Users\\didri\\Desktop\\LLM-models\\LLM-Models\\microsoft\\unsloth\\phi-4-mini-instruct-FinedTuned_version2', revision=None, inference_mode=False, r=16, target_modules={'qkv_proj', 'o_proj', 'down_proj'}, exclude_modules=None, lora_alpha=32, lora_dropout=0.03, fan_in_fan_out=False, bias='none', use_rslora=False, modules_to_save=None, init_lora_weights=True, layers_to_transform=None, layers_pattern=None, rank_pattern={}, alpha_pattern={}, megatron_config=None, megatron_core='megatron.core', trainable_token_indices=None, loftq_config={}, eva_config=None, corda_config=None, use_dora=False, use_qalora=False, qalora_group_size=16, layer_replication=None, runtime_config=LoraRuntimeConfig(ephemeral_gpu_offload=False), lora_bias=False, target_parameters=None) 
+ 
+[2025-08-26 14:17:41] Model is prepared for kbit training now...
+ model: Phi3ForCausalLM(
+  (model): Phi3Model(
+    (embed_tokens): Embedding(200064, 3072, padding_idx=200029)
+    (layers): ModuleList(
+      (0-31): 32 x Phi3DecoderLayer(
+        (self_attn): Phi3Attention(
+          (o_proj): lora.Linear4bit(
+            (base_layer): Linear4bit(in_features=3072, out_features=3072, bias=False)
+            (lora_dropout): ModuleDict(
+              (default): Dropout(p=0.03, inplace=False)
+            )
+            (lora_A): ModuleDict(
+              (default): Linear(in_features=3072, out_features=16, bias=False)
+            )
+            (lora_B): ModuleDict(
+              (default): Linear(in_features=16, out_features=3072, bias=False)
+            )
+            (lora_embedding_A): ParameterDict()
+            (lora_embedding_B): ParameterDict()
+            (lora_magnitude_vector): ModuleDict()
+          )
+          (qkv_proj): lora.Linear4bit(
+            (base_layer): Linear4bit(in_features=3072, out_features=5120, bias=False)
+            (lora_dropout): ModuleDict(
+              (default): Dropout(p=0.03, inplace=False)
+            )
+            (lora_A): ModuleDict(
+              (default): Linear(in_features=3072, out_features=16, bias=False)
+            )
+            (lora_B): ModuleDict(
+              (default): Linear(in_features=16, out_features=5120, bias=False)
+            )
+            (lora_embedding_A): ParameterDict()
+            (lora_embedding_B): ParameterDict()
+            (lora_magnitude_vector): ModuleDict()
+          )
+        )
+        (mlp): Phi3MLP(
+          (gate_up_proj): Linear4bit(in_features=3072, out_features=16384, bias=False)
+          (down_proj): lora.Linear4bit(
+            (base_layer): Linear4bit(in_features=8192, out_features=3072, bias=False)
+            (lora_dropout): ModuleDict(
+              (default): Dropout(p=0.03, inplace=False)
+            )
+            (lora_A): ModuleDict(
+              (default): Linear(in_features=8192, out_features=16, bias=False)
+            )
+            (lora_B): ModuleDict(
+              (default): Linear(in_features=16, out_features=3072, bias=False)
+            )
+            (lora_embedding_A): ParameterDict()
+            (lora_embedding_B): ParameterDict()
+            (lora_magnitude_vector): ModuleDict()
+          )
+          (activation_fn): SiLU()
+        )
+        (input_layernorm): Phi3RMSNorm((3072,), eps=1e-05)
+        (post_attention_layernorm): Phi3RMSNorm((3072,), eps=1e-05)
+        (resid_attn_dropout): Dropout(p=0.0, inplace=False)
+        (resid_mlp_dropout): Dropout(p=0.0, inplace=False)
+      )
+    )
+    (norm): Phi3RMSNorm((3072,), eps=1e-05)
+    (rotary_emb): Phi3RotaryEmbedding()
+  )
+  (lm_head): Linear(in_features=3072, out_features=200064, bias=False)
+)
+
+[2025-08-26 14:17:41] model: Phi3ForCausalLM(
+  (model): Phi3Model(
+    (embed_tokens): Embedding(200064, 3072, padding_idx=200029)
+    (layers): ModuleList(
+      (0-31): 32 x Phi3DecoderLayer(
+        (self_attn): Phi3Attention(
+          (o_proj): lora.Linear4bit(
+            (base_layer): Linear4bit(in_features=3072, out_features=3072, bias=False)
+            (lora_dropout): ModuleDict(
+              (default): Dropout(p=0.03, inplace=False)
+            )
+            (lora_A): ModuleDict(
+              (default): Linear(in_features=3072, out_features=16, bias=False)
+            )
+            (lora_B): ModuleDict(
+              (default): Linear(in_features=16, out_features=3072, bias=False)
+            )
+            (lora_embedding_A): ParameterDict()
+            (lora_embedding_B): ParameterDict()
+            (lora_magnitude_vector): ModuleDict()
+          )
+          (qkv_proj): lora.Linear4bit(
+            (base_layer): Linear4bit(in_features=3072, out_features=5120, bias=False)
+            (lora_dropout): ModuleDict(
+              (default): Dropout(p=0.03, inplace=False)
+            )
+            (lora_A): ModuleDict(
+              (default): Linear(in_features=3072, out_features=16, bias=False)
+            )
+            (lora_B): ModuleDict(
+              (default): Linear(in_features=16, out_features=5120, bias=False)
+            )
+            (lora_embedding_A): ParameterDict()
+            (lora_embedding_B): ParameterDict()
+            (lora_magnitude_vector): ModuleDict()
+          )
+        )
+        (mlp): Phi3MLP(
+          (gate_up_proj): Linear4bit(in_features=3072, out_features=16384, bias=False)
+          (down_proj): lora.Linear4bit(
+            (base_layer): Linear4bit(in_features=8192, out_features=3072, bias=False)
+            (lora_dropout): ModuleDict(
+              (default): Dropout(p=0.03, inplace=False)
+            )
+            (lora_A): ModuleDict(
+              (default): Linear(in_features=8192, out_features=16, bias=False)
+            )
+            (lora_B): ModuleDict(
+              (default): Linear(in_features=16, out_features=3072, bias=False)
+            )
+            (lora_embedding_A): ParameterDict()
+            (lora_embedding_B): ParameterDict()
+            (lora_magnitude_vector): ModuleDict()
+          )
+          (activation_fn): SiLU()
+        )
+        (input_layernorm): Phi3RMSNorm((3072,), eps=1e-05)
+        (post_attention_layernorm): Phi3RMSNorm((3072,), eps=1e-05)
+        (resid_attn_dropout): Dropout(p=0.0, inplace=False)
+        (resid_mlp_dropout): Dropout(p=0.0, inplace=False)
+      )
+    )
+    (norm): Phi3RMSNorm((3072,), eps=1e-05)
+    (rotary_emb): Phi3RotaryEmbedding()
+  )
+  (lm_head): Linear(in_features=3072, out_features=200064, bias=False)
+)
+
+[2025-08-26 14:17:41] 
+----------------Dataset Initizalation-------------
+
+[2025-08-26 14:17:42] clearing cache after loading dataset
+[2025-08-26 14:18:15] clearing cache after validation test
+[2025-08-26 14:18:15] ----------------Starting Training now----------------
+[2025-08-26 14:26:00] 
+----------------Loading/initalizing MODEL-------------
+
+[2025-08-26 14:26:07] Model: Phi3ForCausalLM(
+  (model): Phi3Model(
+    (embed_tokens): Embedding(200064, 3072, padding_idx=200029)
+    (layers): ModuleList(
+      (0-31): 32 x Phi3DecoderLayer(
+        (self_attn): Phi3Attention(
+          (o_proj): Linear4bit(in_features=3072, out_features=3072, bias=False)
+          (qkv_proj): Linear4bit(in_features=3072, out_features=5120, bias=False)
+        )
+        (mlp): Phi3MLP(
+          (gate_up_proj): Linear4bit(in_features=3072, out_features=16384, bias=False)
+          (down_proj): Linear4bit(in_features=8192, out_features=3072, bias=False)
+          (activation_fn): SiLU()
+        )
+        (input_layernorm): Phi3RMSNorm((3072,), eps=1e-05)
+        (post_attention_layernorm): Phi3RMSNorm((3072,), eps=1e-05)
+        (resid_attn_dropout): Dropout(p=0.0, inplace=False)
+        (resid_mlp_dropout): Dropout(p=0.0, inplace=False)
+      )
+    )
+    (norm): Phi3RMSNorm((3072,), eps=1e-05)
+    (rotary_emb): Phi3RotaryEmbedding()
+  )
+  (lm_head): Linear(in_features=3072, out_features=200064, bias=False)
+)
+[2025-08-26 14:26:07] clearing cache after model loading...
+[2025-08-26 14:26:08] 
+----------------Loading tokenizer-------------
+
+[2025-08-26 14:26:08] tokenizer length: 200030
+[2025-08-26 14:26:08] tokenizer.pad token was None changed it to : <｜PAD▁TOKEN｜>
+[2025-08-26 14:26:08] Vocab length BEFORE training: 200030
+[2025-08-26 14:26:08] Tokenizer.pad_token already exist: <｜PAD▁TOKEN｜>
+[2025-08-26 14:26:08] clearing cache after tokenizer...
+[2025-08-26 14:26:08] clearing cache after prepare model for kbit training...
+[2025-08-26 14:26:09] 🟢 Trainable parameters: ['base_model.model.model.layers.0.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.0.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.0.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.0.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.0.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.0.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.1.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.1.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.1.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.1.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.1.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.1.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.2.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.2.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.2.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.2.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.2.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.2.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.3.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.3.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.3.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.3.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.3.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.3.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.4.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.4.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.4.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.4.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.4.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.4.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.5.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.5.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.5.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.5.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.5.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.5.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.6.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.6.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.6.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.6.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.6.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.6.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.7.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.7.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.7.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.7.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.7.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.7.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.8.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.8.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.8.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.8.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.8.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.8.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.9.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.9.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.9.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.9.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.9.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.9.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.10.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.10.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.10.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.10.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.10.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.10.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.11.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.11.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.11.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.11.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.11.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.11.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.12.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.12.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.12.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.12.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.12.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.12.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.13.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.13.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.13.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.13.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.13.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.13.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.14.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.14.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.14.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.14.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.14.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.14.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.15.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.15.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.15.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.15.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.15.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.15.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.16.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.16.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.16.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.16.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.16.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.16.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.17.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.17.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.17.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.17.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.17.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.17.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.18.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.18.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.18.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.18.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.18.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.18.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.19.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.19.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.19.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.19.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.19.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.19.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.20.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.20.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.20.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.20.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.20.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.20.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.21.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.21.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.21.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.21.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.21.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.21.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.22.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.22.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.22.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.22.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.22.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.22.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.23.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.23.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.23.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.23.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.23.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.23.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.24.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.24.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.24.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.24.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.24.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.24.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.25.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.25.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.25.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.25.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.25.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.25.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.26.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.26.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.26.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.26.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.26.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.26.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.27.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.27.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.27.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.27.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.27.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.27.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.28.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.28.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.28.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.28.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.28.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.28.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.29.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.29.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.29.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.29.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.29.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.29.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.30.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.30.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.30.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.30.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.30.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.30.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.31.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.31.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.31.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.31.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.31.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.31.mlp.down_proj.lora_B.default.weight']
+[2025-08-26 14:26:09] 
+⚪️ Frozen parameters: ['base_model.model.model.embed_tokens.weight', 'base_model.model.model.layers.0.self_attn.o_proj.base_layer.weight', 'base_model.model.model.layers.0.self_attn.qkv_proj.base_layer.weight', 'base_model.model.model.layers.0.mlp.gate_up_proj.weight', 'base_model.model.model.layers.0.mlp.down_proj.base_layer.weight']
+[2025-08-26 14:26:09] Perft_config: LoraConfig(task_type=None, peft_type=<PeftType.LORA: 'LORA'>, auto_mapping=None, base_model_name_or_path='C:\\Users\\didri\\Desktop\\LLM-models\\LLM-Models\\microsoft\\unsloth\\phi-4-mini-instruct-FinedTuned_version2', revision=None, inference_mode=False, r=16, target_modules={'down_proj', 'o_proj', 'qkv_proj'}, exclude_modules=None, lora_alpha=32, lora_dropout=0.03, fan_in_fan_out=False, bias='none', use_rslora=False, modules_to_save=None, init_lora_weights=True, layers_to_transform=None, layers_pattern=None, rank_pattern={}, alpha_pattern={}, megatron_config=None, megatron_core='megatron.core', trainable_token_indices=None, loftq_config={}, eva_config=None, corda_config=None, use_dora=False, use_qalora=False, qalora_group_size=16, layer_replication=None, runtime_config=LoraRuntimeConfig(ephemeral_gpu_offload=False), lora_bias=False, target_parameters=None) 
+ 
+[2025-08-26 14:26:09] Model is prepared for kbit training now...
+ model: Phi3ForCausalLM(
+  (model): Phi3Model(
+    (embed_tokens): Embedding(200064, 3072, padding_idx=200029)
+    (layers): ModuleList(
+      (0-31): 32 x Phi3DecoderLayer(
+        (self_attn): Phi3Attention(
+          (o_proj): lora.Linear4bit(
+            (base_layer): Linear4bit(in_features=3072, out_features=3072, bias=False)
+            (lora_dropout): ModuleDict(
+              (default): Dropout(p=0.03, inplace=False)
+            )
+            (lora_A): ModuleDict(
+              (default): Linear(in_features=3072, out_features=16, bias=False)
+            )
+            (lora_B): ModuleDict(
+              (default): Linear(in_features=16, out_features=3072, bias=False)
+            )
+            (lora_embedding_A): ParameterDict()
+            (lora_embedding_B): ParameterDict()
+            (lora_magnitude_vector): ModuleDict()
+          )
+          (qkv_proj): lora.Linear4bit(
+            (base_layer): Linear4bit(in_features=3072, out_features=5120, bias=False)
+            (lora_dropout): ModuleDict(
+              (default): Dropout(p=0.03, inplace=False)
+            )
+            (lora_A): ModuleDict(
+              (default): Linear(in_features=3072, out_features=16, bias=False)
+            )
+            (lora_B): ModuleDict(
+              (default): Linear(in_features=16, out_features=5120, bias=False)
+            )
+            (lora_embedding_A): ParameterDict()
+            (lora_embedding_B): ParameterDict()
+            (lora_magnitude_vector): ModuleDict()
+          )
+        )
+        (mlp): Phi3MLP(
+          (gate_up_proj): Linear4bit(in_features=3072, out_features=16384, bias=False)
+          (down_proj): lora.Linear4bit(
+            (base_layer): Linear4bit(in_features=8192, out_features=3072, bias=False)
+            (lora_dropout): ModuleDict(
+              (default): Dropout(p=0.03, inplace=False)
+            )
+            (lora_A): ModuleDict(
+              (default): Linear(in_features=8192, out_features=16, bias=False)
+            )
+            (lora_B): ModuleDict(
+              (default): Linear(in_features=16, out_features=3072, bias=False)
+            )
+            (lora_embedding_A): ParameterDict()
+            (lora_embedding_B): ParameterDict()
+            (lora_magnitude_vector): ModuleDict()
+          )
+          (activation_fn): SiLU()
+        )
+        (input_layernorm): Phi3RMSNorm((3072,), eps=1e-05)
+        (post_attention_layernorm): Phi3RMSNorm((3072,), eps=1e-05)
+        (resid_attn_dropout): Dropout(p=0.0, inplace=False)
+        (resid_mlp_dropout): Dropout(p=0.0, inplace=False)
+      )
+    )
+    (norm): Phi3RMSNorm((3072,), eps=1e-05)
+    (rotary_emb): Phi3RotaryEmbedding()
+  )
+  (lm_head): Linear(in_features=3072, out_features=200064, bias=False)
+)
+
+[2025-08-26 14:26:09] model: Phi3ForCausalLM(
+  (model): Phi3Model(
+    (embed_tokens): Embedding(200064, 3072, padding_idx=200029)
+    (layers): ModuleList(
+      (0-31): 32 x Phi3DecoderLayer(
+        (self_attn): Phi3Attention(
+          (o_proj): lora.Linear4bit(
+            (base_layer): Linear4bit(in_features=3072, out_features=3072, bias=False)
+            (lora_dropout): ModuleDict(
+              (default): Dropout(p=0.03, inplace=False)
+            )
+            (lora_A): ModuleDict(
+              (default): Linear(in_features=3072, out_features=16, bias=False)
+            )
+            (lora_B): ModuleDict(
+              (default): Linear(in_features=16, out_features=3072, bias=False)
+            )
+            (lora_embedding_A): ParameterDict()
+            (lora_embedding_B): ParameterDict()
+            (lora_magnitude_vector): ModuleDict()
+          )
+          (qkv_proj): lora.Linear4bit(
+            (base_layer): Linear4bit(in_features=3072, out_features=5120, bias=False)
+            (lora_dropout): ModuleDict(
+              (default): Dropout(p=0.03, inplace=False)
+            )
+            (lora_A): ModuleDict(
+              (default): Linear(in_features=3072, out_features=16, bias=False)
+            )
+            (lora_B): ModuleDict(
+              (default): Linear(in_features=16, out_features=5120, bias=False)
+            )
+            (lora_embedding_A): ParameterDict()
+            (lora_embedding_B): ParameterDict()
+            (lora_magnitude_vector): ModuleDict()
+          )
+        )
+        (mlp): Phi3MLP(
+          (gate_up_proj): Linear4bit(in_features=3072, out_features=16384, bias=False)
+          (down_proj): lora.Linear4bit(
+            (base_layer): Linear4bit(in_features=8192, out_features=3072, bias=False)
+            (lora_dropout): ModuleDict(
+              (default): Dropout(p=0.03, inplace=False)
+            )
+            (lora_A): ModuleDict(
+              (default): Linear(in_features=8192, out_features=16, bias=False)
+            )
+            (lora_B): ModuleDict(
+              (default): Linear(in_features=16, out_features=3072, bias=False)
+            )
+            (lora_embedding_A): ParameterDict()
+            (lora_embedding_B): ParameterDict()
+            (lora_magnitude_vector): ModuleDict()
+          )
+          (activation_fn): SiLU()
+        )
+        (input_layernorm): Phi3RMSNorm((3072,), eps=1e-05)
+        (post_attention_layernorm): Phi3RMSNorm((3072,), eps=1e-05)
+        (resid_attn_dropout): Dropout(p=0.0, inplace=False)
+        (resid_mlp_dropout): Dropout(p=0.0, inplace=False)
+      )
+    )
+    (norm): Phi3RMSNorm((3072,), eps=1e-05)
+    (rotary_emb): Phi3RotaryEmbedding()
+  )
+  (lm_head): Linear(in_features=3072, out_features=200064, bias=False)
+)
+
+[2025-08-26 14:26:09] 
+----------------Dataset Initizalation-------------
+
+[2025-08-26 14:26:09] clearing cache after loading dataset
+[2025-08-26 14:26:38] clearing cache after validation test
+[2025-08-26 14:26:38] ----------------Starting Training now----------------
+[2025-08-26 14:29:47] 
+----------------Loading/initalizing MODEL-------------
+
+[2025-08-26 14:29:53] Model: Phi3ForCausalLM(
+  (model): Phi3Model(
+    (embed_tokens): Embedding(200064, 3072, padding_idx=200029)
+    (layers): ModuleList(
+      (0-31): 32 x Phi3DecoderLayer(
+        (self_attn): Phi3Attention(
+          (o_proj): Linear4bit(in_features=3072, out_features=3072, bias=False)
+          (qkv_proj): Linear4bit(in_features=3072, out_features=5120, bias=False)
+        )
+        (mlp): Phi3MLP(
+          (gate_up_proj): Linear4bit(in_features=3072, out_features=16384, bias=False)
+          (down_proj): Linear4bit(in_features=8192, out_features=3072, bias=False)
+          (activation_fn): SiLU()
+        )
+        (input_layernorm): Phi3RMSNorm((3072,), eps=1e-05)
+        (post_attention_layernorm): Phi3RMSNorm((3072,), eps=1e-05)
+        (resid_attn_dropout): Dropout(p=0.0, inplace=False)
+        (resid_mlp_dropout): Dropout(p=0.0, inplace=False)
+      )
+    )
+    (norm): Phi3RMSNorm((3072,), eps=1e-05)
+    (rotary_emb): Phi3RotaryEmbedding()
+  )
+  (lm_head): Linear(in_features=3072, out_features=200064, bias=False)
+)
+[2025-08-26 14:29:53] clearing cache after model loading...
+[2025-08-26 14:29:54] 
+----------------Loading tokenizer-------------
+
+[2025-08-26 14:29:54] tokenizer length: 200030
+[2025-08-26 14:29:54] tokenizer.pad token was None changed it to : <｜PAD▁TOKEN｜>
+[2025-08-26 14:29:54] Vocab length BEFORE training: 200030
+[2025-08-26 14:29:54] Tokenizer.pad_token already exist: <｜PAD▁TOKEN｜>
+[2025-08-26 14:29:54] clearing cache after tokenizer...
+[2025-08-26 14:29:54] clearing cache after prepare model for kbit training...
+[2025-08-26 14:29:55] 🟢 Trainable parameters: ['base_model.model.model.layers.0.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.0.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.0.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.0.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.0.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.0.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.1.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.1.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.1.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.1.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.1.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.1.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.2.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.2.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.2.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.2.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.2.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.2.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.3.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.3.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.3.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.3.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.3.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.3.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.4.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.4.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.4.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.4.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.4.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.4.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.5.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.5.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.5.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.5.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.5.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.5.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.6.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.6.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.6.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.6.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.6.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.6.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.7.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.7.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.7.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.7.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.7.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.7.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.8.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.8.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.8.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.8.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.8.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.8.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.9.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.9.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.9.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.9.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.9.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.9.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.10.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.10.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.10.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.10.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.10.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.10.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.11.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.11.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.11.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.11.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.11.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.11.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.12.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.12.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.12.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.12.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.12.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.12.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.13.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.13.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.13.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.13.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.13.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.13.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.14.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.14.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.14.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.14.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.14.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.14.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.15.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.15.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.15.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.15.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.15.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.15.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.16.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.16.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.16.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.16.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.16.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.16.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.17.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.17.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.17.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.17.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.17.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.17.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.18.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.18.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.18.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.18.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.18.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.18.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.19.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.19.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.19.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.19.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.19.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.19.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.20.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.20.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.20.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.20.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.20.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.20.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.21.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.21.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.21.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.21.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.21.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.21.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.22.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.22.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.22.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.22.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.22.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.22.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.23.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.23.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.23.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.23.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.23.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.23.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.24.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.24.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.24.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.24.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.24.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.24.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.25.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.25.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.25.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.25.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.25.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.25.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.26.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.26.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.26.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.26.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.26.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.26.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.27.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.27.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.27.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.27.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.27.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.27.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.28.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.28.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.28.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.28.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.28.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.28.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.29.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.29.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.29.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.29.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.29.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.29.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.30.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.30.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.30.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.30.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.30.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.30.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.31.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.31.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.31.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.31.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.31.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.31.mlp.down_proj.lora_B.default.weight']
+[2025-08-26 14:29:55] 
+⚪️ Frozen parameters: ['base_model.model.model.embed_tokens.weight', 'base_model.model.model.layers.0.self_attn.o_proj.base_layer.weight', 'base_model.model.model.layers.0.self_attn.qkv_proj.base_layer.weight', 'base_model.model.model.layers.0.mlp.gate_up_proj.weight', 'base_model.model.model.layers.0.mlp.down_proj.base_layer.weight']
+[2025-08-26 14:29:55] Perft_config: LoraConfig(task_type=None, peft_type=<PeftType.LORA: 'LORA'>, auto_mapping=None, base_model_name_or_path='C:\\Users\\didri\\Desktop\\LLM-models\\LLM-Models\\microsoft\\unsloth\\phi-4-mini-instruct-FinedTuned_version2', revision=None, inference_mode=False, r=16, target_modules={'down_proj', 'o_proj', 'qkv_proj'}, exclude_modules=None, lora_alpha=32, lora_dropout=0.03, fan_in_fan_out=False, bias='none', use_rslora=False, modules_to_save=None, init_lora_weights=True, layers_to_transform=None, layers_pattern=None, rank_pattern={}, alpha_pattern={}, megatron_config=None, megatron_core='megatron.core', trainable_token_indices=None, loftq_config={}, eva_config=None, corda_config=None, use_dora=False, use_qalora=False, qalora_group_size=16, layer_replication=None, runtime_config=LoraRuntimeConfig(ephemeral_gpu_offload=False), lora_bias=False, target_parameters=None) 
+ 
+[2025-08-26 14:29:55] Model is prepared for kbit training now...
+ model: Phi3ForCausalLM(
+  (model): Phi3Model(
+    (embed_tokens): Embedding(200064, 3072, padding_idx=200029)
+    (layers): ModuleList(
+      (0-31): 32 x Phi3DecoderLayer(
+        (self_attn): Phi3Attention(
+          (o_proj): lora.Linear4bit(
+            (base_layer): Linear4bit(in_features=3072, out_features=3072, bias=False)
+            (lora_dropout): ModuleDict(
+              (default): Dropout(p=0.03, inplace=False)
+            )
+            (lora_A): ModuleDict(
+              (default): Linear(in_features=3072, out_features=16, bias=False)
+            )
+            (lora_B): ModuleDict(
+              (default): Linear(in_features=16, out_features=3072, bias=False)
+            )
+            (lora_embedding_A): ParameterDict()
+            (lora_embedding_B): ParameterDict()
+            (lora_magnitude_vector): ModuleDict()
+          )
+          (qkv_proj): lora.Linear4bit(
+            (base_layer): Linear4bit(in_features=3072, out_features=5120, bias=False)
+            (lora_dropout): ModuleDict(
+              (default): Dropout(p=0.03, inplace=False)
+            )
+            (lora_A): ModuleDict(
+              (default): Linear(in_features=3072, out_features=16, bias=False)
+            )
+            (lora_B): ModuleDict(
+              (default): Linear(in_features=16, out_features=5120, bias=False)
+            )
+            (lora_embedding_A): ParameterDict()
+            (lora_embedding_B): ParameterDict()
+            (lora_magnitude_vector): ModuleDict()
+          )
+        )
+        (mlp): Phi3MLP(
+          (gate_up_proj): Linear4bit(in_features=3072, out_features=16384, bias=False)
+          (down_proj): lora.Linear4bit(
+            (base_layer): Linear4bit(in_features=8192, out_features=3072, bias=False)
+            (lora_dropout): ModuleDict(
+              (default): Dropout(p=0.03, inplace=False)
+            )
+            (lora_A): ModuleDict(
+              (default): Linear(in_features=8192, out_features=16, bias=False)
+            )
+            (lora_B): ModuleDict(
+              (default): Linear(in_features=16, out_features=3072, bias=False)
+            )
+            (lora_embedding_A): ParameterDict()
+            (lora_embedding_B): ParameterDict()
+            (lora_magnitude_vector): ModuleDict()
+          )
+          (activation_fn): SiLU()
+        )
+        (input_layernorm): Phi3RMSNorm((3072,), eps=1e-05)
+        (post_attention_layernorm): Phi3RMSNorm((3072,), eps=1e-05)
+        (resid_attn_dropout): Dropout(p=0.0, inplace=False)
+        (resid_mlp_dropout): Dropout(p=0.0, inplace=False)
+      )
+    )
+    (norm): Phi3RMSNorm((3072,), eps=1e-05)
+    (rotary_emb): Phi3RotaryEmbedding()
+  )
+  (lm_head): Linear(in_features=3072, out_features=200064, bias=False)
+)
+
+[2025-08-26 14:29:55] model: Phi3ForCausalLM(
+  (model): Phi3Model(
+    (embed_tokens): Embedding(200064, 3072, padding_idx=200029)
+    (layers): ModuleList(
+      (0-31): 32 x Phi3DecoderLayer(
+        (self_attn): Phi3Attention(
+          (o_proj): lora.Linear4bit(
+            (base_layer): Linear4bit(in_features=3072, out_features=3072, bias=False)
+            (lora_dropout): ModuleDict(
+              (default): Dropout(p=0.03, inplace=False)
+            )
+            (lora_A): ModuleDict(
+              (default): Linear(in_features=3072, out_features=16, bias=False)
+            )
+            (lora_B): ModuleDict(
+              (default): Linear(in_features=16, out_features=3072, bias=False)
+            )
+            (lora_embedding_A): ParameterDict()
+            (lora_embedding_B): ParameterDict()
+            (lora_magnitude_vector): ModuleDict()
+          )
+          (qkv_proj): lora.Linear4bit(
+            (base_layer): Linear4bit(in_features=3072, out_features=5120, bias=False)
+            (lora_dropout): ModuleDict(
+              (default): Dropout(p=0.03, inplace=False)
+            )
+            (lora_A): ModuleDict(
+              (default): Linear(in_features=3072, out_features=16, bias=False)
+            )
+            (lora_B): ModuleDict(
+              (default): Linear(in_features=16, out_features=5120, bias=False)
+            )
+            (lora_embedding_A): ParameterDict()
+            (lora_embedding_B): ParameterDict()
+            (lora_magnitude_vector): ModuleDict()
+          )
+        )
+        (mlp): Phi3MLP(
+          (gate_up_proj): Linear4bit(in_features=3072, out_features=16384, bias=False)
+          (down_proj): lora.Linear4bit(
+            (base_layer): Linear4bit(in_features=8192, out_features=3072, bias=False)
+            (lora_dropout): ModuleDict(
+              (default): Dropout(p=0.03, inplace=False)
+            )
+            (lora_A): ModuleDict(
+              (default): Linear(in_features=8192, out_features=16, bias=False)
+            )
+            (lora_B): ModuleDict(
+              (default): Linear(in_features=16, out_features=3072, bias=False)
+            )
+            (lora_embedding_A): ParameterDict()
+            (lora_embedding_B): ParameterDict()
+            (lora_magnitude_vector): ModuleDict()
+          )
+          (activation_fn): SiLU()
+        )
+        (input_layernorm): Phi3RMSNorm((3072,), eps=1e-05)
+        (post_attention_layernorm): Phi3RMSNorm((3072,), eps=1e-05)
+        (resid_attn_dropout): Dropout(p=0.0, inplace=False)
+        (resid_mlp_dropout): Dropout(p=0.0, inplace=False)
+      )
+    )
+    (norm): Phi3RMSNorm((3072,), eps=1e-05)
+    (rotary_emb): Phi3RotaryEmbedding()
+  )
+  (lm_head): Linear(in_features=3072, out_features=200064, bias=False)
+)
+
+[2025-08-26 14:29:55] 
+----------------Dataset Initizalation-------------
+
+[2025-08-26 14:29:55] clearing cache after loading dataset
+[2025-08-26 14:30:24] clearing cache after validation test
+[2025-08-26 14:30:24] ----------------Starting Training now----------------
+[2025-08-26 14:34:12] 
+----------------Loading/initalizing MODEL-------------
+
+[2025-08-26 14:34:17] Model: Phi3ForCausalLM(
+  (model): Phi3Model(
+    (embed_tokens): Embedding(200064, 3072, padding_idx=200029)
+    (layers): ModuleList(
+      (0-31): 32 x Phi3DecoderLayer(
+        (self_attn): Phi3Attention(
+          (o_proj): Linear4bit(in_features=3072, out_features=3072, bias=False)
+          (qkv_proj): Linear4bit(in_features=3072, out_features=5120, bias=False)
+        )
+        (mlp): Phi3MLP(
+          (gate_up_proj): Linear4bit(in_features=3072, out_features=16384, bias=False)
+          (down_proj): Linear4bit(in_features=8192, out_features=3072, bias=False)
+          (activation_fn): SiLU()
+        )
+        (input_layernorm): Phi3RMSNorm((3072,), eps=1e-05)
+        (post_attention_layernorm): Phi3RMSNorm((3072,), eps=1e-05)
+        (resid_attn_dropout): Dropout(p=0.0, inplace=False)
+        (resid_mlp_dropout): Dropout(p=0.0, inplace=False)
+      )
+    )
+    (norm): Phi3RMSNorm((3072,), eps=1e-05)
+    (rotary_emb): Phi3RotaryEmbedding()
+  )
+  (lm_head): Linear(in_features=3072, out_features=200064, bias=False)
+)
+[2025-08-26 14:34:17] clearing cache after model loading...
+[2025-08-26 14:34:17] 
+----------------Loading tokenizer-------------
+
+[2025-08-26 14:34:18] tokenizer length: 200030
+[2025-08-26 14:34:18] tokenizer.pad token was None changed it to : <｜PAD▁TOKEN｜>
+[2025-08-26 14:34:18] Vocab length BEFORE training: 200030
+[2025-08-26 14:34:18] Tokenizer.pad_token already exist: <｜PAD▁TOKEN｜>
+[2025-08-26 14:34:18] clearing cache after tokenizer...
+[2025-08-26 14:34:18] clearing cache after prepare model for kbit training...
+[2025-08-26 14:34:18] 🟢 Trainable parameters: ['base_model.model.model.layers.0.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.0.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.0.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.0.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.0.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.0.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.1.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.1.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.1.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.1.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.1.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.1.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.2.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.2.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.2.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.2.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.2.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.2.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.3.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.3.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.3.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.3.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.3.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.3.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.4.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.4.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.4.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.4.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.4.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.4.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.5.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.5.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.5.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.5.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.5.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.5.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.6.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.6.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.6.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.6.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.6.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.6.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.7.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.7.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.7.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.7.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.7.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.7.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.8.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.8.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.8.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.8.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.8.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.8.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.9.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.9.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.9.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.9.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.9.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.9.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.10.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.10.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.10.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.10.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.10.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.10.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.11.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.11.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.11.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.11.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.11.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.11.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.12.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.12.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.12.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.12.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.12.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.12.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.13.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.13.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.13.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.13.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.13.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.13.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.14.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.14.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.14.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.14.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.14.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.14.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.15.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.15.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.15.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.15.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.15.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.15.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.16.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.16.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.16.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.16.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.16.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.16.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.17.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.17.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.17.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.17.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.17.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.17.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.18.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.18.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.18.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.18.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.18.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.18.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.19.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.19.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.19.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.19.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.19.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.19.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.20.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.20.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.20.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.20.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.20.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.20.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.21.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.21.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.21.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.21.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.21.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.21.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.22.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.22.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.22.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.22.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.22.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.22.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.23.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.23.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.23.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.23.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.23.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.23.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.24.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.24.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.24.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.24.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.24.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.24.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.25.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.25.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.25.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.25.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.25.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.25.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.26.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.26.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.26.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.26.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.26.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.26.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.27.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.27.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.27.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.27.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.27.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.27.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.28.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.28.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.28.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.28.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.28.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.28.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.29.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.29.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.29.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.29.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.29.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.29.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.30.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.30.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.30.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.30.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.30.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.30.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.31.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.31.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.31.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.31.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.31.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.31.mlp.down_proj.lora_B.default.weight']
+[2025-08-26 14:34:18] 
+⚪️ Frozen parameters: ['base_model.model.model.embed_tokens.weight', 'base_model.model.model.layers.0.self_attn.o_proj.base_layer.weight', 'base_model.model.model.layers.0.self_attn.qkv_proj.base_layer.weight', 'base_model.model.model.layers.0.mlp.gate_up_proj.weight', 'base_model.model.model.layers.0.mlp.down_proj.base_layer.weight']
+[2025-08-26 14:34:18] Perft_config: LoraConfig(task_type=None, peft_type=<PeftType.LORA: 'LORA'>, auto_mapping=None, base_model_name_or_path='C:\\Users\\didri\\Desktop\\LLM-models\\LLM-Models\\microsoft\\unsloth\\phi-4-mini-instruct-FinedTuned_version2', revision=None, inference_mode=False, r=16, target_modules={'qkv_proj', 'o_proj', 'down_proj'}, exclude_modules=None, lora_alpha=32, lora_dropout=0.03, fan_in_fan_out=False, bias='none', use_rslora=False, modules_to_save=None, init_lora_weights=True, layers_to_transform=None, layers_pattern=None, rank_pattern={}, alpha_pattern={}, megatron_config=None, megatron_core='megatron.core', trainable_token_indices=None, loftq_config={}, eva_config=None, corda_config=None, use_dora=False, use_qalora=False, qalora_group_size=16, layer_replication=None, runtime_config=LoraRuntimeConfig(ephemeral_gpu_offload=False), lora_bias=False, target_parameters=None) 
+ 
+[2025-08-26 14:34:18] Model is prepared for kbit training now...
+ model: Phi3ForCausalLM(
+  (model): Phi3Model(
+    (embed_tokens): Embedding(200064, 3072, padding_idx=200029)
+    (layers): ModuleList(
+      (0-31): 32 x Phi3DecoderLayer(
+        (self_attn): Phi3Attention(
+          (o_proj): lora.Linear4bit(
+            (base_layer): Linear4bit(in_features=3072, out_features=3072, bias=False)
+            (lora_dropout): ModuleDict(
+              (default): Dropout(p=0.03, inplace=False)
+            )
+            (lora_A): ModuleDict(
+              (default): Linear(in_features=3072, out_features=16, bias=False)
+            )
+            (lora_B): ModuleDict(
+              (default): Linear(in_features=16, out_features=3072, bias=False)
+            )
+            (lora_embedding_A): ParameterDict()
+            (lora_embedding_B): ParameterDict()
+            (lora_magnitude_vector): ModuleDict()
+          )
+          (qkv_proj): lora.Linear4bit(
+            (base_layer): Linear4bit(in_features=3072, out_features=5120, bias=False)
+            (lora_dropout): ModuleDict(
+              (default): Dropout(p=0.03, inplace=False)
+            )
+            (lora_A): ModuleDict(
+              (default): Linear(in_features=3072, out_features=16, bias=False)
+            )
+            (lora_B): ModuleDict(
+              (default): Linear(in_features=16, out_features=5120, bias=False)
+            )
+            (lora_embedding_A): ParameterDict()
+            (lora_embedding_B): ParameterDict()
+            (lora_magnitude_vector): ModuleDict()
+          )
+        )
+        (mlp): Phi3MLP(
+          (gate_up_proj): Linear4bit(in_features=3072, out_features=16384, bias=False)
+          (down_proj): lora.Linear4bit(
+            (base_layer): Linear4bit(in_features=8192, out_features=3072, bias=False)
+            (lora_dropout): ModuleDict(
+              (default): Dropout(p=0.03, inplace=False)
+            )
+            (lora_A): ModuleDict(
+              (default): Linear(in_features=8192, out_features=16, bias=False)
+            )
+            (lora_B): ModuleDict(
+              (default): Linear(in_features=16, out_features=3072, bias=False)
+            )
+            (lora_embedding_A): ParameterDict()
+            (lora_embedding_B): ParameterDict()
+            (lora_magnitude_vector): ModuleDict()
+          )
+          (activation_fn): SiLU()
+        )
+        (input_layernorm): Phi3RMSNorm((3072,), eps=1e-05)
+        (post_attention_layernorm): Phi3RMSNorm((3072,), eps=1e-05)
+        (resid_attn_dropout): Dropout(p=0.0, inplace=False)
+        (resid_mlp_dropout): Dropout(p=0.0, inplace=False)
+      )
+    )
+    (norm): Phi3RMSNorm((3072,), eps=1e-05)
+    (rotary_emb): Phi3RotaryEmbedding()
+  )
+  (lm_head): Linear(in_features=3072, out_features=200064, bias=False)
+)
+
+[2025-08-26 14:34:18] model: Phi3ForCausalLM(
+  (model): Phi3Model(
+    (embed_tokens): Embedding(200064, 3072, padding_idx=200029)
+    (layers): ModuleList(
+      (0-31): 32 x Phi3DecoderLayer(
+        (self_attn): Phi3Attention(
+          (o_proj): lora.Linear4bit(
+            (base_layer): Linear4bit(in_features=3072, out_features=3072, bias=False)
+            (lora_dropout): ModuleDict(
+              (default): Dropout(p=0.03, inplace=False)
+            )
+            (lora_A): ModuleDict(
+              (default): Linear(in_features=3072, out_features=16, bias=False)
+            )
+            (lora_B): ModuleDict(
+              (default): Linear(in_features=16, out_features=3072, bias=False)
+            )
+            (lora_embedding_A): ParameterDict()
+            (lora_embedding_B): ParameterDict()
+            (lora_magnitude_vector): ModuleDict()
+          )
+          (qkv_proj): lora.Linear4bit(
+            (base_layer): Linear4bit(in_features=3072, out_features=5120, bias=False)
+            (lora_dropout): ModuleDict(
+              (default): Dropout(p=0.03, inplace=False)
+            )
+            (lora_A): ModuleDict(
+              (default): Linear(in_features=3072, out_features=16, bias=False)
+            )
+            (lora_B): ModuleDict(
+              (default): Linear(in_features=16, out_features=5120, bias=False)
+            )
+            (lora_embedding_A): ParameterDict()
+            (lora_embedding_B): ParameterDict()
+            (lora_magnitude_vector): ModuleDict()
+          )
+        )
+        (mlp): Phi3MLP(
+          (gate_up_proj): Linear4bit(in_features=3072, out_features=16384, bias=False)
+          (down_proj): lora.Linear4bit(
+            (base_layer): Linear4bit(in_features=8192, out_features=3072, bias=False)
+            (lora_dropout): ModuleDict(
+              (default): Dropout(p=0.03, inplace=False)
+            )
+            (lora_A): ModuleDict(
+              (default): Linear(in_features=8192, out_features=16, bias=False)
+            )
+            (lora_B): ModuleDict(
+              (default): Linear(in_features=16, out_features=3072, bias=False)
+            )
+            (lora_embedding_A): ParameterDict()
+            (lora_embedding_B): ParameterDict()
+            (lora_magnitude_vector): ModuleDict()
+          )
+          (activation_fn): SiLU()
+        )
+        (input_layernorm): Phi3RMSNorm((3072,), eps=1e-05)
+        (post_attention_layernorm): Phi3RMSNorm((3072,), eps=1e-05)
+        (resid_attn_dropout): Dropout(p=0.0, inplace=False)
+        (resid_mlp_dropout): Dropout(p=0.0, inplace=False)
+      )
+    )
+    (norm): Phi3RMSNorm((3072,), eps=1e-05)
+    (rotary_emb): Phi3RotaryEmbedding()
+  )
+  (lm_head): Linear(in_features=3072, out_features=200064, bias=False)
+)
+
+[2025-08-26 14:34:18] 
+----------------Dataset Initizalation-------------
+
+[2025-08-26 14:34:19] clearing cache after loading dataset
+[2025-08-26 14:34:47] clearing cache after validation test
+[2025-08-26 14:34:47] ----------------Starting Training now----------------
+[2025-08-26 14:42:43] 
+----------------Loading/initalizing MODEL-------------
+
+[2025-08-26 14:42:51] Model: Phi3ForCausalLM(
+  (model): Phi3Model(
+    (embed_tokens): Embedding(200064, 3072, padding_idx=200029)
+    (layers): ModuleList(
+      (0-31): 32 x Phi3DecoderLayer(
+        (self_attn): Phi3Attention(
+          (o_proj): Linear4bit(in_features=3072, out_features=3072, bias=False)
+          (qkv_proj): Linear4bit(in_features=3072, out_features=5120, bias=False)
+        )
+        (mlp): Phi3MLP(
+          (gate_up_proj): Linear4bit(in_features=3072, out_features=16384, bias=False)
+          (down_proj): Linear4bit(in_features=8192, out_features=3072, bias=False)
+          (activation_fn): SiLU()
+        )
+        (input_layernorm): Phi3RMSNorm((3072,), eps=1e-05)
+        (post_attention_layernorm): Phi3RMSNorm((3072,), eps=1e-05)
+        (resid_attn_dropout): Dropout(p=0.0, inplace=False)
+        (resid_mlp_dropout): Dropout(p=0.0, inplace=False)
+      )
+    )
+    (norm): Phi3RMSNorm((3072,), eps=1e-05)
+    (rotary_emb): Phi3RotaryEmbedding()
+  )
+  (lm_head): Linear(in_features=3072, out_features=200064, bias=False)
+)
+[2025-08-26 14:42:51] clearing cache after model loading...
+[2025-08-26 14:42:51] 
+----------------Loading tokenizer-------------
+
+[2025-08-26 14:42:51] tokenizer length: 200030
+[2025-08-26 14:42:51] tokenizer.pad token was None changed it to : <｜PAD▁TOKEN｜>
+[2025-08-26 14:42:51] Vocab length BEFORE training: 200030
+[2025-08-26 14:42:51] Tokenizer.pad_token already exist: <｜PAD▁TOKEN｜>
+[2025-08-26 14:42:51] clearing cache after tokenizer...
+[2025-08-26 14:42:52] clearing cache after prepare model for kbit training...
+[2025-08-26 14:42:52] 🟢 Trainable parameters: ['base_model.model.model.layers.0.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.0.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.0.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.0.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.0.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.0.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.1.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.1.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.1.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.1.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.1.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.1.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.2.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.2.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.2.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.2.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.2.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.2.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.3.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.3.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.3.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.3.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.3.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.3.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.4.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.4.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.4.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.4.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.4.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.4.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.5.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.5.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.5.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.5.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.5.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.5.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.6.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.6.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.6.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.6.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.6.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.6.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.7.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.7.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.7.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.7.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.7.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.7.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.8.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.8.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.8.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.8.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.8.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.8.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.9.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.9.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.9.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.9.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.9.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.9.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.10.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.10.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.10.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.10.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.10.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.10.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.11.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.11.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.11.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.11.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.11.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.11.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.12.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.12.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.12.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.12.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.12.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.12.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.13.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.13.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.13.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.13.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.13.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.13.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.14.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.14.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.14.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.14.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.14.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.14.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.15.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.15.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.15.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.15.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.15.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.15.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.16.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.16.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.16.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.16.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.16.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.16.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.17.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.17.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.17.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.17.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.17.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.17.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.18.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.18.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.18.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.18.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.18.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.18.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.19.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.19.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.19.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.19.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.19.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.19.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.20.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.20.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.20.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.20.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.20.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.20.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.21.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.21.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.21.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.21.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.21.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.21.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.22.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.22.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.22.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.22.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.22.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.22.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.23.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.23.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.23.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.23.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.23.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.23.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.24.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.24.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.24.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.24.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.24.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.24.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.25.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.25.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.25.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.25.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.25.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.25.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.26.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.26.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.26.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.26.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.26.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.26.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.27.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.27.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.27.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.27.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.27.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.27.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.28.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.28.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.28.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.28.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.28.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.28.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.29.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.29.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.29.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.29.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.29.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.29.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.30.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.30.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.30.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.30.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.30.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.30.mlp.down_proj.lora_B.default.weight', 'base_model.model.model.layers.31.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.31.self_attn.o_proj.lora_B.default.weight', 'base_model.model.model.layers.31.self_attn.qkv_proj.lora_A.default.weight', 'base_model.model.model.layers.31.self_attn.qkv_proj.lora_B.default.weight', 'base_model.model.model.layers.31.mlp.down_proj.lora_A.default.weight', 'base_model.model.model.layers.31.mlp.down_proj.lora_B.default.weight']
+[2025-08-26 14:42:52] 
+⚪️ Frozen parameters: ['base_model.model.model.embed_tokens.weight', 'base_model.model.model.layers.0.self_attn.o_proj.base_layer.weight', 'base_model.model.model.layers.0.self_attn.qkv_proj.base_layer.weight', 'base_model.model.model.layers.0.mlp.gate_up_proj.weight', 'base_model.model.model.layers.0.mlp.down_proj.base_layer.weight']
+[2025-08-26 14:42:52] Perft_config: LoraConfig(task_type=None, peft_type=<PeftType.LORA: 'LORA'>, auto_mapping=None, base_model_name_or_path='C:\\Users\\didri\\Desktop\\LLM-models\\LLM-Models\\microsoft\\unsloth\\phi-4-mini-instruct-FinedTuned_version2', revision=None, inference_mode=False, r=16, target_modules={'qkv_proj', 'down_proj', 'o_proj'}, exclude_modules=None, lora_alpha=32, lora_dropout=0.03, fan_in_fan_out=False, bias='none', use_rslora=False, modules_to_save=None, init_lora_weights=True, layers_to_transform=None, layers_pattern=None, rank_pattern={}, alpha_pattern={}, megatron_config=None, megatron_core='megatron.core', trainable_token_indices=None, loftq_config={}, eva_config=None, corda_config=None, use_dora=False, use_qalora=False, qalora_group_size=16, layer_replication=None, runtime_config=LoraRuntimeConfig(ephemeral_gpu_offload=False), lora_bias=False, target_parameters=None) 
+ 
+[2025-08-26 14:42:52] Model is prepared for kbit training now...
+ model: Phi3ForCausalLM(
+  (model): Phi3Model(
+    (embed_tokens): Embedding(200064, 3072, padding_idx=200029)
+    (layers): ModuleList(
+      (0-31): 32 x Phi3DecoderLayer(
+        (self_attn): Phi3Attention(
+          (o_proj): lora.Linear4bit(
+            (base_layer): Linear4bit(in_features=3072, out_features=3072, bias=False)
+            (lora_dropout): ModuleDict(
+              (default): Dropout(p=0.03, inplace=False)
+            )
+            (lora_A): ModuleDict(
+              (default): Linear(in_features=3072, out_features=16, bias=False)
+            )
+            (lora_B): ModuleDict(
+              (default): Linear(in_features=16, out_features=3072, bias=False)
+            )
+            (lora_embedding_A): ParameterDict()
+            (lora_embedding_B): ParameterDict()
+            (lora_magnitude_vector): ModuleDict()
+          )
+          (qkv_proj): lora.Linear4bit(
+            (base_layer): Linear4bit(in_features=3072, out_features=5120, bias=False)
+            (lora_dropout): ModuleDict(
+              (default): Dropout(p=0.03, inplace=False)
+            )
+            (lora_A): ModuleDict(
+              (default): Linear(in_features=3072, out_features=16, bias=False)
+            )
+            (lora_B): ModuleDict(
+              (default): Linear(in_features=16, out_features=5120, bias=False)
+            )
+            (lora_embedding_A): ParameterDict()
+            (lora_embedding_B): ParameterDict()
+            (lora_magnitude_vector): ModuleDict()
+          )
+        )
+        (mlp): Phi3MLP(
+          (gate_up_proj): Linear4bit(in_features=3072, out_features=16384, bias=False)
+          (down_proj): lora.Linear4bit(
+            (base_layer): Linear4bit(in_features=8192, out_features=3072, bias=False)
+            (lora_dropout): ModuleDict(
+              (default): Dropout(p=0.03, inplace=False)
+            )
+            (lora_A): ModuleDict(
+              (default): Linear(in_features=8192, out_features=16, bias=False)
+            )
+            (lora_B): ModuleDict(
+              (default): Linear(in_features=16, out_features=3072, bias=False)
+            )
+            (lora_embedding_A): ParameterDict()
+            (lora_embedding_B): ParameterDict()
+            (lora_magnitude_vector): ModuleDict()
+          )
+          (activation_fn): SiLU()
+        )
+        (input_layernorm): Phi3RMSNorm((3072,), eps=1e-05)
+        (post_attention_layernorm): Phi3RMSNorm((3072,), eps=1e-05)
+        (resid_attn_dropout): Dropout(p=0.0, inplace=False)
+        (resid_mlp_dropout): Dropout(p=0.0, inplace=False)
+      )
+    )
+    (norm): Phi3RMSNorm((3072,), eps=1e-05)
+    (rotary_emb): Phi3RotaryEmbedding()
+  )
+  (lm_head): Linear(in_features=3072, out_features=200064, bias=False)
+)
+
+[2025-08-26 14:42:52] model: Phi3ForCausalLM(
+  (model): Phi3Model(
+    (embed_tokens): Embedding(200064, 3072, padding_idx=200029)
+    (layers): ModuleList(
+      (0-31): 32 x Phi3DecoderLayer(
+        (self_attn): Phi3Attention(
+          (o_proj): lora.Linear4bit(
+            (base_layer): Linear4bit(in_features=3072, out_features=3072, bias=False)
+            (lora_dropout): ModuleDict(
+              (default): Dropout(p=0.03, inplace=False)
+            )
+            (lora_A): ModuleDict(
+              (default): Linear(in_features=3072, out_features=16, bias=False)
+            )
+            (lora_B): ModuleDict(
+              (default): Linear(in_features=16, out_features=3072, bias=False)
+            )
+            (lora_embedding_A): ParameterDict()
+            (lora_embedding_B): ParameterDict()
+            (lora_magnitude_vector): ModuleDict()
+          )
+          (qkv_proj): lora.Linear4bit(
+            (base_layer): Linear4bit(in_features=3072, out_features=5120, bias=False)
+            (lora_dropout): ModuleDict(
+              (default): Dropout(p=0.03, inplace=False)
+            )
+            (lora_A): ModuleDict(
+              (default): Linear(in_features=3072, out_features=16, bias=False)
+            )
+            (lora_B): ModuleDict(
+              (default): Linear(in_features=16, out_features=5120, bias=False)
+            )
+            (lora_embedding_A): ParameterDict()
+            (lora_embedding_B): ParameterDict()
+            (lora_magnitude_vector): ModuleDict()
+          )
+        )
+        (mlp): Phi3MLP(
+          (gate_up_proj): Linear4bit(in_features=3072, out_features=16384, bias=False)
+          (down_proj): lora.Linear4bit(
+            (base_layer): Linear4bit(in_features=8192, out_features=3072, bias=False)
+            (lora_dropout): ModuleDict(
+              (default): Dropout(p=0.03, inplace=False)
+            )
+            (lora_A): ModuleDict(
+              (default): Linear(in_features=8192, out_features=16, bias=False)
+            )
+            (lora_B): ModuleDict(
+              (default): Linear(in_features=16, out_features=3072, bias=False)
+            )
+            (lora_embedding_A): ParameterDict()
+            (lora_embedding_B): ParameterDict()
+            (lora_magnitude_vector): ModuleDict()
+          )
+          (activation_fn): SiLU()
+        )
+        (input_layernorm): Phi3RMSNorm((3072,), eps=1e-05)
+        (post_attention_layernorm): Phi3RMSNorm((3072,), eps=1e-05)
+        (resid_attn_dropout): Dropout(p=0.0, inplace=False)
+        (resid_mlp_dropout): Dropout(p=0.0, inplace=False)
+      )
+    )
+    (norm): Phi3RMSNorm((3072,), eps=1e-05)
+    (rotary_emb): Phi3RotaryEmbedding()
+  )
+  (lm_head): Linear(in_features=3072, out_features=200064, bias=False)
+)
+
+[2025-08-26 14:42:52] 
+----------------Dataset Initizalation-------------
+
+[2025-08-26 14:42:53] clearing cache after loading dataset
+[2025-08-26 14:43:22] clearing cache after validation test
+[2025-08-26 14:43:22] ----------------Starting Training now----------------
+[2025-08-26 14:45:13] clearing cache after training complete
+[2025-08-26 14:45:14] clearing cache after evaluation complete
+[2025-08-26 14:45:14] Successfully done finetuning!
+[2025-08-26 14:45:14] --------------Running a manual test--------------------
+
+
+[2025-08-26 14:45:14] SUCCESS :D
