@@ -23,3 +23,14 @@ youtube_token.pickle
 Secrets/
 *env
 /.env
+/weights
+/vmaf_netflix_quality_checker
+/Utils-Video_creation
+/RIFE
+/neon
+/GPEN
+smolagents_libary_changes.txt
+RIFE_FPS.py
+codeformer.py
+backup_smolagentslibary_toollist.py
+/Video_clips
