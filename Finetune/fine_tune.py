@@ -5,14 +5,14 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 from transformers import BitsAndBytesConfig
 from trl import SFTConfig, SFTTrainer
-import  gc 
+import  gc
 from peft import PeftModel
 import os
 from loss_logger import LossAndEvalloggingCallback
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 torch.backends.cudnn.enabled = True
 torch.backends.cudnn.benchmark = True
-from log import log
+from neon.log import log
 from val_test import run_eval_comparison_test
 os.environ["WANDB_DISABLED"] = "true"
 os.environ["WANDB_MODE"] = "offline"
@@ -22,16 +22,16 @@ os.environ["WANDB_MODE"] = "offline"
 def supervised_Finetune():
 
     log("\n----------------Loading/initalizing MODEL-------------\n")
-   
+
     bnb_config = BitsAndBytesConfig(
         load_in_4bit=True,
         bnb_4bit_use_double_quant=True,
         bnb_4bit_quant_type="nf4",
-        bnb_4bit_compute_dtype=torch.bfloat16,
+        bnb_4bit_compute_dtype=torch.float16,
 
     )
     model_id = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\microsoft\unsloth\phi-4-mini-instruct-FinedTuned_version2"
-    model = AutoModelForCausalLM.from_pretrained(model_id, device_map="auto", torch_dtype=torch.bfloat16, quantization_config=bnb_config, local_files_only=True,  use_cache=False)
+    model = AutoModelForCausalLM.from_pretrained(model_id, device_map="auto", torch_dtype=torch.float16, attn_implementation="sdpa", quantization_config=bnb_config, local_files_only=True,  use_cache=False)
     model.config.use_cache = False
     log(f"Model: {model}")
 
@@ -58,14 +58,14 @@ def supervised_Finetune():
 
     log(f"tokenizer length: {len(tokenizer)}")
 
-    
+
 
     log(f"tokenizer.pad token was None changed it to : {tokenizer.pad_token}")
     before_vocab = len(tokenizer)
     log(f"Vocab length BEFORE training: {before_vocab}")
     log(f"Tokenizer.pad_token already exist: {tokenizer.pad_token}")
 
-    
+
     log("clearing cache after tokenizer...")
     gc.collect()
     torch.cuda.empty_cache()
@@ -74,7 +74,7 @@ def supervised_Finetune():
             r=16,
             lora_alpha=32,
             lora_dropout=0.03,
-            target_modules=["qkv_proj","o_proj","down_proj"]
+            target_modules=["qkv_proj","o_proj","down_proj","gate_up_proj"]
     )
 
 
@@ -82,11 +82,11 @@ def supervised_Finetune():
         model,
         use_gradient_checkpointing=True
         )
-    
+
     log("clearing cache after prepare model for kbit training...")
     gc.collect()
     torch.cuda.empty_cache()
-        
+
     peft_model = get_peft_model(model_kbit , peft_config_lora_Tuning)
     trainable = []
     frozen   = []
@@ -109,7 +109,7 @@ def supervised_Finetune():
     dataset = load_dataset(
         "json",
         data_files={
-            "train": r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\Dataset_detecting_motivationalquotes_from_chunk\hey.jsonl",
+            "train": r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\Dataset_detecting_motivationalquotes_from_chunk\Supervised_dataset\datasets\123.jsonl",
          #   "eval": r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\Dataset_detecting_motivationalquotes_from_chunk\Supervised_dataset\datasets\test.jsonl",
           # "validation": r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\Dataset_detecting_motivationalquotes_from_chunk\Supervised_dataset\datasets\validation.jsonl"
         }
@@ -134,12 +134,12 @@ def supervised_Finetune():
             num_train_epochs=1,
             gradient_accumulation_steps=1,
             per_device_train_batch_size=1,
-            learning_rate = 5e-5, 
-            max_seq_length=5230,
+            learning_rate = 5e-5,
+            max_seq_length=7700,
             gradient_checkpointing= True,
             gradient_checkpointing_kwargs ={"use_reentrant": False},
             bf16=True,
-            logging_steps=10,
+            logging_steps=1,
             dataset_num_proc=4,
             save_strategy="epoch",
             warmup_ratio=0.05,
@@ -162,12 +162,12 @@ def supervised_Finetune():
             callbacks=[LossAndEvalloggingCallback],
             processing_class=tokenizer,
         )
-    
 
 
 
 
-   
+
+
    # run_eval_comparison_test(trainer,sft_config,model,tokenizer, eval_dataset=validation_set, num_samples=10, max_new_tokens=1000,phase="Before Training")
     log("clearing cache after validation test")
     # gc.collect()
@@ -179,14 +179,14 @@ def supervised_Finetune():
     log(f"----------------Starting Training now----------------")
     trainer.train()
     log("clearing cache after training complete")
-    
+
    # metrics = trainer.evaluate(eval_dataset=validation_set)
    # log(f"eval_loss: {metrics.eval_loss} \n eval_accuracy: {metrics.eval_accuracy} ")
 
     gc.collect()
     torch.cuda.empty_cache()
     #evalloss = trainer.evaluate(eval_dataset=validation_set)
-   # import json 
+   # import json
     # with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Finetune\Dataset_detecting_motivationalquotes_from_chunk\Supervised_dataset\logs\Evaluation_logg.txt", "w", encoding="utf-8") as f:
     #     f.write(json.dumps(evalloss, ensure_ascii=False, indent=2))
 
@@ -221,7 +221,7 @@ if __name__ == "__main__":
 
 
 
-  
+
 
 
 

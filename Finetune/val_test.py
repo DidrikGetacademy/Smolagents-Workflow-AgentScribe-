@@ -1,5 +1,5 @@
 
-from log import validation_logger
+from neon.log import validation_logger
 import torch
 from difflib import SequenceMatcher
 
@@ -16,7 +16,7 @@ def run_eval_comparison_test(trainer, sft_config, model, tokenizer, eval_dataset
     )
     if tokenizer.pad_token is None:
         tokenizer.pad_token = "<|endoftext|>"
-    
+
     tokenizer.eos_token = "<|end|>"
 
     correct_count = 0
@@ -27,7 +27,7 @@ def run_eval_comparison_test(trainer, sft_config, model, tokenizer, eval_dataset
         example = prepared_eval_dataset[i]
         input_ids_list = example["input_ids"]
         assistant_mask = example.get("assistant_masks", None)
-      
+
 
         first_assistant_idx = next((idx for idx, m in enumerate(assistant_mask) if m == 1), len(input_ids_list)) if assistant_mask else len(input_ids_list)
         user_input_ids = input_ids_list[:first_assistant_idx]

@@ -1,0 +1,33 @@
+===START_TEXT===
+[5869.86s - 5876.10s] Whats the best advice you ever [5876.10s - 5881.22s] heard or recieved believe in yourself what is the worst advice you ever heard or received it can't be done
+===END_TEXT===
+
+SCORING INFORMATION:
+- Chunk 1: ❌ INCORRECT
+- Similarity Score: 1.64%
+- Points Earned: 0/1
+- Current Total: 0/1 (0.0%)
+==================================================
+
+===START_TEXT===
+[2006.90s - 2013.04s] it's the world champions that are prepared to do the most boring [2013.04s - 2020.84s] work with the least amount of complaining
+===END_TEXT===
+
+SCORING INFORMATION:
+- Chunk 2: ❌ INCORRECT
+- Similarity Score: 0.00%
+- Points Earned: 0/1
+- Current Total: 0/2 (0.0%)
+==================================================
+
+===START_TEXT===
+[2116.34s - 2124.12s] i will always have to do boring shit and that's not a bug it's a feature and not only is it a feature [2124.12s - 2131.76s] it's a source of competitive advantage because as things get more salubrious as you as you raise up [2131.76s - 2136.62s] through the ranks other people will have the same thought that you do which is i shouldn't need to do this [2136.62s - 2141.14s] anymore you go okay so if you can continue to lean into the stuff that you did at the start [2141.14s - 2147.02s] at the end that's where the competitive advantage lies
+===END_TEXT===
+
+SCORING INFORMATION:
+- Chunk 2: ❌ INCORRECT
+- Similarity Score: 0.00%
+- Points Earned: 0/1
+- Current Total: 0/3 (0.0%)
+==================================================
+

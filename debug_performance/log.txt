@@ -1,161 +1,357 @@
-[2025-08-27 16:27:19][MainThread] Total Used: 0.9GB
+[2025-11-15 18:58:26][MainThread] 🔄 JSON: Restored 22 video tasks from backup
 
-[2025-08-27 16:27:19][MainThread] RUNNING --> [run_video_short_creation_thead]: video_url: c:\Users\didri\Documents\Discipline, Confidence & The Champion’s Mindset - Chris Bumstead (4K).mp4, start_time: 300.14, end_time: 304.6
+[2025-11-15 18:58:27][MainThread] Total Used: 1.0GB
 
-[2025-08-27 16:27:20][MainThread] Temp dir created:C:\Users\didri\AppData\Local\Temp\tmphfcojehm
+[2025-11-15 18:58:28][MainThread] RUNNING --> [run_video_short_creation_thead]: video_url: c:\Users\didri\Documents\Hardship Is An Opportunity To Improve - Bugzy Malone (4K) [yHX6OFGivWo] [1080p].mp4, start_time: 2000.69, end_time: 2027.52
 
-[2025-08-27 16:27:20][MainThread] Truncated audio clip: C:\Users\didri\AppData\Local\Temp\tmphfcojehm\temp_audio_1.wav
+[2025-11-15 18:58:29][MainThread] [run_video_short_creation_thread] Audio duration: 9100.121882s
 
-[2025-08-27 16:27:21][MainThread] start_ms: 13236174, end_ms: 13432860
+[2025-11-15 18:58:29][MainThread] Truncated audio path: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\Hardship Is An Opportunity To Improve - Bugzy Malone (4K) [yHX6OFGivWo] [1080p]\truncated_1.wav
 
-[2025-08-27 16:27:21][MainThread] subtitletext cleaned: close as possible to suffering that you're still benefiting from and you still enjoy I think it's beautiful
+[2025-11-15 18:58:30][MainThread] [truncate_audio] Audio metadata: duration=9100.12s, size=1567638.26KB, frame_rate=44100Hz
 
-[2025-08-27 16:27:21][MainThread] [INFO] Audio Duration: 4.46 seconds Detected Language: en (confidence: 1.00)
+[2025-11-15 18:58:30][MainThread] [truncate_audio] Calculated: start_sample=88230429, end_sample=89413632
 
-[2025-08-27 16:27:22][MainThread] S['close', 'as', 'possible', 'to', 'suffering', 'that', "you're", 'still', 'benefiting', 'from', 'and', 'you', 'still', 'enjoy', 'i', 'think', "it's", 'beautiful']
+[2025-11-15 18:58:30][MainThread] start_ms: 88230429, end_ms: 89413632
 
+[2025-11-15 18:58:30][MainThread] Global state: - set_current_truncated_audio_path: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\Hardship Is An Opportunity To Improve - Bugzy Malone (4K) [yHX6OFGivWo] [1080p]\truncated_1.wav
 
-[2025-08-27 16:27:22][MainThread] T['closest', 'possible', 'to', 'suffering', 'that', "you're", 'still', 'benefiting', 'from', 'and', 'you', 'still', 'enjoy', 'i', 'think', "it's", 'beautiful']
+[2025-11-15 18:58:30][MainThread] [truncate_audio] Output created: duration=26.83s, size=4621.93KB
 
+[2025-11-15 18:58:30][MainThread] subtitletext cleaned: somebody who's got a lot of
 
-[2025-08-27 16:27:22][MainThread] start_phrase subtitletokens: ['close', 'as', 'possible']
- end_phrase subtitletokens: ['think', "it's", 'beautiful']
+[2025-11-15 18:58:30][MainThread] [INFO] Audio Duration: 26.83 seconds Detected Language: en (confidence: 1.00)
 
-[2025-08-27 16:27:22][MainThread] match end transcribetokens: 17
+[2025-11-15 18:58:32][MainThread] S['somebody', "who's", 'got', 'a', 'lot', 'of']
 
-[2025-08-27 16:27:22][MainThread] Did not find a start/end in transcript
 
-[2025-08-27 16:27:22][MainThread] [ERROR] during transcription: Did not find a start/end in transcript
+[2025-11-15 18:58:32][MainThread] T['way', 'from', 'that', 'is', 'that', 'somebody', "who's", 'got', 'a', 'lot', 'of', 'self', 'motivation', 'and', 'discipline', 'and', 'is', 'powered', 'by', 'what', 'they', 'want', 'to', 'achieve', 'still', 'needs', 'a', 'goal', 'to', 'be', 'moving', 'toward', 'in', 'order', 'to', 'drag', 'them', 'through', 'a', 'very', 'difficult', 'time', 'because', 'had', 'you', 'have', 'not', 'had', 'this', 'new', 'challenge', 'this', 'new', 'outcome', 'this', 'new', 'people']
 
-[2025-08-27 16:27:22][MainThread] Transcription complete | device: cuda
 
-[2025-08-27 16:27:22][MainThread] [ERROR] during execution: Logic in speectotext_short_creation_thread NEEDS FIXING
+[2025-11-15 18:58:32][MainThread] start_phrase subtitletokens: ['somebody', "who's", 'got']
+ end_phrase subtitletokens: ['a', 'lot', 'of']
 
-[2025-08-27 16:28:01][MainThread] Total Used: 0.8GB
+[2025-11-15 18:58:32][MainThread] match start transcribetokens: 5
 
-[2025-08-27 16:28:01][MainThread] RUNNING --> [run_video_short_creation_thead]: video_url: c:\Users\didri\Documents\Discipline, Confidence & The Champion’s Mindset - Chris Bumstead (4K).mp4, start_time: 327.15, end_time: 339.07
+[2025-11-15 18:58:32][MainThread] match end transcribe tokens: 11
 
-[2025-08-27 16:28:02][MainThread] Temp dir created:C:\Users\didri\AppData\Local\Temp\tmpk96abwqi
+[2025-11-15 18:58:32][MainThread] [WINDOW] Index 5-11: somebody who's got a lot of
 
-[2025-08-27 16:28:02][MainThread] Truncated audio clip: C:\Users\didri\AppData\Local\Temp\tmpk96abwqi\temp_audio_1.wav
+[2025-11-15 18:58:32][MainThread] Word-based similarity: 1.00
 
-[2025-08-27 16:28:03][MainThread] start_ms: 14427315, end_ms: 14952987
+[2025-11-15 18:58:32][MainThread] [MATCH] Found exact match: ['somebody', "who's", 'got', 'a', 'lot', 'of']
 
-[2025-08-27 16:28:03][MainThread] subtitletext cleaned: but better that's now the next minimum yeah and I've I've had conversation with many people about the possibility of not having that and just being able to enjoy and relieve the pressure on yourself
+[2025-11-15 18:58:32][MainThread] final_start_time: 2003.67
 
-[2025-08-27 16:28:03][MainThread] [INFO] Audio Duration: 11.92 seconds Detected Language: en (confidence: 1.00)
+[2025-11-15 18:58:32][MainThread] final_end_time: 2005.73
 
-[2025-08-27 16:28:04][MainThread] S['but', 'better', "that's", 'now', 'the', 'next', 'minimum', 'yeah', 'and', "i've", "i've", 'had', 'conversation', 'with', 'many', 'people', 'about', 'the', 'possibility', 'of', 'not', 'having', 'that', 'and', 'just', 'being', 'able', 'to', 'enjoy', 'and', 'relieve', 'the', 'pressure', 'on', 'yourself']
+[2025-11-15 18:58:32][MainThread] matched_words: [{'word': 'somebody', 'start': 2.98, 'end': 3.78}, {'word': "who's", 'start': 3.78, 'end': 4.0}, {'word': 'got', 'start': 4.0, 'end': 4.1}, {'word': 'a', 'start': 4.1, 'end': 4.22}, {'word': 'lot', 'start': 4.22, 'end': 4.32}, {'word': 'of', 'start': 4.32, 'end': 4.54}]
+ start : 2003.67
+ end : 2005.73
 
 
-[2025-08-27 16:28:04][MainThread] T['but', 'better', "that's", 'now', 'the', 'next', 'minimum', 'yeah', 'and', "i've", "i've", 'had', 'conversations', 'with', 'many', 'people', 'about', 'the', 'possibility', 'of', 'not', 'having', 'that', 'and', 'just', 'being', 'able', 'to', 'enjoy', 'and', 'relieve', 'the', 'pressure', 'on', 'yourself']
+[2025-11-15 18:58:32][MainThread] Transcription complete | device: cuda
 
+[2025-11-15 18:58:32][MainThread] [run_video_short_creation_thread] creating video now... 
+ start_time: 2003.67 
+ end_time: 2005.73,  
+ subtitle_text: [{'word': 'somebody', 'start': 2.98, 'end': 3.78}, {'word': "who's", 'start': 3.78, 'end': 4.0}, {'word': 'got', 'start': 4.0, 'end': 4.1}, {'word': 'a', 'start': 4.1, 'end': 4.22}, {'word': 'lot', 'start': 4.22, 'end': 4.32}, {'word': 'of', 'start': 4.32, 'end': 4.54}]
 
-[2025-08-27 16:28:04][MainThread] start_phrase subtitletokens: ['but', 'better', "that's"]
- end_phrase subtitletokens: ['pressure', 'on', 'yourself']
+[2025-11-15 18:58:32][MainThread] YT_channel: LR_Youtube
 
-[2025-08-27 16:28:04][MainThread] match start transcribetokens: 0
+[2025-11-15 18:58:32][MainThread] {'streams': [{'index': 0, 'codec_name': 'h264', 'codec_long_name': 'H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10', 'profile': 'Constrained Baseline', 'codec_type': 'video', 'codec_tag_string': 'avc1', 'codec_tag': '0x31637661', 'width': 2160, 'height': 1080, 'coded_width': 2160, 'coded_height': 1080, 'closed_captions': 0, 'film_grain': 0, 'has_b_frames': 0, 'pix_fmt': 'yuv420p', 'level': 50, 'color_range': 'tv', 'color_space': 'bt709', 'color_transfer': 'bt709', 'color_primaries': 'bt709', 'chroma_location': 'left', 'field_order': 'progressive', 'refs': 1, 'is_avc': 'true', 'nal_length_size': '4', 'id': '0x1', 'r_frame_rate': '25/1', 'avg_frame_rate': '25/1', 'time_base': '1/12800', 'start_pts': 0, 'start_time': '0.000000', 'duration_ts': 116481024, 'duration': '9100.080000', 'bit_rate': '3155762', 'bits_per_raw_sample': '8', 'nb_frames': '227502', 'extradata_size': 42, 'disposition': {'default': 1, 'dub': 0, 'original': 0, 'comment': 0, 'lyrics': 0, 'karaoke': 0, 'forced': 0, 'hearing_impaired': 0, 'visual_impaired': 0, 'clean_effects': 0, 'attached_pic': 0, 'timed_thumbnails': 0, 'non_diegetic': 0, 'captions': 0, 'descriptions': 0, 'metadata': 0, 'dependent': 0, 'still_image': 0, 'multilayer': 0}, 'tags': {'language': 'und', 'handler_name': 'ISO Media file produced by Google Inc. Created on: 11/10/2025.', 'vendor_id': '[0][0][0][0]', 'encoder': 'Lavc61.11.100 libx264'}}, {'index': 1, 'codec_name': 'mp3', 'codec_long_name': 'MP3 (MPEG audio layer 3)', 'codec_type': 'audio', 'codec_tag_string': 'mp4a', 'codec_tag': '0x6134706d', 'sample_fmt': 'fltp', 'sample_rate': '44100', 'channels': 2, 'channel_layout': 'stereo', 'bits_per_sample': 0, 'initial_padding': 0, 'id': '0x2', 'r_frame_rate': '0/0', 'avg_frame_rate': '0/0', 'time_base': '1/44100', 'start_pts': 0, 'start_time': '0.000000', 'duration_ts': 401315292, 'duration': '9100.120000', 'bit_rate': '128000', 'nb_frames': '348365', 'disposition': {'default': 1, 'dub': 0, 'original': 0, 'comment': 0, 'lyrics': 0, 'karaoke': 0, 'forced': 0, 'hearing_impaired': 0, 'visual_impaired': 0, 'clean_effects': 0, 'attached_pic': 0, 'timed_thumbnails': 0, 'non_diegetic': 0, 'captions': 0, 'descriptions': 0, 'metadata': 0, 'dependent': 0, 'still_image': 0, 'multilayer': 0}, 'tags': {'language': 'und', 'handler_name': 'SoundHandler', 'vendor_id': '[0][0][0][0]'}}], 'format': {'filename': 'c:\\Users\\didri\\Documents\\Hardship Is An Opportunity To Improve - Bugzy Malone (4K) [yHX6OFGivWo] [1080p].mp4', 'nb_streams': 2, 'nb_programs': 0, 'nb_stream_groups': 0, 'format_name': 'mov,mp4,m4a,3gp,3g2,mj2', 'format_long_name': 'QuickTime / MOV', 'start_time': '0.000000', 'duration': '9100.120000', 'size': '3742002064', 'bit_rate': '3289628', 'probe_score': 100, 'tags': {'major_brand': 'isom', 'minor_version': '512', 'compatible_brands': 'isomiso2avc1mp41', 'encoder': 'Lavf61.5.101'}}}
 
-[2025-08-27 16:28:04][MainThread] match end transcribetokens: 35
+[2025-11-15 18:58:34][MainThread] clip duration: 2.0599999999999454, clip fps: 25.0, clip width: 2160, clip height: 1080, start_time: 2003.67, end_time: 2005.73, video_path: c:\Users\didri\Documents\Hardship Is An Opportunity To Improve - Bugzy Malone (4K) [yHX6OFGivWo] [1080p].mp4
 
-[2025-08-27 16:28:04][MainThread] [WINDOW] Index 0-35: but better that's now the next minimum yeah and i've i've had conversations with many people about the possibility of not having that and just being able to enjoy and relieve the pressure on yourself
+[2025-11-15 18:58:34][MainThread] Clip fps: 25.0
 
-[2025-08-27 16:28:04][MainThread] Word-based similarity: 0.97
+[2025-11-15 18:58:34][MainThread] [Extracting original video frames]  1. frames: 51 frames.
+ [CLIP.ITER] Height: 1080, Width: 2160
 
-[2025-08-27 16:28:04][MainThread] [MATCH] Found exact match: [' but', ' better', " that's", ' now', ' the', ' next', ' minimum', ' yeah', ' and', " I've", " I've", ' had', ' conversations', ' with', ' many', ' people', ' about', ' the', ' possibility', ' of', ' not', ' having', ' that', ' and', ' just', ' being', ' able', ' to', ' enjoy', ' and', ' relieve', ' the', ' pressure', ' on', ' yourself']
+[2025-11-15 18:58:35][MainThread] ONNX Runtime providers in use: ['CUDAExecutionProvider', 'CPUExecutionProvider']
 
-[2025-08-27 16:28:04][MainThread] final_start_time: 327.15
+[2025-11-15 18:58:35][MainThread] batch: 0 - 8
 
-[2025-08-27 16:28:04][MainThread] final_end_time: 338.99999999999994
+[2025-11-15 18:58:36][MainThread] batch: 8 - 16
 
-[2025-08-27 16:28:04][MainThread] Transcription complete | device: cuda
+[2025-11-15 18:58:37][MainThread] batch: 16 - 24
 
-[2025-08-27 16:28:04][MainThread] [run_video_short_creation_thread] creating video now... 
- start_time: 327.15 
- end_time: 338.99999999999994,  
- subtitle_text: [{'word': ' but', 'start': 0.0, 'end': 0.26}, {'word': ' better', 'start': 0.26, 'end': 0.58}, {'word': " that's", 'start': 0.58, 'end': 1.68}, {'word': ' now', 'start': 1.68, 'end': 1.82}, {'word': ' the', 'start': 1.82, 'end': 1.96}, {'word': ' next', 'start': 1.96, 'end': 2.24}, {'word': ' minimum', 'start': 2.24, 'end': 2.68}, {'word': ' yeah', 'start': 2.68, 'end': 4.32}, {'word': ' and', 'start': 4.32, 'end': 4.5}, {'word': " I've", 'start': 4.5, 'end': 4.66}, {'word': " I've", 'start': 4.66, 'end': 5.14}, {'word': ' had', 'start': 5.14, 'end': 5.24}, {'word': ' conversations', 'start': 5.24, 'end': 5.74}, {'word': ' with', 'start': 5.74, 'end': 5.98}, {'word': ' many', 'start': 5.98, 'end': 6.16}, {'word': ' people', 'start': 6.16, 'end': 6.42}, {'word': ' about', 'start': 6.42, 'end': 6.64}, {'word': ' the', 'start': 6.64, 'end': 6.78}, {'word': ' possibility', 'start': 6.78, 'end': 7.3}, {'word': ' of', 'start': 7.3, 'end': 7.6}, {'word': ' not', 'start': 7.6, 'end': 8.32}, {'word': ' having', 'start': 8.32, 'end': 8.66}, {'word': ' that', 'start': 8.66, 'end': 8.82}, {'word': ' and', 'start': 8.82, 'end': 8.96}, {'word': ' just', 'start': 8.96, 'end': 9.06}, {'word': ' being', 'start': 9.06, 'end': 9.24}, {'word': ' able', 'start': 9.24, 'end': 9.5}, {'word': ' to', 'start': 9.5, 'end': 9.72}, {'word': ' enjoy', 'start': 9.72, 'end': 10.08}, {'word': ' and', 'start': 10.08, 'end': 10.32}, {'word': ' relieve', 'start': 10.32, 'end': 10.84}, {'word': ' the', 'start': 10.84, 'end': 11.02}, {'word': ' pressure', 'start': 11.02, 'end': 11.32}, {'word': ' on', 'start': 11.32, 'end': 11.58}, {'word': ' yourself', 'start': 11.58, 'end': 11.78}]
+[2025-11-15 18:58:38][MainThread] batch: 24 - 32
 
-[2025-08-27 16:28:04][MainThread] {'streams': [{'index': 0, 'codec_name': 'av1', 'codec_long_name': 'Alliance for Open Media AV1', 'profile': 'Main', 'codec_type': 'video', 'codec_tag_string': 'av01', 'codec_tag': '0x31307661', 'width': 3840, 'height': 1920, 'coded_width': 3840, 'coded_height': 1920, 'closed_captions': 0, 'film_grain': 0, 'has_b_frames': 0, 'sample_aspect_ratio': '1:1', 'display_aspect_ratio': '2:1', 'pix_fmt': 'yuv420p', 'level': 12, 'color_range': 'tv', 'color_space': 'bt709', 'color_transfer': 'bt709', 'color_primaries': 'bt709', 'refs': 1, 'id': '0x1', 'r_frame_rate': '25/1', 'avg_frame_rate': '25/1', 'time_base': '1/12800', 'start_pts': 0, 'start_time': '0.000000', 'duration_ts': 95307264, 'duration': '7445.880000', 'bit_rate': '2373038', 'nb_frames': '186147', 'extradata_size': 21, 'disposition': {'default': 1, 'dub': 0, 'original': 0, 'comment': 0, 'lyrics': 0, 'karaoke': 0, 'forced': 0, 'hearing_impaired': 0, 'visual_impaired': 0, 'clean_effects': 0, 'attached_pic': 0, 'timed_thumbnails': 0, 'non_diegetic': 0, 'captions': 0, 'descriptions': 0, 'metadata': 0, 'dependent': 0, 'still_image': 0, 'multilayer': 0}, 'tags': {'language': 'und', 'handler_name': 'ISO Media file produced by Google Inc.', 'vendor_id': '[0][0][0][0]'}}, {'index': 1, 'codec_name': 'aac', 'codec_long_name': 'AAC (Advanced Audio Coding)', 'profile': 'LC', 'codec_type': 'audio', 'codec_tag_string': 'mp4a', 'codec_tag': '0x6134706d', 'sample_fmt': 'fltp', 'sample_rate': '44100', 'channels': 2, 'channel_layout': 'stereo', 'bits_per_sample': 0, 'initial_padding': 0, 'id': '0x2', 'r_frame_rate': '0/0', 'avg_frame_rate': '0/0', 'time_base': '1/44100', 'start_pts': 0, 'start_time': '0.000000', 'duration_ts': 328366080, 'duration': '7445.942857', 'bit_rate': '127999', 'nb_frames': '320670', 'extradata_size': 16, 'disposition': {'default': 1, 'dub': 0, 'original': 0, 'comment': 0, 'lyrics': 0, 'karaoke': 0, 'forced': 0, 'hearing_impaired': 0, 'visual_impaired': 0, 'clean_effects': 0, 'attached_pic': 0, 'timed_thumbnails': 0, 'non_diegetic': 0, 'captions': 0, 'descriptions': 0, 'metadata': 0, 'dependent': 0, 'still_image': 0, 'multilayer': 0}, 'tags': {'language': 'eng', 'handler_name': 'ISO Media file produced by Google Inc.', 'vendor_id': '[0][0][0][0]'}}], 'format': {'filename': 'c:\\Users\\didri\\Documents\\Discipline, Confidence & The Champion’s Mindset - Chris Bumstead (4K).mp4', 'nb_streams': 2, 'nb_programs': 0, 'nb_stream_groups': 0, 'format_name': 'mov,mp4,m4a,3gp,3g2,mj2', 'format_long_name': 'QuickTime / MOV', 'start_time': '0.000000', 'duration': '7445.942857', 'size': '2332567967', 'bit_rate': '2506135', 'probe_score': 100, 'tags': {'major_brand': 'isom', 'minor_version': '512', 'compatible_brands': 'isomav01iso2mp41', 'encoder': 'Lavf61.9.100'}}}
+[2025-11-15 18:58:39][MainThread] batch: 32 - 40
 
-[2025-08-27 16:28:07][MainThread] clip duration: 11.849999999999966, clip fps: 25.0, clip width: 3840, clip height: 1920, start_time: 327.15, end_time: 338.99999999999994, video_path: c:\Users\didri\Documents\Discipline, Confidence & The Champion’s Mindset - Chris Bumstead (4K).mp4
+[2025-11-15 18:58:40][MainThread] batch: 40 - 48
 
-[2025-08-27 16:28:14][MainThread] [Extracting original video frames] Extracted 296 frames.
- [CLIP.ITER] Height: 1920, Width: 3840
+[2025-11-15 18:58:41][MainThread] batch: 48 - 56
 
-[2025-08-27 16:28:15][MainThread] ONNX Runtime providers in use: ['CUDAExecutionProvider', 'CPUExecutionProvider']
+[2025-11-15 18:58:41][MainThread] 2. cropped frames length: 51
 
-[2025-08-27 16:28:15][MainThread] batch: 0 - 10
+[2025-11-15 18:58:42][MainThread] [bpy] Processing 51 frames in 7 batches of size 8
 
-[2025-08-27 16:28:17][MainThread] batch: 10 - 20
+[2025-11-15 19:00:43][MainThread] [bpy] Batch compositing success: 51 frames processed (1080x1920)
 
-[2025-08-27 16:28:18][MainThread] batch: 20 - 30
+[2025-11-15 19:00:43][MainThread] 
 
-[2025-08-27 16:28:19][MainThread] batch: 30 - 40
+[COLOR ADJUSTMENT] PROCCESS starting...
 
-[2025-08-27 16:28:20][MainThread] batch: 40 - 50
+[2025-11-15 19:00:44][MainThread] 3. Color_corrected_frames length: 51
 
-[2025-08-27 16:28:21][MainThread] batch: 50 - 60
+[2025-11-15 19:00:44][MainThread] Subtitle clip 0: text='SOMEBODY WHO'S GOT A...', total_duration=1.240s
 
-[2025-08-27 16:28:22][MainThread] batch: 60 - 70
+[2025-11-15 19:00:44][MainThread] Subtitle clip 1: text='LOT OF...', total_duration=0.320s
 
-[2025-08-27 16:28:23][MainThread] batch: 70 - 80
+[2025-11-15 19:00:44][MainThread] 
 
-[2025-08-27 16:28:24][MainThread] batch: 80 - 90
+[FACEENCHACEMENT] PROCCESS starting...
 
-[2025-08-27 16:28:25][MainThread] batch: 90 - 100
+[2025-11-15 19:00:45][MainThread] Input frame size: 1080 x 1920
 
-[2025-08-27 16:28:26][MainThread] batch: 100 - 110
+[2025-11-15 19:01:02][MainThread] Enhanced frame size: 2160 x 3840
 
-[2025-08-27 16:28:27][MainThread] batch: 110 - 120
+[2025-11-15 19:01:02][MainThread] Input frame size: 1080 x 1920
 
-[2025-08-27 16:28:28][MainThread] batch: 120 - 130
+[2025-11-15 19:01:05][MainThread] Enhanced frame size: 2160 x 3840
 
-[2025-08-27 16:28:29][MainThread] batch: 130 - 140
+[2025-11-15 19:01:05][MainThread] Input frame size: 1080 x 1920
 
-[2025-08-27 16:28:30][MainThread] batch: 140 - 150
+[2025-11-15 19:01:08][MainThread] Enhanced frame size: 2160 x 3840
 
-[2025-08-27 16:28:31][MainThread] batch: 150 - 160
+[2025-11-15 19:01:08][MainThread] Input frame size: 1080 x 1920
 
-[2025-08-27 16:28:32][MainThread] batch: 160 - 170
+[2025-11-15 19:01:11][MainThread] Enhanced frame size: 2160 x 3840
 
-[2025-08-27 16:28:33][MainThread] batch: 170 - 180
+[2025-11-15 19:01:11][MainThread] Input frame size: 1080 x 1920
 
-[2025-08-27 16:28:34][MainThread] batch: 180 - 190
+[2025-11-15 19:01:15][MainThread] Enhanced frame size: 2160 x 3840
 
-[2025-08-27 16:28:35][MainThread] batch: 190 - 200
+[2025-11-15 19:01:15][MainThread] Input frame size: 1080 x 1920
 
-[2025-08-27 16:28:36][MainThread] batch: 200 - 210
+[2025-11-15 19:01:18][MainThread] Enhanced frame size: 2160 x 3840
 
-[2025-08-27 16:28:37][MainThread] batch: 210 - 220
+[2025-11-15 19:01:18][MainThread] Input frame size: 1080 x 1920
 
-[2025-08-27 16:28:38][MainThread] batch: 220 - 230
+[2025-11-15 19:01:21][MainThread] Enhanced frame size: 2160 x 3840
 
-[2025-08-27 16:28:39][MainThread] batch: 230 - 240
+[2025-11-15 19:01:21][MainThread] Input frame size: 1080 x 1920
 
-[2025-08-27 16:28:40][MainThread] batch: 240 - 250
+[2025-11-15 19:01:24][MainThread] Enhanced frame size: 2160 x 3840
 
-[2025-08-27 16:28:42][MainThread] batch: 250 - 260
+[2025-11-15 19:01:24][MainThread] Input frame size: 1080 x 1920
 
-[2025-08-27 16:28:43][MainThread] batch: 260 - 270
+[2025-11-15 19:01:27][MainThread] Enhanced frame size: 2160 x 3840
 
-[2025-08-27 16:28:44][MainThread] batch: 270 - 280
+[2025-11-15 19:01:27][MainThread] Input frame size: 1080 x 1920
 
-[2025-08-27 16:28:45][MainThread] batch: 280 - 290
+[2025-11-15 19:01:31][MainThread] Enhanced frame size: 2160 x 3840
 
-[2025-08-27 16:28:46][MainThread] batch: 290 - 300
+[2025-11-15 19:01:31][MainThread] Input frame size: 1080 x 1920
 
-[2025-08-27 16:28:48][MainThread] current YT_count: 0
+[2025-11-15 19:01:34][MainThread] Enhanced frame size: 2160 x 3840
 
-[2025-08-27 16:28:48][MainThread] YT_channel: LR_Youtube
+[2025-11-15 19:01:34][MainThread] Input frame size: 1080 x 1920
 
-[2025-08-27 16:28:49][MainThread] Final clip fps: 25.0
+[2025-11-15 19:01:37][MainThread] Enhanced frame size: 2160 x 3840
 
-[2025-08-27 16:30:50][MainThread] video is completed: output path : ./Video_clips\short11.mp4, video name: short11 video_fps: 25.0, codec: av1, bitrate: 2506135, audio_codec: aac, subtitles: [{'word': ' but', 'start': 0.0, 'end': 0.26}, {'word': ' better', 'start': 0.26, 'end': 0.58}, {'word': " that's", 'start': 0.58, 'end': 1.68}, {'word': ' now', 'start': 1.68, 'end': 1.82}, {'word': ' the', 'start': 1.82, 'end': 1.96}, {'word': ' next', 'start': 1.96, 'end': 2.24}, {'word': ' minimum', 'start': 2.24, 'end': 2.68}, {'word': ' yeah', 'start': 2.68, 'end': 4.32}, {'word': ' and', 'start': 4.32, 'end': 4.5}, {'word': " I've", 'start': 4.5, 'end': 4.66}, {'word': " I've", 'start': 4.66, 'end': 5.14}, {'word': ' had', 'start': 5.14, 'end': 5.24}, {'word': ' conversations', 'start': 5.24, 'end': 5.74}, {'word': ' with', 'start': 5.74, 'end': 5.98}, {'word': ' many', 'start': 5.98, 'end': 6.16}, {'word': ' people', 'start': 6.16, 'end': 6.42}, {'word': ' about', 'start': 6.42, 'end': 6.64}, {'word': ' the', 'start': 6.64, 'end': 6.78}, {'word': ' possibility', 'start': 6.78, 'end': 7.3}, {'word': ' of', 'start': 7.3, 'end': 7.6}, {'word': ' not', 'start': 7.6, 'end': 8.32}, {'word': ' having', 'start': 8.32, 'end': 8.66}, {'word': ' that', 'start': 8.66, 'end': 8.82}, {'word': ' and', 'start': 8.82, 'end': 8.96}, {'word': ' just', 'start': 8.96, 'end': 9.06}, {'word': ' being', 'start': 9.06, 'end': 9.24}, {'word': ' able', 'start': 9.24, 'end': 9.5}, {'word': ' to', 'start': 9.5, 'end': 9.72}, {'word': ' enjoy', 'start': 9.72, 'end': 10.08}, {'word': ' and', 'start': 10.08, 'end': 10.32}, {'word': ' relieve', 'start': 10.32, 'end': 10.84}, {'word': ' the', 'start': 10.84, 'end': 11.02}, {'word': ' pressure', 'start': 11.02, 'end': 11.32}, {'word': ' on', 'start': 11.32, 'end': 11.58}, {'word': ' yourself', 'start': 11.58, 'end': 11.78}] 
- Final video resolution (width x height): 1080 x 1920
+[2025-11-15 19:01:37][MainThread] Input frame size: 1080 x 1920
 
-[2025-08-27 16:30:50][MainThread] Interpolated video saved to: ./Video_clips\short11_rife.mp4
+[2025-11-15 19:01:40][MainThread] Enhanced frame size: 2160 x 3840
 
-[2025-08-27 16:30:50][MainThread] 
+[2025-11-15 19:01:40][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:01:44][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:01:44][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:01:47][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:01:47][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:01:50][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:01:50][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:01:53][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:01:53][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:01:56][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:01:56][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:02:00][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:02:00][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:02:03][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:02:03][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:02:06][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:02:06][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:02:09][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:02:09][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:02:12][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:02:12][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:02:16][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:02:16][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:02:19][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:02:19][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:02:22][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:02:22][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:02:25][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:02:25][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:02:28][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:02:28][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:02:31][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:02:31][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:02:34][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:02:34][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:02:37][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:02:37][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:02:41][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:02:41][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:02:44][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:02:44][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:02:47][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:02:47][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:02:50][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:02:50][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:02:53][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:02:53][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:02:56][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:02:56][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:03:00][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:03:00][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:03:03][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:03:03][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:03:06][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:03:06][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:03:09][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:03:09][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:03:12][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:03:12][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:03:15][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:03:15][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:03:19][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:03:19][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:03:22][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:03:22][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:03:25][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:03:25][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:03:28][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:03:28][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:03:31][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:03:31][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:03:35][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:03:35][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:03:38][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:03:38][MainThread] Input frame size: 1080 x 1920
+
+[2025-11-15 19:03:41][MainThread] Enhanced frame size: 2160 x 3840
+
+[2025-11-15 19:03:41][MainThread] [FaceEnhancement] 5. FaceEnhancement_frames length: 51
+
+[2025-11-15 19:03:41][MainThread] Cleared cache and collected garbage
+
+[2025-11-15 19:03:41][MainThread] current YT_count: 0
+
+[2025-11-15 19:03:41][MainThread] Latest_Yt_channel: LM_Youtube
+
+[2025-11-15 19:03:41][MainThread] YT_channel: MR_Youtube
+
+[2025-11-15 19:03:42][MainThread] #######choosing Background Audio########
+
+
+[2025-11-15 19:04:01][MainThread] Emotion recieved from [predict_emotion] --> disgust
+
+[2025-11-15 19:04:01][MainThread] Loading model: gpt-5-minimal from [Background_Audio_Decision_Model]
+
+[2025-11-15 19:04:04][MainThread] Starting [run_multi_Vision_model_conclusion]
+
+[2025-11-15 19:04:05][MainThread] Extracted 10 frames (capped at 64).
+
+[2025-11-15 19:04:27][MainThread] Response from [run_multi_Vision_model_conclusion]: {'path': 'C:\\Users\\didri\\Desktop\\Full-Agent-Flow_VideoEditing\\Video_clips\\audio\\Lukas Graham - 7 Years (Instrumental) [mp3].mp3', 'song_name': '7 Years Piano Cover', 'reason': 'Neutral‑positive piano with low‑moderate arousal gently lifts a gritty delivery toward purpose and resolve, matching the slow pacing while keeping the voice clear.', 'editing_notes': 'Start at -18 dB, 6s fade‑in; light sidechain/duck 3–4 dB on key phrases (“still needs a goal…”, “new challenge, new outcome”); hold a soft loop, fade‑out 3s before end.'}
+
+[2025-11-15 19:04:27][MainThread] Removed temporary audio file: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\Hardship Is An Opportunity To Improve - Bugzy Malone (4K) [yHX6OFGivWo] [1080p]\truncated_1.wav
+
+[2025-11-15 19:04:27][MainThread] Selected background audio: 7 Years Piano Cover
+
+[2025-11-15 19:04:27][MainThread] Background audio path: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\Lukas Graham - 7 Years (Instrumental) [mp3].mp3 
+ Reason: Neutral‑positive piano with low‑moderate arousal gently lifts a gritty delivery toward purpose and resolve, matching the slow pacing while keeping the voice clear.
+
+
+[2025-11-15 19:04:27][MainThread] [mix_audio] --> (original_audio.duration): 2.0599999999999454, (bg_music.duration): 2.0599999999999454, (mixed_audio.duration): 2.0599999999999454
+
+[2025-11-15 19:04:27][MainThread] (AUDIO DURATION): 2.0599999999999454
+
+[2025-11-15 19:04:29][MainThread] FINAL CLIP DURATION: 2.0599999999999454
+
+[2025-11-15 19:07:11][MainThread] video is completed: output path : ./Video_clips/Youtube_Upload_folder/MR_Youtube\short11.mp4, video name: short11 video_fps: 25.0, codec: h264, bitrate: 3289628, audio_codec: mp3, subtitles: [{'word': 'somebody', 'start': 2.98, 'end': 3.78}, {'word': "who's", 'start': 3.78, 'end': 4.0}, {'word': 'got', 'start': 4.0, 'end': 4.1}, {'word': 'a', 'start': 4.1, 'end': 4.22}, {'word': 'lot', 'start': 4.22, 'end': 4.32}, {'word': 'of', 'start': 4.32, 'end': 4.54}] 
+ Final video resolution (width x height): 2160 x 3840
+
+[2025-11-15 19:07:11][MainThread] Interpolated video saved to: ./Video_clips/Youtube_Upload_folder/MR_Youtube\short11_rife.mp4
+
+[2025-11-15 19:07:11][MainThread] 
+
 
 
 
@@ -170,29 +366,254 @@
 
 
 
-[2025-08-27 16:30:50][MainThread] Youtube uploading & agent STARTING....
+[2025-11-15 19:07:11][MainThread] Youtube uploading & agent STARTING....
 
-[2025-08-27 16:30:50][MainThread] Reloading model to -> Qwen_7b before running [upload_video]
+[2025-11-15 19:07:11][MainThread] Autenchiating now..: youtube_channel: MR_Youtube
 
-[2025-08-27 16:31:19][MainThread] Autenchiating now..
+[2025-11-15 19:07:11][MainThread] Loaded pickle: <google.oauth2.credentials.Credentials object at 0x00000272D79385D0>
 
-[2025-08-27 16:31:19][MainThread] Loaded pickle: <google.oauth2.credentials.Credentials object at 0x000001C244C7ACD0>
+[2025-11-15 19:07:11][MainThread] auth success
 
-[2025-08-27 16:31:19][MainThread] auth success
+[2025-11-15 19:07:11][MainThread] Loaded pickle: <google.oauth2.credentials.Credentials object at 0x00000272CC719850>
 
-[2025-08-27 16:31:50][MainThread] [LOG] Extracted audio duration: 11.89 seconds (~0.20 minutes)
+[2025-11-15 19:07:12][MainThread] videos: ['2025-11-29T18:00:00Z', '2025-11-22T18:00:00Z']
 
-[2025-08-27 16:34:38][MainThread] [get_authenticated_service]: title: Unlock Your Inner Peace: 20-Minute Stress Relief Techniques ⚡🧠, descriptino: Learn practical techniques to reduce stress and enhance your mental well-being in just 20 minutes. Stay calm and focused with these proven methods. Subscribe now for more self-care tips!, tags: ['stress relief', 'self care', 'mindfulness', 'mental health', 'wellness', '20 minute meditation', 'stress reduction', 'mindfulness meditation', 'self help', 'healthy living'], publishAt: 2025-08-30T14:00:00Z, backgroundmusic: None
+[2025-11-15 19:07:21][MainThread] [LOG] Extracted audio duration: 2.09 seconds (~0.03 minutes)
 
-[2025-08-27 16:34:43][MainThread] Upload complete! Video ID: XsdXFd427IY
+[2025-11-15 19:08:40][MainThread] [get_authenticated_service]: title: Built From Within: Own Your Substance, Not the Spotlight ⚡🧠,
+ description: LearnReflects aims to be the biggest community for self development and the journey to growth! Real power isn’t hype—it’s depth. Build the character, discipline, and resilience no one can see, then let results speak for you. If this hit, drop ‘INNER WORK’ in the comments—follow and subscribe to take part in the journey.,
+  hashtags: #Motivation #Resilience #Authenticity #Mindset #Discipline #InnerWork #SelfImprovement #GrowthMindset #Inspiration #Success,
+ tags: ['inner strength', 'authentic self', 'resilience mindset', 'discipline daily', 'self improvement', 'identity work', 'build character', 'mindset shift', 'motivation short', 'viral inspiration', 'personal growth', 'confidence builder', 'focus and grit', 'daily motivation', 'success habits'],
+ categoryId: 22,
+ publishAt: 2025-11-30T18:00:00Z
 
-[2025-08-27 16:34:43][MainThread] response from (get_single_playlist_id): [{'kind': 'youtube#playlist', 'etag': 'Kk8RPiKK_WJTQxeeK3STwhUHtbM', 'id': 'PLFJMrCuXr2BNZIFIcxYKbbHxW7DYlVNeD'}]
 
-[2025-08-27 16:34:43][MainThread] returned playlist_id: PLFJMrCuXr2BNZIFIcxYKbbHxW7DYlVNeD
+[2025-11-15 19:08:44][MainThread] Upload complete! Video ID: bI-UiCYrpPM
 
-[2025-08-27 16:34:44][MainThread] Video added to playlist PLFJMrCuXr2BNZIFIcxYKbbHxW7DYlVNeD: UExGSk1yQ3VYcjJCTlpJRkljeFlLYmJIeFc3RFlsVk5lRC43ODA2MDVCQzY5QzZDMjUw
+[2025-11-15 19:08:45][MainThread] response from (get_single_playlist_id): [{'kind': 'youtube#playlist', 'etag': '02TbBqDWCnyd271xC3UKlXczszE', 'id': 'PLiXxTh1BEMqlHu0Kb6nrD-1eieMKXLZ6E'}]
 
-[2025-08-27 16:34:44][MainThread] Done with uploading to None
+[2025-11-15 19:08:45][MainThread] returned playlist_id: PLiXxTh1BEMqlHu0Kb6nrD-1eieMKXLZ6E
 
-[2025-08-27 16:34:44][MainThread] [ERROR] during execution: [WinError 2] Systemet finner ikke angitt fil: 'C:\\Users\\didri\\AppData\\Local\\Temp\\tmpk96abwqi\\temp_audio_1.wav'
+[2025-11-15 19:08:45][MainThread] Video added to playlist PLiXxTh1BEMqlHu0Kb6nrD-1eieMKXLZ6E: UExpWHhUaDFCRU1xbEh1MEtiNm5yRC0xZWllTUtYTFo2RS4wQzZFNDlFNkI3MDBBMDcx
+
+[2025-11-15 19:08:45][MainThread] Done with uploading to MR_Youtube
+
+[2025-11-15 19:16:06][MainThread] 🔄 JSON: Restored 22 video tasks from backup
+
+[2025-11-15 19:16:09][MainThread] Total Used: 0.9GB
+
+[2025-11-15 19:16:09][MainThread] RUNNING --> [run_video_short_creation_thead]: video_url: c:\Users\didri\Documents\Hardship Is An Opportunity To Improve - Bugzy Malone (4K) [yHX6OFGivWo] [1080p].mp4, start_time: 2000.69, end_time: 2027.52
+
+[2025-11-15 19:16:11][MainThread] [run_video_short_creation_thread] Audio duration: 9100.121882s
+
+[2025-11-15 19:16:11][MainThread] Truncated audio path: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\Hardship Is An Opportunity To Improve - Bugzy Malone (4K) [yHX6OFGivWo] [1080p]\truncated_1.wav
+
+[2025-11-15 19:16:11][MainThread] [truncate_audio] Audio metadata: duration=9100.12s, size=1567638.26KB, frame_rate=44100Hz
+
+[2025-11-15 19:16:11][MainThread] [truncate_audio] Calculated: start_sample=88230429, end_sample=89413632
+
+[2025-11-15 19:16:11][MainThread] start_ms: 88230429, end_ms: 89413632
+
+[2025-11-15 19:16:11][MainThread] Global state: - set_current_truncated_audio_path: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\Hardship Is An Opportunity To Improve - Bugzy Malone (4K) [yHX6OFGivWo] [1080p]\truncated_1.wav
+
+[2025-11-15 19:16:11][MainThread] [truncate_audio] Output created: duration=26.83s, size=4621.93KB
+
+[2025-11-15 19:16:11][MainThread] subtitletext cleaned: somebody who's got a lot of
+
+[2025-11-15 19:16:12][MainThread] [INFO] Audio Duration: 26.83 seconds Detected Language: en (confidence: 1.00)
+
+[2025-11-15 19:16:14][MainThread] S['somebody', "who's", 'got', 'a', 'lot', 'of']
+
+
+[2025-11-15 19:16:14][MainThread] T['way', 'from', 'that', 'is', 'that', 'somebody', "who's", 'got', 'a', 'lot', 'of', 'self', 'motivation', 'and', 'discipline', 'and', 'is', 'powered', 'by', 'what', 'they', 'want', 'to', 'achieve', 'still', 'needs', 'a', 'goal', 'to', 'be', 'moving', 'toward', 'in', 'order', 'to', 'drag', 'them', 'through', 'a', 'very', 'difficult', 'time', 'because', 'had', 'you', 'have', 'not', 'had', 'this', 'new', 'challenge', 'this', 'new', 'outcome', 'this', 'new', 'people']
+
+
+[2025-11-15 19:16:14][MainThread] start_phrase subtitletokens: ['somebody', "who's", 'got']
+ end_phrase subtitletokens: ['a', 'lot', 'of']
+
+[2025-11-15 19:16:14][MainThread] match start transcribetokens: 5
+
+[2025-11-15 19:16:14][MainThread] match end transcribe tokens: 11
+
+[2025-11-15 19:16:14][MainThread] [WINDOW] Index 5-11: somebody who's got a lot of
+
+[2025-11-15 19:16:14][MainThread] Word-based similarity: 1.00
+
+[2025-11-15 19:16:14][MainThread] [MATCH] Found exact match: ['somebody', "who's", 'got', 'a', 'lot', 'of']
+
+[2025-11-15 19:16:14][MainThread] final_start_time: 2003.67
+
+[2025-11-15 19:16:14][MainThread] final_end_time: 2005.73
+
+[2025-11-15 19:16:14][MainThread] matched_words: [{'word': 'somebody', 'start': 2.98, 'end': 3.78}, {'word': "who's", 'start': 3.78, 'end': 4.0}, {'word': 'got', 'start': 4.0, 'end': 4.1}, {'word': 'a', 'start': 4.1, 'end': 4.22}, {'word': 'lot', 'start': 4.22, 'end': 4.32}, {'word': 'of', 'start': 4.32, 'end': 4.54}]
+ start : 2003.67
+ end : 2005.73
+
+
+[2025-11-15 19:16:14][MainThread] Transcription complete | device: cuda
+
+[2025-11-15 19:16:14][MainThread] [run_video_short_creation_thread] creating video now... 
+ start_time: 2003.67 
+ end_time: 2005.73,  
+ subtitle_text: [{'word': 'somebody', 'start': 2.98, 'end': 3.78}, {'word': "who's", 'start': 3.78, 'end': 4.0}, {'word': 'got', 'start': 4.0, 'end': 4.1}, {'word': 'a', 'start': 4.1, 'end': 4.22}, {'word': 'lot', 'start': 4.22, 'end': 4.32}, {'word': 'of', 'start': 4.32, 'end': 4.54}]
+
+[2025-11-15 19:16:14][MainThread] YT_channel: LR_Youtube
+
+[2025-11-15 19:16:14][MainThread] {'streams': [{'index': 0, 'codec_name': 'h264', 'codec_long_name': 'H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10', 'profile': 'Constrained Baseline', 'codec_type': 'video', 'codec_tag_string': 'avc1', 'codec_tag': '0x31637661', 'width': 2160, 'height': 1080, 'coded_width': 2160, 'coded_height': 1080, 'closed_captions': 0, 'film_grain': 0, 'has_b_frames': 0, 'pix_fmt': 'yuv420p', 'level': 50, 'color_range': 'tv', 'color_space': 'bt709', 'color_transfer': 'bt709', 'color_primaries': 'bt709', 'chroma_location': 'left', 'field_order': 'progressive', 'refs': 1, 'is_avc': 'true', 'nal_length_size': '4', 'id': '0x1', 'r_frame_rate': '25/1', 'avg_frame_rate': '25/1', 'time_base': '1/12800', 'start_pts': 0, 'start_time': '0.000000', 'duration_ts': 116481024, 'duration': '9100.080000', 'bit_rate': '3155762', 'bits_per_raw_sample': '8', 'nb_frames': '227502', 'extradata_size': 42, 'disposition': {'default': 1, 'dub': 0, 'original': 0, 'comment': 0, 'lyrics': 0, 'karaoke': 0, 'forced': 0, 'hearing_impaired': 0, 'visual_impaired': 0, 'clean_effects': 0, 'attached_pic': 0, 'timed_thumbnails': 0, 'non_diegetic': 0, 'captions': 0, 'descriptions': 0, 'metadata': 0, 'dependent': 0, 'still_image': 0, 'multilayer': 0}, 'tags': {'language': 'und', 'handler_name': 'ISO Media file produced by Google Inc. Created on: 11/10/2025.', 'vendor_id': '[0][0][0][0]', 'encoder': 'Lavc61.11.100 libx264'}}, {'index': 1, 'codec_name': 'mp3', 'codec_long_name': 'MP3 (MPEG audio layer 3)', 'codec_type': 'audio', 'codec_tag_string': 'mp4a', 'codec_tag': '0x6134706d', 'sample_fmt': 'fltp', 'sample_rate': '44100', 'channels': 2, 'channel_layout': 'stereo', 'bits_per_sample': 0, 'initial_padding': 0, 'id': '0x2', 'r_frame_rate': '0/0', 'avg_frame_rate': '0/0', 'time_base': '1/44100', 'start_pts': 0, 'start_time': '0.000000', 'duration_ts': 401315292, 'duration': '9100.120000', 'bit_rate': '128000', 'nb_frames': '348365', 'disposition': {'default': 1, 'dub': 0, 'original': 0, 'comment': 0, 'lyrics': 0, 'karaoke': 0, 'forced': 0, 'hearing_impaired': 0, 'visual_impaired': 0, 'clean_effects': 0, 'attached_pic': 0, 'timed_thumbnails': 0, 'non_diegetic': 0, 'captions': 0, 'descriptions': 0, 'metadata': 0, 'dependent': 0, 'still_image': 0, 'multilayer': 0}, 'tags': {'language': 'und', 'handler_name': 'SoundHandler', 'vendor_id': '[0][0][0][0]'}}], 'format': {'filename': 'c:\\Users\\didri\\Documents\\Hardship Is An Opportunity To Improve - Bugzy Malone (4K) [yHX6OFGivWo] [1080p].mp4', 'nb_streams': 2, 'nb_programs': 0, 'nb_stream_groups': 0, 'format_name': 'mov,mp4,m4a,3gp,3g2,mj2', 'format_long_name': 'QuickTime / MOV', 'start_time': '0.000000', 'duration': '9100.120000', 'size': '3742002064', 'bit_rate': '3289628', 'probe_score': 100, 'tags': {'major_brand': 'isom', 'minor_version': '512', 'compatible_brands': 'isomiso2avc1mp41', 'encoder': 'Lavf61.5.101'}}}
+
+[2025-11-15 19:16:16][MainThread] clip duration: 2.0599999999999454, clip fps: 25.0, clip width: 2160, clip height: 1080, start_time: 2003.67, end_time: 2005.73, video_path: c:\Users\didri\Documents\Hardship Is An Opportunity To Improve - Bugzy Malone (4K) [yHX6OFGivWo] [1080p].mp4
+
+[2025-11-15 19:16:16][MainThread] Clip fps: 25.0
+
+[2025-11-15 19:16:16][MainThread] [Extracting original video frames]  1. frames: 51 frames.
+ [CLIP.ITER] Height: 1080, Width: 2160
+
+[2025-11-15 19:16:18][MainThread] ONNX Runtime providers in use: ['CUDAExecutionProvider', 'CPUExecutionProvider']
+
+[2025-11-15 19:16:18][MainThread] batch: 0 - 8
+
+[2025-11-15 19:16:19][MainThread] batch: 8 - 16
+
+[2025-11-15 19:16:20][MainThread] batch: 16 - 24
+
+[2025-11-15 19:16:21][MainThread] batch: 24 - 32
+
+[2025-11-15 19:16:22][MainThread] batch: 32 - 40
+
+[2025-11-15 19:16:23][MainThread] batch: 40 - 48
+
+[2025-11-15 19:16:23][MainThread] batch: 48 - 56
+
+[2025-11-15 19:16:24][MainThread] 2. cropped frames length: 51
+
+[2025-11-15 19:17:24][MainThread] 🔄 JSON: Restored 22 video tasks from backup
+
+[2025-11-15 19:17:25][MainThread] Total Used: 1.1GB
+
+[2025-11-15 19:17:25][MainThread] RUNNING --> [run_video_short_creation_thead]: video_url: c:\Users\didri\Documents\Hardship Is An Opportunity To Improve - Bugzy Malone (4K) [yHX6OFGivWo] [1080p].mp4, start_time: 2000.69, end_time: 2027.52
+
+[2025-11-15 19:17:27][MainThread] [run_video_short_creation_thread] Audio duration: 9100.121882s
+
+[2025-11-15 19:17:27][MainThread] Truncated audio path: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\Hardship Is An Opportunity To Improve - Bugzy Malone (4K) [yHX6OFGivWo] [1080p]\truncated_1.wav
+
+[2025-11-15 19:17:37][MainThread] 🔄 JSON: Restored 22 video tasks from backup
+
+[2025-11-15 19:17:39][MainThread] Total Used: 1.2GB
+
+[2025-11-15 19:17:39][MainThread] RUNNING --> [run_video_short_creation_thead]: video_url: c:\Users\didri\Documents\Hardship Is An Opportunity To Improve - Bugzy Malone (4K) [yHX6OFGivWo] [1080p].mp4, start_time: 2000.69, end_time: 2027.52
+
+[2025-11-15 19:17:40][MainThread] [run_video_short_creation_thread] Audio duration: 9100.121882s
+
+[2025-11-15 19:17:40][MainThread] Truncated audio path: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\Hardship Is An Opportunity To Improve - Bugzy Malone (4K) [yHX6OFGivWo] [1080p]\truncated_1.wav
+
+[2025-11-15 19:17:41][MainThread] [truncate_audio] Audio metadata: duration=9100.12s, size=1567638.26KB, frame_rate=44100Hz
+
+[2025-11-15 19:17:41][MainThread] [truncate_audio] Calculated: start_sample=88230429, end_sample=89413632
+
+[2025-11-15 19:17:41][MainThread] start_ms: 88230429, end_ms: 89413632
+
+[2025-11-15 19:17:41][MainThread] Global state: - set_current_truncated_audio_path: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\Hardship Is An Opportunity To Improve - Bugzy Malone (4K) [yHX6OFGivWo] [1080p]\truncated_1.wav
+
+[2025-11-15 19:17:41][MainThread] [truncate_audio] Output created: duration=26.83s, size=4621.93KB
+
+[2025-11-15 19:17:41][MainThread] subtitletext cleaned: somebody who's got a lot of
+
+[2025-11-15 19:17:42][MainThread] [INFO] Audio Duration: 26.83 seconds Detected Language: en (confidence: 1.00)
+
+[2025-11-15 19:17:44][MainThread] S['somebody', "who's", 'got', 'a', 'lot', 'of']
+
+
+[2025-11-15 19:17:44][MainThread] T['way', 'from', 'that', 'is', 'that', 'somebody', "who's", 'got', 'a', 'lot', 'of', 'self', 'motivation', 'and', 'discipline', 'and', 'is', 'powered', 'by', 'what', 'they', 'want', 'to', 'achieve', 'still', 'needs', 'a', 'goal', 'to', 'be', 'moving', 'toward', 'in', 'order', 'to', 'drag', 'them', 'through', 'a', 'very', 'difficult', 'time', 'because', 'had', 'you', 'have', 'not', 'had', 'this', 'new', 'challenge', 'this', 'new', 'outcome', 'this', 'new', 'people']
+
+
+[2025-11-15 19:17:44][MainThread] start_phrase subtitletokens: ['somebody', "who's", 'got']
+ end_phrase subtitletokens: ['a', 'lot', 'of']
+
+[2025-11-15 19:17:44][MainThread] match start transcribetokens: 5
+
+[2025-11-15 19:17:44][MainThread] match end transcribe tokens: 11
+
+[2025-11-15 19:17:44][MainThread] [WINDOW] Index 5-11: somebody who's got a lot of
+
+[2025-11-15 19:17:44][MainThread] Word-based similarity: 1.00
+
+[2025-11-15 19:17:44][MainThread] [MATCH] Found exact match: ['somebody', "who's", 'got', 'a', 'lot', 'of']
+
+[2025-11-15 19:17:44][MainThread] final_start_time: 2003.67
+
+[2025-11-15 19:17:44][MainThread] final_end_time: 2005.73
+
+[2025-11-15 19:17:44][MainThread] matched_words: [{'word': 'somebody', 'start': 2.98, 'end': 3.78}, {'word': "who's", 'start': 3.78, 'end': 4.0}, {'word': 'got', 'start': 4.0, 'end': 4.1}, {'word': 'a', 'start': 4.1, 'end': 4.22}, {'word': 'lot', 'start': 4.22, 'end': 4.32}, {'word': 'of', 'start': 4.32, 'end': 4.54}]
+ start : 2003.67
+ end : 2005.73
+
+
+[2025-11-15 19:17:44][MainThread] Transcription complete | device: cuda
+
+[2025-11-15 19:17:44][MainThread] [run_video_short_creation_thread] creating video now... 
+ start_time: 2003.67 
+ end_time: 2005.73,  
+ subtitle_text: [{'word': 'somebody', 'start': 2.98, 'end': 3.78}, {'word': "who's", 'start': 3.78, 'end': 4.0}, {'word': 'got', 'start': 4.0, 'end': 4.1}, {'word': 'a', 'start': 4.1, 'end': 4.22}, {'word': 'lot', 'start': 4.22, 'end': 4.32}, {'word': 'of', 'start': 4.32, 'end': 4.54}]
+
+[2025-11-15 19:17:44][MainThread] YT_channel: LR_Youtube
+
+[2025-11-15 19:17:44][MainThread] {'streams': [{'index': 0, 'codec_name': 'h264', 'codec_long_name': 'H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10', 'profile': 'Constrained Baseline', 'codec_type': 'video', 'codec_tag_string': 'avc1', 'codec_tag': '0x31637661', 'width': 2160, 'height': 1080, 'coded_width': 2160, 'coded_height': 1080, 'closed_captions': 0, 'film_grain': 0, 'has_b_frames': 0, 'pix_fmt': 'yuv420p', 'level': 50, 'color_range': 'tv', 'color_space': 'bt709', 'color_transfer': 'bt709', 'color_primaries': 'bt709', 'chroma_location': 'left', 'field_order': 'progressive', 'refs': 1, 'is_avc': 'true', 'nal_length_size': '4', 'id': '0x1', 'r_frame_rate': '25/1', 'avg_frame_rate': '25/1', 'time_base': '1/12800', 'start_pts': 0, 'start_time': '0.000000', 'duration_ts': 116481024, 'duration': '9100.080000', 'bit_rate': '3155762', 'bits_per_raw_sample': '8', 'nb_frames': '227502', 'extradata_size': 42, 'disposition': {'default': 1, 'dub': 0, 'original': 0, 'comment': 0, 'lyrics': 0, 'karaoke': 0, 'forced': 0, 'hearing_impaired': 0, 'visual_impaired': 0, 'clean_effects': 0, 'attached_pic': 0, 'timed_thumbnails': 0, 'non_diegetic': 0, 'captions': 0, 'descriptions': 0, 'metadata': 0, 'dependent': 0, 'still_image': 0, 'multilayer': 0}, 'tags': {'language': 'und', 'handler_name': 'ISO Media file produced by Google Inc. Created on: 11/10/2025.', 'vendor_id': '[0][0][0][0]', 'encoder': 'Lavc61.11.100 libx264'}}, {'index': 1, 'codec_name': 'mp3', 'codec_long_name': 'MP3 (MPEG audio layer 3)', 'codec_type': 'audio', 'codec_tag_string': 'mp4a', 'codec_tag': '0x6134706d', 'sample_fmt': 'fltp', 'sample_rate': '44100', 'channels': 2, 'channel_layout': 'stereo', 'bits_per_sample': 0, 'initial_padding': 0, 'id': '0x2', 'r_frame_rate': '0/0', 'avg_frame_rate': '0/0', 'time_base': '1/44100', 'start_pts': 0, 'start_time': '0.000000', 'duration_ts': 401315292, 'duration': '9100.120000', 'bit_rate': '128000', 'nb_frames': '348365', 'disposition': {'default': 1, 'dub': 0, 'original': 0, 'comment': 0, 'lyrics': 0, 'karaoke': 0, 'forced': 0, 'hearing_impaired': 0, 'visual_impaired': 0, 'clean_effects': 0, 'attached_pic': 0, 'timed_thumbnails': 0, 'non_diegetic': 0, 'captions': 0, 'descriptions': 0, 'metadata': 0, 'dependent': 0, 'still_image': 0, 'multilayer': 0}, 'tags': {'language': 'und', 'handler_name': 'SoundHandler', 'vendor_id': '[0][0][0][0]'}}], 'format': {'filename': 'c:\\Users\\didri\\Documents\\Hardship Is An Opportunity To Improve - Bugzy Malone (4K) [yHX6OFGivWo] [1080p].mp4', 'nb_streams': 2, 'nb_programs': 0, 'nb_stream_groups': 0, 'format_name': 'mov,mp4,m4a,3gp,3g2,mj2', 'format_long_name': 'QuickTime / MOV', 'start_time': '0.000000', 'duration': '9100.120000', 'size': '3742002064', 'bit_rate': '3289628', 'probe_score': 100, 'tags': {'major_brand': 'isom', 'minor_version': '512', 'compatible_brands': 'isomiso2avc1mp41', 'encoder': 'Lavf61.5.101'}}}
+
+[2025-11-15 19:17:46][MainThread] clip duration: 2.0599999999999454, clip fps: 25.0, clip width: 2160, clip height: 1080, start_time: 2003.67, end_time: 2005.73, video_path: c:\Users\didri\Documents\Hardship Is An Opportunity To Improve - Bugzy Malone (4K) [yHX6OFGivWo] [1080p].mp4
+
+[2025-11-15 19:17:46][MainThread] Clip fps: 25.0
+
+[2025-11-15 19:17:46][MainThread] [Extracting original video frames]  1. frames: 51 frames.
+ [CLIP.ITER] Height: 1080, Width: 2160
+
+[2025-11-15 19:17:48][MainThread] ONNX Runtime providers in use: ['CUDAExecutionProvider', 'CPUExecutionProvider']
+
+[2025-11-15 19:17:48][MainThread] batch: 0 - 8
+
+[2025-11-15 19:17:49][MainThread] batch: 8 - 16
+
+[2025-11-15 19:17:50][MainThread] batch: 16 - 24
+
+[2025-11-15 19:17:50][MainThread] batch: 24 - 32
+
+[2025-11-15 19:17:51][MainThread] batch: 32 - 40
+
+[2025-11-15 19:17:52][MainThread] batch: 40 - 48
+
+[2025-11-15 19:17:53][MainThread] batch: 48 - 56
+
+[2025-11-15 19:17:54][MainThread] 2. cropped frames length: 51
+
+[2025-11-15 19:17:54][MainThread] current YT_count: 0
+
+[2025-11-15 19:17:54][MainThread] Latest_Yt_channel: MR_Youtube
+
+[2025-11-15 19:17:54][MainThread] YT_channel: LR_Youtube
+
+[2025-11-15 19:17:55][MainThread] #######choosing Background Audio########
+
+
+[2025-11-15 19:18:23][MainThread] Emotion recieved from [predict_emotion] --> disgust
+
+[2025-11-15 19:18:23][MainThread] Loading model: gpt-5-minimal from [Background_Audio_Decision_Model]
+
+[2025-11-15 19:18:27][MainThread] Starting [run_multi_Vision_model_conclusion]
+
+[2025-11-15 19:18:27][MainThread] Extracted 10 frames (capped at 64).
+
+[2025-11-15 19:18:45][MainThread] Response from [run_multi_Vision_model_conclusion]: {'path': 'C:\\Users\\didri\\Desktop\\Full-Agent-Flow_VideoEditing\\Video_clips\\audio\\Cinematic Adventure Epic Podcast by Infraction [No Copyright Music] # Storyteller [mp3].mp3', 'song_name': 'Cinematic Adventure Epic Podcast', 'reason': 'Spacious, cinematic piano with low‑to‑moderate arousal supports reflective dialogue while adding purposeful lift; its slightly negative valence keeps the grit without sounding bleak and won’t overpower the voice.', 'editing_notes': 'Start at -17 LUFS, fade in over 4s; gentle rise at the phrase “new challenge” then duck 3–4 dB under lines about difficult times; tail out 2s after final word.'}
+
+[2025-11-15 19:18:45][MainThread] Removed temporary audio file: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\Hardship Is An Opportunity To Improve - Bugzy Malone (4K) [yHX6OFGivWo] [1080p]\truncated_1.wav
+
+[2025-11-15 19:18:45][MainThread] Selected background audio: Cinematic Adventure Epic Podcast
+
+[2025-11-15 19:18:45][MainThread] Background audio path: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\Cinematic Adventure Epic Podcast by Infraction [No Copyright Music] # Storyteller [mp3].mp3 
+ Reason: Spacious, cinematic piano with low‑to‑moderate arousal supports reflective dialogue while adding purposeful lift; its slightly negative valence keeps the grit without sounding bleak and won’t overpower the voice.
+
+
+[2025-11-15 19:18:45][MainThread] [mix_audio] --> (original_audio.duration): 2.0599999999999454, (bg_music.duration): 2.0599999999999454, (mixed_audio.duration): 2.0599999999999454
+
+[2025-11-15 19:18:45][MainThread] (AUDIO DURATION): 2.0599999999999454
+
+[2025-11-15 19:18:45][MainThread] FINAL CLIP DURATION: 2.0599999999999454
 
