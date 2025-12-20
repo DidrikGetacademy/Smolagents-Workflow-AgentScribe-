@@ -20,7 +20,7 @@ Secrets/
 token.pickle
 youtube_token.pickle
 *.pickle
-Secrets/
+Video_clips/Secrets
 *env
 /.env
 /weights
