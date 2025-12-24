@@ -17,7 +17,7 @@ from smolagents.tools import PipelineTool
 from faster_whisper import WhisperModel
 import torch
 import time
-from neon.log import log
+from utility.log import log
 import utility.Global_state as Global_state
 import gc
 import tempfile
@@ -26,6 +26,22 @@ import requests
 import json
 from typing import List ,Dict
 cookie_file_path = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Secrets\youtube.com_cookies.txt"
+load_dotenv()
+
+@tool
+def read_file(text_file: str) -> str:
+    """
+    A tool that reads and returns the content of a text file.
+    Args:
+        text_file (str): The path to the text file.
+    Return:
+        str: Publihing date of the latest video uploaded.
+    """
+    with open(text_file, "r", encoding="utf-8") as f:
+        content = f.read()[:3000]
+    return content
+
+
 
 
 
@@ -34,6 +50,16 @@ cookie_file_path = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Secrets
 def Fetch_top_trending_youtube_videos(Search_Query: str) -> dict:
     """
         A tool for Fetching enriched metadata + stats for the top trending YouTube videos for a query, including category names, tags, duration, views, likes, comments, and channel stats.
+        IMPORTANT: Avoid overly specific or long queries with many distinct concepts.
+        If the search returns no results, it means the query was too specific.
+        The tool will return a message indicating this, and you should retry with a broader, simpler query.
+
+        BEST PRACTICES FOR QUERY:
+        - Keep it short (1-3 keywords).
+        - Focus on the core topic from the intent of the transcript (e.g.,"Motivation", "Discipline").
+        - Avoid combining unrelated concepts (e.g., "motivation proof over validation discipline action bias").
+        - Broad queries yield the best trending results.
+
         Args:
         Search_Query (str): Topic or keywords to search (e.g. “Motivational”, “Tech Reviews”).
 
@@ -43,7 +69,6 @@ def Fetch_top_trending_youtube_videos(Search_Query: str) -> dict:
         - statistics: viewCount, likeCount, commentCount
     """
 
-    load_dotenv()
     Api_key = os.getenv("YOUTUBE_API_KEY")
     youtube = build("youtube", "v3", developerKey=Api_key)
     if not Api_key:
@@ -56,16 +81,18 @@ def Fetch_top_trending_youtube_videos(Search_Query: str) -> dict:
             type="video",
             regionCode="US",
             order="viewCount",
-            maxResults=5
+            maxResults=6
         ).execute()
+
+    items = search_resp.get("items", [])
 
 
     #Extracts the videoId of each video in items
-    video_ids = [item["id"]["videoId"] for item in  search_resp.get("items",[])]
+    video_ids = [item["id"]["videoId"] for item in items]
 
     #Early exit if no videos is found!
     if not video_ids:
-        return {"items": []}
+        return {"items": [], "message": f"No videos found for query: '{Search_Query}'. The query may be too specific. Try call the tool again but  reduce the number of keywords."}
 
 
     #Fetches snippet + statistics + contentdetails --> fetches mote stats and details --> (title, stats,duration) using the video id's
@@ -164,14 +191,11 @@ class ChunkLimiterTool(Tool):
         self.called = False
         self.saved_file_path = None
 
-    def reset(self):
-        self.called = False
+
 
 
     def forward(self, file_path: str, max_chars: int) -> str:
-        if self.called:
-            raise Exception("ChunkLimiterTool was already called in this reasoning step.")
-        self.called = True
+
 
         if file_path:
             self.saved_file_path = file_path
@@ -186,6 +210,7 @@ class ChunkLimiterTool(Tool):
 
         chunk_lines = []
         total_len = 0
+        chunk = ""
         i = 0
 
         while i < len(lines):
@@ -352,25 +377,33 @@ def transcribe_audio_to_txt(video_paths):
 
 
 @tool
-def Read_transcript(transcript_path: str, start_count: int = 0) -> str:
-    """Reads up to 1000 characters from a transcript starting at a given position, note: If more content exists, a message is added to indicate that you must call the function again.
+def Read_transcript(transcript_path: str, start_count: int = 0, chunk_size: int = 1000) -> dict:
+    """Reads a chunk from a transcript starting at a given position.
     Args:
-        transcript_path (str): The path to the transcript file.
-        start_count (int): The position in the file to start reading from.
+        transcript_path (str): Path to the transcript file.
+        start_count (int): Byte offset to start reading from.
+        chunk_size (int): Number of characters to read (default 1000).
 
     Returns:
-        str: A chunk of the transcript (max 1000 chars) and a message if there's more content.
+        dict: {
+            "text": str,                 # the transcript chunk
+            "next_start": int,           # position to use for next call
+            "has_more": bool             # whether more content remains
+        }
     """
-    chunk_size = 1000
-    with open(transcript_path , "r") as file:
+    with open(transcript_path, "r", encoding="utf-8") as file:
         file.seek(start_count)
         content = file.read(chunk_size + 1)
 
-        if len(content) > chunk_size:
-            output = content[:chunk_size] + "\n\nThe transcript has more content please run the `Read_transcript` tool call again"
-        else: output = content
+    has_more = len(content) > chunk_size
+    text = content[:chunk_size] if has_more else content
+    next_start = start_count + len(text)
 
-        return output
+    return {
+        "text": text,
+        "next_start": next_start,
+        "has_more": has_more,
+    }
 
 
 
@@ -472,39 +505,43 @@ def parse_multiline_block(block_text):#DIDRIK
 
 
 
+
+
+
+
+
+
+
 @tool
-def create_motivationalshort(text: str) -> None:
+def create_motivationalshort(text: str,text_file: str) -> None:
         """
-        Tool that creates a motivational shorts video.
-        You must Explicitly call correct Python syntax for string arguments in tool calls here is an exsample:
+        Save a single, self-contained motivational passage for short-video creation.
 
-        This is correct:
-            create_motivationalshort(text="....")
+        Rules (summary):
+        - Verbatim only: copy text exactly as in the transcript; no paraphrasing, trimming, or cleanup.
+        - Timestamps: include every "[SSSS.SSs - SSSS.SSs]" segment in order. If multi-line, merge into one string preserving order and spacing.
+        - One call per passage: do not split a coherent passage across multiple calls.
+        - Pass `text_file` by variable name (e.g., text_file=text_file), not a literal path.
 
-        This is invalid:
-            create_motivationalshort(text="..."])
+        Example:
+            create_motivationalshort(
+                text="[1478.88s - 1483.00s] Line 1 [1483.58s - 1489.74s] Line 2",
+                text_file=text_file,
+            )
+
         Args:
-            text (str): The complete input text for the motivational short.
-                The text must include the entire message — as one complete
-                thought, quote, or motivational statement — along with
-                timestamps for each line. The text must be enclosed within
-                the markers (===START_TEXT===) and (===END_TEXT===) in the
-                following format:
-                    ===START_TEXT===
-                    ...
-                    [start_time - end_time] Line 1
-                    [start_time - end_time] Line 2
-                    ...
-                    ===END_TEXT===
-
-                All content between START_TEXT and END_TEXT will be treated
-                as a single cohesive message and analyzed as one unit.
+            text (str): Complete passage including all required timestamps
+            text_file (str): Path to the text file where the passage will be appended.
 
         """
-        with open (r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\Hardship Is An Opportunity To Improve - Bugzy Malone (4K) [yHX6OFGivWo] [1080p]\verify_agent_verified.txt", "a", encoding="utf-8") as f:
-            f.write(f"{text}\n")
+        with open (text_file, "a", encoding="utf-8") as f:
+            log(f"Writing saved motivational text from agent to: {text_file}\n text: {text}")
+            f.write(f"===START_TEXT===")
+            f.write(f"{text}")
+            f.write(f"===END_TEXT===\n")
         try:
             start_time, end_time, new_text = parse_multiline_block(text)
+            log(f"start time: {start_time}, end_time: {end_time}, new_text: {new_text}")
         except Exception as e:
              log(f"Error during [parse_multiline_block]: {str(e)}")
 
@@ -517,11 +554,11 @@ def create_motivationalshort(text: str) -> None:
         try:
             log(f"\n now Added work to QUEUE: \n video url: {video_url}\n, audio_path: {audio_path} \n start_time: {start_time}s \n end_time {end_time}s\nOriginal text: {text}")
 
-            Global_state.video_task_que.put((video_url, audio_path, start_time, end_time, new_text))
+         #   Global_state.video_task_que.put((video_url, audio_path, start_time, end_time, new_text))
             count = Global_state.get_current_count()
             count +=1
             log(f"Added VideoWork to videotask Queue:\n{video_url}\nAudio_path:{audio_path}\n{start_time}\n {end_time}\n {new_text}\n  Amount of added videowork to queue: {count}\n ")
-            Delete_rejected_line(text)
+
             log(f"Current videos added to que for proccessing: {count}")
             Global_state.set_current_count(count)
 
@@ -530,66 +567,15 @@ def create_motivationalshort(text: str) -> None:
              log(f"Error addng to queue: {str(e)}")
 
 
-@tool
-def SaveMotivationalText(text: str, text_file: str) -> None:
-    """A function/tool that saves qualifying motivational texts for a punchy 15-30 second shorts video.
-    Args:
-        text (str): The complete motivational text block to save.
-            - The text must evoke emotional energy (e.g., hope, empathy, vulnerability) alongside inspiration, making it suitable for grabbing a listener's attention in a short video.
-            - The text must be a self-contained, inspirational passage that encourages action, resilience, discipline, perseverance, or personal growth, suitable for a short video without relying on prior context or external references.
-            - Every line must include the exact timestamp range from the original chunk (e.g., '[start1 - end1] Text1 [start2 - end2] Text2').
-            - You must provide the text exactly as it appears in the chunk, preserving every word, space, and punctuation, with no rephrasing, omissions, or alterations, except that leading conjunctions or transitional words (e.g., 'And,' 'So,' 'But') may be removed if doing so makes the text fully self-contained without changing the core motivational message.
-            - If the saved text begins or ends in the middle of a line, the timestamp from that line must still be included.
-            - The number of lines is not fixed; include all lines (with timestamps) that the text spans, whether it is one line or many.
-            - Wrap the entire block in triple quotes if it contains commas, quotes, or line breaks to ensure proper handling in Python.
-        text_file (str): The path to the text file where the motivational text will be saved.
-    """
-
-    with open(text_file, "a", encoding="utf-8") as f:
-                f.write("===START_TEXT===")
-                f.write(text.strip())
-                f.write("===END_TEXT===\n")
-                log(f"text: {text}")
 
 
 
 
 
 
-@tool
-def Delete_rejected_line(text: str) -> None:
-        """  Deletes a block from the text file that contains the given inner text,
-             by removing the whole block: ===START_TEXT=== text... ===END_TEXT===
-        Args:
-            text: The line to delete (i.e., considered rejected/not valid) Format:
-              ===START_TEXT===
-              [start_time - end_time] actual text here... [start_time - end_time] ....
-              ===END_TEXT===
-        """
-        import re
-        log(f"\n[Delete_rejected_line] text into func: {text}")
-        text_file = Global_state.get_current_textfile()
-        log(f"[Delete_rejected_line] path to textfile: {text_file}")
 
-        with open(text_file, 'r', encoding="utf-8") as f:
-                    content = f.read()
 
-        escaped_text = re.escape(text.strip())
 
-        pattern = rf'===START_TEXT\s*.*?{escaped_text}.*?\s*===END_TEXT===\s*'
-
-        new_content, num_subs = re.subn(pattern, '', content, flags=re.DOTALL)
-
-        if num_subs == 0:
-            log("[Delete_rejected_line] No matching block found — nothing deleted.")
-            return
-
-        with open(text_file, 'w', encoding="utf-8") as f:
-            f.write(new_content)
-
-        with open (r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\Hardship Is An Opportunity To Improve - Bugzy Malone (4K) [yHX6OFGivWo] [1080p]\verify_agent_declined.txt", "a", encoding="utf-8") as f:
-            f.write(f"{text}\n")
-        log(f"[Delete_rejected_line] Deleted {num_subs} block(s) containing the text.")
 
 
 
@@ -603,10 +589,11 @@ def open_work_file(work_queue_folder: str) -> str:
      text_list = []
      count = 1
      import re
+     text_list.append(f"Below are the motivational snippets found in the work queue folder. : {work_queue_folder}")
      for subdir in os.listdir(work_queue_folder):
           subdir_path = os.path.join(work_queue_folder,subdir)
           if os.path.isdir(subdir_path):
-            copy_path = os.path.join(subdir_path, "agent_saving_path_copy.txt")
+            copy_path = os.path.join(subdir_path, "agent_saving_path.txt")
             audio_path = os.path.join(subdir_path, f"{subdir}.wav")
             video_path = os.path.join(subdir, f"c:/Users/didri/Documents/{subdir}.mp4")
             if os.path.exists(copy_path):
@@ -641,7 +628,6 @@ def open_work_file(work_queue_folder: str) -> str:
 
 
 
-### later i need to add possibility of more clips in middle if video_paths are > 3.
 @tool
 def montage_short_creation_tool(montage_list: List[Dict[str,str]]) -> str:
         """A tool that creates a montage-style short video by combining words, sentences, or complete snippets from multiple input sources.
@@ -658,6 +644,7 @@ def montage_short_creation_tool(montage_list: List[Dict[str,str]]) -> str:
                 - "video_url" (str): Path to the source video file.
                 - "audio_path" (str): Path to the audio file associated with the clip.
                 - "order" (str): Position of the clip in the montage sequence ("start", "middle", "ending").
+                - "middle_order" (int, optional): If `order` is "middle" and there are multiple middle clips, this indicates the sequence of the middle clips (1 for first middle clip, 2 for second, etc.). Omit or set to None if not applicable.
                 - "text" (str): Annotated text with embedded timestamps indicating the portion of the clip to extract.
                 - "ID" (float): A unique identifier.
                     - The letter N represents the montage sequence number (1 = first montage, 2 = second montage, 3 = third montage, etc.).
@@ -671,19 +658,20 @@ def montage_short_creation_tool(montage_list: List[Dict[str,str]]) -> str:
                 - YT_channel (str): The YouTube channel choosen for uploading the montage short. MR_Youtube, LRS_Youtube, LM_Youtube, or  LR_Youtube
 
          Example correct output:
-            run_montage_short_creation([{"audio_path": r"...","order": "start","video_url": r"...","text": "...","ID": 1.1},{"audio_path": r"...","order": "middle","video_url": r"...","text": "...","ID": 1.2},{"audio_path": r"...","order": "ending","video_url": r"...","text": "...","ID": 1.3}])
-            run_montage_short_creation([{"audio_path": r"...","order": "start","video_url": r"...","text": "...","ID": 2.1},{"audio_path": r"...","order": "middle","video_url": r"...","text": "...","ID": 2.2},{"audio_path": r"...","order": "ending","video_url": r"...","text": "...","ID": 2.3}])
-            run_montage_short_creation([{"audio_path": r"...","order": "start","video_url": r"...","text": "...","ID": 3.1},{"audio_path": r"...","order": "middle","video_url": r"...","text": "...","ID": 3.2},{"audio_path": r"...","order": "ending","video_url": r"...","text": "...","ID": 3.3}])
+            run_montage_short_creation([{"audio_path": r"...","order": "start","video_url": r"...","text": "...","ID": 1.1},{"audio_path": r"...","order": "middle","video_url": r"...","text": "...","ID": 1.2,"middle_order": 1},{"audio_path": r"...","order": "middle","video_url": r"...","text": "...","ID": 3.2,"middle_order": 2},{"audio_path": r"...","order": "ending","video_url": r"...","text": "...","ID": 1.3}])
+            run_montage_short_creation([{"audio_path": r"...","order": "start","video_url": r"...","text": "...","ID": 2.1},{"audio_path": r"...","order": "middle","video_url": r"...","text": "...","ID": 2.2, "middle_order": 1},{"audio_path": r"...","order": "middle","video_url": r"...","text": "...","ID": 3.2,"middle_order": 2},{"audio_path": r"...","order": "ending","video_url": r"...","text": "...","ID": 2.3}])
+            run_montage_short_creation([{"audio_path": r"...","order": "start","video_url": r"...","text": "...","ID": 3.1},{"audio_path": r"...","order": "middle","video_url": r"...","text": "...","ID": 3.2,"middle_order": 1},{"audio_path": r"...","order": "middle","video_url": r"...","text": "...","ID": 3.2,"middle_order": 2},{"audio_path": r"...","order": "ending","video_url": r"...","text": "...","ID": 3.3}])
         """
         items_queued = 0
         for item in montage_list:
              video_path = item["video_url"]
+             middle_order = item["middle_order"]
              audio = item["audio_path"]
              order = item["order"]
              text = item["text"]
              Montage_ID = item["ID"]
              YT_channel = item["YT_channel"]
-             log(f"\n[montage_short_creation_tool] Item in montage_list:\n video_path: {video_path}, \n audio: {audio}, \n order: {order}, \n text: {text}, \n Montage_ID: {Montage_ID}, \n YT_channel: {YT_channel}")
+             log(f"\n[montage_short_creation_tool] Item in montage_list:\n video_path: {video_path}, \n audio: {audio}, \n order: {order}, \n text: {text}, \n Montage_ID: {Montage_ID}, \n YT_channel: {YT_channel}, middle_order: {middle_order} ")
 
              start_time, end_time, new_text = parse_multiline_block(text)
              if order not in ("start", "middle", "ending"):
@@ -702,18 +690,248 @@ def montage_short_creation_tool(montage_list: List[Dict[str,str]]) -> str:
                     new_text,
                     order,
                     Montage_ID,
-                    YT_channel
+                    YT_channel,
+                    middle_order
                 ))
                 items_queued += 1
              except Exception as e:
-                log(f"Error adding to queue.")
+                log(f"Error adding to queue: {str(e)}")
 
              log(f"Added to Montage_clip_task_Que: video_path: {video_path}, audio: {audio}, start_time: {start_time}, end_time: {end_time}, order: {order}, Montage_ID: {Montage_ID}")
         log(f"items queued: {items_queued}")
 
 
 
+@tool
+def Check_Already_used_videos(video_id: str, channel_name: str) -> bool:
+    """
+    A tool that checks if a YouTube video ID has already been used by reading from a JSON file.
 
+    Args:
+        video_id (str): The YouTube video ID to check.
+        channel_name (str): The name of the channel.
+    Returns:
+        bool: True if the video ID has been used, False otherwise.
+    """
+    import json
+    youtube_folder = os.path.join(REPO_ROOT, "Youtube", channel_name)
+    json_file = os.path.join(youtube_folder, "used_videos.json")
+
+    if not os.path.exists(json_file):
+        return False
+
+    try:
+        with open(json_file, "r", encoding="utf-8") as f:
+            used_videos = json.load(f)
+
+        for video in used_videos:
+            if video.get("video_id") == video_id:
+                return True
+    except Exception as e:
+        log(f"Error reading used_videos.json: {e}")
+        return False
+
+    return False
+
+
+@tool
+def update_used_videos(video_id: str, channel_name: str, title: str, published_at: str, description: str) -> None:
+    """
+    A tool that updates the record of used YouTube video IDs in a JSON file.
+
+    Args:
+        video_id (str): The YouTube video ID to add to the used list.
+        channel_name (str): The name of the channel.
+        title (str): The title of the video.
+        published_at (str): The publication date.
+        description (str): The video description.
+    Returns:
+        None
+    """
+    import json
+    import time
+
+    youtube_folder = os.path.join(REPO_ROOT, "Youtube", channel_name)
+    os.makedirs(youtube_folder, exist_ok=True)
+
+    json_file = os.path.join(youtube_folder, "used_videos.json")
+
+    used_videos = []
+    if os.path.exists(json_file):
+        try:
+            with open(json_file, "r", encoding="utf-8") as f:
+                used_videos = json.load(f)
+        except Exception:
+            used_videos = []
+
+
+    if any(v.get("video_id") == video_id for v in used_videos):
+        log(f"Video {video_id} already exists in records for {channel_name}.")
+        return
+
+    new_entry = {
+        "video_id": video_id,
+        "title": title,
+        "published_at": published_at,
+        "description": description,
+        "added_at": time.strftime("%Y-%m-%d %H:%M:%S")
+    }
+
+    used_videos.append(new_entry)
+
+    with open(json_file, "w", encoding="utf-8") as f:
+        json.dump(used_videos, f, indent=4, ensure_ascii=False)
+
+    log(f"Updated used_videos.json for {channel_name} with video {video_id}")
+
+
+
+
+
+
+
+@tool
+def youtube_Searcher(channel_name: str, search_query: str = None, max_results: int = 10, order: str = "relevance") -> dict:
+    """
+    A tool that retrieves information about videos from a specific YouTube channel.
+    It can either list the latest uploads or search for videos matching a query within the channel.
+
+    Args:
+        channel_name (str): The name of the channel to look up (e.g., "Chris_williamson", "Jay_shetty", "Mel Robbins").
+        search_query (str, optional): A keyword or topic to search for within the channel's videos. If None, fetches latest uploads (unless order is 'viewCount' or 'rating').
+        max_results (int, optional): The maximum number of videos to return. Defaults to 10.
+        order (str, optional): The order of the search results. Allowed values: 'date', 'rating', 'relevance', 'title', 'videoCount', 'viewCount'.
+                               Defaults to 'relevance'. Use 'viewCount' to find the most popular videos.
+
+    Returns:
+        dict: A dictionary containing channel statistics and a list of videos (with titles, descriptions, etc.).
+    """
+    Youtube_channels = {
+        "Chris_williamson": 'UCIaH-gZIVC432YRjNVvnyCA',
+        "Jay_shetty": 'UCbk_QsfaFZG6PdQeCvaYXJQ',
+        'Mel_Robbins': 'UCk2U-Oqn7RXf-ydPqfSxG5g',
+        'Diary_ceo': 'UCGq-a57w-aPwyi3pW7XLiHw',
+    }
+
+    if channel_name not in Youtube_channels:
+        return {"error": f"Channel '{channel_name}' not found in the available list. Available channels: {list(Youtube_channels.keys())}"}
+
+    channel_id = Youtube_channels[channel_name]
+
+    Api_key = os.getenv("YOUTUBE_API_KEY")
+    if not Api_key:
+        raise ValueError("YOUTUBE_API_KEY is not set in environment variables.")
+
+    youtube = build("youtube", "v3", developerKey=Api_key)
+
+    channel_response = youtube.channels().list(
+        part="snippet,statistics,contentDetails",
+        id=channel_id
+    ).execute()
+
+    if not channel_response.get("items"):
+        return {"error": f"No details found for channel ID {channel_id}"}
+
+    channel_info = channel_response["items"][0]
+    uploads_playlist_id = channel_info["contentDetails"]["relatedPlaylists"]["uploads"]
+
+    stats = {
+        "title": channel_info["snippet"]["title"],
+        "description": channel_info["snippet"]["description"],
+        "subscriberCount": channel_info["statistics"]["subscriberCount"],
+        "videoCount": channel_info["statistics"]["videoCount"],
+        "viewCount": channel_info["statistics"]["viewCount"]
+    }
+
+    videos = []
+
+
+    use_search_api = (search_query is not None) or (order in ["viewCount", "rating", "title", "videoCount"])
+
+    if use_search_api:
+        # Search within the channel
+        search_params = {
+            "part": "snippet",
+            "channelId": channel_id,
+            "maxResults": max_results,
+            "order": order,
+            "type": "video"
+        }
+        if search_query:
+            search_params["q"] = search_query
+
+        search_response = youtube.search().list(**search_params).execute()
+
+        for item in search_response.get("items", []):
+            videos.append({
+                "title": item["snippet"]["title"],
+                "videoId": item["id"]["videoId"],
+                "publishedAt": item["snippet"]["publishedAt"],
+                "description": item["snippet"]["description"]
+            })
+    else:
+
+        playlist_response = youtube.playlistItems().list(
+            part="snippet,contentDetails",
+            playlistId=uploads_playlist_id,
+            maxResults=max_results
+        ).execute()
+
+        for item in playlist_response.get("items", []):
+            videos.append({
+                "title": item["snippet"]["title"],
+                "videoId": item["contentDetails"]["videoId"],
+                "publishedAt": item["snippet"]["publishedAt"],
+                "description": item["snippet"]["description"]
+            })
+
+    return {
+        "channel_statistics": stats,
+        "videos": videos
+    }
+
+
+
+
+
+@tool
+def youtube_downloader(VideoId: int) -> str:
+    """
+    A tool that Downloads video based on a YouTube Video ID.
+
+    Args:
+        VideoId (int): The ID of the YouTube video to download.
+
+    Returns:
+        str: The path to the downloaded video file.
+    """
+    yt_dlp_opts = {
+        'quiet': False,
+        'nocheckcertificate': True,
+        'format':'best',
+        'debuge': True,
+        "cookiefile": '../youtube.com_cookies.txt',
+        'cookiesfrombrowser': True,
+        'extractor_args':{
+            'youtube': {
+                'player_client': ['default','mweb'],
+            }
+        }
+    }
+    with yt_dlp.YoutubeDL(yt_dlp_opts) as ytdlp:
+        try:
+            video_url = f"https://www.youtube.com/watch?v={VideoId}"
+            info_dict = ytdlp.extract_info(video_url, download=True)
+            video_title = info_dict.get('title', None)
+            sanitized_title = "".join(c for c in video_title if c.isalnum() or c in (' ', '_', '-')).rstrip()
+            output_path = ytdlp.prepare_filename(info_dict)
+            new_output_path = os.path.join(os.path.dirname(output_path), f"{sanitized_title}.mp4")
+            os.rename(output_path, new_output_path)
+            log(f"Downloaded video to: {new_output_path}")
+            return new_output_path
+        except ytdlp.utils.DownloadError as e:
+            log(f"DownloadError: {str(e)}")
+            return None
 
 
 
@@ -977,13 +1195,13 @@ class SpeechToText_short_creation_thread(PipelineTool):
                 patience=1.5,
                 vad_filter=True,
                 vad_parameters={
-                    "threshold": 0.6,                 # more strict VAD
-                    "min_silence_duration_ms": 400,   # require a real pause
-                    "min_speech_duration_ms": 250,    # stabilize speech regions
+                    "threshold": 0.6,
+                    "min_silence_duration_ms": 400,
+                    "min_speech_duration_ms": 250,
                     "speech_pad_ms": 100,
                     },
                 no_speech_threshold=0.6,
-
+                initial_prompt=subtitle_text
             )
 
             log(f"[INFO] Audio Duration: {info.duration:.2f} seconds Detected Language: {info.language} (confidence: {info.language_probability:.2f})")
@@ -1024,14 +1242,6 @@ class SpeechToText_short_creation_thread(PipelineTool):
             window_tokens = transcribed_tokens[match_start:match_end]
             log(f"[WINDOW] Index {match_start}-{match_end}: {' '.join(window_tokens)}")
 
-            commonwords = set(subtitle_tokens) & set(window_tokens)
-            similarity = len(commonwords) /len(set(subtitle_tokens)) if subtitle_tokens else 0
-            log(f"Word-based similarity: {similarity:.2f}")
-
-            if similarity < 0.6:
-                log(f"Match found but similarity is too low: {similarity:.2f}")
-                raise ValueError(f"Match found but similarity is too low: {similarity:.2f}")
-
             matched_words = [
                         {
                             "word": self.clean_word(all_words[i].word),
@@ -1043,7 +1253,7 @@ class SpeechToText_short_creation_thread(PipelineTool):
 
             log(f"[MATCH] Found exact match: {[w['word'] for w in matched_words]}")
 
-            final_start_time = original_start_time + float(all_words[match_start].start)
+            final_start_time = original_start_time + float(all_words[match_start].start) - 0.2
             log(f"final_start_time: {final_start_time}")
 
 
@@ -1161,42 +1371,43 @@ class SpeechToTextToolTEST(PipelineTool):
 
     }
     output_type = "string"
-    def setup(self):
 
+    def setup(self):
         self.model = WhisperModel(
-                model_size_or_path=self.default_checkpoint,
-                device="cuda",
-                compute_type="int8_float16"
-                )
+            model_size_or_path=self.default_checkpoint,
+            device="auto",
+            compute_type="int8_float16"
+            )
+
+
     def forward(self, inputs):
         audio_path = inputs["audio"]
         print(f"Audio_path speech to text tool: {audio_path}")
 
-
-        segments, info = self.model.transcribe(
-            audio_path,
-            initial_prompt="Motivational podcast"
-        )
-
-
-        Transcript = ""
         try:
+            segments, _= self.model.transcribe(
+                audio_path,
+                initial_prompt="Motivational podcast",
+                language="en",
+                temperature=0.0,
+                vad_filter=True,
+            )
+
+
+            Transcript = ""
             for segment in segments:
+                log(f" text: {segment.text.strip()}")
                 if hasattr(segment, "text"):
                     Transcript += segment.text + " "
                 else:
-                    Transcript += str(segment) + " "
-
-
+                    print(f"Segment missing text attribute: {segment}")
         except Exception as e:
-                    print(f"error during segments: {str(e)}")
+             log(f"Error during transcription: {str(e)}")
 
         finally:
-            print(f"transcription complete ! device  {self.device}")
-            if self.device == "cuda":
-                torch.cuda.empty_cache()
-                import gc
-                gc.collect()
+            log(f"transcription complete")
+            log(f"Transcript: {Transcript}")
+            del self.model
 
         return Transcript.strip()
 
@@ -1212,121 +1423,29 @@ class SpeechToTextToolTEST(PipelineTool):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#################################
-# Background Music Automation  #
-#################################
-def run_multi_Vision_model_conclusion(video_path , Additional_content,Global_model, already_uploaded_videos) -> str:
-    """
-    Generates a detailed motivational summary of a podcast using both text and audiovisual inputs.
-    The function leverages a Vision-Audio model to process the video and audio content,
-    and a text summarization pipeline to produce a concise, motivational summary.
-
-    Args:
-        _text: The transcript or textual content of the podcast to summarize.
-        video_path: Path to the video file that is being uploaded of the podcast, used to extract visual frames for context.
-        audio_path: Path to the audio file that is being uploaded of the podcast, used for extracting audio features for context.
-
-    Returns:
-        A string containing a detailed summary of the podcast, highlighting motivational points, emotions,
-        and actionable advice. If summarization fails, a message indicating the failure is returned.
-    """
-    from smolagents import CodeAgent,FinalAnswerTool
+def extract_window_frames(video_path: str, start_time: float, end_time: float, max_frames: int = 5):
     import cv2
     from PIL import Image
-    import yaml
-
-    from PIL import Image
-
-    frames = []
+    import numpy as np
     cap = cv2.VideoCapture(video_path)
-    while len(frames) < 10:
-        ret, frame = cap.read()
-        if not ret:
+    fps = cap.get(cv2.CAP_PROP_FPS) or 30
+    start_f = int(start_time * fps)
+    end_f = int(end_time * fps)
+    if end_f <= start_f:
+        cap.release()
+        return []
+    indices = np.linspace(start_f, end_f - 1, num=max_frames, dtype=int)
+    frames = []
+    for idx in indices:
+        cap.set(cv2.CAP_PROP_POS_FRAMES, int(idx))
+        ok, frame = cap.read()
+        if not ok:
             break
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         frames.append(Image.fromarray(frame))
     cap.release()
-    log(f"Extracted {len(frames)} frames (capped at 64).")
-
-
-    with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Prompt_templates\system_prompt_background_music_analytic.yaml", "r", encoding="utf-8") as r:
-            prompt = yaml.safe_load(r)
-
-    with open(already_uploaded_videos, "r", encoding="utf-8") as f:
-            uploaded_videos_content = f.read()
-
-
-
-    agent = CodeAgent(
-        model=Global_model,
-        add_base_tools=True,
-        verbosity_level=1,
-        prompt_templates=prompt,
-        tools=[FinalAnswerTool()],
-        additional_authorized_imports=['typing'],
-        max_steps=3,
-    )
-
-    user_message = f"""Analyze the following inputs to select the best background music:
-    - Podcast Transcript: ({Additional_content["Transcript"]}) -  (Use this to identify the story, key motivational points, and overall arc.)
-
-    - Detected Speech Emotion: ({Additional_content["emotion"]})  (Raw tone from audio model; integrate but prioritize motivational intent if conflicting.)
-
-    - Video Frames and Audio: Observe all the  provided images for visual style, speaker energy, and pacing. Listen to the audio for vocal delivery, pauses, and intensity.
-
-    - Candidate Background Tracks: ({Additional_content["videolist"]})  (List with metadata; select exactly one by its number.)
-
-    - Previously Used Tracks/songs: \n({uploaded_videos_content})\n  (Avoid repeating any tracks already used in prior videos. the limit before you are allowed to reuse is 3 videos ago.)
-    Follow the reasoning process step-by-step in your thinking, but output only the JSON with your final choice. Ensure the music enhances clarity, emotion, and motivation for the audience.
-
-    -Respond ONLY with valid JSON  object inside your `final_answer` tool
-        - Structure:  "path": "<exact file path from videolist>",  "song_name": "The name of the song choosen","reason": "<concise explanation, 1-3 sentences>", "editing_notes": "<optional suggestions, e.g., 'Fade in at 5s, duck volume during key speeches'>", "lut_path": <The path for choosen lut for the shorts video>"
-        - The "path" field must match the "path" value from one of the tracks in the provided videolist exactly.
-    """
-    response =  agent.run(task=user_message, images=frames)
-
-    return response
+    log(f"Extracted {len(frames)} frames in window [{start_time:.2f}s - {end_time:.2f}s].")
+    return frames
 
 
 
@@ -1365,18 +1484,18 @@ def predict_emotion(audio_path):
 
 
 
-def Background_Audio_Decision_Model(audio_file: str, video_path: str,already_uploaded_videos: str):
-    from utility.Global_state import videolist
+def Background_Audio_Decision_Model(audio_file: str, video_path: str,already_uploaded_videos: str,start_time: float,end_time: float):
+    from utility.Global_state import Music_list
     from App import Reload_and_change_model
 
-    tool = SpeechToTextToolTEST()
-    tool.device = "cuda"
-    tool.setup()
     try:
+        tool = SpeechToTextToolTEST()
+        tool.setup()
         Transcript = tool.forward({"audio": audio_file})
-        print(f"Transcript: {Transcript}")
+        del tool
+        log(f"Transcript: {Transcript}")
     except Exception as e:
-        log(f"Error during SpeechToTextTool")
+        log(f"Error during SpeechToTextTool {str(e)}")
 
     try:
         emotion = predict_emotion(audio_file)
@@ -1384,9 +1503,9 @@ def Background_Audio_Decision_Model(audio_file: str, video_path: str,already_upl
     except Exception as e:
         log(f"Error during prediction of emotion: {str(e)}")
 
-    def format_videolist(videolist):
+    def format_videolist(Music_list):
         formatted = "Candidate Background Tracks: \n"
-        for i, track in enumerate(videolist):
+        for i, track in enumerate(Music_list):
                 formatted += f"Track {i}:\n"
                 formatted += f"song name: {track['song_name']}\n"
                 formatted += f"  Path: {track['path']}\n"
@@ -1399,28 +1518,36 @@ def Background_Audio_Decision_Model(audio_file: str, video_path: str,already_upl
                 formatted += f"  Tags: {', '.join(track['Tags'])}\n\n"
         return formatted
 
-    _videolist = format_videolist(videolist)
+    _videolist = format_videolist(Music_list)
 
     content = {
         "Transcript": Transcript,
         "emotion": emotion,
         "videolist": _videolist
     }
+    response = {}
     try:
          Global_model = Reload_and_change_model(model_name="gpt-5-minimal",message="Loading model: gpt-5-minimal from [Background_Audio_Decision_Model]")
          log("Starting [run_multi_Vision_model_conclusion]")
-         response = run_multi_Vision_model_conclusion(
+         from Agents.Vision_agent import run_multi_Vision_model_agent
+         response = run_multi_Vision_model_agent(
             video_path=video_path,
             Additional_content=content,
             Global_model=Global_model,
-             already_uploaded_videos=already_uploaded_videos
+             already_uploaded_videos=already_uploaded_videos,
+             start_time=start_time,
+             end_time=end_time
              )
          log(f"Response from [run_multi_Vision_model_conclusion]: {response}")
     except Exception as e:
-        log(f"Error during [run_multi_Vision_model_conclusion]: {str(e)}")
+        log(f"[Background_Audio_Decision_Model] Error during run_multi_Vision_model_agent: {str(e)}")
     from utility.clean_memory import clean_get_gpu_memory
     clean_get_gpu_memory(threshold=0.1)
-    del Global_model
+    if 'Global_model' in locals():
+        del Global_model
+
+
+    log(f"Finished [Background_Audio_Decision_Model] with response: {response}")
 
 
     return response
@@ -1432,302 +1559,283 @@ def Background_Audio_Decision_Model(audio_file: str, video_path: str,already_upl
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# async def  detect_music_in_video(audio_file: str):
-#     from shazamio import Shazam
-#     shazam = Shazam()
-#     try:
-#         result = await shazam.recognize(audio_file)
-#         track = result.get('track')
-
-#         if track:
-#             title = track.get("title", "Unknown")
-#             artist = track.get("artist", "Unknown")
-#             log(f"shazam: Title: {title} \n Artist: {artist}")
-#             return title, artist
-
-#         elif track is None or track.get("title") is None:
-#             log("SHAZAM failed, falling back to YouTube search using video title")
-#             music_title = "Unknown"
-#             music_artist = "Unknown"
-#             return music_title, music_artist
-#     except Exception as e:
-#         log(f"Error inside: [detect_music_in_video] -> {str(e)}")
-
-
-
-
-
-# def isolate_audiofile(audio_file: str, save_folder: str = None):
-#     """
-#     Demucs model that seperate the vocals and music, and returns the music
-#     """
-#     from demucs.pretrained import get_model
-#     from demucs.audio import AudioFile
-#     from demucs.separate import apply_model
-#     import soundfile as sf
-#     import numpy as np
-#     model = get_model('mdx')
-#     model.cpu()
-#     model.eval()
-#     try:
-#         wav = AudioFile(audio_file).read(streams=0, samplerate=model.samplerate)
-#         wav = torch.tensor(wav, dtype=torch.float32).unsqueeze(0)
-
-#         with torch.no_grad():
-#             sources = apply_model(model, wav, device='cpu')
-
-#         accompaniment = sources[0, [0, 1, 2]].sum(dim=0).cpu().numpy()
-#         output_file = os.path.join(save_folder,"accompaniment.wav")
-#         sf.write(output_file, accompaniment.T, model.samplerate)
-#     except Exception as e:
-#         log(f"Error inside [isolate_audiofile] -> {str(e)}")
-#     return output_file
-
-
-
-
-
-# def Download_Music_from_youtube(music_info: dict):
-#     if isinstance(music_info, tuple):
-#         title, artist = music_info
-#     else:
-#         title = music_info.get("title")
-#         artist = music_info.get("artist")
-
-#     if title == "Unknown":
-#         print("Shazam failed, skipping YouTube music download")
-#         return None
-
-#     query = title
-#     if artist:
-#         query += f" {artist}"
-
-#     output_path = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio"
-#     ytdl =  {
-#             "outtmpl": f'{output_path}/%(title)s.%(ext)s',
-#             "cookiefile": cookie_file_path,
-#             'format': f"bestaudio/best",
-#             'nocheckcertificate': True,
-#             "restrictfilenames": True,
-#             'quiet': False,
-#             '--no-playlist': True,
-#             "default_search": "ytsearch1",
-#             'postprocessors': [{
-#             'key': 'FFmpegExtractAudio',
-#             'preferredcodec': 'wav',
-#             'preferredquality': '0',
-#         }]
-#         }
-#     try:
-#         with yt_dlp.YoutubeDL(ytdl) as ydl:
-#             info = ydl.extract_info(query, download=True)
-#             if 'requested_downloads' in info:
-
-#                  file_path = info['requested_downloads'][0]['filepath']
-#             elif 'entries' in info and len(info['entries']) > 0:
-#                 file_path = info['entries'][0]['requested_downloads'][0]['filepath']
-
-#             else:
-#                 raise ValueError("Could not find downloaded file path ")
-#             log(f"Music downloaded from YouTube to: {file_path}")
-#             return file_path
-#     except yt_dlp.utils.DownloadError as e:
-#             log(f"[YT_dlp] ERROR: {str(e)}")
-#             return None
-
-
-# def detect_Music_with_Audd(audio_file: str,original_url = None, verbose: bool = True):
-#     load_dotenv()
-#     api_key = os.getenv("AAUDD_APIKEY")
-#     if not api_key:
-#         raise ValueError("Api key is missing!")
-
-#     url = "https://api.audd.io/"
-
-#     data = {
-#         'api_token': api_key,
-#         'return': 'apple_music,spotify,is_instrumental'
-#     }
-
-#     files = None
-#     if audio_file:
-#         files = {'file': open(audio_file, 'rb')}
-#     if original_url:
-#         data['url'] = original_url
-
-#     response = requests.post(url, data=data, files=files)
-#     result = response.json()
-
-#     if verbose:
-#         log("=== AUD raw response===")
-#         log(json.dumps(result, indent=2))
-
-#     if result['status'] == 'success' and result.get('result'):
-#         data = result['result']
-#         title = data.get('title', 'Unknown')
-#         artist = data.get('artist', 'Unknown')
-#         instrumental = data.get('is_instrumental', False)
-#         spotify_link = data.get('spotify', {}).get('external_urls', {}).get('spotify')
-#         apple_link = data.get('apple_music', {}).get('url')
-
-#         if verbose:
-#             log("=== AudD Parsed Result ===")
-#             log(f"Title: {title}")
-#             log(f"Artist: {artist}")
-#             log(f"Is instrumental? {instrumental}")
-#             log(f"Spotify: {spotify_link}")
-#             log(f"Apple Music: {apple_link}")
-#         return data
-#     else:
-#         if verbose:
-#            log("Song not found or recognition failed")
-#         return None
-
-
-
-
-
-# def download_youtube_Music_Audio(Youtube_url: str,save_folder: str):
-#     """Downloads the Audio file from a youtube video and detects the music name. Downloads the music and returns it
-#         Args:
-#             Youtube_url (str): Path to the youtube video
-
-#     """
-#     ytdl =  {
-#             "outtmpl": os.path.join(save_folder, "%(title)s.%(ext)s"),
-#             "cookiefile": cookie_file_path,
-#             'format': f"bestaudio/best",
-#             "restrictfilenames": True,
-#             'nocheckcertificate': True,
-#             'postprocessors': [{
-#             'key': 'FFmpegExtractAudio',
-#             'preferredcodec': 'wav',
-#             'preferredquality': '0',
-#         }]
-#         }
-#     try:
-#         with yt_dlp.YoutubeDL(ytdl) as ydl:
-#                info = ydl.extract_info(Youtube_url,download=True)
-#                audio_file_path = info['requested_downloads'][0]['filepath']
-#                print(f"Video audio downloaded to: {audio_file_path}")
-#     except yt_dlp.utils.DownloadError as e:
-#             log(f"[YT_dlp] ERROR: {str(e)}")
-#             return None
-
-#     try:
-#         accompaniment_path = isolate_audiofile(audio_file_path, save_folder)
-#         log(f"only music/intstrumental path: {accompaniment_path}")
-#     except Exception as e:
-#         log(f"Error during: [isolate_audiofile]: {str(e)}")
-
-
-#     import asyncio
-#     log("Trying to detect music with Shazam.")
-#     try:
-#         music_title, music_artist = asyncio.run(detect_music_in_video(accompaniment_path))
-#     except Exception as e:
-#         log(f"Error during [detect_music_in_video]: {str(e)}")
-
-#     if not music_title:
-#         log("Shazam could not detect music. Skipping music download.")
-#         return audio_file_path, accompaniment_path, None
-#     else:
-#         music_info_dict = { "title": music_title, "music_artist": music_artist }
-
-
-#     try:
-#        music_file_path  = Download_Music_from_youtube(music_info_dict)
-#     except Exception as e:
-#         log(f"Error during [Download_Music_from_youtube]: {str(e)}")
-
-#     if music_file_path  is None:
-#         log("Trying to detect with (AUUD) now...")
-#         try:
-#             Auud_music = detect_Music_with_Audd(accompaniment_path,Youtube_url)
-#             if Auud_music is None:
-#                 music_file_path  = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\way down we go (instrumental) - kaleo [edit audio] [mp3].mp3"
-#         except Exception as e:
-#             log(f"Error during [detect_Music_with_Audd]: {str(e)}")
-#             music_file_path  = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\way down we go (instrumental) - kaleo [edit audio] [mp3].mp3"
-
-
-#     log(f"Final Music path: {music_file_path}")
-
-#     return  music_file_path
-
-
-
-# @tool
-# def Read_already_uploaded_video_publishedat(file_path: str) -> str:
-#     """A tool that returns information about all videos that are published already. data like (title, description, tags, PublishedAt).
-#         This tool is useful too gather information about future video PublishedAt/Time scheduling .
-#         Args:
-#         file_path (str): The path to already_uploaded file
-#         Returns: str "string"
-#     """
-#     try:
-
-#         with open(file_path, "r", encoding="utf-8") as f:
-#             content = f.read()
-#         return content
-#     except FileNotFoundError as e:
-#         return "No uploaded video data found."
-#     except Exception as e:
-#             return f"Error reading uploaded video data: {str(e)}"
-
+async def detect_music_in_video(audio_file: str):
+    from shazamio import Shazam
+    shazam = Shazam()
+    try:
+        result = await shazam.recognize(audio_file)
+        track = result.get('track')
+
+        if track:
+            title = track.get("title", "Unknown")
+            artist = track.get("artist", "Unknown")
+            log(f"shazam: Title: {title} \n Artist: {artist}")
+            return title, artist
+
+        elif track is None or track.get("title") is None:
+            log("SHAZAM failed, falling back to YouTube search using video title")
+            music_title = "Unknown"
+            music_artist = "Unknown"
+            return music_title, music_artist
+    except Exception as e:
+        log(f"Error inside: [detect_music_in_video] -> {str(e)}")
+
+
+
+
+
+def isolate_audiofile(audio_file: str, save_folder: str = None):
+    """
+    Demucs model that seperate the vocals and music, and returns the music
+    """
+    from demucs.pretrained import get_model
+    from demucs.audio import AudioFile
+    from demucs.separate import apply_model
+    import soundfile as sf
+    import numpy as np
+    model = get_model('mdx')
+    model.cpu()
+    model.eval()
+    try:
+        wav = AudioFile(audio_file).read(streams=0, samplerate=model.samplerate)
+        wav = torch.tensor(wav, dtype=torch.float32).unsqueeze(0)
+
+        with torch.no_grad():
+            sources = apply_model(model, wav, device='cpu')
+
+        accompaniment = sources[0, [0, 1, 2]].sum(dim=0).cpu().numpy()
+        output_file = os.path.join(save_folder,"accompaniment.wav")
+        sf.write(output_file, accompaniment.T, model.samplerate)
+    except Exception as e:
+        log(f"Error inside [isolate_audiofile] -> {str(e)}")
+    return output_file
+
+
+
+
+
+def Download_Music_from_youtube(music_info: dict):
+    if isinstance(music_info, tuple):
+        title, artist = music_info
+    else:
+        title = music_info.get("title")
+        artist = music_info.get("artist")
+
+    if title == "Unknown":
+        print("Shazam failed, skipping YouTube music download")
+        return None
+
+    query = title
+    if artist:
+        query += f" {artist}"
+
+    output_path = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio"
+    ytdl =  {
+            "outtmpl": f'{output_path}/%(title)s.%(ext)s',
+            "cookiefile": cookie_file_path,
+            'format': f"bestaudio/best",
+            'nocheckcertificate': True,
+            "restrictfilenames": True,
+            'quiet': False,
+            '--no-playlist': True,
+            "default_search": "ytsearch1",
+            'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'wav',
+            'preferredquality': '0',
+        }]
+        }
+    try:
+        with yt_dlp.YoutubeDL(ytdl) as ydl:
+            info = ydl.extract_info(query, download=True)
+            if 'requested_downloads' in info:
+
+                 file_path = info['requested_downloads'][0]['filepath']
+            elif 'entries' in info and len(info['entries']) > 0:
+                file_path = info['entries'][0]['requested_downloads'][0]['filepath']
+
+            else:
+                raise ValueError("Could not find downloaded file path ")
+            log(f"Music downloaded from YouTube to: {file_path}")
+            return file_path
+    except yt_dlp.utils.DownloadError as e:
+            log(f"[YT_dlp] ERROR: {str(e)}")
+            return None
+
+
+def detect_Music_with_Audd(audio_file: str,original_url = None, verbose: bool = True):
+    load_dotenv()
+    api_key = os.getenv("AAUDD_APIKEY")
+    if not api_key:
+        raise ValueError("Api key is missing!")
+
+    url = "https://api.audd.io/"
+
+    data = {
+        'api_token': api_key,
+        'return': 'apple_music,spotify,is_instrumental'
+    }
+
+    files = None
+    if audio_file:
+        files = {'file': open(audio_file, 'rb')}
+    if original_url:
+        data['url'] = original_url
+
+    response = requests.post(url, data=data, files=files)
+    result = response.json()
+
+    if verbose:
+        log("=== AUD raw response===")
+        log(json.dumps(result, indent=2))
+
+    if result['status'] == 'success' and result.get('result'):
+        data = result['result']
+        title = data.get('title', 'Unknown')
+        artist = data.get('artist', 'Unknown')
+        instrumental = data.get('is_instrumental', False)
+        spotify_link = data.get('spotify', {}).get('external_urls', {}).get('spotify')
+        apple_link = data.get('apple_music', {}).get('url')
+
+        if verbose:
+            log("=== AudD Parsed Result ===")
+            log(f"Title: {title}")
+            log(f"Artist: {artist}")
+            log(f"Is instrumental? {instrumental}")
+            log(f"Spotify: {spotify_link}")
+            log(f"Apple Music: {apple_link}")
+        return data
+    else:
+        if verbose:
+           log("Song not found or recognition failed")
+        return None
+
+
+
+
+
+def download_youtube_Music_Audio(Youtube_url: str,save_folder: str):
+    """Downloads the Audio file from a youtube video and detects the music name. Downloads the music and returns it
+        Args:
+            Youtube_url (str): Path to the youtube video
+
+    """
+    ytdl =  {
+            "outtmpl": os.path.join(save_folder, "%(title)s.%(ext)s"),
+            "cookiefile": cookie_file_path,
+            'format': f"bestaudio/best",
+            "restrictfilenames": True,
+            'nocheckcertificate': True,
+            'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'wav',
+            'preferredquality': '0',
+        }]
+        }
+    try:
+        with yt_dlp.YoutubeDL(ytdl) as ydl:
+               info = ydl.extract_info(Youtube_url,download=True)
+               audio_file_path = info['requested_downloads'][0]['filepath']
+               print(f"Video audio downloaded to: {audio_file_path}")
+    except yt_dlp.utils.DownloadError as e:
+            log(f"[YT_dlp] ERROR: {str(e)}")
+            return None
+
+    try:
+        accompaniment_path = isolate_audiofile(audio_file_path, save_folder)
+        log(f"only music/intstrumental path: {accompaniment_path}")
+    except Exception as e:
+        log(f"Error during: [isolate_audiofile]: {str(e)}")
+
+
+    import asyncio
+    log("Trying to detect music with Shazam.")
+    try:
+        music_title, music_artist = asyncio.run(detect_music_in_video(accompaniment_path))
+    except Exception as e:
+        log(f"Error during [detect_music_in_video]: {str(e)}")
+
+    if not music_title:
+        log("Shazam could not detect music. Skipping music download.")
+        return audio_file_path, accompaniment_path, None
+    else:
+        music_info_dict = { "title": music_title, "music_artist": music_artist }
+
+
+    try:
+       music_file_path  = Download_Music_from_youtube(music_info_dict)
+    except Exception as e:
+        log(f"Error during [Download_Music_from_youtube]: {str(e)}")
+
+    if music_file_path  is None:
+        log("Trying to detect with (AUUD) now...")
+        try:
+            Auud_music = detect_Music_with_Audd(accompaniment_path,Youtube_url)
+            if Auud_music is None:
+                music_file_path  = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\way down we go (instrumental) - kaleo [edit audio] [mp3].mp3"
+        except Exception as e:
+            log(f"Error during [detect_Music_with_Audd]: {str(e)}")
+            music_file_path  = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\way down we go (instrumental) - kaleo [edit audio] [mp3].mp3"
+
+
+    log(f"Final Music path: {music_file_path}")
+
+    return  music_file_path
+
+
+
+@tool
+def Read_already_uploaded_video_publishedat(file_path: str) -> str:
+    """A tool that returns information about all videos that are published already. data like (title, description, tags, PublishedAt).
+        This tool is useful too gather information about future video PublishedAt/Time scheduling .
+        Args:
+        file_path (str): The path to already_uploaded file
+        Returns: str "string"
+    """
+    try:
+
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read()
+        return content
+    except FileNotFoundError as e:
+        return "No uploaded video data found."
+    except Exception as e:
+            return f"Error reading uploaded video data: {str(e)}"
+
+
+@tool
+def check_video_source_exists(video_name: str) -> str:
+    """
+    Checks if a video source name exists in the completed videos database.
+    This tool searches the Videosources_completed.json file to see if a specific video has already been used.
+
+    Args:
+        video_name (str): The exact name of the video to check (e.g., "Motivational Speech.mp4")
+
+    Returns:
+        str: A message indicating whether the video exists and its metadata if found.
+    """
+    json_path = r"c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\Videosources_completed.json"
+
+    try:
+        if not os.path.exists(json_path):
+            return f"Database file not found. Video '{video_name}' does not exist in database."
+
+        with open(json_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        video_name = video_name.strip()
+
+        if video_name in data:
+            metadata = data[video_name]
+            used_date = metadata.get("used_date", "unknown")
+            clips_created = metadata.get("clips_created", 0)
+            return f"Video '{video_name}' EXISTS in database. Used on: {used_date}, Clips created: {clips_created}"
+        else:
+            return f"Video '{video_name}' does NOT exist in database."
+
+    except json.JSONDecodeError as e:
+        return f"Error parsing database file: {str(e)}"
+    except Exception as e:
+        return f"Error checking video source: {str(e)}"
 

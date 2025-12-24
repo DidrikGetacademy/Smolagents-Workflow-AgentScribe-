@@ -1,3 +1,12 @@
+from tqdm import tqdm
+import torch
+from moviepy import VideoFileClip, ImageSequenceClip, TextClip, CompositeVideoClip,vfx,AudioFileClip,afx,CompositeAudioClip,afx
+import os
+import cv2
+import sys
+import sys
+import os
+
 
 def _ffmpeg_minterpolate_to_fps(input_path: str, target_fps: int = 30) -> str:
     """Create a target-fps version of input using ffmpeg minterpolate. Returns new path."""
@@ -30,13 +39,13 @@ def _ffmpeg_minterpolate_to_fps(input_path: str, target_fps: int = 30) -> str:
     return output_path
 
 
-def _create_montage_short_func(video_path, start_time, end_time,subtitle_text,video_name, Video_output_path=None, YT_channel=None):
+def _create_montage_short_func(video_path, start_time, end_time, subtitle_text, video_name, order, Video_output_path=None, YT_channel=None, middle_order=None):
+    print(f"YT_channel in create_montage_short: {YT_channel}, order: {order}, middle_order: {middle_order}")
+    from neon.log import log; log(f"[create_montage_short] order={order}, middle_order={middle_order}")
     print(f"YT_channel in create_montage_short: {YT_channel}")
-    import utils.Global_state as Global_state
     import os
-    import sys
     import gc
-    from utils.clean_memory import clean_get_gpu_memory
+    from utility.clean_memory import clean_get_gpu_memory
     import ffmpeg
     from neon.log import log
     from moviepy import VideoFileClip,ImageSequenceClip,CompositeVideoClip
@@ -57,6 +66,81 @@ def _create_montage_short_func(video_path, start_time, end_time,subtitle_text,vi
 
 
 
+    def group_subtitle_words_in_triplets(subtitle_words):
+         chunks = []
+         if not subtitle_words:
+             return chunks
+
+         offset = float(subtitle_words[0]['start'])
+         segments = []
+         current_segment = [subtitle_words[0]]
+         PAUSE_THRESHOLD = 0.3
+
+         for i in range(1, len(subtitle_words)):
+              prev_word = subtitle_words[i-1]
+              curr_word = subtitle_words[i]
+              gap = float(curr_word['start']) - float(prev_word['end'])
+
+              if gap > PAUSE_THRESHOLD:
+                  current_segment[-1]['end'] += 0.2
+                  segments.append(current_segment)
+                  current_segment = []
+
+              current_segment.append(curr_word)
+
+         if current_segment:
+              segments.append(current_segment)
+
+         MAX_WORDS_PER_CHUNK = 4
+
+         for segment in segments:
+              for i in range(0, len(segment), MAX_WORDS_PER_CHUNK):
+                   chunk_words = segment[i : i + MAX_WORDS_PER_CHUNK]
+
+                   text_chunk = ''.join([w['word'].strip() + ' ' for w in chunk_words]).strip().upper()
+                   start = float(chunk_words[0]['start']) - offset
+                   end = float(chunk_words[-1]['end']) - offset
+                   duration = max(0.0, end - start)
+                   start = max(0.0, start)
+
+                   chunks.append({'text': text_chunk, 'start': start, 'end': end, 'duration': duration})
+
+         return chunks
+
+    try:
+       log(f"Subtitle text before grouping: {subtitle_text}")
+       triplets = group_subtitle_words_in_triplets(subtitle_text)
+    except Exception as e:
+         log(f"[group_subtitle_words_in_triplets] Error during grouping of subtitles in triplets. {str(e)} ")
+
+
+    def create_subtitles_from_triplets(triplets):
+        text_clips = []
+
+        for i, c in enumerate(triplets):
+
+
+
+            txt_clip = TextClip(
+                text=c['text'],
+                font=r"C:\WINDOWS\FONTS\COPPERPLATECC-BOLD.TTF",
+                font_size=50,
+                margin=(10, 10),
+                text_align="center",
+                vertical_align="center",
+                horizontal_align="center",
+                color='white',
+                stroke_color="black",
+                stroke_width=4,
+                size=(1400, 300),
+                method="label",
+                duration=c['duration']
+            ).with_start(c['start']).with_position(('center', 0.50), relative=True)
+
+
+            text_clips.append(txt_clip)
+            log(f"Subtitle clip {i}: text='{c['text'][:20]}...', total_duration={c['duration']:.3f}s")
+        return text_clips
     #------------------------------------------------------------------------#
     # CREATES THE (START & END) OF the currentclip from FULL ORIGINAL VIDEO
     #------------------------------------------------------------------------#
@@ -94,101 +178,84 @@ def _create_montage_short_func(video_path, start_time, end_time,subtitle_text,vi
     del frames
 
 
-#     from blender import enhance_frames_bpy
-#     blender_frames = enhance_frames_bpy(cropped_frames)
 
+    try:
+        subtitle_clips = create_subtitles_from_triplets(triplets)
+    except Exception as e:
+            log(f"error during [create_subtitles_from_triplets]: {str(e)}")
 
-# # -----------------#
-# # # color/Adjustment
-# # #-----------------#
-#     log(f"\n\n[COLOR ADJUSTMENT] PROCCESS starting...")
-#     try:
+# -----------------#
+# # color/Adjustment
+# #-----------------#
+    log(f"\n\n[COLOR ADJUSTMENT] PROCCESS starting...")
+    try:
+        from App import change_saturation
 
-#         Color_corrected_frames = [change_saturation(frame,mode="Increase", amount=0.2) for frame in blender_frames]
-#         log(f"3. Color_corrected_frames length: {len(Color_corrected_frames)}")
-#         del cropped_frames
-#     except Exception as e:
-#          log(f"Error during color correction: {str(e)}")
-
-
-    # try:
-    #     log(f"\n\n[SUBTITLE PROCESSING] Adding neon subtitles to frames...")
-    #     from neon.dynamic_glow_fade import build_random_mode_pairs_from_words
-    #     frames_with_subtitles = build_random_mode_pairs_from_words(cropped_frames,subtitle_text, clip.duration, clip.fps)
-
-    #     log(f"4. Frames with subtitles length: {len(frames_with_subtitles)}")
-    #   #  del Color_corrected_frames
-    # except Exception as e:
-    #     log(f"Error during subtitle processing: {str(e)}")
-    #     return
+        Color_corrected_frames = [change_saturation(frame,mode="Increase", amount=0.1) for frame in cropped_frames]
+        log(f"3. Color_corrected_frames length: {len(Color_corrected_frames)}")
+        del cropped_frames
+    except Exception as e:
+         log(f"Error during color correction: {str(e)}")
 
 
 
+    from blender.blender import enhance_frames_bpy
+    blender_frames = enhance_frames_bpy(Color_corrected_frames)
+    del Color_corrected_frames
+# ----------------------#
+#   FACEENCHANCEMENT
+# ----------------------#
+    class Face_enchance_Args:
+            model = 'GPEN-BFR-2048'
+            task = 'FaceEnhancement'
+            key = None
+            in_size = 2048
+            out_size = 0
+            channel_multiplier = 2
+            narrow = 1
+            alpha = 0.4
+            use_sr = True
+            use_cuda = True
+            save_face = False
+            aligned = False
+            sr_model = 'realesrnet'
+            sr_scale = 2
+            tile_size = 0
+            ext = '.png'
 
-# # #########################
-# # ---------------------###
-# # Enchance & detailed sharpening
-# # ---------------------##
-# # #########################
-#     log(f"\n\n[Enchance & detailed sharpening] PROCCESS starting...")
-#     Sharpened_frames = []
-#     for frame in frames_with_subtitles:
-#          frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-#          enchanced_frame = enhance_detail_and_sharpness(frame_bgr, clarity_factor=0.15, sharpen_amount=0.15)
-#          Sharpened_frames.append(enchanced_frame)
+    log(f"\n\n[FACEENCHACEMENT] PROCCESS starting...")
 
+    from GPEN.face_enhancement import FaceEnhancement
 
-#     log(f"[enhance_detail_and_sharpness] 4. sharpened frames length: {len(Sharpened_frames)}!\n\n")
+    face_args = Face_enchance_Args()
 
+    Skin_texture_enchancement = FaceEnhancement(
+        face_args,
+        in_size=face_args.in_size,
+        model=face_args.model,
+        use_sr=face_args.use_sr,
+        device='cuda' if face_args.use_cuda else 'cpu'
+    )
 
+    FaceEnhancement_frames = []
+    try:
+         for enchanced_frame in tqdm(blender_frames, desc="[FaceEnhancement]  proccessing frames", unit="frame"):
+              log(f"Input frame size: {frame.shape[1]} x {frame.shape[0]}")
+              frame_height,frame_width = frame.shape[:2]
+              enchanced_frame = cv2.cvtColor(enchanced_frame, cv2.COLOR_RGB2BGR)
+              enchanced_frame, _, _ = Skin_texture_enchancement.process(enchanced_frame)
+              log(f"Enhanced frame size: {enchanced_frame.shape[1]} x {enchanced_frame.shape[0]}")
+              RGB_face_enchanced_frame = cv2.cvtColor(enchanced_frame, cv2.COLOR_BGR2RGB)
+              FaceEnhancement_frames.append(RGB_face_enchanced_frame)
 
-# # ----------------------#
-# #   FACEENCHANCEMENT
-# # ----------------------#
-#     class Face_enchance_Args:
-#             model = 'GPEN-BFR-2048'
-#             task = 'FaceEnhancement'
-#             key = None
-#             in_size = 2048
-#             out_size = 0
-#             channel_multiplier = 2
-#             narrow = 1
-#             alpha = 0.5
-#             use_sr = True
-#             use_cuda = True
-#             save_face = False
-#             aligned = False
-#             sr_model = 'realesrnet'
-#             sr_scale = 2
-#             tile_size = 512
-#             ext = '.png'
+         log(f"[FaceEnhancement] 5. FaceEnhancement_frames length: {len(FaceEnhancement_frames)}")
+         torch.cuda.empty_cache()
+         gc.collect()
 
-#     log(f"\n\n[FACEENCHACEMENT] PROCCESS starting...")
-#     Skin_texture_enchancement = FaceEnhancement(
-#          Face_enchance_Args,
-#         in_size=Face_enchance_Args.in_size,
-#         model=Face_enchance_Args.model,
-#         use_sr=Face_enchance_Args.use_sr,
-#         device='cuda' if Face_enchance_Args.use_cuda else 'cpu'
-#     )
-#     FaceEnhancement_frames = []
-#     try:
-#          for enchanced_frame in tqdm(Sharpened_frames, desc="[FaceEnhancement]  proccessing frames", unit="frame"):
-#               log(f"Input frame size: {frame.shape[1]} x {frame.shape[0]}")
-#               frame_height,frame_width = frame.shape[:2]
-#               enchanced_frame, _, _ = Skin_texture_enchancement.process(enchanced_frame)
-#               log(f"Enhanced frame size: {enchanced_frame.shape[1]} x {enchanced_frame.shape[0]}")
-#               RGB_face_enchanced_frame = cv2.cvtColor(enchanced_frame, cv2.COLOR_BGR2RGB)
-#               FaceEnhancement_frames.append(RGB_face_enchanced_frame)
+         log(f"Cleared cache and collected garbage")
+    except Exception as e:
+            log(f"[FaceEnhancement] Error: {str(e)}")
 
-#          log(f"[FaceEnhancement] 5. FaceEnhancement_frames length: {len(FaceEnhancement_frames)}")
-#          del Sharpened_frames
-#          torch.cuda.empty_cache()
-#          gc.collect()
-
-#          log(f"Cleared cache and collected garbage")
-#     except Exception as e:
-#             log(f"[FaceEnhancement] Error: {str(e)}")
 
 
 
@@ -196,22 +263,22 @@ def _create_montage_short_func(video_path, start_time, end_time,subtitle_text,vi
 # Creating videoclip from frames
 #-------------------------------#
     try:
-       processed_clip = ImageSequenceClip(cropped_frames, fps=clip.fps).with_duration(clip.duration)
+       processed_clip = ImageSequenceClip(FaceEnhancement_frames, fps=clip.fps).with_duration(clip.duration)
        gc.collect()
     except Exception as e:
          log(f"[processed_clip] ERROR: {str(e)}")
-   # del FaceEnhancement_frames
+    del blender_frames
 
 
 
 #-----------------------------------------------#
 #     Adds Logo/overlay for YT_channel
 #-----------------------------------------------#
-
-
-
     if YT_channel == "LR_Youtube":
-            overlay_clip = VideoFileClip(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\YT_logo\LOGO_LR.mp4",has_mask=True)
+            if order != "start":
+                overlay_clip = VideoFileClip(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\YT_logo\LOGO_MR_CUT.mp4",has_mask=True)
+            else:
+                overlay_clip = VideoFileClip(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\YT_logo\LOGO_LR.mp4",has_mask=True)
 
     elif YT_channel == "LRS_Youtube":
                 overlay_clip = VideoFileClip(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\YT_logo\LOGO_LRS.mp4",has_mask=True)
@@ -233,7 +300,7 @@ def _create_montage_short_func(video_path, start_time, end_time,subtitle_text,vi
 # Adds Subtitles + Logo to the video
 #-----------------------------------------------#
     final_clip = CompositeVideoClip(
-                [processed_clip.with_position('center')] + [logo_with_mask.with_position('center',0.85)] ,
+                [processed_clip.with_position('center')] + subtitle_clips + [logo_with_mask.with_position('center',0.85)] ,
                 size=processed_clip.size
                 )
 
@@ -258,14 +325,10 @@ def _create_montage_short_func(video_path, start_time, end_time,subtitle_text,vi
 #    Adds fade in/out to the video and sets the FPS
 #------------------------------------------------------#
     final_clip = FadeIn(duration=0.1).apply(final_clip)
-    final_clip = FadeOut(duration=0.1).apply(final_clip)
+    final_clip = FadeOut(duration=0.05).apply(final_clip)
     final_clip.fps = clip.fps
 
 
-
-#-----------------------------------------------------#
-#    Cleans cpu/gpu memory
-#------------------------------------------------------#
 
 
 #-----------------------------------------------------#
@@ -293,6 +356,7 @@ def _create_montage_short_func(video_path, start_time, end_time,subtitle_text,vi
         "-pix_fmt", "yuv420p",
         "-profile:v", "high",
         "-ar", "48000",
+        "-vf", "fps=30",
         "-color_primaries", "bt709",
         "-color_trc", "bt709",
         "-colorspace", "bt709",
@@ -307,11 +371,10 @@ def _create_montage_short_func(video_path, start_time, end_time,subtitle_text,vi
     clip.close()
     clean_get_gpu_memory(threshold=0.1)
 
-    from utils.RIFE_FPS import run_rife
-    normalized_path = _ffmpeg_minterpolate_to_fps(Video_output_path, target_fps=30)
+    from utility.RIFE_FPS import run_rife
+    #normalized_path = _ffmpeg_minterpolate_to_fps(Video_output_path, target_fps=30)
     try:
-      output_video = run_rife(normalized_path)
-      # Ensure final name matches expected pattern: '<stem>_rife.ext'
+      output_video = run_rife(Video_output_path)
       import os
       stem, ext = os.path.splitext(Video_output_path)
       expected_rife = f"{stem}_rife{ext}"
@@ -322,7 +385,7 @@ def _create_montage_short_func(video_path, start_time, end_time,subtitle_text,vi
               log(f"[rename] Normalized RIFE output to expected name: {output_video}")
           except Exception as _e:
               log(f"[rename] Could not rename RIFE output: {_e}")
-      log(f"video is completed: output path : {normalized_path}, video name: {video_name} video_fps: {clip.fps}, codec: {video_codec}, bitrate: {bitrate}, audio_codec: {audio_codec}, subtitles: {subtitle_text} \n Final video resolution (width x height): {final_clip.size[0]} x {final_clip.size[1]}")
+      log(f"video is completed: output path : {Video_output_path}, video name: {video_name} video_fps: {clip.fps}, codec: {video_codec}, bitrate: {bitrate}, audio_codec: {audio_codec}, subtitles: {subtitle_text} \n Final video resolution (width x height): {final_clip.size[0]} x {final_clip.size[1]}")
       clean_get_gpu_memory(threshold=0.2)
       log(f"Interpolated video saved to: {output_video}")
     except Exception as e:
@@ -335,13 +398,13 @@ def _create_montage_short_func(video_path, start_time, end_time,subtitle_text,vi
                 os.remove(Video_output_path)
         except Exception:
             pass
-        try:
-            if normalized_path != Video_output_path and os.path.exists(normalized_path):
-                os.remove(normalized_path)
-        except Exception:
-            pass
+        # try:
+        #     if normalized_path != Video_output_path and os.path.exists(normalized_path):
+        #         os.remove(normalized_path)
+        # except Exception:
+        #     pass
 
-def compose_montage_clips(input_paths, output_path, add_bg_music=True, bg_music_candidates=None, bg_music_volume=0.4, add_random_lut=True, lut_path_candidates=None):
+def compose_montage_clips(input_paths, output_path, YT_channel, audio_path, video_path, add_bg_music=True,  bg_music_volume=0.4):
     """
     Compose the provided clips in order into a single output video.
     Attempts fast concat via ffmpeg demuxer; falls back to MoviePy re-encode if needed.
@@ -392,57 +455,35 @@ def compose_montage_clips(input_paths, output_path, add_bg_music=True, bg_music_
             log(f"[compose_montage_clips] ffprobe failed for '{path}': {e}")
             return None
 
-    # Ensure all inputs exist
+    # Ensure all inputs exist; allow variable number of middles (>=2 total with start and ending)
     existing = [p for p in input_paths if p and os.path.exists(p)]
-    if len(existing) != 3:
-        raise ValueError(f"compose_montage_clips: Expected 3 valid paths, got {len(existing)}: {input_paths}")
+    if len(existing) < 2:
+        raise ValueError(f"compose_montage_clips: Expected at least 2 valid paths (start and ending), got {len(existing)}: {input_paths}")
 
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
-    # Randomly select background music ONCE for the composed clip
-    selected_bg = None
-    if add_bg_music:
-        try:
-            import random
-            default_candidates = [
-                r"C:\\Users\\didri\\Desktop\\Full-Agent-Flow_VideoEditing\\Video_clips\\audio\\bloody_mary.WAV",
-                r"C:\\Users\\didri\\Desktop\\Full-Agent-Flow_VideoEditing\\Video_clips\\audio\\mindsetplug369 - original sound - mindsetplug369.mp3",
-                r"C:\\Users\\didri\\Desktop\\Full-Agent-Flow_VideoEditing\\Video_clips\\audio\\way down we go (instrumental) - kaleo [edit audio] [mp3].mp3",
-            ]
-            candidates = bg_music_candidates or default_candidates
-            candidates = [p for p in candidates if isinstance(p, str) and os.path.exists(p)]
-            if candidates:
-                selected_bg = random.choice(candidates)
-                log(f"[compose_montage_clips] Selected background audio: {selected_bg}")
-            else:
-                log("[compose_montage_clips] No background audio candidates exist on disk; skipping bg music.")
-        except Exception as e:
-            log(f"[compose_montage_clips] Error selecting background audio: {e}")
 
-    # Randomly select LUT (None or specific path) ONCE for the composed clip
-    selected_lut = None
-    if add_random_lut:
+    selected_bg = None
+    background_audio_path = ""
+    if add_bg_music:
+        log("#######choosing Background Audio########\n")
         try:
-            import random
-            default_luts = [
-                None,
-                r"C:\\Users\\didri\\Desktop\\Full-Agent-Flow_VideoEditing\\Utils-Video_creation\\LUT\\Black & white cube\\blackwhite1.cube",
-            ]
-            lut_candidates = lut_path_candidates or default_luts
-            # Keep None, and filter existing string paths
-            valid_luts = []
-            for lp in lut_candidates:
-                if lp is None:
-                    valid_luts.append(None)
-                elif isinstance(lp, str) and os.path.exists(lp):
-                    valid_luts.append(lp)
-            if valid_luts:
-                selected_lut = random.choice(valid_luts)
-                log(f"[compose_montage_clips] Selected LUT: {selected_lut if selected_lut else 'None'}")
-            else:
-                log("[compose_montage_clips] No valid LUT candidates found; skipping LUT.")
+            already_uploaded_videos = f"Video_clips/Youtube_Upload_folder/{YT_channel}/already_uploaded.txt"
+            from utility.Custom_Agent_Tools import Background_Audio_Decision_Model
+            result = Background_Audio_Decision_Model(audio_file=audio_path,video_path=video_path,already_uploaded_videos=already_uploaded_videos,start_time=start_time,end_time=end_time)
+
+            background_audio_path = result.get("path", "")
+            if background_audio_path:
+                selected_bg = background_audio_path
+
         except Exception as e:
-            log(f"[compose_montage_clips] Error selecting LUT: {e}")
+            log(f"error during: [Background_Audio_Decision_Model]: {str(e)}")
+
+
+
+
+
+    selected_lut = None
 
     # Helper to build ffmpeg filter args for LUT
     def _lut_ffmpeg_args(lut_path):
@@ -530,7 +571,7 @@ def compose_montage_clips(input_paths, output_path, add_bg_music=True, bg_music_
                 from App import mix_audio
                 if final.audio is None:
                     # No original audio: just use bg music, trimmed/looped to duration
-                    bg = AudioFileClip(selected_bg)
+                    bg = AudioFileClip(background_audio_path)
                     if getattr(final, 'duration', None):
                         if bg.duration < final.duration:
                             bg = afx.audio_loop(bg, duration=final.duration)

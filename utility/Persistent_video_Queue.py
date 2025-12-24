@@ -7,7 +7,7 @@ import json
 import os
 import threading
 from queue import Queue
-from neon.log import log
+from utility.log import log
 
 class PersistentVideoQueue:
     def __init__(self, filepath):
