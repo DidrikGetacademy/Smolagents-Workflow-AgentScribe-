@@ -5,43 +5,29 @@ if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
 import json
 import datetime
-GPEN_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), 'GPEN'))
-if GPEN_PATH not in sys.path:
-    sys.path.insert(0, GPEN_PATH)
-import GPEN.__init_paths
-from GPEN.face_enhancement import FaceEnhancement
-from utility.Custom_Agent_Tools import SpeechToTextToolCUDA, SpeechToText_short_creation_thread,Background_Audio_Decision_Model
-import gc
+
+from Agents.utility.Agent_tools import SpeechToTextToolCUDA, SpeechToText_short_creation_thread,SpeechToText_montage_creation_thread
+from utility.Videocreation_pipeline.VideoCreator import create_short_video
 from utility.log import log
 import torchvision.transforms.functional as F
 sys.modules['torchvision.transforms.functional_tensor'] = F
 import torch.nn.functional as F
 import subprocess
-from moviepy.audio.fx import MultiplyVolume
-from moviepy import VideoFileClip, ImageSequenceClip, TextClip, CompositeVideoClip,vfx,AudioFileClip,afx,CompositeAudioClip,afx
-import cv2
 import ffmpeg
 from concurrent.futures import ThreadPoolExecutor
-from tqdm import tqdm
-import onnxruntime as ort
-from ultralytics.utils.ops import non_max_suppression
 import pynvml
 import time
-import numpy as np
 from utility.clean_memory import clean_get_gpu_memory
 import torch
-from moviepy.video.fx.CrossFadeIn import CrossFadeIn
-from moviepy.video.fx.FadeIn import FadeIn
-from moviepy.video.fx.FadeOut import FadeOut
 import threading
 import queue
 import torch
-from blender.blender import enhance_frames_bpy
+from utility.Videocreation_pipeline.blender import enhance_frames_bpy
 from pydub import AudioSegment
 from proglog import ProgressBarLogger
 import utility.Global_state as Global_state
 from queue import Queue
-from utility.create_montage_short import _create_montage_short_func, compose_montage_clips
+from utility.Videocreation_pipeline.Utility import compose_montage_clips
 import threading
 from utility.reload_model import Reload_and_change_model
 import re
@@ -91,711 +77,6 @@ class MyProgressLogger(ProgressBarLogger):
         for param, value in changes.items():
             log(f"{param}: {value}")
             log(f"{param}: {value}")
-
-
-
-
-
-
-
-#-----------------------------------#
-# Shorts Video Creation/Functions
-#-----------------------------------#
-def change_brightness(frame, amount=0.2):
-    """
-    Darken or brighten the frame.
-    amount > 0 : brighten
-    amount < 0 : darken
-    Optimized to avoid float32 conversion
-    """
-    hsv = cv2.cvtColor(frame, cv2.COLOR_RGB2HSV)
-    # Work with V channel as int16 to avoid overflow, then clip
-    v_channel = hsv[..., 2].astype(np.int16)
-    v_channel = np.clip(v_channel * (1.0 + amount), 0, 255).astype(np.uint8)
-    hsv[..., 2] = v_channel
-    changed_frame = cv2.cvtColor(hsv, cv2.COLOR_HSV2RGB)
-    return changed_frame
-
-
-def change_saturation(frame, mode="Increase", amount=0.2):
-    """
-    Change saturation without float32 conversion to save memory.
-    Uses int16 temporarily to avoid overflow.
-    """
-    hsv = cv2.cvtColor(frame, cv2.COLOR_RGB2HSV)
-
-    if mode == "Grayscale":
-        hsv[..., 1] = 0  # Set saturation to 0 for completely gray frames
-    else:
-        # Work with S channel as int16 to avoid overflow during multiplication
-        s_channel = hsv[..., 1].astype(np.int16)
-        if mode == "Increase":
-            s_channel = np.clip(s_channel * (1.0 + amount), 0, 255).astype(np.uint8)
-        elif mode == "Decrease":
-            s_channel = np.clip(s_channel * (1.0 - amount), 0, 255).astype(np.uint8)
-        hsv[..., 1] = s_channel
-
-    # Convert back to RGB
-    changed_frames = cv2.cvtColor(hsv, cv2.COLOR_HSV2RGB)
-    return changed_frames
-
-
-
-
-def _resize_smart(img, target_w: int, target_h: int):
-    """Resize with better interpolation:
-    - INTER_AREA when downscaling
-    - INTER_CUBIC when upscaling
-    """
-    h, w = img.shape[:2]
-    if target_w < w or target_h < h:
-        interp = cv2.INTER_AREA
-    else:
-        interp = cv2.INTER_CUBIC
-    return cv2.resize(img, (target_w, target_h), interpolation=interp)
-
-
-def mix_audio(original_audio, background_music_path, bg_music_volume=0.25):
-        bg_music = AudioFileClip(background_music_path)
-        if bg_music.duration < original_audio.duration:
-            bg_music = bg_music.with_effects([afx.AudioLoop(duration=original_audio.duration)])
-        else:
-            bg_music = bg_music.subclipped(0, original_audio.duration)
-        bg_music = bg_music.with_effects([MultiplyVolume(bg_music_volume)])
-        original_audio = original_audio.with_effects([MultiplyVolume(1.0)])
-        mixed_audio = CompositeAudioClip([original_audio, bg_music])
-        log(f"[mix_audio] --> (original_audio.duration): {original_audio.duration}, (bg_music.duration): {bg_music.duration}, (mixed_audio.duration): {mixed_audio.duration}")
-        return mixed_audio
-
-
-
-def parse_editing_notes(notes):
-        fade_in_duration = 0
-        volume_reduction = 1.0
-        import re
-
-        fade_in_match = re.search(r'Fade in (?over|at) (\d+\.?\d*) seconds?', notes, re.IGNORECASE)
-        if fade_in_match:
-            fade_in_duration = float(fade_in_match.group(1))
-
-        volume_match = re.search(r'lower volume by (\d+\.?+\d)%?', notes, re.IGNORECASE)
-        if volume_match:
-              percentage = float(volume_match.group(1))
-              volume_reduction = 1.0 - (percentage / 100.0)
-
-        return  {"fade_in_duration": fade_in_duration, "volume_reduction": volume_reduction}
-
-def load_cube_lut(path):
-    lut_data = []
-    size = None
-    with open(path, "r") as f:
-        for line in f:
-            line = line.strip()
-            if not line or line.startswith("#"):
-                continue
-            if line.upper().startswith("LUT_3D_SIZE"):
-                size = int(line.split()[1])
-            elif line[0].isdigit() or line[0] == "-":
-                values = [float(v) for v in line.split()]
-                lut_data.append(values)
-
-    if size is None:
-        raise ValueError("Invalid .cube file: missing LUT_3D_SIZE")
-
-    lut = np.array(lut_data).reshape((size, size, size, 3))
-    return lut
-
-
-
-def mix_audio_with_effects(original_audio, bg_music_path, bg_music_volume=0.48, editing_notes=""):
-        bg_music = AudioFileClip(bg_music_path)
-
-
-        if bg_music.duration < original_audio.duration:
-            bg_music = afx.audio_loop(bg_music, duration=original_audio.duration)
-        else:
-            bg_music = bg_music.subclipped(0, original_audio.duration)
-
-
-        effects = parse_editing_notes(editing_notes)
-        fade_in_duration = effects["fade_in_duration"]
-        volume_reduction = effects["volume_reduction"]
-        time_specific = effects["time_specific"]
-
-
-        if fade_in_duration > 0:
-            bg_music = bg_music.fx(vfx.FadeIn, duration=fade_in_duration)
-
-
-        if time_specific:
-            print(f"Warning: Time-specific ducking requested ({time_specific}), but no timestamps provided. Applying uniform volume reduction.")
-            bg_music = bg_music.volumex(bg_music_volume * volume_reduction)
-        else:
-            bg_music = bg_music.volumex(bg_music_volume * volume_reduction)
-
-        original_audio = original_audio.volumex(1.0)
-
-        mixed_audio = CompositeAudioClip([original_audio, bg_music])
-        return mixed_audio
-
-
-
-
-
-def detect_and_crop_frames_batch(frames, batch_size=8):
-        TARGET_W, TARGET_H = 1080, 1920
-        alpha = 0.1
-        prev_cx, prev_cy = None, None
-        cropped_frames = []
-        onnx_path_gpu = r"c:\Users\didri\Desktop\LLM-models\Face-Detection-Models\yolov8x-face-lindevs_cuda.onnx"
-        providers = ['CUDAExecutionProvider']
-        sess_options = ort.SessionOptions()
-        sess_options.log_severity_level = 0
-        session = ort.InferenceSession(onnx_path_gpu, sess_options, providers=providers)
-        input_name = session.get_inputs()[0].name
-        print("ONNX input shape:", session.get_inputs()[0].shape)
-        progress_bar = tqdm(total=len(frames), desc="[detect_and_crop_frames_batch]Processing frames", unit="frame", dynamic_ncols=True)
-        try:
-            for i in range(0, len(frames), batch_size):
-                batch = frames[i:i+batch_size]
-                original_count = len(batch)
-
-
-                if len(batch) < batch_size:
-                    pad_count = batch_size - len(batch)
-                    batch += [np.zeros_like(batch[0])] * pad_count
-
-
-                processed_batch = []
-                for frame in batch:
-
-                    img = cv2.resize(frame, (928, 928), interpolation=cv2.INTER_AREA)
-                    img = img.astype(np.float32) / 255.0
-                    processed_batch.append(img.transpose(2, 0, 1))
-                    progress_bar.set_postfix({
-                                            "GPU Mem": f"{torch.cuda.memory_allocated()/1e9:.1f}GB",
-                                            "Batch Size": f"{len(batch[:original_count])}/{batch_size}"
-                                        })
-                    progress_bar.update(1)
-
-                if len(processed_batch) < batch_size:
-                    processed_batch += [np.zeros((3, 928, 928), dtype=np.float32)] * (batch_size - len(processed_batch))
-
-                input_tensor = np.stack(processed_batch).astype(np.float32)
-
-
-                outputs = session.run(None, {input_name: input_tensor})[0]
-
-
-                predictions = torch.tensor(outputs[:original_count])
-                detections = non_max_suppression(predictions, conf_thres=0.25, iou_thres=0.45)
-
-
-                for idx, (frame, det) in enumerate(zip(batch[:original_count], detections)):
-                    h, w = frame.shape[:2]
-
-                    if det is not None and len(det):
-
-                        areas = (det[:, 2] - det[:, 0]) * (det[:, 3] - det[:, 1])
-                        max_idx = torch.argmax(areas)
-                        x1, y1, x2, y2 = det[max_idx, :4].cpu().numpy().astype(int)
-
-
-                        x1 = int(x1 * w / 928)
-                        y1 = int(y1 * h / 928)
-                        x2 = int(x2 * w / 928)
-                        y2 = int(y2 * h / 928)
-                        cx, cy = (x1 + x2) // 2, (y1 + y2) // 2
-                    else:
-                        cx, cy = w // 2, h // 2
-
-
-                    if prev_cx is None or prev_cy is None:
-                        sx, sy = cx, cy
-                    else:
-                        sx = int(alpha * cx + (1 - alpha) * prev_cx)
-                        sy = int(alpha * cy + (1 - alpha) * prev_cy)
-                    prev_cx, prev_cy = sx, sy
-
-
-                    aspect_ratio = TARGET_W / TARGET_H
-                    if w / h > aspect_ratio:
-                        crop_h = h
-                        crop_w = int(h * aspect_ratio)
-                    else:
-                        crop_w = w
-                        crop_h = int(w / aspect_ratio)
-
-                    x0 = max(0, min(sx - crop_w // 2, w - crop_w))
-                    y0 = max(0, min(sy - crop_h // 2, h - crop_h))
-
-                    cropped_frame = frame[y0:y0+crop_h, x0:x0+crop_w]
-                    if cropped_frame.shape[:2] != (TARGET_H, TARGET_W):
-                        cropped_frame = _resize_smart(cropped_frame, TARGET_W, TARGET_H)
-                    cropped_frames.append(cropped_frame)
-        finally:
-            progress_bar.close()
-            del  predictions, detections, frame, det, h, w, areas, max_idx,session
-            if batch is not None:
-                del batch
-            session = None
-            clean_get_gpu_memory(threshold=0.1)
-        return cropped_frames
-
-
-
-#------------------------------------------------------------------------------------------------------------------------#
-# create_short_video --> Function takes (video, start time/end time for video, video name, subtitles for video) as input
-#------------------------------------------------------------------------------------------------------------------------#
-def create_short_video(video_path, audio_path, start_time, end_time, video_name, subtitle_text,Video_output_path=None):
-    probe = ffmpeg.probe(video_path)
-    log(probe)
-    format_info = probe.get('format', {})
-    video_streams = [s for s in probe['streams'] if s['codec_type'] == 'video']
-    bitrate = int(format_info.get('bit_rate', 0))
-    video_codec = video_streams[0]['codec_name'] if video_streams else None
-    audio_streams = [s for s in probe['streams'] if s['codec_type'] == 'audio']
-    audio_codec = audio_streams[0]['codec_name'] if audio_streams else None
-
-    def group_subtitle_words_in_triplets(subtitle_words):
-         chunks = []
-         if not subtitle_words:
-             return chunks
-
-         offset = float(subtitle_words[0]['start'])
-         segments = []
-         current_segment = [subtitle_words[0]]
-         PAUSE_THRESHOLD = 0.25
-
-         for i in range(1, len(subtitle_words)):
-              prev_word = subtitle_words[i-1]
-              curr_word = subtitle_words[i]
-              gap = float(curr_word['start']) - float(prev_word['end'])
-
-              if gap > PAUSE_THRESHOLD:
-                  current_segment[-1]['end'] += 0.2
-                  segments.append(current_segment)
-                  current_segment = []
-
-              current_segment.append(curr_word)
-
-         if current_segment:
-              segments.append(current_segment)
-
-         MAX_WORDS_PER_CHUNK = 5
-
-         for segment in segments:
-              for i in range(0, len(segment), MAX_WORDS_PER_CHUNK):
-                   chunk_words = segment[i : i + MAX_WORDS_PER_CHUNK]
-
-                   text_chunk = ''.join([w['word'].strip() + ' ' for w in chunk_words]).strip().upper()
-                   start = float(chunk_words[0]['start']) - offset
-                   end = float(chunk_words[-1]['end']) - offset
-                   duration = max(0.0, end - start)
-                   start = max(0.0, start)
-
-                   chunks.append({'text': text_chunk, 'start': start, 'end': end, 'duration': duration})
-
-         return chunks
-
-    try:
-       triplets = group_subtitle_words_in_triplets(subtitle_text)
-    except Exception as e:
-         log(f"[group_subtitle_words_in_triplets] Error during grouping of subtitles in triplets. {str(e)} ")
-
-
-    def create_subtitles_from_triplets(triplets):
-        text_clips = []
-
-        for i, c in enumerate(triplets):
-
-            _text = c['text']
-            _text = _text.upper()
-            log(f"text: {_text}")
-            txt_clip = TextClip(
-                text=_text,
-                font=r"C:\WINDOWS\FONTS\COPPERPLATECC-BOLD.TTF",
-                font_size=35,
-                margin=(10, 10),
-                text_align="center",
-                vertical_align="center",
-                horizontal_align="center",
-                color='white',
-                stroke_color="black",
-                stroke_width=2,
-                size=(1080, 300),
-                method="label",
-                duration=c['duration']
-            ).with_start(c['start']).with_position(('center', 0.44), relative=True)
-
-
-            text_clips.append(txt_clip)
-            log(f"Subtitle clip {i}: text='{c['text'][:20]}...', total_duration={c['duration']:.3f}s")
-        return text_clips
-
-
-
-
-
-    #------------------------------------------------------------------------#
-    # CREATES THE (START & END) OF the currentclip from FULL ORIGINAL VIDEO
-    #------------------------------------------------------------------------#
-    full_video = VideoFileClip(video_path)
-    clip = full_video.subclipped(start_time, end_time)
-    log(f"clip duration: {clip.duration}, clip fps: {clip.fps}, clip width: {clip.w}, clip height: {clip.h}, start_time: {start_time}, end_time: {end_time}, video_path: {video_path}")
-    log(f"Clip fps: {clip.fps}")
-
-
-
-
-#--------------------------------------------------#
-# Extrcting frames from original video to a LIST
-#--------------------------------------------------#
-    frames = []
-    for  frame in clip.iter_frames():
-        frames.append(frame)
-        frame_height, frame_width = frame.shape[:2]
-    log(f"[Extracting original video frames]  1. frames: {len(frames)} frames.\n [CLIP.ITER] Height: {frame_height}, Width: {frame_width}")
-
-
-
-
-
-
-# --------------------------------#
-# Yolo8/facedetection + Cropping
-# --------------------------------#
-    cropped_frames = detect_and_crop_frames_batch(frames=frames,batch_size=8)
-    clean_get_gpu_memory(threshold=0.1)
-    del frames
-
-
-
-
-
-
-
-# --------------------------------------#
-#  Blender version 5.0.0 detail enahcement
-# ----------------------------------------#
-    # log(f"blender frames proccessing now.")
-    # gc.collect()
-    # gc.collect()
-    # blender_frames = enhance_frames_bpy(cropped_frames, batch_size=10,use_skin_mask=True)
-    # del cropped_frames
-    # clean_get_gpu_memory(threshold=0.1)
-
-
-
-
-
-
-# ----------------------#
-#   FACEENCHANCEMENT
-# ---------------------#
-    class Face_enchance_Args:
-            model = 'GPEN-BFR-2048'
-            task = 'FaceEnhancement'
-            key = None
-            in_size = 2048
-            out_size = 0
-            channel_multiplier = 2
-            narrow = 1
-            alpha = 0.5
-            use_sr = True
-            use_cuda = True
-            save_face = False
-            aligned = True
-            sr_model = 'realesrnet'
-            sr_scale = 2
-            tile_size = 0
-            ext = '.png'
-    face_args = Face_enchance_Args()
-    Skin_texture_enchancement = FaceEnhancement(
-        face_args,
-        in_size=face_args.in_size,
-        model=face_args.model,
-        use_sr=face_args.use_sr,
-        device='cuda'
-    )
-    FaceEnhancement_frames = []
-    try:
-         for f_frames in tqdm(cropped_frames, desc="[FaceEnhancement]  proccessing frames", unit="frame"):
-              frame_height, frame_width = f_frames.shape[:2]
-              bgr_frame = cv2.cvtColor(f_frames, cv2.COLOR_RGB2BGR)
-              enchanced_frame_bgr, _, _ = Skin_texture_enchancement.process(bgr_frame)
-              RGB_face_enchanced_frame = cv2.cvtColor(enchanced_frame_bgr, cv2.COLOR_BGR2RGB)
-              FaceEnhancement_frames.append(RGB_face_enchanced_frame)
-              del enchanced_frame_bgr,RGB_face_enchanced_frame
-              gc.collect()
-         del  Skin_texture_enchancement,bgr_frame,#blender_frames
-         clean_get_gpu_memory(threshold=0.1)
-    except Exception as e:
-            log(f"[FaceEnhancement] Error: {str(e)}")
-
-
-
-
-
-
-
-
-
-#-------------------------------#
-# Creating videoclip from frames
-#-------------------------------#
-    try:
-       processed_clip = ImageSequenceClip(FaceEnhancement_frames, fps=clip.fps).with_duration(clip.duration)
-       clean_get_gpu_memory(threshold=0.1)
-
-       gc.collect()
-    except Exception as e:
-         log(f"[processed_clip] ERROR: {str(e)}")
-
-
-
-#-----------------------------------------------#
-#     Adds Logo/overlay for YT_channel
-#-----------------------------------------------#
-    YT_channel = None
-    try:
-        global Upload_YT_count
-        log(f"current YT_count: {Upload_YT_count}")
-        with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\Youtube_Upload_folder\latest_uploaded.txt","r", encoding="UTF-8") as r:
-            Latest_Yt_channel = r.read().strip()
-            log(f"Latest_Yt_channel: {Latest_Yt_channel}")
-            YT_channel = Latest_Yt_channel
-
-
-        if Latest_Yt_channel == "MA_Youtube":
-             YT_channel = "LR_Youtube"
-             overlay_clip = VideoFileClip(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\YT_logo\LOGO_LR.mp4",has_mask=True)
-             log(f"YT_channel: {YT_channel}")
-        elif Latest_Yt_channel == "LR_Youtube":
-             YT_channel = "LRS_Youtube"
-             overlay_clip = VideoFileClip(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\YT_logo\LOGO_LRS.mp4",has_mask=True)
-             log(f"YT_channel: {YT_channel}")
-        elif Latest_Yt_channel == "LRS_Youtube":
-             YT_channel = "LM_Youtube"
-             overlay_clip = VideoFileClip(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\YT_logo\LOGO_LM.mp4",has_mask=True)
-             log(f"YT_channel: {YT_channel}")
-        elif Latest_Yt_channel == "LM_Youtube":
-             YT_channel = "MR_Youtube"
-             overlay_clip = VideoFileClip(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\YT_logo\LOGO_MR.mp4",has_mask=True)
-             log(f"YT_channel: {YT_channel}")
-        elif Latest_Yt_channel == "MR_Youtube":
-                YT_channel = "MA_Youtube"
-                overlay_clip = VideoFileClip(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\YT_logo\LOGO_MA.mp4",has_mask=True)
-                log(f"YT_channel: {YT_channel}")
-
-
-        Global_state.set_current_yt_channel(YT_channel)
-
-        with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\Youtube_Upload_folder\latest_uploaded.txt","w", encoding="UTF-8") as w:
-            w.write(YT_channel)
-
-        overlay_clip = overlay_clip.subclipped(0, clip.duration)
-        logo_mask = overlay_clip.to_mask()
-        logo_with_mask = overlay_clip.with_mask(logo_mask)
-
-
-        if Upload_YT_count == 4:
-            Upload_YT_count = 0
-
-    except Exception as e:
-        log(f"Error:  {str(e)}")
-
-
-    try:
-        subtitle_clips = create_subtitles_from_triplets(triplets)
-    except Exception as e:
-            log(f"error during [create_subtitles_from_triplets]: {str(e)}")
-
-
-
-#-----------------------------------------------#
-# Adds Subtitles + Logo to the video
-#-----------------------------------------------#
-    final_clip = CompositeVideoClip(
-                [processed_clip.with_position('center')]  + subtitle_clips +  [logo_with_mask.with_position('center',0.50)] ,
-                size=processed_clip.size
-                )
-
-    del logo_with_mask, subtitle_clips, processed_clip
-    clean_get_gpu_memory(threshold=0.1)
-
-
-    fade = CrossFadeIn(1.5)
-    final_clip = fade.apply(final_clip)
-
-# -------------------------------#
-# Adds Background Music to video
-# -------------------------------#
-    log("choosing Background Audio\n")
-    try:
-        already_uploaded_videos = f"Video_clips/Youtube_Upload_folder/{YT_channel}/already_uploaded.txt"
-        log(f"already_uploaded_videos: {already_uploaded_videos}")
-        result = Background_Audio_Decision_Model(audio_file=audio_path,video_path=video_path,already_uploaded_videos=already_uploaded_videos,start_time=start_time,end_time=end_time)
-        if os.path.exists(audio_path):
-            os.remove(audio_path)
-            log(f"Removed temporary audio file: {audio_path}")
-
-        background_audio = result.get("path", "")
-        song_name = result.get("song_name", "")
-        Background_Audio_Reason = result.get("reason", "")
-        log(f"Background Audio : {background_audio}, song_name: {song_name}, Background_Audio_Reason: {Background_Audio_Reason}")
-    except Exception as e:
-         log(f"error during: [Background_Audio_Decision_Model]: {str(e)}")
-
-
-    log(f"Background audio path: {background_audio} \n Reason: {Background_Audio_Reason}\n")
-
-    if background_audio:
-        background_music_path = background_audio
-        final_clip.audio = mix_audio(clip.audio, background_music_path, bg_music_volume=0.4)
-    else:
-        final_clip.audio = clip.audio
-        log(f"keeping original audio")
-        Background_Audio_Reason = "original audio only"
-
-    log(f"(AUDIO DURATION): {final_clip.audio.duration}")
-
-
-
-    clean_get_gpu_memory(threshold=0.1)
-
-
-
-
-
-#-----------------------------------------------------#
-#    Adds fade in/out to the video and sets the FPS
-#------------------------------------------------------#
-    final_clip = FadeIn(duration=0.1).apply(final_clip)
-    final_clip = FadeOut(duration=0.1).apply(final_clip)
-    final_clip.fps = clip.fps
-
-
-
-#-----------------------------------------------------#
-#    Cleans cpu/gpu memory
-#------------------------------------------------------#
-    clean_get_gpu_memory(threshold=0.2)
-
-
-#-----------------------------------------------------#
-#    Writes the final Video
-#------------------------------------------------------#
-    output_dir = f"./Video_clips/Youtube_Upload_folder/{YT_channel}"
-    os.makedirs(output_dir, exist_ok=True)
-
-    if Video_output_path:
-         out_path = Video_output_path
-    else:
-        out_path = os.path.join(output_dir, f"{video_name}.mp4")
-
-
-    _finalclipduration = final_clip.duration
-    log(f"FINAL CLIP DURATION: {_finalclipduration}")
-
-    final_clip.write_videofile(
-    out_path,
-    logger='bar',
-    codec="libx264",
-    preset="slow",
-    audio_codec="aac",
-    threads=8,
-    ffmpeg_params=[
-        "-crf", "8",
-        "-pix_fmt", "yuv420p",
-        "-profile:v", "high",
-        "-ar", "48000",
-        "-vf", "minterpolate=fps=30:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1:scd_threshold=50",
-        "-color_primaries", "bt709",
-        "-color_trc", "bt709",
-        "-colorspace", "bt709",
-        "-movflags", "+faststart",
-    ],
-    audio_bitrate="384k",
-    remove_temp=True
-        )
-
-
-    gc.collect()
-    full_video.close()
-    clip.close()
-    clean_get_gpu_memory(threshold=0.1)
-
-
-
-
-
-
-
-
-
-#-----------------------------------------------------#
-#    Boosts x2 FPS on full video
-#------------------------------------------------------#
-    from utility.RIFE_FPS import run_rife
-    try:
-      output_video = run_rife(out_path)
-      log(f"video is completed: output path : {out_path}, video name: {video_name} video_fps: {clip.fps}, codec: {video_codec}, bitrate: {bitrate}, audio_codec: {audio_codec}, subtitles: {subtitle_text} \n Final video resolution (width x height): {final_clip.size[0]} x {final_clip.size[1]}")
-      log(f"Interpolated video saved to: {output_video}")
-    except Exception as e:
-         log(f"[run_rife] ERROR: {str(e)}")
-    finally:
-        os.remove(out_path)
-        clean_get_gpu_memory(threshold=0.1)
-
-
-
-
-
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
-# A Agent creates optimized (Title, Description, Hashtags, Tags, category, publishAt) after analyzing similar trending videos related to input video &  Uploads the video to Youtube
-# - Reloads the Global Model
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
-    try:
-        global Global_model
-        if 'Global_model' not in globals():
-                Global_model = None
-        from utility.upload_Socialmedia import upload_video
-        log(f"\n\n\n\n\n\n\n\n\n\n-------------------------------------------------------------------\n\n\n\n")
-        log("Youtube uploading & agent STARTING....")
-
-        try:
-            Current_model_loaded = Global_state.get_current_global_model()
-            if Global_model and Current_model_loaded == "gpt-4o":
-                del Global_model
-                Global_model = None
-                clean_get_gpu_memory(threshold=0.3)
-        except NameError:
-                pass
-
-
-        if Global_model is None:
-             try:
-                Global_model = Reload_and_change_model(model_name="gpt-5-minimal", message="Reloading model to -> gpt-5-minimal before running [upload_video]")
-             except Exception as e:
-                  log(f"Error reloading and changing model to gpt-5: {str(e)}")
-
-        if Global_model is None:
-            raise ValueError("Failed to initialize Global_model for upload_video")
-
-
-        YT_channel = Global_state.get_current_yt_channel()
-
-        try:
-            social_media = upload_video(model=Global_model,file_path=output_video,subtitle_text=subtitle_text,YT_channel=YT_channel,background_audio_=Background_Audio_Reason,song_name=song_name,video_duration=_finalclipduration)
-        except Exception as e:
-            log(f"error during upload_video: {str(e)}")
-        log(f"Done with uploading to {social_media}")
-    except Exception as e:
-         log(f"error during uploading: {str(e)}")
-
-    finally:
-         clean_get_gpu_memory(threshold=0.8)
 
 
 
@@ -904,7 +185,7 @@ def run_video_short_creation_thread(video_url,audio_path,start_time,end_time,sub
 
 
             padding_offset = 4.0
-            adjusted_start = max(0, video_start_time - padding_offset)
+            adjusted_start = video_start_time - padding_offset
             log(f"[run_video_short_creation_thread] Adjusting timestamps for padding: original_start={video_start_time}, adjusted_start={adjusted_start}")
 
             result = tool.forward({"audio": audio_for_clip,"subtitle_text": subtitle_text, "original_start_time": adjusted_start, "original_end_time:": video_end_time})
@@ -919,8 +200,7 @@ def run_video_short_creation_thread(video_url,audio_path,start_time,end_time,sub
             else:
                  Video_title = Video_Title_name
 
-
-            create_short_video(video_path=text_video_path, audio_path=audio_for_clip, start_time=new_video_start_time, end_time = new_video_end_time, video_name = Video_title, subtitle_text=crafted_Subtitle_text,Video_output_path=Video_output_path)
+            create_short_video(video_path=text_video_path, audio_path=audio_for_clip, start_time=new_video_start_time, end_time = new_video_end_time, video_name = Video_title, subtitle_text=crafted_Subtitle_text,Video_output_path=Video_output_path,order=None, YT_channel=None, middle_order=None,Montage_Flag=False)
         except Exception as e:
                 log(f"[ERROR] during execution: {str(e)}")
 
@@ -1019,7 +299,7 @@ def Montage_short_worker():
                     audio_dir = os.path.dirname(audio_path)
                     truncated_audio_path = os.path.join(audio_dir, f"temp_truncated_montage_{montage_id}_{order}.wav")
                     _truncate_audio = truncate_audio(audio_path, start_time, end_time, output_path=truncated_audio_path)
-                    tool = SpeechToText_short_creation_thread()
+                    tool = SpeechToText_montage_creation_thread()
 
                     subtitle_text = re.sub(r"\[\d+\.\d+s\s*-\s*\d+\.\d+s\]", "", subtitle_text)
                     subtitle_text = re.sub(r"\s+", " ",subtitle_text).strip()
@@ -1057,7 +337,7 @@ def Montage_short_worker():
                log(f"[Montage_short_worker] Rendering part group={group_key} order={order} -> {part_output_path}")
 
                # Render the individual part (this writes part_output_path, then creates RIFE file and deletes original)
-               _create_montage_short_func(
+               create_short_video(
                    video_path=video_path,
                    start_time=new_video_start_time,
                    end_time=new_video_end_time,
@@ -1066,7 +346,8 @@ def Montage_short_worker():
                    Video_output_path=part_output_path,
                    YT_channel=YT_channel,
                    order=order,
-                   middle_order=middle_order
+                   middle_order=middle_order,
+                   Montage_Flag=True
 
                )
 
@@ -1129,7 +410,7 @@ def Montage_short_worker():
                        os.makedirs(final_output_dir, exist_ok=True)
                        final_output_path = os.path.join(final_output_dir, f"montage_{group_key}.mp4")
                        log(f"[Montage_short_worker] Composing montage group={group_key} -> {final_output_path}")
-                       output_path = compose_montage_clips(ordered_paths, final_output_path,YT_channel,_truncate_audio,video_path)
+                       output_path = compose_montage_clips(ordered_paths, final_output_path,YT_channel,_truncate_audio,video_path,start_time,end_time)
                        from utility.upload_Socialmedia import upload_MontageClip
                        log(f"[Montage_short_worker] Uploading montage to YT channel: {group_channel}")
                        model = Reload_and_change_model("gpt-5-minimal",message="reloaded model inside Montage_short_worker before upload_MontageClip")
@@ -1238,7 +519,7 @@ def transcribe_single_video(video_path, device):
     script_dir = os.path.dirname(os.path.abspath(__file__))
 
 
-    parent_folder = os.path.join(script_dir, "work_queue_folder/in_progress")
+    parent_folder = os.path.join(script_dir, "work_queue_folder")
     os.makedirs(parent_folder, exist_ok=True)
 
     base_name = os.path.splitext(os.path.basename(video_path))[0]
@@ -1331,8 +612,13 @@ def gpu_worker():
     while True:
         item = Global_state.transcript_queue.get()
         if item is None:
+
             log("[Shutdown signal received] - exiting GPU worker")
             Global_state.transcript_queue.task_done()
+            Global_state.chunk_proccesed_event.set() # signaliserer at video_creation_worker kan starte og kjøre og ikke henge på wait lengre.
+            clean_get_gpu_memory(threshold=0.8)
+            wait_for_proccessed_video_complete(Global_state.video_task_que) # stopper thread her og venter på at alle videoer er ferdig prossesert
+            Global_state.chunk_proccesed_event.clear()
             break
 
         video_path_url, transcript_text_path,agent_txt_saving_path,_audio_path = item
@@ -1356,38 +642,35 @@ def gpu_worker():
 
 
 
+def load_downloaded_video_paths() -> list[str]:
+        """Load downloaded video files from work_queue_folder/videos_downloaded."""
+        base_dir = os.path.join(os.path.dirname(__file__), "work_queue_folder", "videos_downloaded")
+        if not os.path.isdir(base_dir):
+            log(f"No downloaded videos folder found at {base_dir}")
+            return []
 
+        video_files = []
+        for name in os.listdir(base_dir):
+            if name.lower().endswith((".mp4", ".mkv", ".mov")):
+                log(f"Found downloaded video file: {name}")
+                video_files.append(os.path.join(base_dir, name))
 
+        if not video_files:
+            log("No downloaded video files found in videos_downloaded folder.")
 
-
-
-
-
+        return video_files
 
 
 
 
 if __name__ == "__main__":
-    video_paths = [
-    r"c:\Users\didri\Documents\Hacking Your Psychology to Do Hard Things Consistently - Dr Mike Israetel.mp4",
-    r"c:\Users\didri\Documents\Give Me 30 Minutes and Finally STOP Feeling Behind in Life.mp4",
-    r"c:\Users\didri\Documents\Give Me 30 Minutes and I'll Make You Confident & Remove ALL Your Self Doubt! with Jay Shetty.mp4",
-    r"c:\Users\didri\Documents\8 Things To Tell Yourself Every Morning.mp4",
-    r"C:\Users\didri\Documents\Confidenco.mp4",
-    r"c:\Users\didri\Documents\6 LIFE-CHANGING lessons I've learned from EXTRAORDINARY Guests I Wish I knew Sooner….mp4",
-    r"c:\Users\didri\Documents\8 Things To Tell Yourself Every Morning.mp4",
-    r"c:\Users\didri\Documents\A Toolkit for Confidence： How to Build UNSHAKABLE Self Confidence ｜ The Mel Robbins Podcast.mp4",
-    r"c:\Users\didri\Documents\Change Your Brain： Neuroscientist Dr. Andrew Huberman ｜ Rich Roll Podcast.mp4",
-    r"c:\Users\didri\Documents\Daily Habits for Increasing Grit & Resilience ｜ Michael Easter & Dr. Andrew Huberman.mp4",
-    r"c:\Users\didri\Documents\Focus on Yourself, Not Others ｜ Jim Rohn Mindset.mp4",
-    r"c:\Users\didri\Documents\Give Me 27 Minutes and I’ll End Your Perfectionism for Good (FINALLY Get Unstuck!).mp4",
-    r"c:\Users\didri\Documents\How to Defeat Your Stress, Anxiety & Inaction - Mel Robbins.mp4",
-    r"c:\Users\didri\Documents\If you’re ambitious but lazy, please watch this….mp4",
-    r"c:\Users\didri\Documents\Jordan Peterson： STOP LYING TO YOURSELF! How To Turn Your Life Around In 2024!.mp4",
-    r"c:\Users\didri\Documents\The Let Them Theory： How to Take Back Your Peace and Power.mp4",
-    ]
+
+    video_paths = load_downloaded_video_paths()
+    if not video_paths:
+        log("No videos available to process; exiting main thread.")
+        sys.exit(0)
+
     clean_get_gpu_memory(threshold=0.1)
-    Clean_log_onRun()
 
 
     worker_thread = threading.Thread(target=video_creation_worker,name="Video_creation(THREAD)")

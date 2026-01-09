@@ -1,5 +1,5 @@
 
-from utility.Custom_Agent_Tools import open_work_file,montage_short_creation_tool
+from Agents.utility.Agent_tools import open_work_file,montage_short_creation_tool
 from smolagents import  CodeAgent
 import yaml
 from utility.log import log
@@ -9,7 +9,7 @@ def Run_short_montage_agent():
     """Agent that creates motivational montage shorts from multiple video titles with snippets"""
     global Global_model
     from App import Reload_and_change_model
-    Global_model =  Reload_and_change_model("gpt-5",message="Reloading model to -> gpt-5 before running [Montage_short_agent]")
+    Global_model =  Reload_and_change_model("gpt-5-high",message="Reloading model to -> gpt-5 before running [Montage_short_agent]")
     with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Agents\Prompt_templates\Montage short Agent\system_prompt.yaml", "r", encoding="utf-8") as r:
          montage_agent_systemprompt = yaml.safe_load(r)
 

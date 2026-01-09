@@ -1,4 +1,4 @@
-from utility.Custom_Agent_Tools import create_motivationalshort
+from Agents.utility.Agent_tools import create_motivationalshort
 from smolagents import  FinalAnswerTool, CodeAgent
 import yaml
 from utility.log import log
@@ -7,12 +7,12 @@ import utility.Global_state
 
 def Motivational_analytic_agent(transcript_path,agent_txt_saving_path):
     """Agent that analyzes text  from transcript by reading it (chunk for chunk) --->  (saves Quote identified in podcast transcript."""
-    from utility.Custom_Agent_Tools import ChunkLimiterTool
+    from Agents.utility.Agent_tools import ChunkLimiterTool
     from App import wait_for_proccessed_video_complete
     log(f"✅Transcript_Reasoning_AGENT (Running)")
     from App import Reload_and_change_model
     global Global_model
-    Global_model =  Reload_and_change_model("gpt-5-minimal",message="Reloading model to -> gpt-5 before running [Motivational_analytic_agent]")
+    Global_model =  Reload_and_change_model("gpt-5-high",message="Reloading model to -> gpt-5 before running [Motivational_analytic_agent]")
     loaded_reasoning_agent_prompts = r'C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Agents\Prompt_templates\Motivational Analytic Agent\System_prompt.yaml'
     with open(loaded_reasoning_agent_prompts, 'r', encoding='utf-8') as f:
             Prompt_template = yaml.safe_load(f)
@@ -34,20 +34,11 @@ def Motivational_analytic_agent(transcript_path,agent_txt_saving_path):
 
     chunk_limiter = ChunkLimiterTool()
 
-
-    reasoning_log = []
     while True:
-        reasoning_log.clear()
-
         chunk = chunk_limiter.forward(file_path=transcript_path, max_chars=10000)
-
         if not chunk.strip():
                 log(f"\nTranscript Path is (EMPTY)\n -{transcript_path}")
                 del Reasoning_Text_Agent
-                utility.Global_state.chunk_proccesed_event.set()
-                clean_get_gpu_memory(threshold=0.8)
-                wait_for_proccessed_video_complete(utility.Global_state.video_task_que)
-                utility.Global_state.chunk_proccesed_event.clear()
                 log(f"done with work. exiting transcript reasoning agent to retrieve the next items from the queue.")
                 break
 
@@ -90,7 +81,6 @@ def Motivational_analytic_agent(transcript_path,agent_txt_saving_path):
                     task=task,
                     additional_args={"text_file": agent_txt_saving_path},
                 )
-
         clean_get_gpu_memory(threshold=0.1)
 
 

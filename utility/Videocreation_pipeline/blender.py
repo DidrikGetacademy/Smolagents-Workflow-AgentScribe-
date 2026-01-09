@@ -65,7 +65,7 @@ def _normalize_frame_rgb_uint8(arr: np.ndarray) -> np.ndarray:
 def enhance_frames_bpy(
     frames: List[np.ndarray],
     *,
-    detail_amount: float = 0.6,
+    detail_amount: float = 0.7,
     view_transform: str = "Filmic",
     blur_radius: int = 15,
     use_skin_mask: bool = False,
@@ -74,7 +74,7 @@ def enhance_frames_bpy(
     glow_mix: float = 0.0,
     glow_threshold: float = 0.9,
    # skin_key_color: tuple = (0.85, 0.56, 0.47, 1.0),
-    vignette_strength: float = 0.20,
+    vignette_strength: float = 0.22,
     filmic_look: str = "Medium High Contrast",
     batch_size: int = 16,  # For memory management (not parallel processing)
 ) -> List[np.ndarray]:

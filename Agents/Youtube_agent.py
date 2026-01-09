@@ -10,7 +10,7 @@ def get_automatic_data_from_agent_montage(model,input_video,YT_channel):
 
     """
     from smolagents import CodeAgent,FinalAnswerTool,GoogleSearchTool,PythonInterpreterTool,VisitWebpageTool
-    from utility.Custom_Agent_Tools import ExtractAudioFromVideo,Fetch_top_trending_youtube_videos,SpeechToTextTool_viral_agent
+    from Agents.utility.Agent_tools import ExtractAudioFromVideo,Fetch_top_trending_youtube_videos,SpeechToTextTool_viral_agent
     from utility.upload_Socialmedia import Get_latestUpload_date
     import torch
 
@@ -102,18 +102,25 @@ def get_automatic_data_from_agent_montage(model,input_video,YT_channel):
 
 
 def get_automatic_data_from_agent(model,input_video):
-    """
-
-    """
     from smolagents import CodeAgent,FinalAnswerTool,GoogleSearchTool,PythonInterpreterTool,VisitWebpageTool,DuckDuckGoSearchTool
-    from utility.Custom_Agent_Tools import ExtractAudioFromVideo,Fetch_top_trending_youtube_videos,SpeechToTextTool_viral_agent,read_file
+    from Agents.utility.Agent_tools import (
+        ExtractAudioFromVideo,
+        Fetch_top_trending_youtube_videos,
+        SpeechToTextTool_viral_agent,
+        get_recent_background_music,
+        get_recent_background_music_summary,
+        get_video_publish_at,
+        get_upload_counts_by_date,
+        get_latest_publish_entries,
+        get_nearest_previous_publish,
+    )
     import utility.Global_state as Global_state
 
     from utility.upload_Socialmedia import Get_latestUpload_date
     YT_channel = Global_state.get_current_yt_channel()
     previous_publishAt = Get_latestUpload_date(YT_channel)
     import utility.Global_state as Global_state
-    with open((r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Prompt_templates\Youtube Agent\viral_agent_prompt.yaml"), 'r') as stream:
+    with open((r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Agents\Prompt_templates\Youtube Agent\system_prompt.yaml"), 'r') as stream:
                 Manager_Agent_prompt_templates = yaml.safe_load(stream)
 
     final_answer = FinalAnswerTool()
@@ -135,7 +142,12 @@ def get_automatic_data_from_agent(model,input_video):
                 PythonInterpeter,
                 DuckDuckGoSearch,
                 VisitWebpageTool(),
-                read_file
+                get_recent_background_music,
+                get_recent_background_music_summary,
+                get_video_publish_at,
+                get_upload_counts_by_date,
+                get_latest_publish_entries,
+                get_nearest_previous_publish,
                 ],
         max_steps=5,
         verbosity_level=1,
@@ -148,7 +160,7 @@ def get_automatic_data_from_agent(model,input_video):
             "input_video": input_video,
             "emojies": emojies,
             "previous_publishAt": previous_publishAt,
-            'Already_uploaded_path': f"Video_clips/Youtube_Upload_folder/{YT_channel}/already_uploaded.txt",
+            'Already_uploaded_path': f"Video_clips/Youtube_Upload_folder/{YT_channel}/already_uploaded.json",
             'current_video_name': Global_state.get_current_videourl(),
             'present_date': datetime.datetime.utcnow().strftime("%Y-%m-%d")
         }
@@ -175,7 +187,6 @@ def get_automatic_data_from_agent(model,input_video):
 
     Return ONLY the valid JSON object using the `final_answer` tool
     """
-
 
     try:
         Response = manager_agent.run(

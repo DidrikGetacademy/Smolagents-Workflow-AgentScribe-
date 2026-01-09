@@ -42,6 +42,217 @@ def read_file(text_file: str) -> str:
     return content
 
 
+@tool
+def get_recent_background_music(already_uploaded_json: str, limit: int = 3) -> list:
+    """
+    Return the most recent background music selections from the upload history JSON.
+
+    Args:
+        already_uploaded_json: Path to the channel-specific upload history JSON file.
+        limit: Number of latest entries to return (default 3).
+
+    Returns:
+        List of dicts containing song_name, background_audio, publishAt, title, and current_video_name.
+    """
+    if not os.path.exists(already_uploaded_json):
+        return []
+
+    try:
+        with open(already_uploaded_json, "r", encoding="utf-8") as r:
+            history = json.load(r)
+    except Exception:
+        return []
+
+    if not isinstance(history, list):
+        return []
+
+    recent = history[-limit:]
+    result = []
+    for entry in recent:
+        result.append(
+            {
+                "song_name": entry.get("song_name"),
+                "background_audio": entry.get("background_audio"),
+                "publishAt": entry.get("publishAt"),
+                "title": entry.get("title"),
+                "current_video_name": entry.get("current_video_name"),
+            }
+        )
+    return result
+
+
+@tool
+def get_recent_background_music_summary(already_uploaded_json: str, limit: int = 3) -> str:
+    """
+    Return a compact summary string of the latest background tracks from upload history.
+
+    Args:
+        already_uploaded_json: Path to the upload history JSON file.
+        limit: Number of latest entries to include (default 3).
+
+    Returns:
+        A newline-separated summary of recent background tracks.
+    """
+    recent = get_recent_background_music(already_uploaded_json, limit=limit)
+    if not recent:
+        return "No previous background tracks recorded."
+
+    lines = []
+    for idx, item in enumerate(recent, start=1):
+        lines.append(
+            f"{idx}. song_name={item.get('song_name')}, background_audio={item.get('background_audio')}, publishAt={item.get('publishAt')}, title={item.get('title')}, source_video={item.get('current_video_name')}"
+        )
+    return "\n".join(lines)
+
+
+@tool
+def get_video_publish_at(already_uploaded_json: str, current_video_name: str) -> str:
+    """
+    Look up the publishAt value for a given source video name in the JSON upload history.
+
+    Args:
+        already_uploaded_json: Path to the upload history JSON file.
+        current_video_name: The source video name to search for (string containment match).
+
+    Returns:
+        The publishAt string if found, else an empty string.
+    """
+    if not os.path.exists(already_uploaded_json):
+        return ""
+
+    try:
+        with open(already_uploaded_json, "r", encoding="utf-8") as r:
+            history = json.load(r)
+    except Exception:
+        return ""
+
+    if not isinstance(history, list):
+        return ""
+
+    current_video_name_lower = (current_video_name or "").lower()
+    for entry in reversed(history):
+        name = str(entry.get("current_video_name", "")).lower()
+        if current_video_name_lower and current_video_name_lower in name:
+            return entry.get("publishAt", "")
+
+    return ""
+
+
+@tool
+def get_upload_counts_by_date(already_uploaded_json: str) -> dict:
+    """
+    Return a mapping of publish date (YYYY-MM-DD) to upload count from the JSON history.
+
+    Args:
+        already_uploaded_json: Path to the upload history JSON file.
+
+    Returns:
+        Dict with keys as date strings and values as integer counts.
+    """
+    if not os.path.exists(already_uploaded_json):
+        return {}
+
+    try:
+        with open(already_uploaded_json, "r", encoding="utf-8") as r:
+            history = json.load(r)
+    except Exception:
+        return {}
+
+    if not isinstance(history, list):
+        return {}
+
+    counts = {}
+    for entry in history:
+        publish_at = entry.get("publishAt") or ""
+        if not publish_at:
+            continue
+        date_part = publish_at.split("T")[0]
+        counts[date_part] = counts.get(date_part, 0) + 1
+    return counts
+
+
+@tool
+def get_latest_publish_entries(already_uploaded_json: str, limit: int = 5) -> list:
+    """
+    Return the latest publish entries sorted by publishAt descending.
+
+    Args:
+        already_uploaded_json: Path to the upload history JSON file.
+        limit: Maximum number of entries to return (default 5).
+
+    Returns:
+        List of dicts with publishAt, title, current_video_name.
+    """
+    if not os.path.exists(already_uploaded_json):
+        return []
+
+    try:
+        with open(already_uploaded_json, "r", encoding="utf-8") as r:
+            history = json.load(r)
+    except Exception:
+        return []
+
+    if not isinstance(history, list):
+        return []
+
+    def _key(entry):
+        return entry.get("publishAt") or ""
+
+    sorted_history = sorted(history, key=_key, reverse=True)
+    trimmed = sorted_history[:limit]
+
+    result = []
+    for entry in trimmed:
+        result.append(
+            {
+                "publishAt": entry.get("publishAt"),
+                "title": entry.get("title"),
+                "current_video_name": entry.get("current_video_name"),
+            }
+        )
+    return result
+
+
+@tool
+def get_nearest_previous_publish(already_uploaded_json: str, present_date: str) -> str:
+    """
+    Return the latest publishAt that is <= present_date (UTC date string YYYY-MM-DD).
+
+    Args:
+        already_uploaded_json: Path to the upload history JSON file.
+        present_date: Current date in YYYY-MM-DD (UTC).
+
+    Returns:
+        publishAt string if found, else empty string.
+    """
+    if not os.path.exists(already_uploaded_json):
+        return ""
+
+    try:
+        with open(already_uploaded_json, "r", encoding="utf-8") as r:
+            history = json.load(r)
+    except Exception:
+        return ""
+
+    if not isinstance(history, list):
+        return ""
+
+    present_dt = present_date
+    candidates = []
+    for entry in history:
+        publish_at = entry.get("publishAt") or ""
+        if not publish_at:
+            continue
+        date_part = publish_at.split("T")[0]
+        if date_part <= present_dt:
+            candidates.append(publish_at)
+
+    if not candidates:
+        return ""
+
+    return sorted(candidates, reverse=True)[0]
+
+
 
 
 
@@ -534,6 +745,8 @@ def create_motivationalshort(text: str,text_file: str) -> None:
             text_file (str): Path to the text file where the passage will be appended.
 
         """
+        with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\checking.txt", encoding="utf-8", mode="a") as f:
+            f.write(f"\n=============saved text======  \n{text}\n=============================\n")
         with open (text_file, "a", encoding="utf-8") as f:
             log(f"Writing saved motivational text from agent to: {text_file}\n text: {text}")
             f.write(f"===START_TEXT===")
@@ -554,7 +767,7 @@ def create_motivationalshort(text: str,text_file: str) -> None:
         try:
             log(f"\n now Added work to QUEUE: \n video url: {video_url}\n, audio_path: {audio_path} \n start_time: {start_time}s \n end_time {end_time}s\nOriginal text: {text}")
 
-         #   Global_state.video_task_que.put((video_url, audio_path, start_time, end_time, new_text))
+            Global_state.video_task_que.put((video_url, audio_path, start_time, end_time, new_text))
             count = Global_state.get_current_count()
             count +=1
             log(f"Added VideoWork to videotask Queue:\n{video_url}\nAudio_path:{audio_path}\n{start_time}\n {end_time}\n {new_text}\n  Amount of added videowork to queue: {count}\n ")
@@ -702,236 +915,8 @@ def montage_short_creation_tool(montage_list: List[Dict[str,str]]) -> str:
 
 
 
-@tool
-def Check_Already_used_videos(video_id: str, channel_name: str) -> bool:
-    """
-    A tool that checks if a YouTube video ID has already been used by reading from a JSON file.
-
-    Args:
-        video_id (str): The YouTube video ID to check.
-        channel_name (str): The name of the channel.
-    Returns:
-        bool: True if the video ID has been used, False otherwise.
-    """
-    import json
-    youtube_folder = os.path.join(REPO_ROOT, "Youtube", channel_name)
-    json_file = os.path.join(youtube_folder, "used_videos.json")
-
-    if not os.path.exists(json_file):
-        return False
-
-    try:
-        with open(json_file, "r", encoding="utf-8") as f:
-            used_videos = json.load(f)
-
-        for video in used_videos:
-            if video.get("video_id") == video_id:
-                return True
-    except Exception as e:
-        log(f"Error reading used_videos.json: {e}")
-        return False
-
-    return False
 
 
-@tool
-def update_used_videos(video_id: str, channel_name: str, title: str, published_at: str, description: str) -> None:
-    """
-    A tool that updates the record of used YouTube video IDs in a JSON file.
-
-    Args:
-        video_id (str): The YouTube video ID to add to the used list.
-        channel_name (str): The name of the channel.
-        title (str): The title of the video.
-        published_at (str): The publication date.
-        description (str): The video description.
-    Returns:
-        None
-    """
-    import json
-    import time
-
-    youtube_folder = os.path.join(REPO_ROOT, "Youtube", channel_name)
-    os.makedirs(youtube_folder, exist_ok=True)
-
-    json_file = os.path.join(youtube_folder, "used_videos.json")
-
-    used_videos = []
-    if os.path.exists(json_file):
-        try:
-            with open(json_file, "r", encoding="utf-8") as f:
-                used_videos = json.load(f)
-        except Exception:
-            used_videos = []
-
-
-    if any(v.get("video_id") == video_id for v in used_videos):
-        log(f"Video {video_id} already exists in records for {channel_name}.")
-        return
-
-    new_entry = {
-        "video_id": video_id,
-        "title": title,
-        "published_at": published_at,
-        "description": description,
-        "added_at": time.strftime("%Y-%m-%d %H:%M:%S")
-    }
-
-    used_videos.append(new_entry)
-
-    with open(json_file, "w", encoding="utf-8") as f:
-        json.dump(used_videos, f, indent=4, ensure_ascii=False)
-
-    log(f"Updated used_videos.json for {channel_name} with video {video_id}")
-
-
-
-
-
-
-
-@tool
-def youtube_Searcher(channel_name: str, search_query: str = None, max_results: int = 10, order: str = "relevance") -> dict:
-    """
-    A tool that retrieves information about videos from a specific YouTube channel.
-    It can either list the latest uploads or search for videos matching a query within the channel.
-
-    Args:
-        channel_name (str): The name of the channel to look up (e.g., "Chris_williamson", "Jay_shetty", "Mel Robbins").
-        search_query (str, optional): A keyword or topic to search for within the channel's videos. If None, fetches latest uploads (unless order is 'viewCount' or 'rating').
-        max_results (int, optional): The maximum number of videos to return. Defaults to 10.
-        order (str, optional): The order of the search results. Allowed values: 'date', 'rating', 'relevance', 'title', 'videoCount', 'viewCount'.
-                               Defaults to 'relevance'. Use 'viewCount' to find the most popular videos.
-
-    Returns:
-        dict: A dictionary containing channel statistics and a list of videos (with titles, descriptions, etc.).
-    """
-    Youtube_channels = {
-        "Chris_williamson": 'UCIaH-gZIVC432YRjNVvnyCA',
-        "Jay_shetty": 'UCbk_QsfaFZG6PdQeCvaYXJQ',
-        'Mel_Robbins': 'UCk2U-Oqn7RXf-ydPqfSxG5g',
-        'Diary_ceo': 'UCGq-a57w-aPwyi3pW7XLiHw',
-    }
-
-    if channel_name not in Youtube_channels:
-        return {"error": f"Channel '{channel_name}' not found in the available list. Available channels: {list(Youtube_channels.keys())}"}
-
-    channel_id = Youtube_channels[channel_name]
-
-    Api_key = os.getenv("YOUTUBE_API_KEY")
-    if not Api_key:
-        raise ValueError("YOUTUBE_API_KEY is not set in environment variables.")
-
-    youtube = build("youtube", "v3", developerKey=Api_key)
-
-    channel_response = youtube.channels().list(
-        part="snippet,statistics,contentDetails",
-        id=channel_id
-    ).execute()
-
-    if not channel_response.get("items"):
-        return {"error": f"No details found for channel ID {channel_id}"}
-
-    channel_info = channel_response["items"][0]
-    uploads_playlist_id = channel_info["contentDetails"]["relatedPlaylists"]["uploads"]
-
-    stats = {
-        "title": channel_info["snippet"]["title"],
-        "description": channel_info["snippet"]["description"],
-        "subscriberCount": channel_info["statistics"]["subscriberCount"],
-        "videoCount": channel_info["statistics"]["videoCount"],
-        "viewCount": channel_info["statistics"]["viewCount"]
-    }
-
-    videos = []
-
-
-    use_search_api = (search_query is not None) or (order in ["viewCount", "rating", "title", "videoCount"])
-
-    if use_search_api:
-        # Search within the channel
-        search_params = {
-            "part": "snippet",
-            "channelId": channel_id,
-            "maxResults": max_results,
-            "order": order,
-            "type": "video"
-        }
-        if search_query:
-            search_params["q"] = search_query
-
-        search_response = youtube.search().list(**search_params).execute()
-
-        for item in search_response.get("items", []):
-            videos.append({
-                "title": item["snippet"]["title"],
-                "videoId": item["id"]["videoId"],
-                "publishedAt": item["snippet"]["publishedAt"],
-                "description": item["snippet"]["description"]
-            })
-    else:
-
-        playlist_response = youtube.playlistItems().list(
-            part="snippet,contentDetails",
-            playlistId=uploads_playlist_id,
-            maxResults=max_results
-        ).execute()
-
-        for item in playlist_response.get("items", []):
-            videos.append({
-                "title": item["snippet"]["title"],
-                "videoId": item["contentDetails"]["videoId"],
-                "publishedAt": item["snippet"]["publishedAt"],
-                "description": item["snippet"]["description"]
-            })
-
-    return {
-        "channel_statistics": stats,
-        "videos": videos
-    }
-
-
-
-
-
-@tool
-def youtube_downloader(VideoId: int) -> str:
-    """
-    A tool that Downloads video based on a YouTube Video ID.
-
-    Args:
-        VideoId (int): The ID of the YouTube video to download.
-
-    Returns:
-        str: The path to the downloaded video file.
-    """
-    yt_dlp_opts = {
-        'quiet': False,
-        'nocheckcertificate': True,
-        'format':'best',
-        'debuge': True,
-        "cookiefile": '../youtube.com_cookies.txt',
-        'cookiesfrombrowser': True,
-        'extractor_args':{
-            'youtube': {
-                'player_client': ['default','mweb'],
-            }
-        }
-    }
-    with yt_dlp.YoutubeDL(yt_dlp_opts) as ytdlp:
-        try:
-            video_url = f"https://www.youtube.com/watch?v={VideoId}"
-            info_dict = ytdlp.extract_info(video_url, download=True)
-            video_title = info_dict.get('title', None)
-            sanitized_title = "".join(c for c in video_title if c.isalnum() or c in (' ', '_', '-')).rstrip()
-            output_path = ytdlp.prepare_filename(info_dict)
-            new_output_path = os.path.join(os.path.dirname(output_path), f"{sanitized_title}.mp4")
-            os.rename(output_path, new_output_path)
-            log(f"Downloaded video to: {new_output_path}")
-            return new_output_path
-        except ytdlp.utils.DownloadError as e:
-            log(f"DownloadError: {str(e)}")
-            return None
 
 
 
@@ -1136,7 +1121,7 @@ class SpeechToTextToolCPU(PipelineTool):
 
 
 
-class SpeechToText_short_creation_thread(PipelineTool):
+class SpeechToText_montage_creation_thread(PipelineTool):
     default_checkpoint = r"c:\Users\didri\Desktop\LLM-models\Audio-Models\faster-whisper-large-v3-turbo-int8float16"
     description = "Fast tool that transcribes audio into text using faster-whisper. It returns the matched words with timestamps."
     name = "transcriber"
@@ -1222,17 +1207,23 @@ class SpeechToText_short_creation_thread(PipelineTool):
 
             match_start = -1
             for i in range(len(transcribed_tokens) - len(start_phrase) + 1):
-                    if transcribed_tokens[i:i+3] == start_phrase:
-                        match_start = i
-                        log(f"match start transcribetokens: {match_start}")
-                        break
+                if transcribed_tokens[i:i+3] == start_phrase:
+                    match_start = i
+                    log(f"match start transcribetokens: {match_start}")
+                    break
 
-            match_end = -1
+            end_matches = []
             for j in range(len(transcribed_tokens) - len(end_phrase) + 1):
-                    if transcribed_tokens[j:j+3] == end_phrase:
-                        match_end = j + 3
-                        log(f"match end transcribe tokens: {match_end}")
-                        break
+                if transcribed_tokens[j:j+len(end_phrase)] == end_phrase:
+                    end_matches.append(j)
+
+            if end_matches:
+                last_end_idx = max(end_matches)
+                raw_match_end = last_end_idx + 3
+                match_end = min(raw_match_end, len(all_words))
+                log(f"match end transcribe tokens (last occurrence): {match_end} from start index {last_end_idx}")
+            else:
+                match_end = -1
 
             if match_start == -1 or match_end == -1 or match_end <= match_start:
                     log("Did not find a start/end in transcript")
@@ -1253,11 +1244,11 @@ class SpeechToText_short_creation_thread(PipelineTool):
 
             log(f"[MATCH] Found exact match: {[w['word'] for w in matched_words]}")
 
-            final_start_time = original_start_time + float(all_words[match_start].start) - 0.2
+            final_start_time = original_start_time + float(all_words[match_start].start) - 0.1
             log(f"final_start_time: {final_start_time}")
 
 
-            final_end_time = original_start_time + float(matched_words[-1]["end"]) + 0.5
+            final_end_time = original_start_time + float(matched_words[-1]["end"]) + 0.3
             log(f"final_end_time: {final_end_time}")
             log(f"matched_words: {matched_words}\n start : {final_start_time}\n end : {final_end_time}\n")
 
@@ -1285,6 +1276,162 @@ class SpeechToText_short_creation_thread(PipelineTool):
     def decode(self, outputs):
         return outputs
 
+
+
+class SpeechToText_short_creation_thread(PipelineTool):
+    default_checkpoint = r"c:\Users\didri\Desktop\LLM-models\Audio-Models\faster-whisper-large-v3-turbo-int8float16"
+    description = "Fast tool that transcribes audio into text using faster-whisper. It returns the matched words with timestamps."
+    name = "transcriber"
+    def __init__(self, device="cuda"):
+        self.device = device
+    inputs = {
+        "audio": {
+            "type": "audio",
+            "description": "The audio to transcribe. Can be a local path, a URL, or a tensor.",
+        },
+        "subtitle_text": {
+            "type": "string",
+            "description": "The correct subtitle text to match to",
+        },
+        "padding": {
+            "type": "number",
+            "description": "padding"
+        },
+        "original_start_time":
+        {
+            "type": "number",
+            "description": "Extended end time for video"
+        },
+
+        "original_end_time": {
+            "type": "number",
+            "description": "extended start time for video"
+        }
+    }
+    output_type = "string"
+
+    def setup(self):
+        self.model = WhisperModel(
+            model_size_or_path=self.default_checkpoint,
+            device=self.device,
+            compute_type="int8_float16"
+        )
+
+    @staticmethod
+    def clean_word(word):
+        import re
+        return re.sub(r"[^\w']", "", word).lower()
+
+    def forward(self, inputs):
+        audio_path = inputs["audio"]
+        subtitle_text = inputs["subtitle_text"]
+        original_start_time = round(inputs["original_start_time"],2)
+
+        try:
+            segments, info = self.model.transcribe(
+                audio_path,
+                language="en",
+                word_timestamps=True,
+                temperature=0.0,
+                beam_size=10,
+                patience=1.5,
+                vad_filter=True,
+                vad_parameters={
+                    "threshold": 0.6,
+                    "min_silence_duration_ms": 400,
+                    "min_speech_duration_ms": 250,
+                    "speech_pad_ms": 100,
+                    },
+                no_speech_threshold=0.6,
+                initial_prompt=subtitle_text
+            )
+
+            log(f"[INFO] Audio Duration: {info.duration:.2f} seconds Detected Language: {info.language} (confidence: {info.language_probability:.2f})")
+
+            all_words = []
+            for segment in segments:
+                all_words.extend(segment.words)
+
+
+            subtitle_tokens = [self.clean_word(w) for w in subtitle_text.replace("\n", " ").split()]
+            transcribed_tokens = [self.clean_word(w.word) for w in all_words]
+            log(f"S{subtitle_tokens}\n")
+            log(f"T{transcribed_tokens}\n")
+            start_phrase = subtitle_tokens[:4]
+            end_phrase = subtitle_tokens[-4:]
+            log(f"start_phrase subtitletokens: {start_phrase}\n end_phrase subtitletokens: {end_phrase}")
+
+
+            match_start = -1
+            for i in range(len(transcribed_tokens) - len(start_phrase) + 1):
+                if transcribed_tokens[i:i+len(start_phrase)] == start_phrase:
+                    match_start = i
+                    log(f"match start transcribetokens: {match_start}")
+                    break
+
+            end_matches = []
+            for j in range(len(transcribed_tokens) - len(end_phrase) + 1):
+                if transcribed_tokens[j:j+len(end_phrase)] == end_phrase:
+                    end_matches.append(j)
+
+            if end_matches:
+                last_end_idx = max(end_matches)
+                raw_match_end = last_end_idx + 4
+                match_end = min(raw_match_end, len(all_words))
+                log(f"match end transcribe tokens (last occurrence): {match_end} from start index {last_end_idx}")
+            else:
+                match_end = -1
+
+            if match_start == -1 or match_end == -1 or match_end <= match_start:
+                log("Did not find a start/end in transcript")
+                raise ValueError("Did not find a start/end in transcript")
+
+
+            window_tokens = transcribed_tokens[match_start:match_end]
+            log(f"[WINDOW] Index {match_start}-{match_end}: {' '.join(window_tokens)}")
+
+            matched_words = [
+                        {
+                            "word": self.clean_word(all_words[i].word),
+                            "start": float(all_words[i].start),
+                            "end": float(all_words[i].end),
+                        }
+                        for i in range(match_start, match_end)
+                    ]
+
+            log(f"[MATCH] Found exact match: {[w['word'] for w in matched_words]}")
+
+            final_start_time = original_start_time + float(all_words[match_start].start) - 0.1
+            log(f"final_start_time: {final_start_time}")
+
+
+            final_end_time = original_start_time + float(matched_words[-1]["end"]) + 0.15
+            log(f"final_end_time: {final_end_time}")
+            log(f"matched_words: {matched_words}\n start : {final_start_time}\n end : {final_end_time}\n")
+
+            return {
+                    "matched_words": matched_words,
+                    "video_start_time": final_start_time,
+                    "video_end_time": final_end_time,
+                   }
+
+
+
+        except Exception as e:
+            log(f"[ERROR] during transcription: {str(e)}")
+            raise ValueError(f"Logic in speectotext_short_creation_thread NEEDS FIXING")
+
+        finally:
+            log(f"Transcription complete | device: {self.device}")
+
+            if self.device == "cuda":
+                torch.cuda.empty_cache()
+
+    def encode(self, audio):
+        return {"audio": audio}
+
+    def decode(self, outputs):
+        return outputs
 
 class SpeechToTextToolCUDA(PipelineTool):
     default_checkpoint = r"c:\Users\didri\Desktop\LLM-models\Audio-Models\faster-whisper-large-v3-turbo-int8float16"
@@ -1801,41 +1948,4 @@ def Read_already_uploaded_video_publishedat(file_path: str) -> str:
         return "No uploaded video data found."
     except Exception as e:
             return f"Error reading uploaded video data: {str(e)}"
-
-
-@tool
-def check_video_source_exists(video_name: str) -> str:
-    """
-    Checks if a video source name exists in the completed videos database.
-    This tool searches the Videosources_completed.json file to see if a specific video has already been used.
-
-    Args:
-        video_name (str): The exact name of the video to check (e.g., "Motivational Speech.mp4")
-
-    Returns:
-        str: A message indicating whether the video exists and its metadata if found.
-    """
-    json_path = r"c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\Videosources_completed.json"
-
-    try:
-        if not os.path.exists(json_path):
-            return f"Database file not found. Video '{video_name}' does not exist in database."
-
-        with open(json_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-
-        video_name = video_name.strip()
-
-        if video_name in data:
-            metadata = data[video_name]
-            used_date = metadata.get("used_date", "unknown")
-            clips_created = metadata.get("clips_created", 0)
-            return f"Video '{video_name}' EXISTS in database. Used on: {used_date}, Clips created: {clips_created}"
-        else:
-            return f"Video '{video_name}' does NOT exist in database."
-
-    except json.JSONDecodeError as e:
-        return f"Error parsing database file: {str(e)}"
-    except Exception as e:
-        return f"Error checking video source: {str(e)}"
 

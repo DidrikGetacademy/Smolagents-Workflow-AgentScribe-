@@ -14,7 +14,7 @@ class OpenAi_model():
     def __init__(self):
         self.model_id = model_id
 
-  
+
 
 
 
@@ -88,7 +88,7 @@ def Reload_and_change_model(model_name, message):
         )
         return Global_model
     elif model_name == "gpt-5-mini":
-        utility.Global_state.set_current_global_model("gpt-5.2")
+        utility.Global_state.set_current_global_model("gpt-5.2-mini")
         Global_model = LiteLLMModel(
             model_id="gpt-5-mini",
             reasoning_effort="high",

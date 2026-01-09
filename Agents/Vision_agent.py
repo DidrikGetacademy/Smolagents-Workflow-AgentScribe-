@@ -1,5 +1,7 @@
 
-from utility.Custom_Agent_Tools import extract_window_frames
+from Agents.utility.Agent_tools import extract_window_frames, get_recent_background_music_summary
+import os
+import json
 
 def run_multi_Vision_model_agent(video_path , Additional_content,Global_model, already_uploaded_videos,start_time,end_time) -> str:
     """Agent that selects background music for the motivational shorts video
@@ -25,8 +27,15 @@ def run_multi_Vision_model_agent(video_path , Additional_content,Global_model, a
     with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Agents\Prompt_templates\Background Music Agent\system_prompt.yaml", "r", encoding="utf-8") as r:
             prompt = yaml.safe_load(r)
 
-    with open(already_uploaded_videos, "r", encoding="utf-8") as f:
-            uploaded_videos_content = f.read()
+    if os.path.exists(already_uploaded_videos):
+        try:
+            with open(already_uploaded_videos, "r", encoding="utf-8") as f:
+                json.load(f)  # validate file is readable json
+            uploaded_videos_content = get_recent_background_music_summary(already_uploaded_videos, limit=3)
+        except Exception:
+            uploaded_videos_content = "No previous background tracks recorded."
+    else:
+        uploaded_videos_content = "No previous background tracks recorded."
 
 
 

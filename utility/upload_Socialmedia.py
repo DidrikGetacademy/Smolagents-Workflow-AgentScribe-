@@ -10,12 +10,13 @@ from google.auth.transport.requests import Request
 import pickle
 from dotenv import load_dotenv
 import gc
+import json
 from googleapiclient.errors import HttpError
 import torch
 load_dotenv()
 SERPAPI_API_KEY = os.getenv("SERPAPI_API_KEY")
 OPENAI_APIKEY = os.getenv("OPENAI_APIKEY")
-from neon.log import log
+from utility.log import log
 import utility.Global_state as Global_state
 
 
@@ -75,43 +76,42 @@ def upload_tiktok_Instagram_API(hashtags,description,title,video_path,YT_channel
 
 
 def Populate_Already_Uploaded(title, description, tags, categoryId, publishAt, YT_channel, video_url,subtitle_text,error,background_audio_,song_name,video_duration=None):
-    already_uploaded_videos = f"Video_clips/Youtube_Upload_folder/{YT_channel}/already_uploaded.txt"
-    if error == False:
-        subtitle_text_list = []
-        for text in subtitle_text:
-             subtitle_text_list.append(text["word"])
+    history_path = os.path.join("Video_clips", "Youtube_Upload_folder", YT_channel, "already_uploaded.json")
+    os.makedirs(os.path.dirname(history_path), exist_ok=True)
 
+    history = []
+    if os.path.exists(history_path):
+        try:
+            with open(history_path, "r", encoding="utf-8") as r:
+                history = json.load(r)
+        except Exception as e:
+            log(f"Failed to load existing upload history: {str(e)}")
 
-        with open(already_uploaded_videos,"a", encoding="UTF-8") as w:
-                w.write("----------------------------------\n")
-                w.write(f"Title: {title}\n")
-                w.write(f"description: {description}\n")
-                w.write(f"tags: {tags}\n")
-                w.write(f"categoryId: {categoryId}\n")
-                w.write(f"publishAt: {publishAt}\n")
-                w.write(f"Youtube Channel: {YT_channel}\n")
-                w.write(f"Current_video_name: {video_url}\n")
-                w.write(f"Subtitle text: {subtitle_text_list}\n")
-                w.write(f"Video duration: {video_duration}\n")
-                w.write (f"Background audio used: {background_audio_}\n")
-                w.write(f"Song name: {song_name}\n")
-                w.write("----------------------------------")
-    else:
-        with open(already_uploaded_videos,"a", encoding="UTF-8") as w:
-            w.write("----------------------------------" + "\n")
-            w.write("###############UPLOADING FAILED!#####################\n")
-            w.write(f"Title: {title}\n")
-            w.write(f"description: {description}\n")
-            w.write(f"tags: {tags}\n")
-            w.write(f"categoryId: {categoryId}\n")
-            w.write(f"publishAt: {publishAt}\n")
-            w.write(f"Youtube Channel: {YT_channel}")
-            w.write(f"Current_video_name: {video_url}\n")
-            w.write(f"Subtitle text: {subtitle_text}\n")
-            w.write(f"Video duration: {video_duration}\n")
-            w.write (f"Background audio used: {background_audio_}\n")
-            w.write(f"Song name: {song_name}\n")
-            w.write("----------------------------------" + "\n")
+    subtitle_text_list = []
+    for text in subtitle_text:
+        subtitle_text_list.append(text)
+
+    entry = {
+        "title": title,
+        "description": description,
+        "tags": tags,
+        "categoryId": categoryId,
+        "publishAt": publishAt,
+        "youtube_channel": YT_channel,
+        "current_video_name": video_url,
+        "subtitle_text": subtitle_text_list,
+        "video_duration": video_duration,
+        "background_audio": background_audio_,
+        "song_name": song_name,
+        "error": error,
+    }
+    history.append(entry)
+
+    try:
+        with open(history_path, "w", encoding="utf-8") as w:
+            json.dump(history, w, ensure_ascii=False, indent=2)
+    except Exception as e:
+        log(f"Failed to write upload history json: {str(e)}")
 
 
 SCOPES = ["https://www.googleapis.com/auth/youtube"]
@@ -427,5 +427,5 @@ if __name__ == "__main__":
      torch.cuda.empty_cache()
      Global_state.set_current_videourl(r"c:\Users\didri\Documents\Is Being Smart Worth the Depression？ - Alex O’Connor & Joe Folley (4K).mp4")
      Global_model = LiteLLMModel(model_id="gpt-5", reasoning_effort="minimal" ,api_key=OPENAI_APIKEY,max_tokens=20000)
-     Global_state.set_current_yt_channel("MR_Youtube")
-     upload_video(model=Global_model,file_path=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\Youtube_Upload_folder\LM_Youtube\short16.mp4",subtitle_text="",YT_channel="LM_Youtube",background_audio_="lofi")
+     Global_state.set_current_yt_channel("MA_Youtube")
+     upload_video(model=Global_model,file_path=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\Youtube_Upload_folder\LM_Youtube\short11_rife.mp4",subtitle_text="",YT_channel="LRS_Youtube",background_audio_="lofi")
