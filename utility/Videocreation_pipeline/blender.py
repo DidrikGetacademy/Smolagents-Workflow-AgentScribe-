@@ -12,40 +12,13 @@ if GPEN_PATH not in sys.path:
 from GPEN.face_enhancement import FaceEnhancement
 from tqdm import tqdm
 
-# Try to use repo logger; fall back to print
-try:
-    from neon.log import log as _repo_log
-except Exception:
-    _repo_log = None
 
-def _log(msg: str):
-    """Use repo logger if available, otherwise fall back to print."""
-    if _repo_log is not None:
-        try:
-            _repo_log(msg)
-            return
-        except Exception:
-            pass
-    print(msg)
 
 # =============================================
 # Frame-based API: frames in -> frames out (bpy)
 # =============================================
 
-#Try to use repo logger; fall back to print
-try:
-    from neon.log import print as _repo_log
-except Exception:
-    _repo_log = None
 
-def _log(msg: str):
-    if _repo_log is not None:
-        try:
-            _repo_log(msg)
-            return
-        except Exception:
-            pass
-    print(msg)
 
 def _normalize_frame_rgb_uint8(arr: np.ndarray) -> np.ndarray:
     """Ensure frame is RGB uint8 HxWx3."""
@@ -65,17 +38,17 @@ def _normalize_frame_rgb_uint8(arr: np.ndarray) -> np.ndarray:
 def enhance_frames_bpy(
     frames: List[np.ndarray],
     *,
-    detail_amount: float = 0.7,
+    detail_amount: float = 0.6,
     view_transform: str = "Filmic",
-    blur_radius: int = 15,
+    blur_radius: int = 13,
     use_skin_mask: bool = False,
     mask_soften: int = 3,
-    pore_amount: float = 0.5,
+    pore_amount: float = 0.3,
     glow_mix: float = 0.0,
-    glow_threshold: float = 0.9,
-   # skin_key_color: tuple = (0.85, 0.56, 0.47, 1.0),
-    vignette_strength: float = 0.22,
-    filmic_look: str = "Medium High Contrast",
+    glow_threshold: float = 0.8,
+    skin_key_color: tuple = (0.85, 0.56, 0.47, 1.0),
+    vignette_strength: float = 0.15,
+    filmic_look: str = "Medium Contrast",
     batch_size: int = 16,  # For memory management (not parallel processing)
 ) -> List[np.ndarray]:
     """
@@ -98,7 +71,7 @@ def enhance_frames_bpy(
     norm = [_normalize_frame_rgb_uint8(f) for f in frames]
     h, w = norm[0].shape[:2]
 
-    _log(f"[bpy] OPTIMIZED compositor processing {len(norm)} frames ({w}x{h})")
+    print(f"[bpy] OPTIMIZED compositor processing {len(norm)} frames ({w}x{h})")
 
     # =============================
     # ONE-TIME SETUP - REUSED FOR ALL FRAMES
@@ -333,7 +306,7 @@ def enhance_frames_bpy(
     # =============================
     try:
         total_batches = (len(norm) + batch_size - 1) // batch_size
-        _log(f"[bpy] Processing {len(norm)} frames ({total_batches} memory batches of {batch_size})")
+        print(f"[bpy] Processing {len(norm)} frames ({total_batches} memory batches of {batch_size})")
 
         # Single progress bar for all frames
         with tqdm(total=len(norm), desc="Blender Enhancement", unit="frame") as pbar:
@@ -365,7 +338,7 @@ def enhance_frames_bpy(
                         bpy.ops.render.render(write_still=False)
                         out_rgb = _grab_composite_rgb_optimized()
                     except Exception as e:
-                        _log(f"[bpy] Render error frame {frame_idx}: {e}")
+                        print(f"[bpy] Render error frame {frame_idx}: {e}")
                         out_rgb = None
 
                     # Handle fallback (return original frame if compositor fails)
@@ -391,9 +364,9 @@ def enhance_frames_bpy(
 
         # Final statistics
         if fallback_count:
-            _log(f"[bpy] Compositor fallbacks: {fallback_count}/{len(norm)} frames")
+            print(f"[bpy] Compositor fallbacks: {fallback_count}/{len(norm)} frames")
         else:
-            _log(f"[bpy] SUCCESS: {len(norm)} frames enhanced ({w}x{h})")
+            print(f"[bpy] SUCCESS: {len(norm)} frames enhanced ({w}x{h})")
 
     finally:
         # Cleanup source image
@@ -415,7 +388,7 @@ if __name__ == "__main__":
 
         # Test image paths to try (in order of preference)
         test_paths = [
-            r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\neon\content (2).png",
+            r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\free_human-wallpaper-1080x1920.jpg",
 
         ]
 
@@ -506,7 +479,7 @@ if __name__ == "__main__":
 
 
         # Create output directory
-        output_dir = './blender_test_output'
+        output_dir = './'
         os.makedirs(output_dir, exist_ok=True)
 
         # Save original for comparison
@@ -516,70 +489,60 @@ if __name__ == "__main__":
 
 
         # Process with different enhancement levels
-        for config in test_configs:
-            print(f"\nProcessing with {config['name']} settings...")
+        # for config in test_configs:
+        #     print(f"\nProcessing with {config['name']} settings...")
 
-            try:
-                enhanced_frames = enhance_frames_bpy([input_image], **config['params'])
+        #     try:
+        #         enhanced_frames = enhance_frames_bpy([input_image], **config['params'])
 
-                if enhanced_frames and len(enhanced_frames) > 0:
-                    enhanced_rgb = enhanced_frames[0]
-                    print(f"Enhanced RGB shape: {enhanced_rgb.shape}, dtype: {enhanced_rgb.dtype}")
-                    print(f"Enhanced RGB range: {enhanced_rgb.min()} - {enhanced_rgb.max()}")
+        #         if enhanced_frames and len(enhanced_frames) > 0:
+        #             enhanced_rgb = enhanced_frames[0]
+        #             print(f"Enhanced RGB shape: {enhanced_rgb.shape}, dtype: {enhanced_rgb.dtype}")
+        #             print(f"Enhanced RGB range: {enhanced_rgb.min()} - {enhanced_rgb.max()}")
 
                 # ----------------------#
                 #   FACEENCHANCEMENT
                 # ----------------------#
-                    class Face_enchance_Args:
-                            model = 'GPEN-BFR-2048'
-                            task = 'FaceEnhancement'
-                            key = None
-                            in_size = 2048
-                            out_size = 2048
-                            channel_multiplier = 2
-                            narrow = 1
-                            alpha = 0.5
-                            use_sr = True
-                            use_cuda = True
-                            save_face = False
-                            aligned = False
-                            sr_model = 'realesrnet'
-                            sr_scale = 2
-                            tile_size = 0
-                            ext = '.png'
+        class Face_enchance_Args:
+               # model = 'GPEN-BFR-2048'
+                task = 'FaceEnhancement'
+                key = None
+                in_size = 2048
+                out_size = 2048
+                channel_multiplier = 2
+                narrow = 1
+                alpha = 0.5
+                use_sr = True
+                use_cuda = True
+                save_face = False
+                aligned = False
+                sr_model = 'realesrnet'
+                sr_scale = 2
+                tile_size = 0
+                ext = '.png'
 
 
-                    Skin_texture_enchancement = FaceEnhancement(
-                        Face_enchance_Args,
-                        in_size=Face_enchance_Args.in_size,
-                        model=Face_enchance_Args.model,
-                        use_sr=Face_enchance_Args.use_sr,
-                        device='cuda' if Face_enchance_Args.use_cuda else 'cpu'
-                    )
-                    try:
-                        Color_corrected_frames = change_saturation(enhanced_rgb, mode="Decrease", amount=1.0)  # Make grayscale
-                        print(f"After saturation: shape={Color_corrected_frames.shape}, dtype={Color_corrected_frames.dtype}, range={Color_corrected_frames.min()}-{Color_corrected_frames.max()}")
+        Skin_texture_enchancement = FaceEnhancement(
+            Face_enchance_Args,
+            in_size=Face_enchance_Args.in_size,
+            model=Face_enchance_Args.model,
+            use_sr=Face_enchance_Args.use_sr,
+            device='cuda' if Face_enchance_Args.use_cuda else 'cpu'
+        )
 
-                        enchanced_frame, _, _ = Skin_texture_enchancement.process(Color_corrected_frames)
-                        print(f"After GPEN: shape={enchanced_frame.shape}, dtype={enchanced_frame.dtype}, range={enchanced_frame.min()}-{enchanced_frame.max()}")
 
-                        # Convert RGB to BGR for OpenCV saving
-                        enchanced_frame_bgr = cv2.cvtColor(enchanced_frame, cv2.COLOR_RGB2BGR)
-                        print("done gpen face enchancement - converted to BGR for saving")
-                    except Exception as e:
-                        print(f"[FaceEnhancement] Error during Face Enhancement: {e}")
-                        # Fallback to enhanced RGB if face enhancement fails
-                        enchanced_frame_bgr = cv2.cvtColor(enhanced_rgb, cv2.COLOR_RGB2BGR)
-                        print("Using fallback - converted enhanced RGB to BGR")
+        enchanced_frame, _, _ = Skin_texture_enchancement.process(original_bgr)
+        print(f"After GPEN: shape={enchanced_frame.shape}, dtype={enchanced_frame.dtype}, range={enchanced_frame.min()}-{enchanced_frame.max()}")
 
-                    output_path = os.path.join(output_dir, f'enhanced_{config["name"]}.png')
-                    cv2.imwrite(output_path, enchanced_frame_bgr)
-                    print(f"✓ Saved {config['name']} enhancement: {output_path}")
-                else:
-                    print(f"✗ Failed to enhance with {config['name']} settings")
 
-            except Exception as e:
-                print(f"✗ Error with {config['name']} settings: {e}")
+     #   enchanced_frame_bgr = cv2.cvtColor(enchanced_frame, cv2.COLOR_BGR2RGB)
+
+
+        output_path = os.path.join(output_dir, f'enhanced.png')
+        cv2.imwrite(output_path, enchanced_frame)
+
+
+
 
         print(f"\nAll test images saved to: {output_dir}")
         print("Compare the results to see the enhancement effects!")

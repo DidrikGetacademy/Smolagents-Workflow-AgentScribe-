@@ -427,5 +427,5 @@ if __name__ == "__main__":
      torch.cuda.empty_cache()
      Global_state.set_current_videourl(r"c:\Users\didri\Documents\Is Being Smart Worth the Depression？ - Alex O’Connor & Joe Folley (4K).mp4")
      Global_model = LiteLLMModel(model_id="gpt-5", reasoning_effort="minimal" ,api_key=OPENAI_APIKEY,max_tokens=20000)
-     Global_state.set_current_yt_channel("MA_Youtube")
-     upload_video(model=Global_model,file_path=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\Youtube_Upload_folder\LM_Youtube\short11_rife.mp4",subtitle_text="",YT_channel="LRS_Youtube",background_audio_="lofi")
+     Global_state.set_current_yt_channel("LM_Youtube")
+     upload_video(model=Global_model,file_path=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\Youtube_Upload_folder\MA_Youtube\short16.mp4",subtitle_text="",YT_channel="MR_Youtube",background_audio_="lofi")

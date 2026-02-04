@@ -12,10 +12,15 @@ from Agents.utility.Agent_tools import Background_Audio_Decision_Model
 from .Utility import detect_and_crop_frames_batch,mix_audio
 from utility.reload_model import Reload_and_change_model
 from .blender  import enhance_frames_bpy
+from moviepy import AudioArrayClip
+import cv2
+import torch
+import numpy as np
 import os
 import random
 import gc
 import sys
+from tqdm import tqdm
 REPO_ROOT = os.path.abspath('.')
 if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
@@ -27,7 +32,8 @@ import GPEN.__init_paths
 #------------------------------------------------------------------------------------------------------------------------#
 # create_short_video --> Function takes (video, start time/end time for video, video name, subtitles for video) as input
 #------------------------------------------------------------------------------------------------------------------------#
-def create_short_video(video_path, audio_path, start_time, end_time, video_name, subtitle_text, order = None, Video_output_path=None, YT_channel = None, middle_order=None,Montage_Flag=False):
+Upload_YT_count = 0
+def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_time, video_name, subtitle_text, order = None, Video_output_path=None, YT_channel = None, middle_order=None,Montage_Flag=False):
     probe = ffmpeg.probe(video_path)
     log(probe)
     format_info = probe.get('format', {})
@@ -37,46 +43,57 @@ def create_short_video(video_path, audio_path, start_time, end_time, video_name,
     audio_streams = [s for s in probe['streams'] if s['codec_type'] == 'audio']
     audio_codec = audio_streams[0]['codec_name'] if audio_streams else None
 
+
     def group_subtitle_words_in_triplets(subtitle_words):
-         chunks = []
-         if not subtitle_words:
-             return chunks
+        chunks = []  # Liste som skal inneholde de grupperte ordene
+        if not subtitle_words:  # Sjekk om listen er tom
+            return chunks
 
-         offset = float(subtitle_words[0]['start'])
-         segments = []
-         current_segment = [subtitle_words[0]]
-         PAUSE_THRESHOLD = 0.2
+        offset = float(subtitle_words[0]['start'])  # Lagre starttiden på første ord (brukes senere for justering)
+        segments = []  # Liste for å holde segmenter delt på pauser
+        current_segment = [subtitle_words[0]]  # Start første segment med første ord
+        PAUSE_THRESHOLD = 0.15  # Hvis pause er større enn 0.2 sekunder = ny pause
 
-         for i in range(1, len(subtitle_words)):
-              prev_word = subtitle_words[i-1]
-              curr_word = subtitle_words[i]
-              gap = float(curr_word['start']) - float(prev_word['end'])
+        # Loop gjennom alle ord fra nr 2 og framover
+        for i in range(1, len(subtitle_words)):
+            prev_word = subtitle_words[i-1]  # Forrige ord
+            curr_word = subtitle_words[i]  # Nåværende ord
+            gap = float(curr_word['start']) - float(prev_word['end'])  # Beregn pause mellom ord (tidskillnad)
 
-              if gap > PAUSE_THRESHOLD:
-                  current_segment[-1]['end'] += 0.2 # siste ordet blir rendera litt lengre.
-                  segments.append(current_segment)
-                  current_segment = []
+            if gap > PAUSE_THRESHOLD:  # Hvis pausen er større enn 0.2 sekunder
+                current_segment[-1]['end'] += 0.15
+                segments.append(current_segment)  # Lagre segmentet som er bygd opp til nå
+                current_segment = []  # Start på nytt segment
 
-              current_segment.append(curr_word)
+            current_segment.append(curr_word)  # Legg ord til nåværende segment
 
-         if current_segment:
-              segments.append(current_segment)
+        # Etter loop: lagre siste segment hvis det finnes ord i det
+        if current_segment:
+            segments.append(current_segment)
 
-         MAX_WORDS_PER_CHUNK = 5
+        # Legg til 0.2 sekunder på siste ordet i hele listen
+        if segments and segments[-1]:
+            segments[-1][-1]['end'] += 0.2
 
-         for segment in segments:
-              for i in range(0, len(segment), MAX_WORDS_PER_CHUNK):
-                   chunk_words = segment[i : i + MAX_WORDS_PER_CHUNK]
+        MAX_WORDS_PER_CHUNK = 6  # Maksimalt 6 ord per "chunk" (gruppe)
 
-                   text_chunk = ''.join([w['word'].strip() + ' ' for w in chunk_words]).strip().upper()
-                   start = float(chunk_words[0]['start']) - offset
-                   end = float(chunk_words[-1]['end']) - offset
-                   duration = max(0.0, end - start)
-                   start = max(0.0, start)
+        # Loop gjennom hvert segment som ble delt på pauser
+        for segment in segments:
+            # Del segmentet opp i mindre grupper på 5 ord
+            for i in range(0, len(segment), MAX_WORDS_PER_CHUNK):
+                chunk_words = segment[i : i + MAX_WORDS_PER_CHUNK]  # Ta 5 ord av gangen
 
-                   chunks.append({'text': text_chunk, 'start': start, 'end': end, 'duration': duration})
+                # Slå sammen ordene til en tekststreng
+                text_chunk = ''.join([w['word'].strip() + ' ' for w in chunk_words]).strip().upper()
+                start = float(chunk_words[0]['start']) - offset  # Starttid (justert med offset)
+                end = float(chunk_words[-1]['end']) - offset  # Slutttid (justert med offset)
+                duration = max(0.0, end - start)  # Varigheten av chunk'en
+                start = max(0.0, start)  # Sikr at starttid ikke er negativ
 
-         return chunks
+                # Lagre den ferdige chunk'en
+                chunks.append({'text': text_chunk, 'start': start, 'end': end, 'duration': duration})
+                log(f"Created subtitle chunk: text='{text_chunk}...', start={start:.3f}, end={end:.3f}, duration={duration:.3f}s")
+        return chunks
 
     try:
        triplets = group_subtitle_words_in_triplets(subtitle_text)
@@ -95,7 +112,7 @@ def create_short_video(video_path, audio_path, start_time, end_time, video_name,
             txt_clip = TextClip(
                 text=_text,
                 font=r"C:\WINDOWS\FONTS\COPPERPLATECC-BOLD.TTF",
-                font_size=40,
+                font_size=38,
                 margin=(10, 10),
                 text_align="center",
                 vertical_align="center",
@@ -104,9 +121,9 @@ def create_short_video(video_path, audio_path, start_time, end_time, video_name,
                 stroke_color="black",
                 stroke_width=2,
                 size=(1200, 400),
-                method="label",
+                method="caption",
                 duration=c['duration']
-            ).with_start(c['start']).with_position(('center', 0.45), relative=True).with_effects([CrossFadeIn(0.15), CrossFadeOut(0.15)])
+            ).with_start(c['start']).with_position(('center', 0.52), relative=True).with_effects([CrossFadeIn(0.10), CrossFadeOut(0.10)])
 
 
 
@@ -136,8 +153,7 @@ def create_short_video(video_path, audio_path, start_time, end_time, video_name,
     for  frame in clip.iter_frames():
         frames.append(frame)
         frame_height, frame_width = frame.shape[:2]
-    log(f"[Extracting original video frames]  1. frames: {len(frames)} frames.\n  Height: {frame_height}, Width: {frame_width}")
-
+    print(f"Extracted frame {len(frames)}: Height={frame_height}, Width={frame_width}")
 
 
 
@@ -170,9 +186,9 @@ def create_short_video(video_path, audio_path, start_time, end_time, video_name,
 
 
 
-# ----------------------#
-#   FACEENCHANCEMENT
-# # ---------------------#
+#----------------------#
+# FACEENCHANCEMENT
+# ---------------------#
     class Face_enchance_Args:
             model = 'GPEN-BFR-2048'
             task = 'FaceEnhancement'
@@ -181,14 +197,14 @@ def create_short_video(video_path, audio_path, start_time, end_time, video_name,
             out_size = 0
             channel_multiplier = 2
             narrow = 1
-            alpha = 0.35
+            alpha = 0.5
             use_sr = True
             use_cuda = True
             save_face = False
             aligned = False
             sr_model = 'realesrnet'
             sr_scale = 2
-            tile_size = 512
+            tile_size = 0
             ext = '.png'
     face_args = Face_enchance_Args()
     Skin_texture_enchancement = FaceEnhancement(
@@ -200,21 +216,22 @@ def create_short_video(video_path, audio_path, start_time, end_time, video_name,
     )
     FaceEnhancement_frames = []
     try:
-         for f_frames in tqdm(blender_frames, desc="[FaceEnhancement]  proccessing frames", unit="frame"):
-              frame_height, frame_width = f_frames.shape[:2]
-              bgr_frame = cv2.cvtColor(f_frames, cv2.COLOR_RGB2BGR)
+         for f_frame in tqdm(blender_frames, desc="[FaceEnhancement]  proccessing frames", unit="frame"):
+              frame_height, frame_width = f_frame.shape[:2]
+              bgr_frame = cv2.cvtColor(f_frame, cv2.COLOR_RGB2BGR)
               enchanced_frame_bgr, _, _ = Skin_texture_enchancement.process(bgr_frame)
               RGB_face_enchanced_frame = cv2.cvtColor(enchanced_frame_bgr, cv2.COLOR_BGR2RGB)
               FaceEnhancement_frames.append(RGB_face_enchanced_frame)
               del enchanced_frame_bgr,RGB_face_enchanced_frame
-              gc.collect()
-         del  Skin_texture_enchancement,bgr_frame
+         del  Skin_texture_enchancement, bgr_frame,  #blender_frames
          frame_height, frame_width = FaceEnhancement_frames[0].shape[:2]
          log(f"[FaceEnhancement]  1. frames: {len(FaceEnhancement_frames)} frames.\n Height: {frame_height}, Width: {frame_width}")
-
-         clean_get_gpu_memory(threshold=0.1)
     except Exception as e:
             log(f"[FaceEnhancement] Error: {str(e)}")
+
+
+
+
 
 
 
@@ -223,7 +240,8 @@ def create_short_video(video_path, audio_path, start_time, end_time, video_name,
 # Creating videoclip from frames
 #-------------------------------#
     try:
-       processed_clip = ImageSequenceClip(cropped_frames, fps=clip.fps)
+       processed_clip = ImageSequenceClip(cropped_frames, fps=clip.fps).with_duration(clip.duration)
+       del FaceEnhancement_frames
        clean_get_gpu_memory(threshold=0.1)
        gc.collect()
     except Exception as e:
@@ -268,23 +286,23 @@ def create_short_video(video_path, audio_path, start_time, end_time, video_name,
 
             if Latest_Yt_channel == "MA_Youtube":
                 YT_channel = "LR_Youtube"
-                overlay_clip = VideoFileClip(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\YT_logo\LOGO_LR.mp4",has_mask=True)
+                overlay_clip = VideoFileClip(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\YT_logo\2K\LOGO_LR.mp4",has_mask=True)
                 log(f"YT_channel: {YT_channel}")
             elif Latest_Yt_channel == "LR_Youtube":
                 YT_channel = "LRS_Youtube"
-                overlay_clip = VideoFileClip(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\YT_logo\LOGO_LRS.mp4",has_mask=True)
+                overlay_clip = VideoFileClip(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\YT_logo\2K\LOGO_LRS.mp4",has_mask=True)
                 log(f"YT_channel: {YT_channel}")
             elif Latest_Yt_channel == "LRS_Youtube":
                 YT_channel = "LM_Youtube"
-                overlay_clip = VideoFileClip(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\YT_logo\LOGO_LM.mp4",has_mask=True)
+                overlay_clip = VideoFileClip(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\YT_logo\2K\LOGO_LM.mp4",has_mask=True)
                 log(f"YT_channel: {YT_channel}")
             elif Latest_Yt_channel == "LM_Youtube":
                 YT_channel = "MR_Youtube"
-                overlay_clip = VideoFileClip(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\YT_logo\LOGO_MR.mp4",has_mask=True)
+                overlay_clip = VideoFileClip(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\YT_logo\2K\LOGO_MR.mp4",has_mask=True)
                 log(f"YT_channel: {YT_channel}")
             elif Latest_Yt_channel == "MR_Youtube":
                     YT_channel = "MA_Youtube"
-                    overlay_clip = VideoFileClip(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\YT_logo\LOGO_MA.mp4",has_mask=True)
+                    overlay_clip = VideoFileClip(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\YT_logo\2K\LOGO_MA.mp4",has_mask=True)
                     log(f"YT_channel: {YT_channel}")
 
             Global_state.set_current_yt_channel(YT_channel)
@@ -325,7 +343,7 @@ def create_short_video(video_path, audio_path, start_time, end_time, video_name,
     clean_get_gpu_memory(threshold=0.1)
 
 
-    fade = CrossFadeIn(1.5)
+    fade = CrossFadeIn(1.3)
     final_clip = fade.apply(final_clip)
 
 # -------------------------------#
@@ -335,15 +353,8 @@ def create_short_video(video_path, audio_path, start_time, end_time, video_name,
     try:
         already_uploaded_videos = f"Video_clips/Youtube_Upload_folder/{YT_channel}/already_uploaded.json"
         log(f"already_uploaded_videos: {already_uploaded_videos}")
-        result = Background_Audio_Decision_Model(audio_file=audio_path,video_path=video_path,already_uploaded_videos=already_uploaded_videos,start_time=start_time,end_time=end_time)
-        if os.path.exists(audio_path):
-            os.remove(audio_path)
-            log(f"Removed temporary audio file: {audio_path}")
-
-        background_audio = result.get("path", "")
-        song_name = result.get("song_name", "")
-        Background_Audio_Reason = result.get("reason", "")
-        log(f"Background Audio : {background_audio}, song_name: {song_name}, Background_Audio_Reason: {Background_Audio_Reason}")
+        background_audio,song_name,Background_Audio_Reason = Background_Audio_Decision_Model(audio_file=audio_path, video_subtitles=raw_subtitles,video_path=video_path,already_uploaded_videos=already_uploaded_videos,start_time=start_time,end_time=end_time)
+        log(f"Background Audio : {background_audio},\n song_name: {song_name}, Background_Audio_Reason: {Background_Audio_Reason}")
     except Exception as e:
          log(f"error during: [Background_Audio_Decision_Model]: {str(e)}")
 
@@ -352,7 +363,63 @@ def create_short_video(video_path, audio_path, start_time, end_time, video_name,
 
     if background_audio:
         background_music_path = background_audio
-        final_clip.audio = mix_audio(clip.audio, background_music_path, bg_music_volume=0.35)
+
+        try:
+            log(f"Original clip duration: {clip.duration:.2f}s")
+            log(f"Original audio duration: {clip.audio.duration:.2f}s")
+            from df import enhance, init_df
+            original_audio_np = clip.audio.to_soundarray(fps=44100) #Converts Moviepy Audioclip to a Numpy Array. The array represent raw audio sample (Time samples, channels eg. mono,stereo)
+            log(f"original_audio_np shape: {original_audio_np.shape}")
+            log(f"original_audio_np max abs: {np.abs(original_audio_np).max():.6f}")
+            log(f"original_audio_np min abs: {np.abs(original_audio_np).min():.6f}")
+            if original_audio_np.size == 0:
+                log("!!! original_audio_np er TOM !!!")
+                raise ValueError("Tom lydarray fra clip")
+
+            if original_audio_np.ndim == 2 and original_audio_np.shape[1] == 2: #checks if the raw audio data is stereo. then if it is converts to mono.
+                log("Konverterer stereo → mono")
+                original_audio_np = original_audio_np.mean(axis=1, keepdims=True)
+                log(f"Ny shape etter mono: {original_audio_np.shape}")
+
+            audio_torch = torch.from_numpy(original_audio_np.T).float() # creates a torch tensor from the numpy array, [T,C] -->  [C,T] (channel first, time second)
+            log(f"audio_torch shape: {audio_torch.shape}")
+            log(f"audio_torch device: {audio_torch.device}")
+            log(f"audio_torch max abs: {audio_torch.abs().max():.6f}")
+
+            log("Laster DeepFilterNet modell...")
+            model, df_state, suffix = init_df()
+            log(f"Modell lastet. Suffix: {suffix}")
+
+            log("Kjører enhance() ...")
+            enhanced_torch = enhance(model, df_state, audio_torch, pad=True) #denoising / enhancing
+            log(f"enhanced_torch shape: {enhanced_torch.shape}")
+            log(f"enhanced_torch max abs: {enhanced_torch.abs().max():.6f}")
+            log(f"enhanced_torch min abs: {enhanced_torch.abs().min():.6f}")
+
+            if enhanced_torch.abs().max() < 1e-6:
+              log("!!! enhanced_torch er nesten helt stille !!! (max < 1e-6)")
+
+
+            enhanced_np = enhanced_torch.cpu().numpy().T  # moves tensor to cpu IF on gpu and converts to NumPy and back to [T,C]
+            log(f"enhanced_np shape: {enhanced_np.shape}")
+            log(f"enhanced_np max abs: {np.abs(enhanced_np).max():.6f}")
+
+            enhanced_audio_clip = AudioArrayClip( # converts NumPy array back into moviePy AudioArrayClip
+                enhanced_np,
+                fps=44100
+            )
+            log(f"enhanced_audio_clip duration: {enhanced_audio_clip.duration:.2f}s")
+            log(f"enhanced_audio_clip nchannels: {enhanced_audio_clip.nchannels}")
+
+            final_clip.audio = mix_audio(enhanced_audio_clip, background_music_path, bg_music_volume=0.28) #mixes the enhanced audio and background music. with background music at background volume 0.33
+
+
+        except Exception as e:
+            log(f"Error during audio mixing/enhancing : {str(e)}")
+            import traceback
+            log(traceback.format_exc())
+
+
     else:
         final_clip.audio = clip.audio
         log(f"keeping original audio")
@@ -363,27 +430,20 @@ def create_short_video(video_path, audio_path, start_time, end_time, video_name,
 
 
 
-
-
 #-----------------------------------------------------#
 #    Adds fade in/out to the video and sets the FPS
 #------------------------------------------------------#
-    final_clip = FadeIn(duration=0.1).apply(final_clip)
-    final_clip = FadeOut(duration=0.1).apply(final_clip)
+    # final_clip = FadeIn(duration=0.1).apply(final_clip)
+    # final_clip = FadeOut(duration=0.1).apply(final_clip)
     final_clip.fps = clip.fps
 
-
-
-#-----------------------------------------------------#
-#    Cleans cpu/gpu memory
-#------------------------------------------------------#
-    clean_get_gpu_memory(threshold=0.0)
 
 
 #-----------------------------------------------------#
 #    Writes the final Video
 #------------------------------------------------------#
     output_dir = f"./Video_clips/Youtube_Upload_folder/{YT_channel}"
+    import os
     os.makedirs(output_dir, exist_ok=True)
 
     if Video_output_path:
@@ -397,14 +457,14 @@ def create_short_video(video_path, audio_path, start_time, end_time, video_name,
 
     lut_cube_path = "./Video_clips/Utils-Video_creation/LUT/black/RMP_BW709_1.cube"
     vf_filters = []
-    apply_lut = True
+    apply_lut = False
     if os.path.isfile(lut_cube_path):
         apply_lut = random.choice([True, False])
         if apply_lut:
             vf_filters.append(f"lut3d=file='{lut_cube_path}'")
     else:
         log(f"[ffmpeg] LUT file missing, skipping: {lut_cube_path}")
-    vf_filters.append("minterpolate=fps=30:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1:scd_threshold=50")
+    vf_filters.append("minterpolate=fps=30:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1:scd_threshold=15")
     vf_chain = ",".join(vf_filters)
     log(f"[ffmpeg] LUT applied: {apply_lut} path: {lut_cube_path if apply_lut else 'none'}")
 
@@ -412,11 +472,11 @@ def create_short_video(video_path, audio_path, start_time, end_time, video_name,
     out_path,
     logger='bar',
     codec="libx264",
-    preset="slow",
+    preset="fast",
     audio_codec="aac",
-    threads=6,
+    threads=8,
     ffmpeg_params=[
-        "-crf", "10",
+        "-crf", "12",
         "-pix_fmt", "yuv420p",
         "-profile:v", "high",
         "-ar", "48000",
@@ -437,9 +497,10 @@ def create_short_video(video_path, audio_path, start_time, end_time, video_name,
     clean_get_gpu_memory(threshold=0.1)
 
 
-#-----------------------------------------------------#
+
+# -----------------------------------------------------#
 #    Boosts x2 FPS on full video
-#------------------------------------------------------#
+# ------------------------------------------------------#
     from utility.RIFE_FPS import run_rife
     try:
       output_video = run_rife(out_path)

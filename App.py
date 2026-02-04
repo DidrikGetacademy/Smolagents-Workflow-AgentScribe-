@@ -5,7 +5,7 @@ if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
 import json
 import datetime
-
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 from Agents.utility.Agent_tools import SpeechToTextToolCUDA, SpeechToText_short_creation_thread,SpeechToText_montage_creation_thread
 from utility.Videocreation_pipeline.VideoCreator import create_short_video
 from utility.log import log
@@ -22,7 +22,6 @@ import torch
 import threading
 import queue
 import torch
-from utility.Videocreation_pipeline.blender import enhance_frames_bpy
 from pydub import AudioSegment
 from proglog import ProgressBarLogger
 import utility.Global_state as Global_state
@@ -61,7 +60,7 @@ count = 0
 Video_count = 0
 Global_model = None
 gpu_thread_offline = False
-Upload_YT_count = 0
+
 
 
 
@@ -116,8 +115,8 @@ def truncate_audio(audio_path, start_time, end_time, output_path, padding=4.0):
                 padded_end_time = min(audio_duration, end_time + padding)
                 log(f"[truncate_audio] Original range: {start_time:.2f}s - {end_time:.2f}s, Padded range: {padded_start_time:.2f}s - {padded_end_time:.2f}s (padding={padding}s)")
 
-                start_sample = round(padded_start_time * frame_rate )
-                end_sample = round(padded_end_time * frame_rate )
+                start_sample = round(padded_start_time * frame_rate)
+                end_sample = round(padded_end_time * frame_rate)
                 log(f"[truncate_audio] Calculated: start_sample={start_sample}, end_sample={end_sample}")
                 log(f"start_ms: {start_sample}, end_ms: {end_sample}")
 
@@ -172,12 +171,16 @@ def run_video_short_creation_thread(video_url,audio_path,start_time,end_time,sub
                  raise ValueError("Invalid time range for audio")
 
             audio_dir = os.path.dirname(audio_path)
-            truncated_audio_path = os.path.join(audio_dir, f"truncated_{current_count}.wav")
-            log(f"Truncated audio path: {truncated_audio_path}")
+            padded_truncated_audio_path = os.path.join(audio_dir, f"padded_truncated{current_count}.wav")
+
+
+            log(f" padded Truncated audio path: {padded_truncated_audio_path}\n original_truncated audio path: {audio_path}")
             try:
-                audio_for_clip = truncate_audio(audio_path, video_start_time, video_end_time,truncated_audio_path)
+                padded_audio_clip = truncate_audio(audio_path, video_start_time, video_end_time,padded_truncated_audio_path,padding=4)
+
+
             except Exception as e:
-                log(f"Error during trunacation of audio: {e}")
+                log(f"Error during trunacation and enhancement of audio: {e}")
 
             subtitle_text = re.sub(r"\[\d+\.\d+s\s*-\s*\d+\.\d+s\]", "", subtitle_text)
             subtitle_text = re.sub(r"\s+", " ",subtitle_text).strip()
@@ -186,10 +189,12 @@ def run_video_short_creation_thread(video_url,audio_path,start_time,end_time,sub
 
             padding_offset = 4.0
             adjusted_start = video_start_time - padding_offset
+            if adjusted_start < 0:
+                adjusted_start = video_start_time
             log(f"[run_video_short_creation_thread] Adjusting timestamps for padding: original_start={video_start_time}, adjusted_start={adjusted_start}")
 
-            result = tool.forward({"audio": audio_for_clip,"subtitle_text": subtitle_text, "original_start_time": adjusted_start, "original_end_time:": video_end_time})
-
+            result = tool.forward({"audio": padded_audio_clip,"subtitle_text": subtitle_text, "original_start_time": adjusted_start, "original_end_time": video_end_time})
+            os.remove(padded_truncated_audio_path)
             crafted_Subtitle_text = result["matched_words"]
             new_video_start_time = float(result["video_start_time"])
             new_video_end_time = float(result["video_end_time"])
@@ -200,7 +205,7 @@ def run_video_short_creation_thread(video_url,audio_path,start_time,end_time,sub
             else:
                  Video_title = Video_Title_name
 
-            create_short_video(video_path=text_video_path, audio_path=audio_for_clip, start_time=new_video_start_time, end_time = new_video_end_time, video_name = Video_title, subtitle_text=crafted_Subtitle_text,Video_output_path=Video_output_path,order=None, YT_channel=None, middle_order=None,Montage_Flag=False)
+            create_short_video(video_path=text_video_path, audio_path=audio_path, raw_subtitles=subtitle_text, start_time=new_video_start_time, end_time = new_video_end_time, video_name = Video_title, subtitle_text=crafted_Subtitle_text,Video_output_path=Video_output_path,order=None, YT_channel=None, middle_order=None,Montage_Flag=False)
         except Exception as e:
                 log(f"[ERROR] during execution: {str(e)}")
 
@@ -228,7 +233,7 @@ def video_creation_worker():
             Success = False
             clean_get_gpu_memory(threshold=0.8)
 
-            item, task_id = Global_state.video_task_que.get(timeout=1.0)
+            item, task_id = Global_state.video_task_que.get(timeout=30)
             if item is None:
                 log(f"[video_creation_worker] Received sentinel, exiting.")
                 Global_state.video_task_que.task_done(task_id)
@@ -549,7 +554,7 @@ def transcribe_single_video(video_path, device):
         ]
         subprocess.run(ffmpeg_cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         log(f"Global audio_path: {audio_path}")
-        log(f"Extracted audio → {audio_path}")
+        log(f"Extracted audio → {audio_path} (with RNN denoising + highpass filter)")
     except subprocess.CalledProcessError:
         log(f"❌ Audio extraction failed for {video_path}")
         return
@@ -630,8 +635,8 @@ def gpu_worker():
         log(f"Item Retrieved from (Transcript Queue) ready for Processing: Global state:\n - set_current_videourl:{video_path_url}\n, Global state: set_current_audio_path:\n - {_audio_path}\n Transcript text path - {transcript_text_path}\n agent is saving text from transcript to Global state:\n set_current_textfile:{agent_txt_saving_path}")
 
         try:
-            from Agents.Motivational_agent import Motivational_analytic_agent
-            Motivational_analytic_agent(transcript_text_path, agent_txt_saving_path)
+            from Agents.Motivational_openaiAPI import Motivational_analytic_agent_openai
+            Motivational_analytic_agent_openai(transcript_text_path, agent_txt_saving_path)
             log(f"Transcript_Reasoning_AGENT  (EXITED)")
         finally:
             log(f"Transcript Queue (TASK DONE)\n - {transcript_text_path}")
@@ -664,7 +669,8 @@ def load_downloaded_video_paths() -> list[str]:
 
 
 if __name__ == "__main__":
-
+    with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\logs\log.txt", "w", encoding="UTF-8") as f:
+        f.write("")
     video_paths = load_downloaded_video_paths()
     if not video_paths:
         log("No videos available to process; exiting main thread.")

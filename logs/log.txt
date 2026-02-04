@@ -1,751 +1,389 @@
-[2026-01-07 13:05:27][MainThread] 🔄 JSON: Restored 1 video tasks from backup
-[2026-01-07 13:15:43][MainThread] 🔄 JSON: Restored 1 video tasks from backup
-[2026-01-07 13:17:34][MainThread] 🔄 JSON: Restored 1 video tasks from backup
-[2026-01-07 13:17:41][MainThread] Reloading model to -> gpt-5-high before running [Motivational_analytic_agent]
-[2026-01-07 13:21:30][MainThread] Reloading model to -> gpt-5-medium before running [Motivational_analytic_agent]
-[2026-01-07 13:23:31][MainThread] 🔄 JSON: Restored 1 video tasks from backup
-[2026-01-07 13:23:34][MainThread] Reloading model to -> gpt-5-high before running [Motivational_analytic_agent]
-[2026-01-07 13:28:05][MainThread] 🔄 JSON: Restored 1 video tasks from backup
-[2026-01-07 13:28:10][MainThread] Reloading model to -> gpt-5-minimal before running [Motivational_analytic_agent]
-[2026-01-07 13:28:32][MainThread] Writing saved motivational text from agent to: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\checking.txt
- text: [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it.
-[2026-01-07 13:28:32][MainThread] block_text: [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it.
-[2026-01-07 13:28:32][MainThread] [parse_multiline_block] start_time: 160.16, [parse_multiline_block] end_time: 186.08,[parse_multiline_block] new_text: [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it.
-[2026-01-07 13:28:32][MainThread] start time: 160.16, end_time: 186.08, new_text: [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it.
-[2026-01-07 13:28:32][MainThread] 
- now Added work to QUEUE: 
- video url: None
-, audio_path: None 
- start_time: 160.16s 
- end_time 186.08s
-Original text: [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it.
-[2026-01-07 13:28:32][MainThread] 💾 JSON backup updated: 2 queued + 0 in-progress
-[2026-01-07 13:28:32][MainThread] ➕ Added new task to queue. Total: 2 items
-[2026-01-07 13:28:32][MainThread] Added VideoWork to videotask Queue:
-None
-Audio_path:None
-160.16
- 186.08
- [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it.
-  Amount of added videowork to queue: 1
- 
-[2026-01-07 13:28:32][MainThread] Current videos added to que for proccessing: 1
-[2026-01-07 13:28:32][MainThread] Reloading model to -> gpt-5-high before running [Motivational_analytic_agent]
-[2026-01-07 13:52:44][MainThread] 🔄 JSON: Restored 2 video tasks from backup
-[2026-01-07 13:52:53][MainThread] Reloading model to -> gpt-5-minimal before running [Motivational_analytic_agent]
-[2026-01-07 13:53:25][MainThread] Writing saved motivational text from agent to: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\checking.txt
- text: [169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to, [174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to [180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it.
-[2026-01-07 13:53:25][MainThread] block_text: [169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to, [174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to [180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it.
-[2026-01-07 13:53:25][MainThread] [parse_multiline_block] start_time: 169.42, [parse_multiline_block] end_time: 186.08,[parse_multiline_block] new_text: [169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it.
-[2026-01-07 13:53:25][MainThread] start time: 169.42, end_time: 186.08, new_text: [169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it.
-[2026-01-07 13:53:25][MainThread] 
- now Added work to QUEUE: 
- video url: None
-, audio_path: None 
- start_time: 169.42s 
- end_time 186.08s
-Original text: [169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to, [174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to [180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it.
-[2026-01-07 13:53:25][MainThread] 💾 JSON backup updated: 3 queued + 0 in-progress
-[2026-01-07 13:53:25][MainThread] ➕ Added new task to queue. Total: 3 items
-[2026-01-07 13:53:25][MainThread] Added VideoWork to videotask Queue:
-None
-Audio_path:None
-169.42
- 186.08
- [169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it.
-  Amount of added videowork to queue: 1
- 
-[2026-01-07 13:53:25][MainThread] Current videos added to que for proccessing: 1
-[2026-01-07 13:53:25][MainThread] Reloading model to -> gpt-5-high before running [Motivational_analytic_agent]
-[2026-01-07 13:56:05][MainThread] Writing saved motivational text from agent to: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\checking.txt
- text: [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at [165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different [169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to, [174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to [180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it. Another way to raise your self-esteem [186.08s - 192.52s] might be to do things for others. If I look back on my life, and, you know, what are the moments that [192.52s - 196.62s] I'm actually proud of? There's very far and few between. And it's not that often. It's not the [196.62s - 200.72s] things you would expect. It's not the material success. It's not having learned this thing or that.
-[2026-01-07 13:56:05][MainThread] block_text: [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at [165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different [169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to, [174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to [180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it. Another way to raise your self-esteem [186.08s - 192.52s] might be to do things for others. If I look back on my life, and, you know, what are the moments that [192.52s - 196.62s] I'm actually proud of? There's very far and few between. And it's not that often. It's not the [196.62s - 200.72s] things you would expect. It's not the material success. It's not having learned this thing or that.
-[2026-01-07 13:56:05][MainThread] [parse_multiline_block] start_time: 160.16, [parse_multiline_block] end_time: 200.72,[parse_multiline_block] new_text: [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it. Another way to raise your self-esteem
-[186.08s - 192.52s] might be to do things for others. If I look back on my life, and, you know, what are the moments that
-[192.52s - 196.62s] I'm actually proud of? There's very far and few between. And it's not that often. It's not the
-[196.62s - 200.72s] things you would expect. It's not the material success. It's not having learned this thing or that.
-[2026-01-07 13:56:05][MainThread] start time: 160.16, end_time: 200.72, new_text: [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it. Another way to raise your self-esteem
-[186.08s - 192.52s] might be to do things for others. If I look back on my life, and, you know, what are the moments that
-[192.52s - 196.62s] I'm actually proud of? There's very far and few between. And it's not that often. It's not the
-[196.62s - 200.72s] things you would expect. It's not the material success. It's not having learned this thing or that.
-[2026-01-07 13:56:05][MainThread] 
- now Added work to QUEUE: 
- video url: None
-, audio_path: None 
- start_time: 160.16s 
- end_time 200.72s
-Original text: [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at [165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different [169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to, [174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to [180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it. Another way to raise your self-esteem [186.08s - 192.52s] might be to do things for others. If I look back on my life, and, you know, what are the moments that [192.52s - 196.62s] I'm actually proud of? There's very far and few between. And it's not that often. It's not the [196.62s - 200.72s] things you would expect. It's not the material success. It's not having learned this thing or that.
-[2026-01-07 13:56:05][MainThread] 💾 JSON backup updated: 4 queued + 0 in-progress
-[2026-01-07 13:56:05][MainThread] ➕ Added new task to queue. Total: 4 items
-[2026-01-07 13:56:05][MainThread] Added VideoWork to videotask Queue:
-None
-Audio_path:None
-160.16
- 200.72
- [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it. Another way to raise your self-esteem
-[186.08s - 192.52s] might be to do things for others. If I look back on my life, and, you know, what are the moments that
-[192.52s - 196.62s] I'm actually proud of? There's very far and few between. And it's not that often. It's not the
-[196.62s - 200.72s] things you would expect. It's not the material success. It's not having learned this thing or that.
-  Amount of added videowork to queue: 2
- 
-[2026-01-07 13:56:05][MainThread] Current videos added to que for proccessing: 2
-[2026-01-07 13:56:06][MainThread] Reloading model to -> gpt-5-medium before running [Motivational_analytic_agent]
-[2026-01-07 13:58:34][MainThread] Reloading model to -> gpt-5-minimal before running [Motivational_analytic_agent]
-[2026-01-07 13:58:50][MainThread] Writing saved motivational text from agent to: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\checking.txt
- text: [384.42s - 389.92s] if you're the kind of person, if you're the kind of person who long-term signals ethics and virtues, then you'll attract [389.92s - 395.10s] other people who are ethical and virtuous. Whereas if you are a shark, you will eventually [395.10s - 399.74s] find yourself swimming entirely amongst sharks. And that's an unpleasant existence.
-[2026-01-07 13:58:50][MainThread] block_text: [384.42s - 389.92s] if you're the kind of person, if you're the kind of person who long-term signals ethics and virtues, then you'll attract [389.92s - 395.10s] other people who are ethical and virtuous. Whereas if you are a shark, you will eventually [395.10s - 399.74s] find yourself swimming entirely amongst sharks. And that's an unpleasant existence.
-[2026-01-07 13:58:50][MainThread] [parse_multiline_block] start_time: 384.42, [parse_multiline_block] end_time: 399.74,[parse_multiline_block] new_text: [384.42s - 389.92s] if you're the kind of person, if you're the kind of person who long-term signals ethics and virtues, then you'll attract
-[389.92s - 395.10s] other people who are ethical and virtuous. Whereas if you are a shark, you will eventually
-[395.10s - 399.74s] find yourself swimming entirely amongst sharks. And that's an unpleasant existence.
-[2026-01-07 13:58:50][MainThread] start time: 384.42, end_time: 399.74, new_text: [384.42s - 389.92s] if you're the kind of person, if you're the kind of person who long-term signals ethics and virtues, then you'll attract
-[389.92s - 395.10s] other people who are ethical and virtuous. Whereas if you are a shark, you will eventually
-[395.10s - 399.74s] find yourself swimming entirely amongst sharks. And that's an unpleasant existence.
-[2026-01-07 13:58:50][MainThread] 
- now Added work to QUEUE: 
- video url: None
-, audio_path: None 
- start_time: 384.42s 
- end_time 399.74s
-Original text: [384.42s - 389.92s] if you're the kind of person, if you're the kind of person who long-term signals ethics and virtues, then you'll attract [389.92s - 395.10s] other people who are ethical and virtuous. Whereas if you are a shark, you will eventually [395.10s - 399.74s] find yourself swimming entirely amongst sharks. And that's an unpleasant existence.
-[2026-01-07 13:58:50][MainThread] 💾 JSON backup updated: 5 queued + 0 in-progress
-[2026-01-07 13:58:50][MainThread] ➕ Added new task to queue. Total: 5 items
-[2026-01-07 13:58:50][MainThread] Added VideoWork to videotask Queue:
-None
-Audio_path:None
-384.42
- 399.74
- [384.42s - 389.92s] if you're the kind of person, if you're the kind of person who long-term signals ethics and virtues, then you'll attract
-[389.92s - 395.10s] other people who are ethical and virtuous. Whereas if you are a shark, you will eventually
-[395.10s - 399.74s] find yourself swimming entirely amongst sharks. And that's an unpleasant existence.
-  Amount of added videowork to queue: 3
- 
-[2026-01-07 13:58:50][MainThread] Current videos added to que for proccessing: 3
-[2026-01-07 13:58:51][MainThread] Reloading model to -> gpt-5-high before running [Motivational_analytic_agent]
-[2026-01-07 14:03:36][MainThread] Writing saved motivational text from agent to: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\checking.txt
- text: [333.46s - 338.44s] The most common game played is one called a stag's hunt, where if we cooperate, we can bring down a [338.44s - 342.86s] big stag and both have big dinners. But if we don't cooperate, then we have to go hunt like rabbits and [342.86s - 349.84s] we each have small dinners. And that game has two stable equilibriums. And one could be where we're [349.84s - 353.94s] both hunting the rabbit and one could be where we're hunting the stag. So the high-trust society [353.94s - 359.04s] is a more virtuous society where I can trust you to come hunt the stag with me and show up on time [359.04s - 364.72s] and do the work and divide it up properly.
-[2026-01-07 14:03:36][MainThread] block_text: [333.46s - 338.44s] The most common game played is one called a stag's hunt, where if we cooperate, we can bring down a [338.44s - 342.86s] big stag and both have big dinners. But if we don't cooperate, then we have to go hunt like rabbits and [342.86s - 349.84s] we each have small dinners. And that game has two stable equilibriums. And one could be where we're [349.84s - 353.94s] both hunting the rabbit and one could be where we're hunting the stag. So the high-trust society [353.94s - 359.04s] is a more virtuous society where I can trust you to come hunt the stag with me and show up on time [359.04s - 364.72s] and do the work and divide it up properly.
-[2026-01-07 14:03:36][MainThread] [parse_multiline_block] start_time: 333.46, [parse_multiline_block] end_time: 364.72,[parse_multiline_block] new_text: [333.46s - 338.44s] The most common game played is one called a stag's hunt, where if we cooperate, we can bring down a
-[338.44s - 342.86s] big stag and both have big dinners. But if we don't cooperate, then we have to go hunt like rabbits and
-[342.86s - 349.84s] we each have small dinners. And that game has two stable equilibriums. And one could be where we're
-[349.84s - 353.94s] both hunting the rabbit and one could be where we're hunting the stag. So the high-trust society
-[353.94s - 359.04s] is a more virtuous society where I can trust you to come hunt the stag with me and show up on time
-[359.04s - 364.72s] and do the work and divide it up properly.
-[2026-01-07 14:03:36][MainThread] start time: 333.46, end_time: 364.72, new_text: [333.46s - 338.44s] The most common game played is one called a stag's hunt, where if we cooperate, we can bring down a
-[338.44s - 342.86s] big stag and both have big dinners. But if we don't cooperate, then we have to go hunt like rabbits and
-[342.86s - 349.84s] we each have small dinners. And that game has two stable equilibriums. And one could be where we're
-[349.84s - 353.94s] both hunting the rabbit and one could be where we're hunting the stag. So the high-trust society
-[353.94s - 359.04s] is a more virtuous society where I can trust you to come hunt the stag with me and show up on time
-[359.04s - 364.72s] and do the work and divide it up properly.
-[2026-01-07 14:03:36][MainThread] 
- now Added work to QUEUE: 
- video url: None
-, audio_path: None 
- start_time: 333.46s 
- end_time 364.72s
-Original text: [333.46s - 338.44s] The most common game played is one called a stag's hunt, where if we cooperate, we can bring down a [338.44s - 342.86s] big stag and both have big dinners. But if we don't cooperate, then we have to go hunt like rabbits and [342.86s - 349.84s] we each have small dinners. And that game has two stable equilibriums. And one could be where we're [349.84s - 353.94s] both hunting the rabbit and one could be where we're hunting the stag. So the high-trust society [353.94s - 359.04s] is a more virtuous society where I can trust you to come hunt the stag with me and show up on time [359.04s - 364.72s] and do the work and divide it up properly.
-[2026-01-07 14:03:36][MainThread] 💾 JSON backup updated: 6 queued + 0 in-progress
-[2026-01-07 14:03:36][MainThread] ➕ Added new task to queue. Total: 6 items
-[2026-01-07 14:03:36][MainThread] Added VideoWork to videotask Queue:
-None
-Audio_path:None
-333.46
- 364.72
- [333.46s - 338.44s] The most common game played is one called a stag's hunt, where if we cooperate, we can bring down a
-[338.44s - 342.86s] big stag and both have big dinners. But if we don't cooperate, then we have to go hunt like rabbits and
-[342.86s - 349.84s] we each have small dinners. And that game has two stable equilibriums. And one could be where we're
-[349.84s - 353.94s] both hunting the rabbit and one could be where we're hunting the stag. So the high-trust society
-[353.94s - 359.04s] is a more virtuous society where I can trust you to come hunt the stag with me and show up on time
-[359.04s - 364.72s] and do the work and divide it up properly.
-  Amount of added videowork to queue: 4
- 
-[2026-01-07 14:03:36][MainThread] Current videos added to que for proccessing: 4
-[2026-01-07 14:03:37][MainThread] Reloading model to -> gpt-5-medium before running [Motivational_analytic_agent]
-[2026-01-07 14:06:42][MainThread] Reloading model to -> gpt-5-minimal before running [Motivational_analytic_agent]
-[2026-01-07 14:06:55][MainThread] Writing saved motivational text from agent to: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\checking.txt
- text: [540.84s - 547.76s] your body. So if you want to have high self-esteem, then earn your own self-respect.
-[2026-01-07 14:06:55][MainThread] block_text: [540.84s - 547.76s] your body. So if you want to have high self-esteem, then earn your own self-respect.
-[2026-01-07 14:06:55][MainThread] [parse_multiline_block] start_time: 540.84, [parse_multiline_block] end_time: 547.76,[parse_multiline_block] new_text: [540.84s - 547.76s] your body. So if you want to have high self-esteem, then earn your own self-respect.
-[2026-01-07 14:06:55][MainThread] start time: 540.84, end_time: 547.76, new_text: [540.84s - 547.76s] your body. So if you want to have high self-esteem, then earn your own self-respect.
-[2026-01-07 14:06:55][MainThread] 
- now Added work to QUEUE: 
- video url: None
-, audio_path: None 
- start_time: 540.84s 
- end_time 547.76s
-Original text: [540.84s - 547.76s] your body. So if you want to have high self-esteem, then earn your own self-respect.
-[2026-01-07 14:06:55][MainThread] 💾 JSON backup updated: 7 queued + 0 in-progress
-[2026-01-07 14:06:55][MainThread] ➕ Added new task to queue. Total: 7 items
-[2026-01-07 14:06:55][MainThread] Added VideoWork to videotask Queue:
-None
-Audio_path:None
-540.84
- 547.76
- [540.84s - 547.76s] your body. So if you want to have high self-esteem, then earn your own self-respect.
-  Amount of added videowork to queue: 5
- 
-[2026-01-07 14:06:55][MainThread] Current videos added to que for proccessing: 5
-[2026-01-07 14:06:58][MainThread] Reloading model to -> gpt-5-high before running [Motivational_analytic_agent]
-[2026-01-07 14:12:16][MainThread] Writing saved motivational text from agent to: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\checking.txt
- text: [571.22s - 577.62s] you can try to remember the feeling of being loved. So go back to when someone was in love with you or [577.62s - 582.32s] someone did love you. And like really remember that feeling, like really sit with it and try to [582.32s - 589.64s] recreate it within yourself. And then go to the feeling of you loving someone. And when you were in [589.64s - 593.36s] love, and I'm not even talking about romantic love necessarily. So be a little careful there. I'm talking [593.36s - 597.58s] more about like love for it. Sometimes get complex if you're talking about past romantic love. Right. [597.68s - 603.72s] A sibling or a child or something like that, or a parent. And think about when you felt love [603.72s - 610.82s] towards someone or something. And now which is better? And I would argue that the feeling of being [610.82s - 615.52s] in love is actually more exhilarating than the feeling of being loved. Being loved is a little [615.52s - 619.52s] cloying. It's a little too sweet. You kind of want to push the person away. It's a little embarrassing. [619.52s - 623.52s] And you know that if that person is too much into it, that you feel constrained.
-[2026-01-07 14:12:16][MainThread] block_text: [571.22s - 577.62s] you can try to remember the feeling of being loved. So go back to when someone was in love with you or [577.62s - 582.32s] someone did love you. And like really remember that feeling, like really sit with it and try to [582.32s - 589.64s] recreate it within yourself. And then go to the feeling of you loving someone. And when you were in [589.64s - 593.36s] love, and I'm not even talking about romantic love necessarily. So be a little careful there. I'm talking [593.36s - 597.58s] more about like love for it. Sometimes get complex if you're talking about past romantic love. Right. [597.68s - 603.72s] A sibling or a child or something like that, or a parent. And think about when you felt love [603.72s - 610.82s] towards someone or something. And now which is better? And I would argue that the feeling of being [610.82s - 615.52s] in love is actually more exhilarating than the feeling of being loved. Being loved is a little [615.52s - 619.52s] cloying. It's a little too sweet. You kind of want to push the person away. It's a little embarrassing. [619.52s - 623.52s] And you know that if that person is too much into it, that you feel constrained.
-[2026-01-07 14:12:16][MainThread] [parse_multiline_block] start_time: 571.22, [parse_multiline_block] end_time: 623.52,[parse_multiline_block] new_text: [571.22s - 577.62s] you can try to remember the feeling of being loved. So go back to when someone was in love with you or
-[577.62s - 582.32s] someone did love you. And like really remember that feeling, like really sit with it and try to
-[582.32s - 589.64s] recreate it within yourself. And then go to the feeling of you loving someone. And when you were in
-[589.64s - 593.36s] love, and I'm not even talking about romantic love necessarily. So be a little careful there. I'm talking
-[593.36s - 597.58s] more about like love for it. Sometimes get complex if you're talking about past romantic love. Right.
-[597.68s - 603.72s] A sibling or a child or something like that, or a parent. And think about when you felt love
-[603.72s - 610.82s] towards someone or something. And now which is better? And I would argue that the feeling of being
-[610.82s - 615.52s] in love is actually more exhilarating than the feeling of being loved. Being loved is a little
-[615.52s - 619.52s] cloying. It's a little too sweet. You kind of want to push the person away. It's a little embarrassing.
-[619.52s - 623.52s] And you know that if that person is too much into it, that you feel constrained.
-[2026-01-07 14:12:16][MainThread] start time: 571.22, end_time: 623.52, new_text: [571.22s - 577.62s] you can try to remember the feeling of being loved. So go back to when someone was in love with you or
-[577.62s - 582.32s] someone did love you. And like really remember that feeling, like really sit with it and try to
-[582.32s - 589.64s] recreate it within yourself. And then go to the feeling of you loving someone. And when you were in
-[589.64s - 593.36s] love, and I'm not even talking about romantic love necessarily. So be a little careful there. I'm talking
-[593.36s - 597.58s] more about like love for it. Sometimes get complex if you're talking about past romantic love. Right.
-[597.68s - 603.72s] A sibling or a child or something like that, or a parent. And think about when you felt love
-[603.72s - 610.82s] towards someone or something. And now which is better? And I would argue that the feeling of being
-[610.82s - 615.52s] in love is actually more exhilarating than the feeling of being loved. Being loved is a little
-[615.52s - 619.52s] cloying. It's a little too sweet. You kind of want to push the person away. It's a little embarrassing.
-[619.52s - 623.52s] And you know that if that person is too much into it, that you feel constrained.
-[2026-01-07 14:12:16][MainThread] 
- now Added work to QUEUE: 
- video url: None
-, audio_path: None 
- start_time: 571.22s 
- end_time 623.52s
-Original text: [571.22s - 577.62s] you can try to remember the feeling of being loved. So go back to when someone was in love with you or [577.62s - 582.32s] someone did love you. And like really remember that feeling, like really sit with it and try to [582.32s - 589.64s] recreate it within yourself. And then go to the feeling of you loving someone. And when you were in [589.64s - 593.36s] love, and I'm not even talking about romantic love necessarily. So be a little careful there. I'm talking [593.36s - 597.58s] more about like love for it. Sometimes get complex if you're talking about past romantic love. Right. [597.68s - 603.72s] A sibling or a child or something like that, or a parent. And think about when you felt love [603.72s - 610.82s] towards someone or something. And now which is better? And I would argue that the feeling of being [610.82s - 615.52s] in love is actually more exhilarating than the feeling of being loved. Being loved is a little [615.52s - 619.52s] cloying. It's a little too sweet. You kind of want to push the person away. It's a little embarrassing. [619.52s - 623.52s] And you know that if that person is too much into it, that you feel constrained.
-[2026-01-07 14:12:16][MainThread] 💾 JSON backup updated: 8 queued + 0 in-progress
-[2026-01-07 14:12:16][MainThread] ➕ Added new task to queue. Total: 8 items
-[2026-01-07 14:12:16][MainThread] Added VideoWork to videotask Queue:
-None
-Audio_path:None
-571.22
- 623.52
- [571.22s - 577.62s] you can try to remember the feeling of being loved. So go back to when someone was in love with you or
-[577.62s - 582.32s] someone did love you. And like really remember that feeling, like really sit with it and try to
-[582.32s - 589.64s] recreate it within yourself. And then go to the feeling of you loving someone. And when you were in
-[589.64s - 593.36s] love, and I'm not even talking about romantic love necessarily. So be a little careful there. I'm talking
-[593.36s - 597.58s] more about like love for it. Sometimes get complex if you're talking about past romantic love. Right.
-[597.68s - 603.72s] A sibling or a child or something like that, or a parent. And think about when you felt love
-[603.72s - 610.82s] towards someone or something. And now which is better? And I would argue that the feeling of being
-[610.82s - 615.52s] in love is actually more exhilarating than the feeling of being loved. Being loved is a little
-[615.52s - 619.52s] cloying. It's a little too sweet. You kind of want to push the person away. It's a little embarrassing.
-[619.52s - 623.52s] And you know that if that person is too much into it, that you feel constrained.
-  Amount of added videowork to queue: 6
- 
-[2026-01-07 14:12:16][MainThread] Current videos added to que for proccessing: 6
-[2026-01-07 14:12:17][MainThread] Reloading model to -> gpt-5-medium before running [Motivational_analytic_agent]
-[2026-01-07 14:15:26][MainThread] Reloading model to -> gpt-5-minimal before running [Motivational_analytic_agent]
-[2026-01-07 14:39:22][MainThread] 🔄 JSON: Restored 8 video tasks from backup
-[2026-01-07 14:39:30][MainThread] Reloading model to -> gpt-5-minimal before running [Motivational_analytic_agent]
-[2026-01-07 14:39:55][MainThread] Writing saved motivational text from agent to: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\checking.txt
- text: [200.72s - 206.56s] It's when I made a sacrifice for somebody or something that I loved. And that's when I'm
-[206.56s - 210.88s] actually ironically most proud. Now that's through an explicit mental exercise, but I'll bet you at
-[210.88s - 216.06s] some level I'm recording that implicitly. So that tells me that even if I am not being loved, then the
-[216.06s - 221.82s] way to create love is to give love, to express love through sacrifice and through duty. And so I think
-[221.82s - 224.68s] doing things like that can build up your self-esteem really fast.
-[2026-01-07 14:39:55][MainThread] block_text: [200.72s - 206.56s] It's when I made a sacrifice for somebody or something that I loved. And that's when I'm
-[206.56s - 210.88s] actually ironically most proud. Now that's through an explicit mental exercise, but I'll bet you at
-[210.88s - 216.06s] some level I'm recording that implicitly. So that tells me that even if I am not being loved, then the
-[216.06s - 221.82s] way to create love is to give love, to express love through sacrifice and through duty. And so I think
-[221.82s - 224.68s] doing things like that can build up your self-esteem really fast.
-[2026-01-07 14:39:55][MainThread] [parse_multiline_block] start_time: 200.72, [parse_multiline_block] end_time: 224.68,[parse_multiline_block] new_text: [200.72s - 206.56s] It's when I made a sacrifice for somebody or something that I loved. And that's when I'm
-[206.56s - 210.88s] actually ironically most proud. Now that's through an explicit mental exercise, but I'll bet you at
-[210.88s - 216.06s] some level I'm recording that implicitly. So that tells me that even if I am not being loved, then the
-[216.06s - 221.82s] way to create love is to give love, to express love through sacrifice and through duty. And so I think
-[221.82s - 224.68s] doing things like that can build up your self-esteem really fast.
-[2026-01-07 14:39:55][MainThread] start time: 200.72, end_time: 224.68, new_text: [200.72s - 206.56s] It's when I made a sacrifice for somebody or something that I loved. And that's when I'm
-[206.56s - 210.88s] actually ironically most proud. Now that's through an explicit mental exercise, but I'll bet you at
-[210.88s - 216.06s] some level I'm recording that implicitly. So that tells me that even if I am not being loved, then the
-[216.06s - 221.82s] way to create love is to give love, to express love through sacrifice and through duty. And so I think
-[221.82s - 224.68s] doing things like that can build up your self-esteem really fast.
-[2026-01-07 14:39:55][MainThread] 
- now Added work to QUEUE: 
- video url: None
-, audio_path: None 
- start_time: 200.72s 
- end_time 224.68s
-Original text: [200.72s - 206.56s] It's when I made a sacrifice for somebody or something that I loved. And that's when I'm
-[206.56s - 210.88s] actually ironically most proud. Now that's through an explicit mental exercise, but I'll bet you at
-[210.88s - 216.06s] some level I'm recording that implicitly. So that tells me that even if I am not being loved, then the
-[216.06s - 221.82s] way to create love is to give love, to express love through sacrifice and through duty. And so I think
-[221.82s - 224.68s] doing things like that can build up your self-esteem really fast.
-[2026-01-07 14:39:55][MainThread] 💾 JSON backup updated: 9 queued + 0 in-progress
-[2026-01-07 14:39:55][MainThread] ➕ Added new task to queue. Total: 9 items
-[2026-01-07 14:39:55][MainThread] Added VideoWork to videotask Queue:
-None
-Audio_path:None
-200.72
- 224.68
- [200.72s - 206.56s] It's when I made a sacrifice for somebody or something that I loved. And that's when I'm
-[206.56s - 210.88s] actually ironically most proud. Now that's through an explicit mental exercise, but I'll bet you at
-[210.88s - 216.06s] some level I'm recording that implicitly. So that tells me that even if I am not being loved, then the
-[216.06s - 221.82s] way to create love is to give love, to express love through sacrifice and through duty. And so I think
-[221.82s - 224.68s] doing things like that can build up your self-esteem really fast.
-  Amount of added videowork to queue: 1
- 
-[2026-01-07 14:39:55][MainThread] Current videos added to que for proccessing: 1
-[2026-01-07 14:45:09][MainThread] 🔄 JSON: Restored 9 video tasks from backup
-[2026-01-07 14:45:41][MainThread] 🔄 JSON: Restored 9 video tasks from backup
-[2026-01-07 14:46:33][MainThread] 🔄 JSON: Restored 9 video tasks from backup
-[2026-01-07 14:46:37][MainThread] Reloading model to -> gpt-5-minimal before running [Motivational_analytic_agent]
-[2026-01-07 14:46:57][MainThread] Writing saved motivational text from agent to: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\checking.txt
- text: [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it.
-[2026-01-07 14:46:57][MainThread] block_text: [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it.
-[2026-01-07 14:46:57][MainThread] [parse_multiline_block] start_time: 160.16, [parse_multiline_block] end_time: 186.08,[parse_multiline_block] new_text: [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it.
-[2026-01-07 14:46:57][MainThread] start time: 160.16, end_time: 186.08, new_text: [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it.
-[2026-01-07 14:46:57][MainThread] 
- now Added work to QUEUE: 
- video url: None
-, audio_path: None 
- start_time: 160.16s 
- end_time 186.08s
-Original text: [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it.
-[2026-01-07 14:46:57][MainThread] 💾 JSON backup updated: 10 queued + 0 in-progress
-[2026-01-07 14:46:57][MainThread] ➕ Added new task to queue. Total: 10 items
-[2026-01-07 14:46:57][MainThread] Added VideoWork to videotask Queue:
-None
-Audio_path:None
-160.16
- 186.08
- [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it.
-  Amount of added videowork to queue: 1
- 
-[2026-01-07 14:46:57][MainThread] Current videos added to que for proccessing: 1
-[2026-01-07 14:46:58][MainThread] Reloading model to -> gpt-5-high before running [Motivational_analytic_agent]
-[2026-01-07 14:50:19][MainThread] Writing saved motivational text from agent to: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\checking.txt
- text: [200.72s - 206.56s] It's when I made a sacrifice for somebody or something that I loved. And that's when I'm [206.56s - 210.88s] actually ironically most proud. Now that's through an explicit mental exercise, but I'll bet you at [210.88s - 216.06s] some level I'm recording that implicitly. So that tells me that even if I am not being loved, then the [216.06s - 221.82s] way to create love is to give love, to express love through sacrifice and through duty. And so I think [221.82s - 224.68s] doing things like that can build up your self-esteem really fast.
-[2026-01-07 14:50:19][MainThread] block_text: [200.72s - 206.56s] It's when I made a sacrifice for somebody or something that I loved. And that's when I'm [206.56s - 210.88s] actually ironically most proud. Now that's through an explicit mental exercise, but I'll bet you at [210.88s - 216.06s] some level I'm recording that implicitly. So that tells me that even if I am not being loved, then the [216.06s - 221.82s] way to create love is to give love, to express love through sacrifice and through duty. And so I think [221.82s - 224.68s] doing things like that can build up your self-esteem really fast.
-[2026-01-07 14:50:19][MainThread] [parse_multiline_block] start_time: 200.72, [parse_multiline_block] end_time: 224.68,[parse_multiline_block] new_text: [200.72s - 206.56s] It's when I made a sacrifice for somebody or something that I loved. And that's when I'm
-[206.56s - 210.88s] actually ironically most proud. Now that's through an explicit mental exercise, but I'll bet you at
-[210.88s - 216.06s] some level I'm recording that implicitly. So that tells me that even if I am not being loved, then the
-[216.06s - 221.82s] way to create love is to give love, to express love through sacrifice and through duty. And so I think
-[221.82s - 224.68s] doing things like that can build up your self-esteem really fast.
-[2026-01-07 14:50:19][MainThread] start time: 200.72, end_time: 224.68, new_text: [200.72s - 206.56s] It's when I made a sacrifice for somebody or something that I loved. And that's when I'm
-[206.56s - 210.88s] actually ironically most proud. Now that's through an explicit mental exercise, but I'll bet you at
-[210.88s - 216.06s] some level I'm recording that implicitly. So that tells me that even if I am not being loved, then the
-[216.06s - 221.82s] way to create love is to give love, to express love through sacrifice and through duty. And so I think
-[221.82s - 224.68s] doing things like that can build up your self-esteem really fast.
-[2026-01-07 14:50:19][MainThread] 
- now Added work to QUEUE: 
- video url: None
-, audio_path: None 
- start_time: 200.72s 
- end_time 224.68s
-Original text: [200.72s - 206.56s] It's when I made a sacrifice for somebody or something that I loved. And that's when I'm [206.56s - 210.88s] actually ironically most proud. Now that's through an explicit mental exercise, but I'll bet you at [210.88s - 216.06s] some level I'm recording that implicitly. So that tells me that even if I am not being loved, then the [216.06s - 221.82s] way to create love is to give love, to express love through sacrifice and through duty. And so I think [221.82s - 224.68s] doing things like that can build up your self-esteem really fast.
-[2026-01-07 14:50:19][MainThread] 💾 JSON backup updated: 11 queued + 0 in-progress
-[2026-01-07 14:50:19][MainThread] ➕ Added new task to queue. Total: 11 items
-[2026-01-07 14:50:19][MainThread] Added VideoWork to videotask Queue:
-None
-Audio_path:None
-200.72
- 224.68
- [200.72s - 206.56s] It's when I made a sacrifice for somebody or something that I loved. And that's when I'm
-[206.56s - 210.88s] actually ironically most proud. Now that's through an explicit mental exercise, but I'll bet you at
-[210.88s - 216.06s] some level I'm recording that implicitly. So that tells me that even if I am not being loved, then the
-[216.06s - 221.82s] way to create love is to give love, to express love through sacrifice and through duty. And so I think
-[221.82s - 224.68s] doing things like that can build up your self-esteem really fast.
-  Amount of added videowork to queue: 2
- 
-[2026-01-07 14:50:19][MainThread] Current videos added to que for proccessing: 2
-[2026-01-07 14:50:20][MainThread] Reloading model to -> gpt-5-medium before running [Motivational_analytic_agent]
-[2026-01-07 15:18:56][MainThread] 🔄 JSON: Restored 11 video tasks from backup
-[2026-01-07 15:18:59][MainThread] Reloading model to -> gpt-5-minimal before running [Motivational_analytic_agent]
-[2026-01-07 15:19:23][MainThread] Writing saved motivational text from agent to: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\checking.txt
- text: [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it.
-[2026-01-07 15:19:23][MainThread] block_text: [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it.
-[2026-01-07 15:19:23][MainThread] [parse_multiline_block] start_time: 160.16, [parse_multiline_block] end_time: 186.08,[parse_multiline_block] new_text: [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it.
-[2026-01-07 15:19:23][MainThread] start time: 160.16, end_time: 186.08, new_text: [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it.
-[2026-01-07 15:19:23][MainThread] 
- now Added work to QUEUE: 
- video url: None
-, audio_path: None 
- start_time: 160.16s 
- end_time 186.08s
-Original text: [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it.
-[2026-01-07 15:19:23][MainThread] 💾 JSON backup updated: 12 queued + 0 in-progress
-[2026-01-07 15:19:23][MainThread] ➕ Added new task to queue. Total: 12 items
-[2026-01-07 15:19:23][MainThread] Added VideoWork to videotask Queue:
-None
-Audio_path:None
-160.16
- 186.08
- [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it.
-  Amount of added videowork to queue: 1
- 
-[2026-01-07 15:19:23][MainThread] Current videos added to que for proccessing: 1
-[2026-01-07 15:19:24][MainThread] Reloading model to -> gpt-5-high before running [Motivational_analytic_agent]
-[2026-01-07 15:21:06][MainThread] 🔄 JSON: Restored 12 video tasks from backup
-[2026-01-07 15:21:08][MainThread] Reloading model to -> gpt-5-minimal before running [Motivational_analytic_agent]
-[2026-01-07 15:21:28][MainThread] Writing saved motivational text from agent to: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\checking.txt
- text: [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it.
-[2026-01-07 15:21:28][MainThread] block_text: [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it.
-[2026-01-07 15:21:28][MainThread] [parse_multiline_block] start_time: 160.16, [parse_multiline_block] end_time: 186.08,[parse_multiline_block] new_text: [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it.
-[2026-01-07 15:21:28][MainThread] start time: 160.16, end_time: 186.08, new_text: [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it.
-[2026-01-07 15:21:28][MainThread] 
- now Added work to QUEUE: 
- video url: None
-, audio_path: None 
- start_time: 160.16s 
- end_time 186.08s
-Original text: [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it.
-[2026-01-07 15:21:28][MainThread] 💾 JSON backup updated: 13 queued + 0 in-progress
-[2026-01-07 15:21:28][MainThread] ➕ Added new task to queue. Total: 13 items
-[2026-01-07 15:21:28][MainThread] Added VideoWork to videotask Queue:
-None
-Audio_path:None
-160.16
- 186.08
- [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it.
-  Amount of added videowork to queue: 1
- 
-[2026-01-07 15:21:28][MainThread] Current videos added to que for proccessing: 1
-[2026-01-07 15:21:29][MainThread] Reloading model to -> gpt-5-high before running [Motivational_analytic_agent]
-[2026-01-07 15:24:50][MainThread] Reloading model to -> gpt-5-medium before running [Motivational_analytic_agent]
-[2026-01-07 16:01:30][MainThread] 🔄 JSON: Restored 13 video tasks from backup
-[2026-01-07 16:01:33][MainThread] Reloading model to -> gpt-5-minimal before running [Motivational_analytic_agent]
-[2026-01-07 16:01:56][MainThread] Writing saved motivational text from agent to: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\checking.txt
- text: [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it. Another way to raise your self-esteem
-[186.08s - 192.52s] might be to do things for others.
-[2026-01-07 16:01:56][MainThread] block_text: [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it. Another way to raise your self-esteem
-[186.08s - 192.52s] might be to do things for others.
-[2026-01-07 16:01:56][MainThread] [parse_multiline_block] start_time: 160.16, [parse_multiline_block] end_time: 192.52,[parse_multiline_block] new_text: [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it. Another way to raise your self-esteem
-[186.08s - 192.52s] might be to do things for others.
-[2026-01-07 16:01:56][MainThread] start time: 160.16, end_time: 192.52, new_text: [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it. Another way to raise your self-esteem
-[186.08s - 192.52s] might be to do things for others.
-[2026-01-07 16:01:56][MainThread] 
- now Added work to QUEUE: 
- video url: None
-, audio_path: None 
- start_time: 160.16s 
- end_time 192.52s
-Original text: [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it. Another way to raise your self-esteem
-[186.08s - 192.52s] might be to do things for others.
-[2026-01-07 16:01:56][MainThread] 💾 JSON backup updated: 14 queued + 0 in-progress
-[2026-01-07 16:01:56][MainThread] ➕ Added new task to queue. Total: 14 items
-[2026-01-07 16:01:56][MainThread] Added VideoWork to videotask Queue:
-None
-Audio_path:None
-160.16
- 192.52
- [160.16s - 165.88s] to some extent, self-esteem is a reputation you have with yourself. You're watching yourself at
-[165.88s - 169.42s] all times. You know what you're doing, and you have your own moral code. Everyone has a different
-[169.42s - 174.30s] moral code. But if you don't live up to your own moral code, the same code that you hold others to,
-[174.30s - 180.70s] it will damage your self-esteem. So perhaps one way to build up your self-esteem is to live up to
-[180.70s - 186.08s] your own code. Very rigorously have one, and then live up to it. Another way to raise your self-esteem
-[186.08s - 192.52s] might be to do things for others.
-  Amount of added videowork to queue: 1
- 
-[2026-01-07 16:01:56][MainThread] Current videos added to que for proccessing: 1
-[2026-01-07 16:01:56][MainThread] Reloading model to -> gpt-5-high before running [Motivational_analytic_agent]
-[2026-01-07 16:06:17][MainThread] Reloading model to -> gpt-5-medium before running [Motivational_analytic_agent]
-[2026-01-07 16:09:45][MainThread] Reloading model to -> gpt-5-minimal before running [Motivational_analytic_agent]
-[2026-01-07 16:10:05][MainThread] Writing saved motivational text from agent to: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\checking.txt
- text: [370.30s - 374.58s] you don't need
-[374.58s - 379.42s] to do that for sacrifice. You don't need to do that for other people. You can do it just purely for
-[379.66s - 381.32s] yourself. You will have higher self-esteem. You will attract other high-virtue people.
-[381.44s - 384.42s] Correct. Yeah, that's right. And if you're the kind of person,
-[384.42s - 389.92s] if you're the kind of person who long-term signals ethics and virtues, then you'll attract
-[389.92s - 395.10s] other people who are ethical and virtuous. Whereas if you are a shark, you will eventually
-[395.10s - 399.74s] find yourself swimming entirely amongst sharks. And that's an unpleasant existence.
-[2026-01-07 16:10:05][MainThread] block_text: [370.30s - 374.58s] you don't need
-[374.58s - 379.42s] to do that for sacrifice. You don't need to do that for other people. You can do it just purely for
-[379.66s - 381.32s] yourself. You will have higher self-esteem. You will attract other high-virtue people.
-[381.44s - 384.42s] Correct. Yeah, that's right. And if you're the kind of person,
-[384.42s - 389.92s] if you're the kind of person who long-term signals ethics and virtues, then you'll attract
-[389.92s - 395.10s] other people who are ethical and virtuous. Whereas if you are a shark, you will eventually
-[395.10s - 399.74s] find yourself swimming entirely amongst sharks. And that's an unpleasant existence.
-[2026-01-07 16:10:05][MainThread] [parse_multiline_block] start_time: 370.3, [parse_multiline_block] end_time: 399.74,[parse_multiline_block] new_text: [370.30s - 374.58s] you don't need
-[374.58s - 379.42s] to do that for sacrifice. You don't need to do that for other people. You can do it just purely for
-[379.66s - 381.32s] yourself. You will have higher self-esteem. You will attract other high-virtue people.
-[381.44s - 384.42s] Correct. Yeah, that's right. And if you're the kind of person,
-[384.42s - 389.92s] if you're the kind of person who long-term signals ethics and virtues, then you'll attract
-[389.92s - 395.10s] other people who are ethical and virtuous. Whereas if you are a shark, you will eventually
-[395.10s - 399.74s] find yourself swimming entirely amongst sharks. And that's an unpleasant existence.
-[2026-01-07 16:10:05][MainThread] start time: 370.3, end_time: 399.74, new_text: [370.30s - 374.58s] you don't need
-[374.58s - 379.42s] to do that for sacrifice. You don't need to do that for other people. You can do it just purely for
-[379.66s - 381.32s] yourself. You will have higher self-esteem. You will attract other high-virtue people.
-[381.44s - 384.42s] Correct. Yeah, that's right. And if you're the kind of person,
-[384.42s - 389.92s] if you're the kind of person who long-term signals ethics and virtues, then you'll attract
-[389.92s - 395.10s] other people who are ethical and virtuous. Whereas if you are a shark, you will eventually
-[395.10s - 399.74s] find yourself swimming entirely amongst sharks. And that's an unpleasant existence.
-[2026-01-07 16:10:05][MainThread] 
- now Added work to QUEUE: 
- video url: None
-, audio_path: None 
- start_time: 370.3s 
- end_time 399.74s
-Original text: [370.30s - 374.58s] you don't need
-[374.58s - 379.42s] to do that for sacrifice. You don't need to do that for other people. You can do it just purely for
-[379.66s - 381.32s] yourself. You will have higher self-esteem. You will attract other high-virtue people.
-[381.44s - 384.42s] Correct. Yeah, that's right. And if you're the kind of person,
-[384.42s - 389.92s] if you're the kind of person who long-term signals ethics and virtues, then you'll attract
-[389.92s - 395.10s] other people who are ethical and virtuous. Whereas if you are a shark, you will eventually
-[395.10s - 399.74s] find yourself swimming entirely amongst sharks. And that's an unpleasant existence.
-[2026-01-07 16:10:05][MainThread] 💾 JSON backup updated: 15 queued + 0 in-progress
-[2026-01-07 16:10:05][MainThread] ➕ Added new task to queue. Total: 15 items
-[2026-01-07 16:10:05][MainThread] Added VideoWork to videotask Queue:
-None
-Audio_path:None
-370.3
- 399.74
- [370.30s - 374.58s] you don't need
-[374.58s - 379.42s] to do that for sacrifice. You don't need to do that for other people. You can do it just purely for
-[379.66s - 381.32s] yourself. You will have higher self-esteem. You will attract other high-virtue people.
-[381.44s - 384.42s] Correct. Yeah, that's right. And if you're the kind of person,
-[384.42s - 389.92s] if you're the kind of person who long-term signals ethics and virtues, then you'll attract
-[389.92s - 395.10s] other people who are ethical and virtuous. Whereas if you are a shark, you will eventually
-[395.10s - 399.74s] find yourself swimming entirely amongst sharks. And that's an unpleasant existence.
-  Amount of added videowork to queue: 2
- 
-[2026-01-07 16:10:05][MainThread] Current videos added to que for proccessing: 2
-[2026-01-07 16:10:05][MainThread] Reloading model to -> gpt-5-high before running [Motivational_analytic_agent]
-[2026-01-07 16:16:24][MainThread] Writing saved motivational text from agent to: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\checking.txt
- text: [333.46s - 338.44s] The most common game played is one called a stag's hunt, where if we cooperate, we can bring down a [338.44s - 342.86s] big stag and both have big dinners. But if we don't cooperate, then we have to go hunt like rabbits and [342.86s - 349.84s] we each have small dinners. And that game has two stable equilibriums. And one could be where we're [349.84s - 353.94s] both hunting the rabbit and one could be where we're hunting the stag. So the high-trust society [353.94s - 359.04s] is a more virtuous society where I can trust you to come hunt the stag with me and show up on time
-[2026-01-07 16:16:24][MainThread] block_text: [333.46s - 338.44s] The most common game played is one called a stag's hunt, where if we cooperate, we can bring down a [338.44s - 342.86s] big stag and both have big dinners. But if we don't cooperate, then we have to go hunt like rabbits and [342.86s - 349.84s] we each have small dinners. And that game has two stable equilibriums. And one could be where we're [349.84s - 353.94s] both hunting the rabbit and one could be where we're hunting the stag. So the high-trust society [353.94s - 359.04s] is a more virtuous society where I can trust you to come hunt the stag with me and show up on time
-[2026-01-07 16:16:24][MainThread] [parse_multiline_block] start_time: 333.46, [parse_multiline_block] end_time: 359.04,[parse_multiline_block] new_text: [333.46s - 338.44s] The most common game played is one called a stag's hunt, where if we cooperate, we can bring down a
-[338.44s - 342.86s] big stag and both have big dinners. But if we don't cooperate, then we have to go hunt like rabbits and
-[342.86s - 349.84s] we each have small dinners. And that game has two stable equilibriums. And one could be where we're
-[349.84s - 353.94s] both hunting the rabbit and one could be where we're hunting the stag. So the high-trust society
-[353.94s - 359.04s] is a more virtuous society where I can trust you to come hunt the stag with me and show up on time
-[2026-01-07 16:16:24][MainThread] start time: 333.46, end_time: 359.04, new_text: [333.46s - 338.44s] The most common game played is one called a stag's hunt, where if we cooperate, we can bring down a
-[338.44s - 342.86s] big stag and both have big dinners. But if we don't cooperate, then we have to go hunt like rabbits and
-[342.86s - 349.84s] we each have small dinners. And that game has two stable equilibriums. And one could be where we're
-[349.84s - 353.94s] both hunting the rabbit and one could be where we're hunting the stag. So the high-trust society
-[353.94s - 359.04s] is a more virtuous society where I can trust you to come hunt the stag with me and show up on time
-[2026-01-07 16:16:24][MainThread] 
- now Added work to QUEUE: 
- video url: None
-, audio_path: None 
- start_time: 333.46s 
- end_time 359.04s
-Original text: [333.46s - 338.44s] The most common game played is one called a stag's hunt, where if we cooperate, we can bring down a [338.44s - 342.86s] big stag and both have big dinners. But if we don't cooperate, then we have to go hunt like rabbits and [342.86s - 349.84s] we each have small dinners. And that game has two stable equilibriums. And one could be where we're [349.84s - 353.94s] both hunting the rabbit and one could be where we're hunting the stag. So the high-trust society [353.94s - 359.04s] is a more virtuous society where I can trust you to come hunt the stag with me and show up on time
-[2026-01-07 16:16:24][MainThread] 💾 JSON backup updated: 16 queued + 0 in-progress
-[2026-01-07 16:16:24][MainThread] ➕ Added new task to queue. Total: 16 items
-[2026-01-07 16:16:24][MainThread] Added VideoWork to videotask Queue:
-None
-Audio_path:None
-333.46
- 359.04
- [333.46s - 338.44s] The most common game played is one called a stag's hunt, where if we cooperate, we can bring down a
-[338.44s - 342.86s] big stag and both have big dinners. But if we don't cooperate, then we have to go hunt like rabbits and
-[342.86s - 349.84s] we each have small dinners. And that game has two stable equilibriums. And one could be where we're
-[349.84s - 353.94s] both hunting the rabbit and one could be where we're hunting the stag. So the high-trust society
-[353.94s - 359.04s] is a more virtuous society where I can trust you to come hunt the stag with me and show up on time
-  Amount of added videowork to queue: 3
- 
-[2026-01-07 16:16:24][MainThread] Current videos added to que for proccessing: 3
-[2026-01-07 16:16:25][MainThread] Reloading model to -> gpt-5-medium before running [Motivational_analytic_agent]
-[2026-01-07 16:18:14][MainThread] Reloading model to -> gpt-5-minimal before running [Motivational_analytic_agent]
-[2026-01-07 16:18:28][MainThread] Writing saved motivational text from agent to: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\checking.txt
- text: [498.74s - 506.48s] Greek daemon. But yeah, what you know that you don't even know you know is far greater than what
-[506.48s - 511.76s] you know you know. You can't even articulate most of the things you know. There are feelings you have
-[511.76s - 517.12s] that have no words for them. There are thoughts you have that are felt within the body or subconsciously
-[517.12s - 521.94s] that you never articulate to yourself. You can't articulate the rules of grammar, yet you
-[521.94s - 527.62s] exercise them effortlessly when you speak. So I would argue that your implicit knowledge and your
-[527.62s - 531.32s] knowledge that is unknown to yourself is far greater than the knowledge you can articulate and
-[531.32s - 537.28s] that you can communicate. And so at some level, you're always watching yourself. That's what your
-[537.28s - 540.84s] consciousness is, right? It's the thing that's watching everything, including your mind, including
-[540.84s - 547.76s] your body. So if you want to have high self-esteem, then earn your own self-respect.
-[2026-01-07 16:18:28][MainThread] block_text: [498.74s - 506.48s] Greek daemon. But yeah, what you know that you don't even know you know is far greater than what
-[506.48s - 511.76s] you know you know. You can't even articulate most of the things you know. There are feelings you have
-[511.76s - 517.12s] that have no words for them. There are thoughts you have that are felt within the body or subconsciously
-[517.12s - 521.94s] that you never articulate to yourself. You can't articulate the rules of grammar, yet you
-[521.94s - 527.62s] exercise them effortlessly when you speak. So I would argue that your implicit knowledge and your
-[527.62s - 531.32s] knowledge that is unknown to yourself is far greater than the knowledge you can articulate and
-[531.32s - 537.28s] that you can communicate. And so at some level, you're always watching yourself. That's what your
-[537.28s - 540.84s] consciousness is, right? It's the thing that's watching everything, including your mind, including
-[540.84s - 547.76s] your body. So if you want to have high self-esteem, then earn your own self-respect.
-[2026-01-07 16:18:28][MainThread] [parse_multiline_block] start_time: 498.74, [parse_multiline_block] end_time: 547.76,[parse_multiline_block] new_text: [498.74s - 506.48s] Greek daemon. But yeah, what you know that you don't even know you know is far greater than what
-[506.48s - 511.76s] you know you know. You can't even articulate most of the things you know. There are feelings you have
-[511.76s - 517.12s] that have no words for them. There are thoughts you have that are felt within the body or subconsciously
-[517.12s - 521.94s] that you never articulate to yourself. You can't articulate the rules of grammar, yet you
-[521.94s - 527.62s] exercise them effortlessly when you speak. So I would argue that your implicit knowledge and your
-[527.62s - 531.32s] knowledge that is unknown to yourself is far greater than the knowledge you can articulate and
-[531.32s - 537.28s] that you can communicate. And so at some level, you're always watching yourself. That's what your
-[537.28s - 540.84s] consciousness is, right? It's the thing that's watching everything, including your mind, including
-[540.84s - 547.76s] your body. So if you want to have high self-esteem, then earn your own self-respect.
-[2026-01-07 16:18:28][MainThread] start time: 498.74, end_time: 547.76, new_text: [498.74s - 506.48s] Greek daemon. But yeah, what you know that you don't even know you know is far greater than what
-[506.48s - 511.76s] you know you know. You can't even articulate most of the things you know. There are feelings you have
-[511.76s - 517.12s] that have no words for them. There are thoughts you have that are felt within the body or subconsciously
-[517.12s - 521.94s] that you never articulate to yourself. You can't articulate the rules of grammar, yet you
-[521.94s - 527.62s] exercise them effortlessly when you speak. So I would argue that your implicit knowledge and your
-[527.62s - 531.32s] knowledge that is unknown to yourself is far greater than the knowledge you can articulate and
-[531.32s - 537.28s] that you can communicate. And so at some level, you're always watching yourself. That's what your
-[537.28s - 540.84s] consciousness is, right? It's the thing that's watching everything, including your mind, including
-[540.84s - 547.76s] your body. So if you want to have high self-esteem, then earn your own self-respect.
-[2026-01-07 16:18:28][MainThread] 
- now Added work to QUEUE: 
- video url: None
-, audio_path: None 
- start_time: 498.74s 
- end_time 547.76s
-Original text: [498.74s - 506.48s] Greek daemon. But yeah, what you know that you don't even know you know is far greater than what
-[506.48s - 511.76s] you know you know. You can't even articulate most of the things you know. There are feelings you have
-[511.76s - 517.12s] that have no words for them. There are thoughts you have that are felt within the body or subconsciously
-[517.12s - 521.94s] that you never articulate to yourself. You can't articulate the rules of grammar, yet you
-[521.94s - 527.62s] exercise them effortlessly when you speak. So I would argue that your implicit knowledge and your
-[527.62s - 531.32s] knowledge that is unknown to yourself is far greater than the knowledge you can articulate and
-[531.32s - 537.28s] that you can communicate. And so at some level, you're always watching yourself. That's what your
-[537.28s - 540.84s] consciousness is, right? It's the thing that's watching everything, including your mind, including
-[540.84s - 547.76s] your body. So if you want to have high self-esteem, then earn your own self-respect.
-[2026-01-07 16:18:28][MainThread] 💾 JSON backup updated: 17 queued + 0 in-progress
-[2026-01-07 16:18:28][MainThread] ➕ Added new task to queue. Total: 17 items
-[2026-01-07 16:18:28][MainThread] Added VideoWork to videotask Queue:
-None
-Audio_path:None
-498.74
- 547.76
- [498.74s - 506.48s] Greek daemon. But yeah, what you know that you don't even know you know is far greater than what
-[506.48s - 511.76s] you know you know. You can't even articulate most of the things you know. There are feelings you have
-[511.76s - 517.12s] that have no words for them. There are thoughts you have that are felt within the body or subconsciously
-[517.12s - 521.94s] that you never articulate to yourself. You can't articulate the rules of grammar, yet you
-[521.94s - 527.62s] exercise them effortlessly when you speak. So I would argue that your implicit knowledge and your
-[527.62s - 531.32s] knowledge that is unknown to yourself is far greater than the knowledge you can articulate and
-[531.32s - 537.28s] that you can communicate. And so at some level, you're always watching yourself. That's what your
-[537.28s - 540.84s] consciousness is, right? It's the thing that's watching everything, including your mind, including
-[540.84s - 547.76s] your body. So if you want to have high self-esteem, then earn your own self-respect.
-  Amount of added videowork to queue: 4
- 
-[2026-01-07 16:18:28][MainThread] Current videos added to que for proccessing: 4
-[2026-01-07 16:18:28][MainThread] Reloading model to -> gpt-5-high before running [Motivational_analytic_agent]
-[2026-01-07 16:22:10][MainThread] Reloading model to -> gpt-5-medium before running [Motivational_analytic_agent]
-[2026-01-07 16:24:14][MainThread] Reloading model to -> gpt-5-minimal before running [Motivational_analytic_agent]
-[2026-01-07 16:24:24][MainThread] Reloading model to -> gpt-5-high before running [Motivational_analytic_agent]
-[2026-01-07 16:25:28][MainThread] Reloading model to -> gpt-5-medium before running [Motivational_analytic_agent]
-[2026-01-07 16:26:02][MainThread] Reloading model to -> gpt-5-minimal before running [Motivational_analytic_agent]
+[2026-02-04 17:52:46][MainThread] Found downloaded video file: Chris Williamson： If You Don't Fix This Now, 2026 Is Already Over!.mp4
+[2026-02-04 17:52:46][MainThread] Found downloaded video file: The Best Moments of Modern Wisdom (2025).mp4
+[2026-02-04 17:52:46][MainThread] Video_paths: 2
+[2026-02-04 17:52:46][ThreadPoolExecutor-0_0] transcribe_single_video
+[2026-02-04 17:52:46][ThreadPoolExecutor-0_0] Transcript already exists: 
+transcript_path:c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\Chris Williamson： If You Don't Fix This Now, 2026 Is Already Over!\Chris Williamson： If You Don't Fix This Now, 2026 Is Already Over!.txt
+,audio exists: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\Chris Williamson： If You Don't Fix This Now, 2026 Is Already Over!\Chris Williamson： If You Don't Fix This Now, 2026 Is Already Over!.wav
+
+[2026-02-04 17:52:46][ThreadPoolExecutor-0_0] Enqueued existing transcript for GPU processing:
+ Video path:c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\videos_downloaded\Chris Williamson： If You Don't Fix This Now, 2026 Is Already Over!.mp4
+txt output:c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\Chris Williamson： If You Don't Fix This Now, 2026 Is Already Over!\Chris Williamson： If You Don't Fix This Now, 2026 Is Already Over!.txt
+agent saving path:c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\Chris Williamson： If You Don't Fix This Now, 2026 Is Already Over!\agent_saving_path.txt
+ audio path: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\Chris Williamson： If You Don't Fix This Now, 2026 Is Already Over!\Chris Williamson： If You Don't Fix This Now, 2026 Is Already Over!.wav
+
+[2026-02-04 17:52:46][ThreadPoolExecutor-0_0] transcribe_single_video
+[2026-02-04 17:52:46][ThreadPoolExecutor-0_0] Transcript already exists: 
+transcript_path:c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Best Moments of Modern Wisdom (2025)\The Best Moments of Modern Wisdom (2025).txt
+,audio exists: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Best Moments of Modern Wisdom (2025)\The Best Moments of Modern Wisdom (2025).wav
+
+[2026-02-04 17:52:46][ThreadPoolExecutor-0_0] Enqueued existing transcript for GPU processing:
+ Video path:c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\videos_downloaded\The Best Moments of Modern Wisdom (2025).mp4
+txt output:c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Best Moments of Modern Wisdom (2025)\The Best Moments of Modern Wisdom (2025).txt
+agent saving path:c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Best Moments of Modern Wisdom (2025)\agent_saving_path.txt
+ audio path: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Best Moments of Modern Wisdom (2025)\The Best Moments of Modern Wisdom (2025).wav
+
+[2026-02-04 17:52:46][MainThread] start_time of threadpool: 1770223966.7991912 & endtime of threadpool = 1770223966.8150563, total: 0.015865087509155273
+[2026-02-04 17:52:46][GPU_Worker - (THREAD)] GPU-Thread started (Running)
+
+[2026-02-04 17:52:46][GPU_Worker - (THREAD)] Loaded Global_model on device
+[2026-02-04 17:52:46][GPU_Worker - (THREAD)] Item Retrieved from (Transcript Queue) ready for Processing: Global state:
+ - set_current_videourl:c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\videos_downloaded\Chris Williamson： If You Don't Fix This Now, 2026 Is Already Over!.mp4
+, Global state: set_current_audio_path:
+ - c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\Chris Williamson： If You Don't Fix This Now, 2026 Is Already Over!\Chris Williamson： If You Don't Fix This Now, 2026 Is Already Over!.wav
+ Transcript text path - c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\Chris Williamson： If You Don't Fix This Now, 2026 Is Already Over!\Chris Williamson： If You Don't Fix This Now, 2026 Is Already Over!.txt
+ agent is saving text from transcript to Global state:
+ set_current_textfile:c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\Chris Williamson： If You Don't Fix This Now, 2026 Is Already Over!\agent_saving_path.txt
+[2026-02-04 17:52:47][GPU_Worker - (THREAD)] ✅Transcript_Reasoning_AGENT (Running)
+[2026-02-04 17:52:47][GPU_Worker - (THREAD)] 
+Transcript Path is (EMPTY)
+ -c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\Chris Williamson： If You Don't Fix This Now, 2026 Is Already Over!\Chris Williamson： If You Don't Fix This Now, 2026 Is Already Over!.txt
+[2026-02-04 17:52:47][GPU_Worker - (THREAD)] done with work. exiting transcript reasoning agent to retrieve the next items from the queue.
+[2026-02-04 17:52:47][GPU_Worker - (THREAD)] Transcript_Reasoning_AGENT  (EXITED)
+[2026-02-04 17:52:47][GPU_Worker - (THREAD)] Transcript Queue (TASK DONE)
+ - c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\Chris Williamson： If You Don't Fix This Now, 2026 Is Already Over!\Chris Williamson： If You Don't Fix This Now, 2026 Is Already Over!.txt
+[2026-02-04 17:52:47][GPU_Worker - (THREAD)] Item Retrieved from (Transcript Queue) ready for Processing: Global state:
+ - set_current_videourl:c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\videos_downloaded\The Best Moments of Modern Wisdom (2025).mp4
+, Global state: set_current_audio_path:
+ - c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Best Moments of Modern Wisdom (2025)\The Best Moments of Modern Wisdom (2025).wav
+ Transcript text path - c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Best Moments of Modern Wisdom (2025)\The Best Moments of Modern Wisdom (2025).txt
+ agent is saving text from transcript to Global state:
+ set_current_textfile:c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Best Moments of Modern Wisdom (2025)\agent_saving_path.txt
+[2026-02-04 17:52:47][GPU_Worker - (THREAD)] ✅Transcript_Reasoning_AGENT (Running)
+[2026-02-04 17:52:47][GPU_Worker - (THREAD)] 
+Transcript Path is (EMPTY)
+ -c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Best Moments of Modern Wisdom (2025)\The Best Moments of Modern Wisdom (2025).txt
+[2026-02-04 17:52:47][GPU_Worker - (THREAD)] done with work. exiting transcript reasoning agent to retrieve the next items from the queue.
+[2026-02-04 17:52:47][GPU_Worker - (THREAD)] Transcript_Reasoning_AGENT  (EXITED)
+[2026-02-04 17:52:47][GPU_Worker - (THREAD)] Transcript Queue (TASK DONE)
+ - c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\The Best Moments of Modern Wisdom (2025)\The Best Moments of Modern Wisdom (2025).txt
+[2026-02-04 17:52:47][GPU_Worker - (THREAD)] [Shutdown signal received] - exiting GPU worker
+[2026-02-04 17:52:47][Video_creation(THREAD)] [video_creation_worker] Started and ready to process video tasks
+[2026-02-04 17:52:47][GPU_Worker - (THREAD)] 
+
+
+
+
+
+[wait_for_proccessed_video_complete]
+[2026-02-04 17:52:48][GPU_Worker - (THREAD)] [wait_for_proccessed_video_complete]  waiting for video_task_que to be empty: items remaining: 6
+[2026-02-04 17:52:48][Video_creation(THREAD)] 💾 JSON backup updated: 5 queued + 1 in-progress
+[2026-02-04 17:52:48][Video_creation(THREAD)] 🔄 Moved task 2560082772272 to in-progress. Queue: 5, In-progress: 1
+[2026-02-04 17:52:48][Video_creation(THREAD)] current work being proccessed/Retrieved WORK: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\videos_downloaded\Chris Williamson： If You Don't Fix This Now, 2026 Is Already Over!.mp4
+audio_path:c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\Chris Williamson： If You Don't Fix This Now, 2026 Is Already Over!\Chris Williamson： If You Don't Fix This Now, 2026 Is Already Over!.wav
+ 1672.32
+ 1682.42
+ [1672.32s - 1682.42s] my life would be much better if I 
+
+[2026-02-04 17:52:48][Video_creation(THREAD)] RUNNING --> [run_video_short_creation_thead]: video_url: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\videos_downloaded\Chris Williamson： If You Don't Fix This Now, 2026 Is Already Over!.mp4, start_time: 1672.32, end_time: 1682.42
+[2026-02-04 17:52:49][Video_creation(THREAD)] [run_video_short_creation_thread] Audio duration: 8875.247166s
+[2026-02-04 17:52:49][Video_creation(THREAD)]  padded Truncated audio path: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\Chris Williamson： If You Don't Fix This Now, 2026 Is Already Over!\padded_truncated1.wav
+ original_truncated audio path: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\Chris Williamson： If You Don't Fix This Now, 2026 Is Already Over!\Chris Williamson： If You Don't Fix This Now, 2026 Is Already Over!.wav
+[2026-02-04 17:52:50][Video_creation(THREAD)] [truncate_audio] Audio metadata: duration=8875.25s, size=1528900.08KB, frame_rate=44100Hz
+[2026-02-04 17:52:50][Video_creation(THREAD)] [truncate_audio] Original range: 1672.32s - 1682.42s, Padded range: 1668.32s - 1686.42s (padding=4s)
+[2026-02-04 17:52:50][Video_creation(THREAD)] [truncate_audio] Calculated: start_sample=73572912, end_sample=74371122
+[2026-02-04 17:52:50][Video_creation(THREAD)] start_ms: 73572912, end_ms: 74371122
+[2026-02-04 17:52:50][Video_creation(THREAD)] Global state: - set_current_truncated_audio_path: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\Chris Williamson： If You Don't Fix This Now, 2026 Is Already Over!\padded_truncated1.wav
+[2026-02-04 17:52:50][Video_creation(THREAD)] [truncate_audio] Output created: duration=18.10s, size=3118.05KB
+[2026-02-04 17:52:50][Video_creation(THREAD)] subtitletext cleaned: my life would be much better if I
+[2026-02-04 17:52:50][Video_creation(THREAD)] [run_video_short_creation_thread] Adjusting timestamps for padding: original_start=1672.32, adjusted_start=1668.32
+[2026-02-04 17:52:50][Video_creation(THREAD)] [INFO] Audio Duration: 18.10 seconds Detected Language: en (confidence: 1.00)
+[2026-02-04 17:52:52][Video_creation(THREAD)] S['my', 'life', 'would', 'be', 'much', 'better', 'if', 'i']
+
+[2026-02-04 17:52:52][Video_creation(THREAD)] T['prioritization', 'it', 'would', 'really', 'be', 'around', 'saying', 'no', 'like', 'we', "don't", 'really', 'teach', 'it', 'goes', 'back', 'to', 'what', "you're", 'saying', 'about', 'adding', 'and', 'subtracting', 'but', 'my', 'life', 'would', 'be', 'much', 'better', 'if', 'i', 'was', 'even', '10', 'better', 'at', 'saying', 'no', 'to', 'things', 'it', 'would', 'be', 'so', 'much', 'better', "i'd", 'be', 'so', 'much', 'more', 'six', 'the', 'upside', "isn't", 'like']
+
+[2026-02-04 17:52:52][Video_creation(THREAD)] start_phrase subtitletokens: ['my', 'life', 'would', 'be']
+ end_phrase subtitletokens: ['much', 'better', 'if', 'i']
+[2026-02-04 17:52:52][Video_creation(THREAD)] match start transcribetokens: 25
+[2026-02-04 17:52:52][Video_creation(THREAD)] match end transcribe tokens (last occurrence): 33 from start index 29
+[2026-02-04 17:52:52][Video_creation(THREAD)] [WINDOW] Index 25-33: my life would be much better if i
+[2026-02-04 17:52:52][Video_creation(THREAD)] [MATCH] Found exact match: ['my', 'life', 'would', 'be', 'much', 'better', 'if', 'i']
+[2026-02-04 17:52:52][Video_creation(THREAD)] final_start_time: 1676.1799999999998
+[2026-02-04 17:52:52][Video_creation(THREAD)] final_end_time: 1678.71
+[2026-02-04 17:52:52][Video_creation(THREAD)] matched_words: [{'word': 'my', 'start': 7.86, 'end': 8.82}, {'word': 'life', 'start': 8.82, 'end': 9.0}, {'word': 'would', 'start': 9.0, 'end': 9.1}, {'word': 'be', 'start': 9.1, 'end': 9.2}, {'word': 'much', 'start': 9.2, 'end': 9.46}, {'word': 'better', 'start': 9.46, 'end': 9.74}, {'word': 'if', 'start': 9.74, 'end': 10.12}, {'word': 'i', 'start': 10.12, 'end': 10.24}]
+ start : 1676.1799999999998
+ end : 1678.71
+
+[2026-02-04 17:52:52][Video_creation(THREAD)] Transcription complete | device: cuda
+[2026-02-04 17:52:52][Video_creation(THREAD)] [run_video_short_creation_thread] creating video now... 
+ start_time: 1676.1799999999998 
+ end_time: 1678.71,  
+ subtitle_text: [{'word': 'my', 'start': 7.86, 'end': 8.82}, {'word': 'life', 'start': 8.82, 'end': 9.0}, {'word': 'would', 'start': 9.0, 'end': 9.1}, {'word': 'be', 'start': 9.1, 'end': 9.2}, {'word': 'much', 'start': 9.2, 'end': 9.46}, {'word': 'better', 'start': 9.46, 'end': 9.74}, {'word': 'if', 'start': 9.74, 'end': 10.12}, {'word': 'i', 'start': 10.12, 'end': 10.24}]
+[2026-02-04 17:52:52][Video_creation(THREAD)] {'streams': [{'index': 0, 'codec_name': 'av1', 'codec_long_name': 'Alliance for Open Media AV1', 'profile': 'Main', 'codec_type': 'video', 'codec_tag_string': 'av01', 'codec_tag': '0x31307661', 'width': 3840, 'height': 2160, 'coded_width': 3840, 'coded_height': 2160, 'closed_captions': 0, 'film_grain': 0, 'has_b_frames': 0, 'sample_aspect_ratio': '1:1', 'display_aspect_ratio': '16:9', 'pix_fmt': 'yuv420p', 'level': 12, 'color_range': 'tv', 'color_space': 'bt709', 'color_transfer': 'bt709', 'color_primaries': 'bt709', 'refs': 1, 'id': '0x1', 'r_frame_rate': '25/1', 'avg_frame_rate': '25/1', 'time_base': '1/12800', 'start_pts': 0, 'start_time': '0.000000', 'duration_ts': 113602560, 'duration': '8875.200000', 'bit_rate': '2278079', 'nb_frames': '221880', 'extradata_size': 21, 'disposition': {'default': 1, 'dub': 0, 'original': 0, 'comment': 0, 'lyrics': 0, 'karaoke': 0, 'forced': 0, 'hearing_impaired': 0, 'visual_impaired': 0, 'clean_effects': 0, 'attached_pic': 0, 'timed_thumbnails': 0, 'non_diegetic': 0, 'captions': 0, 'descriptions': 0, 'metadata': 0, 'dependent': 0, 'still_image': 0, 'multilayer': 0}, 'tags': {'language': 'und', 'handler_name': 'ISO Media file produced by Google Inc.', 'vendor_id': '[0][0][0][0]'}}, {'index': 1, 'codec_name': 'aac', 'codec_long_name': 'AAC (Advanced Audio Coding)', 'profile': 'LC', 'codec_type': 'audio', 'codec_tag_string': 'mp4a', 'codec_tag': '0x6134706d', 'sample_fmt': 'fltp', 'sample_rate': '44100', 'channels': 2, 'channel_layout': 'stereo', 'bits_per_sample': 0, 'initial_padding': 0, 'id': '0x2', 'r_frame_rate': '0/0', 'avg_frame_rate': '0/0', 'time_base': '1/44100', 'start_pts': 0, 'start_time': '0.000000', 'duration_ts': 391398400, 'duration': '8875.247166', 'bit_rate': '127999', 'nb_frames': '382225', 'extradata_size': 16, 'disposition': {'default': 1, 'dub': 0, 'original': 0, 'comment': 0, 'lyrics': 0, 'karaoke': 0, 'forced': 0, 'hearing_impaired': 0, 'visual_impaired': 0, 'clean_effects': 0, 'attached_pic': 0, 'timed_thumbnails': 0, 'non_diegetic': 0, 'captions': 0, 'descriptions': 0, 'metadata': 0, 'dependent': 0, 'still_image': 0, 'multilayer': 0}, 'tags': {'language': 'eng', 'handler_name': 'ISO Media file produced by Google Inc.', 'vendor_id': '[0][0][0][0]'}}], 'format': {'filename': "c:\\Users\\didri\\Desktop\\Full-Agent-Flow_VideoEditing\\work_queue_folder\\videos_downloaded\\Chris Williamson： If You Don't Fix This Now, 2026 Is Already Over!.mp4", 'nb_streams': 2, 'nb_programs': 0, 'nb_stream_groups': 0, 'format_name': 'mov,mp4,m4a,3gp,3g2,mj2', 'format_long_name': 'QuickTime / MOV', 'start_time': '0.000000', 'duration': '8875.247166', 'size': '2674983508', 'bit_rate': '2411185', 'probe_score': 100, 'tags': {'major_brand': 'isom', 'minor_version': '512', 'compatible_brands': 'isomav01iso2mp41', 'encoder': 'Lavf61.9.100'}}}
+[2026-02-04 17:52:52][Video_creation(THREAD)] Created subtitle chunk: text='MY LIFE WOULD BE MUCH BETTER...', start=0.000, end=1.880, duration=1.880s
+[2026-02-04 17:52:52][Video_creation(THREAD)] Created subtitle chunk: text='IF I...', start=1.880, end=2.580, duration=0.700s
+[2026-02-04 17:52:55][Video_creation(THREAD)] clip duration: 2.5300000000002, clip fps: 25.0, clip width: 3840, clip height: 2160, start_time: 1676.1799999999998, end_time: 1678.71, video_path: c:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\videos_downloaded\Chris Williamson： If You Don't Fix This Now, 2026 Is Already Over!.mp4
+[2026-02-04 17:52:55][Video_creation(THREAD)] Clip fps: 25.0
+[2026-02-04 17:53:05][Video_creation(THREAD)] [cropped_frames]  1. frames: 63 frames.
+ Height: 1920, Width: 1080
+[2026-02-04 17:53:05][Video_creation(THREAD)] current YT_count: 0
+[2026-02-04 17:53:05][Video_creation(THREAD)] Latest_Yt_channel: MR_Youtube
+[2026-02-04 17:53:05][Video_creation(THREAD)] YT_channel: MA_Youtube
+[2026-02-04 17:53:05][Video_creation(THREAD)] text: MY LIFE WOULD BE MUCH BETTER
+[2026-02-04 17:53:06][Video_creation(THREAD)] Subtitle clip 0: text='MY LIFE WOULD BE MUC...', total_duration=1.880s
+[2026-02-04 17:53:06][Video_creation(THREAD)] text: IF I
+[2026-02-04 17:53:06][Video_creation(THREAD)] Subtitle clip 1: text='IF I...', total_duration=0.700s
+[2026-02-04 17:53:06][Video_creation(THREAD)] choosing Background Audio
+
+[2026-02-04 17:53:06][Video_creation(THREAD)] already_uploaded_videos: Video_clips/Youtube_Upload_folder/MA_Youtube/already_uploaded.json
+[2026-02-04 17:53:40][Video_creation(THREAD)] Emotion recieved from [predict_emotion] --> disgust
+[2026-02-04 17:53:40][Video_creation(THREAD)] Starting [run_multi_Vision_model_conclusion]
+[2026-02-04 17:53:48][GPU_Worker - (THREAD)] [wait_for_proccessed_video_complete]  waiting for video_task_que to be empty: items remaining: 6
+[2026-02-04 17:53:55][Video_creation(THREAD)] Extracted 5 frames in window [1676.18s - 1678.71s].
+[2026-02-04 17:54:05][Video_creation(THREAD)] user_message: Analyze the following information below and then select the best instrumental background music that pairs well for the text/speech from the motivational shorts video:
+        - Podcast Transcript: (my life would be much better if I) -  (Trancript is the transcribed audio to text from the motivational shorts video; Use this to identify the story, key motivational points, and overall arc.)
+
+        - The Audio length of the motivational short video is: (2.5300000000002 -  seconds)
+
+        - Detected Speech Emotion: (disgust)  (Raw tone from audio mood prediction model; integrate but prioritize motivational intent if conflicting.)
+
+        - Video Frames and Audio: Observe all the  provided images for visual style, speaker energy, and pacing. Listen to the audio for vocal delivery, pauses, and intensity.
+
+        - Candidate Background Tracks: (Candidate Background Tracks: 
+Track 0:
+song name: Tom Odell - Another Love | Piano cover
+  Path: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\Another love -piano.WAV
+  Description: Intimate, poignant piano solo delivering raw emotional vulnerability and profound heartbreak, with gentle melodic builds and a bittersweet blend of deep melancholy, wistful longing, and subtle hopeful resolve. Valence (💖) 6.29 → bittersweet and cathartic mood. Arousal (⚡) 4.29 → tender, introspective energy. Perfect for reflective moments of loss, emotional healing, finding inner peace amid pain, vulnerable personal growth, or motivational scenes about rising stronger
+  Mood: melodic: 0.69, romantic: 0.68, film: 0.53, sad: 0.73, relaxing: 0.65, nature: 0.64, melancholic: 0.77, hopeful: 0.78, drama: 0.68, emotional: 0.9
+  Tempo: Slow
+  Energy: Valence=6.29, Arousal=4.29
+  Genre: Piano / Solo
+  Tags: piano, solo
+
+Track 1:
+song name: Ludovico Einaudi - Experience (Slowed)
+  Path: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\Ludovico Einaudi - Experience (Slowed) [6fBXmhBpFGE] [mp3].mp3
+  Description: Hypnotic minimalist piano with gradual, epic orchestral builds and meditative repetition, creating a deeply introspective journey that evolves from calm melancholy to powerful, soul-stirring inspiration. Valence (💖) 4.47 → nostalgic and bittersweet, shifting toward hopeful empowerment. Arousal (⚡) 2.96 → extremely calm and contemplative energy, perfect for slow-building motivation. Ideal for themes of personal transformation, overcoming fear, liberation, profound self-discovery, or uplifting scenes about realizing inner strength and shining brightly.
+  Mood: emotional: 0.92, melancholic: 0.88, sad: 0.88, relaxing: 0.83, hopeful: 0.75, drama: 0.72, romantic: 0.71, soft: 0.68, nature: 0.62, dramatic: 0.61, calm: 0.6, meditative: 0.59, inspiring: 0.57, ballad: 0.5
+  Tempo: slow
+  Energy: Valence=4.47, Arousal=2.96
+  Genre: Contemporary dance pop
+  Tags: emotional, Deep, Tears, slow
+
+Track 2:
+song name: Way Down We Go Instrumental
+  Path: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\way down we go (instrumental) - kaleo [edit audio] [mp3].WAV
+  Description: This instrumental edit of Kaleo's iconic "Way Down We Go" distills the track's haunting essence into a concise 34-second atmospheric piece, stripping away the powerful vocals to emphasize brooding piano openings, resonant slow-building drums, and ambient layers that evoke a sense of deep introspection and inevitable descent. The slow tempo and moderate energy (low valence with subtle arousal) create a dark, dreamy soundscape infused with dramatic tension, emotional weight, and faint romantic undertones—perfect for underscoring moments of struggle, obsession, resilience, and hard-won triumph. With its contemporary pop-ambient fusion and tags highlighting slow pacing, prominent drums, and ethereal ambiance, it delivers an inspiring yet shadowy vibe that amplifies themes of pushing through doubt, hardship, and setbacks toward victory, making it an ideal backdrop for motivational montages, dramatic reflections, advertising spots, or introspective edits paired with quotes about relentless drive and the brutal reality of chasing greatness.
+  Mood: dream: 0.67, dramatic: 0.6, dark: 0.72, love: 0.73, advertising: 0.5, romantic: 0.55, inspiring: 0.6, drama: 0.54, emotional: 0.53
+  Tempo: Slow
+  Energy: Valence=4.16, Arousal=4.37
+  Genre: Contemporary pop / Ambient
+  Tags: slow, drums, ambient
+
+Track 3:
+song name: Zack Hemsey The Way Instrumental
+  Path: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\Zack Hemsey - #The Way (Instrumental)  [mp3].mp3
+  Description: Haunting, slow-building cinematic instrumental with ambient piano, subtle orchestral layers, and dramatic undertones, evoking deep introspection, quiet resilience, and melancholic reflection on personal journeys. Valence (💖) 2.49 → dark, negative, and profoundly melancholic mood. Arousal (⚡) 2.10 → very calm, low-energy atmosphere. Ideal for contemplative motivational scenes about the curse of competence, silent success, gratitude in uncertainty, honorable perseverance, inner vulnerability, or finding one's path through hardship and quiet determination.
+  Mood: movie: 0.88, dark: 0.82, advertising: 0.79, drama: 0.75, calm: 0.75, documentary: 0.72, uplifting: 0.68, epic: 0.66, nature: 0.61, emotional: 0.58, soft: 0.53, sad: 0.5
+  Tempo: Slow
+  Energy: Valence=2.49, Arousal=2.1
+  Genre: Cinematic / Ambient
+  Tags: slow, ambient, quiet
+
+Track 4:
+song name: The xx Intro Instrumental
+  Path: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\xx-intro-instrumental.WAV
+  Description: Hypnotic, dreamy instrumental with looping guitar riffs, subtle bass, and gradual building percussion, creating atmospheric tension, quiet anticipation, and a goosebumps-inducing rush of determination. Valence (💖) 5.64 → positive, pleasant, and hopeful mood. Arousal (⚡) 3.86 → low-to-moderate energy with subtle motivational build. Ideal for reflective yet empowering scenes about self-belief, enduring hardship without help, personal responsibility, pushing through doubt and stress, or embracing that 'it's up to you' for success & Never give up.
+  Mood: hopeful: 0.82, film: 0.79, dream: 0.78, romantic: 0.72, calm: 0.71, dramatic: 0.71, action: 0.69, soft: 0.68, epic: 0.65, documentary: 0.65, drama: 0.64, inspiring: 0.64, movie: 0.63, nature: 0.63, soundscape: 0.62, background: 0.61, positive: 0.6, emotional: 0.59, relaxing: 0.55
+  Tempo: Slow
+  Energy: Valence=5.23, Arousal=3.78
+  Genre: Indie / Ambient
+  Tags: slow, guitar, drums
+
+Track 5:
+song name: Polozhenie Guitar Slowed
+  Path: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\Polzeni Guitar.WAV
+  Description: Haunting slowed + reverb guitar instrumental with meditative piano undertones and atmospheric depth, evoking profound melancholy, introspective loneliness, and quiet resilience amid suffering. Valence (💖) 3.58 → dark, slightly negative, and deeply melancholic mood. Arousal (⚡) 3.03 → very calm, low-intensity energy with subtle stoic empowerment. Ideal for dark motivational scenes about embracing pain as gatekeeper, pursuing the great/impossible, accepting discomfort for exceptional growth, internal conflict, or rising different and stronger through hardship.
+  Mood: dark: 0.68, slow: 0.71, background: 0.67, meditative: 0.7, soundscape: 0.83, sad: 0.63, relaxing: 0.6, calm: 0.58
+  Tempo: Slow
+  Energy: Valence=3.58, Arousal=3.03
+  Genre: Guitar / Solo
+  Tags: guitar, slow, piano
+
+Track 6:
+song name: Ain't Worried Whistle Loop
+  Path: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\onerepublic I aint worried tiktok whistle loop - slowed reverb [mp3].mp3
+  Description: Dreamy slowed + reverb loop of the iconic whistling melody with ambient echoes and soft nature-inspired layers, evoking carefree nonchalance, gentle release of worries, and quiet inner confidence. Valence (💖) 3.53 → slightly melancholic yet nostalgic mood with subtle positivity. Arousal (⚡) 2.97 → very calm, gentle, and meditative energy. Ideal for reflective motivational scenes about taking action despite setbacks, disappearing to build in private, letting go of overthinking and opinions, or embracing big goals with relaxed determination and freedom from anxiety.
+  Mood: calm: 0.79, relaxing: 0.79, soundscape: 0.77, nature: 0.75, documentary: 0.67, meditative: 0.65, soft: 0.62, movie: 0.55, background: 0.54
+  Tempo: Slow
+  Energy: Valence=3.53, Arousal=2.97
+  Genre: Pop / Ambient
+  Tags: slow, ambient, quiet
+
+Track 7:
+song name: Mindsetplug369 Original Sound
+  Path: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\mindsetplug369 - original sound - mindsetplug369.mp3
+  Description: Pumping medium-tempo electronic/techno beat with prominent driving drums and intense rhythmic builds, delivering relentless energy and hype-driven motivation. Valence (💖) 6.04 → neutral-to-positive mood with uplifting determination. Arousal (⚡) 5.70 → moderate-to-high energy for dynamic action. Ideal for high-intensity motivational scenes about overcoming failure, picking yourself up, outworking laziness with relentless discipline, winners' mindset, or pushing through setbacks toward success.
+  Mood: commercial: 0.93, energetic: 0.82, action: 0.76, sport: 0.75, documentary: 0.65, fast: 0.63, adventure: 0.63, corporate: 0.56, retro: 0.55, travel: 0.55, fun: 0.53
+  Tempo: Medium
+  Energy: Valence=6.04, Arousal=5.7
+  Genre: Techno / Electronic
+  Tags: techno, electronic, drums
+
+Track 8:
+song name: 7 Years Piano Cover
+  Path: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\Lukas Graham - 7 Years (Instrumental) [mp3].mp3
+  Description: Heartfelt, slow melodic piano instrumental evoking profound nostalgia, life's reflective journey through ages, and bittersweet memories with subtle hopeful uplift. Valence (💖) 3.94 → neutral-to-bittersweet mood blending melancholy and optimism. Arousal (⚡) 3.22 → low-to-moderate, calm introspective energy. Ideal for motivational scenes about never giving up to keep possibilities alive, measuring success as progress from your starting point, life's milestones, personal growth through reflection, or embracing change with strong why-driven empowerment.
+  Mood: uplifting: 0.85, drama: 0.76, hopeful: 0.75, emotional: 0.73, sad: 0.71, happy: 0.67, calm: 0.66, upbeat: 0.62, melancholic: 0.61, dark: 0.59, romantic: 0.58, dream: 0.55, soft: 0.55, melodic: 0.54, background: 0.5
+  Tempo: Slow
+  Energy: Valence=3.94, Arousal=3.22
+  Genre: Piano / Solo
+  Tags: piano, solo, classical
+
+Track 9:
+song name: Mockingbird Piano Cover
+  Path: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\Mockingbird instrumental.WAV
+  Description: Tender, slow piano solo radiating raw emotional vulnerability, heartfelt fatherly love, and profound regret, with nostalgic melodies blending deep melancholy, childhood longing, and subtle hopeful healing. Valence (💖) 5.59 → bittersweet positive mood with sentimental warmth. Arousal (⚡) 3.92 → low-to-moderate, gentle introspective energy. Ideal for deeply emotional motivational scenes about childhood loneliness and feeling unprotected, parental love amid struggle, figuring out life's unique puzzle through obsession, overcoming anxiety by breathing and facing fear, or healing family wounds with quiet resilience.
+  Mood: christmas: 0.89, holiday: 0.82, melodic: 0.79, romantic: 0.79, film: 0.74, hopeful: 0.73, sad: 0.73, soft: 0.72, melancholic: 0.71, love: 0.66, ballad: 0.62, drama: 0.58, emotional: 0.57, children: 0.53
+  Tempo: Slow
+  Energy: Valence=5.59, Arousal=3.92
+  Genre: Piano / Solo
+  Tags: piano, solo, slow
+
+Track 10:
+song name: Cinematic Adventure Epic Podcast
+  Path: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\Cinematic Adventure Epic Podcast by Infraction [No Copyright Music] # Storyteller [mp3].mp3
+  Description: Slow-building cinematic epic with gentle piano openings, gradual orchestral swells, and dramatic percussion, creating a profound storytelling atmosphere of reflection, perseverance, and emotional triumph. Valence (💖) 3.12 → slightly melancholic yet hopeful mood. Arousal (⚡) 3.07 → low-to-moderate energy with inspiring intensity build. Ideal for motivational scenes about never giving up despite confusion or failure, learning from mistakes for constant growth, unconditional parental support building unbreakable confidence, life's unexpected connections, or embracing the present as the ultimate gift amid uncertainty.
+  Mood: epic: 0.91, action: 0.87, drama: 0.8, film: 0.8, dramatic: 0.78, trailer: 0.76, documentary: 0.68, emotional: 0.67, movie: 0.6, romantic: 0.56, inspiring: 0.55, soundscape: 0.51
+  Tempo: Slow
+  Energy: Valence=3.12, Arousal=3.07
+  Genre: Cinematic / Ambient
+  Tags: ambient, slow, piano
+
+Track 11:
+song name: Chill Bill Whistling
+  Path: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\Chill Bill Whistling [Tiktok version] [mp3].mp3
+  Description: Iconic slowed whistling loop from Rob $tone's 'Chill Bill' (sampled from Twisted Nerve/Kill Bill), with playful, childlike innocence and gentle reverb echoes, evoking cheerful whimsy, lighthearted calm, and subtle underlying warmth. Valence (💖) 4.30 → slightly positive, happy, and uplifting Mood. Arousal (⚡) 2.44 → very calm, low-energy relaxation. Ideal for lighthearted motivational scenes about self-love as the foundation, embracing inner wilderness strength, feeling quietly protected and not alone, heartwarming support from loved ones or higher power, or joyful present-moment positivity.
+  Mood: children: 0.95, holiday: 0.94, happy: 0.88, christmas: 0.88, advertising: 0.78, commercial: 0.74, funny: 0.74, documentary: 0.71, uplifting: 0.67, travel: 0.63, calm: 0.63, fun: 0.59, nature: 0.59, dream: 0.54, corporate: 0.52
+  Tempo: Slow
+  Energy: Valence=4.3, Arousal=2.44
+  Genre: Flute / Classical / Chill
+  Tags: flute, classical, slow
+
+Track 12:
+song name: After Hours Instrumental
+  Path: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\AFTER HOURS INSTRUMENTAL (Slowed Reverb) [mp3].mp3
+  Description: Immersive slowed + reverb instrumental with deep nocturnal synth layers, spacey echoes, and dreamy atmospheric textures, evoking melancholic introspection, emotional depth, and a somber yet captivating late-night vibe. Valence (💖) 5.33 → positive yet bittersweet and nostalgic mood. Arousal (⚡) 4.32 → moderate, enveloping energy.  introspective emotional reflections, or dreamy lofi-style aesthetic videos.
+  Mood: deep: 0.92, dark: 0.81, space: 0.81, dream: 0.78, soundscape: 0.73, cool: 0.73, uplifting: 0.7, melodic: 0.54
+  Tempo: Medium
+  Energy: Valence=5.33, Arousal=4.32
+  Genre: Techno / Electronic
+  Tags: techno, electronic, synth
+
+Track 13:
+song name: Bloody Mary
+  Path: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\bloody_mary.WAV
+  Description: A haunting and empowering instrumental remix of Lady Gaga's 'Bloody Mary,' driven by pulsing techno beats, layered electronic synths, and retro-inspired melodies that evoke a dark, dreamy atmosphere with futuristic edge. This medium-tempo track builds gradual intensity with moderate arousal (5.42/10), delivering steady, controlled energy that sustains focus and drive without overwhelming the listener. Its balanced valence (5.49/10) strikes a poignant middle ground—neither overtly joyful nor deeply somber—blending mysterious introspection and resilient uplift, making it ideal for transformation arcs, gym montages, or reflective edits where adversity turns into strength. The commercial polish and emotional depth suit corporate videos, cinematic trailers, or inspirational content paired with quotes on perseverance and inner growth.
+  Mood: retro: 0.65, motivational: 0.64, corporate: 0.63, space: 0.57, commercial: 0.57, dream: 0.53
+  Tempo: Medium
+  Energy: Valence=5.49, Arousal=5.42
+  Genre: Acoustic pop
+  Tags: techno, electronic, synth
+
+Track 14:
+song name: All Time Low TikTok Version
+  Path: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\all time low (tiktok version⧸best part!) - jon bellion [edit audio].wav
+  Description: A viral slowed + reverb TikTok edit of Jon Bellion's 'All Time Low,' focusing on the haunting 'sad part' chorus with ethereal, echoing vocals and soft, atmospheric production that creates a deeply melancholic and introspective mood. This slow-tempo track features low valence (2.17/10), evoking poignant sadness, vulnerability, and emotional weight often associated with heartbreak, nostalgia, or quiet inner struggle. Its low-to-moderate arousal (2.87/10) delivers a calm, meditative energy that flows gently without high intensity, making it perfect for reflective voiceover edits, late-night montages, tearful confessions, or profound motivational content layered with philosophical quotes on discipline, presence, and self-discovery. Widely used in emotional TikTok aesthetics for its goosebump-inducing depth and immersive reverb.
+  Mood: sad: 0.82, love: 0.78, melancholic: 0.76, meditative: 0.74, romantic: 0.66, soft: 0.66, christmas: 0.66, drama: 0.59, holiday: 0.56, dream: 0.55, emotional: 0.52, calm: 0.51
+  Tempo: slow
+  Energy: Valence=2.17, Arousal=2.87
+  Genre: Contemporary dance pop
+  Tags: emotional, Deep, Tears, Sad
+
+)  (List with metadata; select exactly one by its number.)
+
+        - Here are Previously Used Tracks/songs: 
+(No previous background tracks recorded.)
+  You must Avoid repeating any tracks already used in prior videos. the limit before you are allowed to reuse is 3 videos ago.)
+        
+
+[2026-02-04 17:54:05][Video_creation(THREAD)] Response: {
+  "path": "C:\\Users\\didri\\Desktop\\Full-Agent-Flow_VideoEditing\\Video_clips\\audio\\xx-intro-instrumental.WAV",
+  "song_name": "The xx Intro Instrumental",
+  "reason": "The line “my life would be much better if I…” sets up a reflective, self-accountability hook; this track’s slow, hopeful build adds determination without turning overly sad. Its low-to-moderate arousal and sparse guitar/drums sit under speech cleanly (important for a 2.53s clip) while still giving a motivational lift despite the detected disgust tone."
+}
+
+[2026-02-04 17:54:05][Video_creation(THREAD)] Music_path: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\xx-intro-instrumental.WAV
+[2026-02-04 17:54:05][Video_creation(THREAD)] song_name: The xx Intro Instrumental
+[2026-02-04 17:54:05][Video_creation(THREAD)] reason: The line “my life would be much better if I…” sets up a reflective, self-accountability hook; this track’s slow, hopeful build adds determination without turning overly sad. Its low-to-moderate arousal and sparse guitar/drums sit under speech cleanly (important for a 2.53s clip) while still giving a motivational lift despite the detected disgust tone.
+[2026-02-04 17:54:05][Video_creation(THREAD)] Response from [run_multi_Vision_model_conclusion]: ('C:\\Users\\didri\\Desktop\\Full-Agent-Flow_VideoEditing\\Video_clips\\audio\\xx-intro-instrumental.WAV', 'The xx Intro Instrumental', 'The line “my life would be much better if I…” sets up a reflective, self-accountability hook; this track’s slow, hopeful build adds determination without turning overly sad. Its low-to-moderate arousal and sparse guitar/drums sit under speech cleanly (important for a 2.53s clip) while still giving a motivational lift despite the detected disgust tone.')
+[2026-02-04 17:54:06][Video_creation(THREAD)] Finished [Background_Audio_Decision_Model] with response: ('C:\\Users\\didri\\Desktop\\Full-Agent-Flow_VideoEditing\\Video_clips\\audio\\xx-intro-instrumental.WAV', 'The xx Intro Instrumental', 'The line “my life would be much better if I…” sets up a reflective, self-accountability hook; this track’s slow, hopeful build adds determination without turning overly sad. Its low-to-moderate arousal and sparse guitar/drums sit under speech cleanly (important for a 2.53s clip) while still giving a motivational lift despite the detected disgust tone.')
+[2026-02-04 17:54:06][Video_creation(THREAD)] Background Audio : C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\xx-intro-instrumental.WAV,
+ song_name: The xx Intro Instrumental, Background_Audio_Reason: The line “my life would be much better if I…” sets up a reflective, self-accountability hook; this track’s slow, hopeful build adds determination without turning overly sad. Its low-to-moderate arousal and sparse guitar/drums sit under speech cleanly (important for a 2.53s clip) while still giving a motivational lift despite the detected disgust tone.
+[2026-02-04 17:54:06][Video_creation(THREAD)] Background audio path: C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\xx-intro-instrumental.WAV 
+ Reason: The line “my life would be much better if I…” sets up a reflective, self-accountability hook; this track’s slow, hopeful build adds determination without turning overly sad. Its low-to-moderate arousal and sparse guitar/drums sit under speech cleanly (important for a 2.53s clip) while still giving a motivational lift despite the detected disgust tone.
+
+[2026-02-04 17:54:06][Video_creation(THREAD)] Original clip duration: 2.53s
+[2026-02-04 17:54:06][Video_creation(THREAD)] Original audio duration: 2.53s
+[2026-02-04 17:54:06][Video_creation(THREAD)] original_audio_np shape: (111573, 2)
+[2026-02-04 17:54:06][Video_creation(THREAD)] original_audio_np max abs: 0.790649
+[2026-02-04 17:54:06][Video_creation(THREAD)] original_audio_np min abs: 0.000000
+[2026-02-04 17:54:06][Video_creation(THREAD)] Konverterer stereo → mono
+[2026-02-04 17:54:06][Video_creation(THREAD)] Ny shape etter mono: (111573, 1)
+[2026-02-04 17:54:06][Video_creation(THREAD)] audio_torch shape: torch.Size([1, 111573])
+[2026-02-04 17:54:06][Video_creation(THREAD)] audio_torch device: cpu
+[2026-02-04 17:54:06][Video_creation(THREAD)] audio_torch max abs: 0.790649
+[2026-02-04 17:54:06][Video_creation(THREAD)] Laster DeepFilterNet modell...
+[2026-02-04 17:54:07][Video_creation(THREAD)] Modell lastet. Suffix: DeepFilterNet3
+[2026-02-04 17:54:07][Video_creation(THREAD)] Kjører enhance() ...
+[2026-02-04 17:54:07][Video_creation(THREAD)] enhanced_torch shape: torch.Size([1, 111573])
+[2026-02-04 17:54:07][Video_creation(THREAD)] enhanced_torch max abs: 0.765224
+[2026-02-04 17:54:07][Video_creation(THREAD)] enhanced_torch min abs: 0.000000
+[2026-02-04 17:54:07][Video_creation(THREAD)] enhanced_np shape: (111573, 1)
+[2026-02-04 17:54:07][Video_creation(THREAD)] enhanced_np max abs: 0.765224
+[2026-02-04 17:54:07][Video_creation(THREAD)] enhanced_audio_clip duration: 2.53s
+[2026-02-04 17:54:07][Video_creation(THREAD)] enhanced_audio_clip nchannels: 1
+[2026-02-04 17:54:07][Video_creation(THREAD)] Starter mix audio
+[2026-02-04 17:54:07][Video_creation(THREAD)] bg_music raw duration: 60.91
+[2026-02-04 17:54:07][Video_creation(THREAD)] target duration: 2.53
+[2026-02-04 17:54:07][Video_creation(THREAD)] Cropper bakgrunnsmusikk
+[2026-02-04 17:54:07][Video_creation(THREAD)] bg_music duration after cropping: 2.53
+[2026-02-04 17:54:07][Video_creation(THREAD)] [mix_audio] --> (original_audio.duration): 2.53, (bg_music.duration): 2.53, (mixed_audio.duration): 2.53
+[2026-02-04 17:54:07][Video_creation(THREAD)] (AUDIO DURATION): 2.53
+[2026-02-04 17:54:09][Video_creation(THREAD)] FINAL CLIP DURATION: 2.579999999999999
+[2026-02-04 17:54:09][Video_creation(THREAD)] [ffmpeg] LUT applied: True path: ./Video_clips/Utils-Video_creation/LUT/black/RMP_BW709_1.cube
+[2026-02-04 17:54:48][GPU_Worker - (THREAD)] [wait_for_proccessed_video_complete]  waiting for video_task_que to be empty: items remaining: 6
+[2026-02-04 17:55:00][Video_creation(THREAD)] Video Successfully Done! Information: SubitleText: [1672.32s - 1682.42s] my life would be much better if I  
+ start_time: 1672.32, end_time: 1682.42
+ Current number of Successfull video creations: [0]
+[2026-02-04 17:55:00][Video_creation(THREAD)] 💾 JSON backup updated: 5 queued + 0 in-progress
+[2026-02-04 17:55:00][Video_creation(THREAD)] ✅ Task 2560082772272 completed and removed from storage. Remaining: 5 items
+[2026-02-04 17:57:45][MainThread] 🔄 JSON: Restored 5 video tasks from backup
+[2026-02-04 17:57:48][MainThread] Autenchiating now..: youtube_channel: LM_Youtube
+[2026-02-04 17:57:57][MainThread] auth success
+[2026-02-04 17:58:04][MainThread] 🔄 JSON: Restored 5 video tasks from backup
+[2026-02-04 17:58:07][MainThread] Autenchiating now..: youtube_channel: LM_Youtube
+[2026-02-04 17:58:07][MainThread] Loaded pickle: <google.oauth2.credentials.Credentials object at 0x000001E027B4A090>
+[2026-02-04 17:58:07][MainThread] auth success
+[2026-02-04 17:58:33][MainThread] 🔄 JSON: Restored 5 video tasks from backup
+[2026-02-04 17:58:41][MainThread] 🔄 JSON: Restored 5 video tasks from backup
+[2026-02-04 17:58:44][MainThread] Autenchiating now..: youtube_channel: LM_Youtube
+[2026-02-04 17:58:44][MainThread] Loaded pickle: <google.oauth2.credentials.Credentials object at 0x0000013355316110>
+[2026-02-04 17:58:44][MainThread] auth success
+[2026-02-04 17:58:46][MainThread] error during running [get_automatic_data_from_agent] message: Error No None exists.
+[2026-02-04 17:59:01][MainThread] 🔄 JSON: Restored 5 video tasks from backup
+[2026-02-04 17:59:05][MainThread] Autenchiating now..: youtube_channel: LM_Youtube
+[2026-02-04 17:59:05][MainThread] Loaded pickle: <google.oauth2.credentials.Credentials object at 0x000001CABD09BF50>
+[2026-02-04 17:59:05][MainThread] auth success
+[2026-02-04 17:59:06][MainThread] Loaded pickle: <google.oauth2.credentials.Credentials object at 0x000001CAC8F1CE50>
+[2026-02-04 17:59:07][MainThread] videos: ['2026-01-31T18:00:28Z', '2026-01-24T18:00:11Z']
+[2026-02-04 17:59:45][MainThread] 🔄 JSON: Restored 5 video tasks from backup
+[2026-02-04 17:59:48][MainThread] Autenchiating now..: youtube_channel: LR_Youtube
+[2026-02-04 17:59:52][MainThread] auth success
+[2026-02-04 17:59:54][MainThread] Loaded pickle: <google.oauth2.credentials.Credentials object at 0x0000015248C9BDD0>
+[2026-02-04 17:59:55][MainThread] videos: ['2026-01-31T18:00:28Z', '2026-01-24T18:00:11Z']
+[2026-02-04 18:00:22][MainThread] 🔄 JSON: Restored 5 video tasks from backup
+[2026-02-04 18:00:25][MainThread] Autenchiating now..: youtube_channel: LRS_Youtube
+[2026-02-04 18:00:33][MainThread] auth success
+[2026-02-04 18:00:35][MainThread] Loaded pickle: <google.oauth2.credentials.Credentials object at 0x000001847B6FAD50>
+[2026-02-04 18:00:36][MainThread] videos: ['2026-01-31T18:00:28Z', '2026-01-24T18:00:11Z']
+[2026-02-04 18:00:58][MainThread] 🔄 JSON: Restored 5 video tasks from backup
+[2026-02-04 18:01:01][MainThread] Autenchiating now..: youtube_channel: MA_Youtube
+[2026-02-04 18:01:38][MainThread] auth success
+[2026-02-04 18:01:40][MainThread] Loaded pickle: <google.oauth2.credentials.Credentials object at 0x0000027A9F63AD50>
+[2026-02-04 18:01:40][MainThread] videos: ['2026-01-31T18:00:28Z', '2026-01-24T18:00:11Z']
+[2026-02-04 18:02:42][MainThread] 🔄 JSON: Restored 5 video tasks from backup
+[2026-02-04 18:02:45][MainThread] Autenchiating now..: youtube_channel: MR_Youtube
+[2026-02-04 18:02:54][MainThread] auth success
+[2026-02-04 18:02:56][MainThread] Loaded pickle: <google.oauth2.credentials.Credentials object at 0x00000292133FB1D0>
+[2026-02-04 18:02:57][MainThread] videos: ['2026-01-31T18:00:28Z', '2026-01-24T18:00:11Z']

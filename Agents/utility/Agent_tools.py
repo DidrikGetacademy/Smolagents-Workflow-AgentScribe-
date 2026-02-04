@@ -24,7 +24,7 @@ import tempfile
 import yt_dlp
 import requests
 import json
-from typing import List ,Dict
+from typing import List ,Dict, Optional
 cookie_file_path = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Secrets\youtube.com_cookies.txt"
 load_dotenv()
 
@@ -622,7 +622,7 @@ def Read_transcript(transcript_path: str, start_count: int = 0, chunk_size: int 
 
 
 class SpeechToTextTool(PipelineTool):
-    default_checkpoint = r"c:\Users\didri\Desktop\LLM-models\Audio-Models\faster-whisper-large-v3-turbo-int8float16"
+    default_checkpoint = r"c:\Users\didri\Desktop\AI-models\Audio-Models\faster-whisper-large-v3-turbo-int8float16"
     description = "Fast tool that transcribes audio into text using faster-whisper. It returns the path to the transcript file"
     name = "transcriber"
     inputs = {
@@ -724,7 +724,7 @@ def parse_multiline_block(block_text):#DIDRIK
 
 
 @tool
-def create_motivationalshort(text: str,text_file: str) -> None:
+def create_motivationalshort(text: str,text_file: str,reasoning: Optional[str] = None) -> None:
         """
         Save a single, self-contained motivational passage for short-video creation.
 
@@ -743,10 +743,13 @@ def create_motivationalshort(text: str,text_file: str) -> None:
         Args:
             text (str): Complete passage including all required timestamps
             text_file (str): Path to the text file where the passage will be appended.
+            reasoning (Optional[str]): Optional reasoning for logging purposes.
 
         """
         with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\work_queue_folder\checking.txt", encoding="utf-8", mode="a") as f:
-            f.write(f"\n=============saved text======  \n{text}\n=============================\n")
+            f.write(f"\n=============saved text=============  \n{text}\n reason: {reasoning}\n=============================\n")
+
+
         with open (text_file, "a", encoding="utf-8") as f:
             log(f"Writing saved motivational text from agent to: {text_file}\n text: {text}")
             f.write(f"===START_TEXT===")
@@ -984,7 +987,7 @@ class SpeechToTextTool_viral_agent(PipelineTool):
 
 
 class SpeechToTextToolCPU_Custom(PipelineTool):
-    default_checkpoint = r"c:\Users\didri\Desktop\LLM-models\Audio-Models\faster-whisper-large-v3-turbo-int8float16"
+    default_checkpoint = r"c:\Users\didri\Desktop\AI-models\Audio-Models\faster-whisper-large-v3-turbo-int8float16"
     description = "Fast tool that transcribes audio into text using faster-whisper. It returns the path to the transcript file"
     name = "transcriber"
     inputs = {
@@ -1052,7 +1055,7 @@ class SpeechToTextToolCPU_Custom(PipelineTool):
 
 
 class SpeechToTextToolCPU(PipelineTool):
-    default_checkpoint = r"c:\Users\didri\Desktop\LLM-models\Audio-Models\faster-whisper-large-int8-ct2"
+    default_checkpoint = r"c:\Users\didri\Desktop\AI-models\Audio-Models\faster-whisper-large-int8-ct2"
     description = "Fast tool that transcribes audio into text using faster-whisper. It returns the path to the transcript file"
     name = "transcriber"
     inputs = {
@@ -1122,7 +1125,7 @@ class SpeechToTextToolCPU(PipelineTool):
 
 
 class SpeechToText_montage_creation_thread(PipelineTool):
-    default_checkpoint = r"c:\Users\didri\Desktop\LLM-models\Audio-Models\faster-whisper-large-v3-turbo-int8float16"
+    default_checkpoint = r"c:\Users\didri\Desktop\AI-models\Audio-Models\faster-whisper-large-v3-turbo-int8float16"
     description = "Fast tool that transcribes audio into text using faster-whisper. It returns the matched words with timestamps."
     name = "transcriber"
     def __init__(self, device="cuda"):
@@ -1279,7 +1282,7 @@ class SpeechToText_montage_creation_thread(PipelineTool):
 
 
 class SpeechToText_short_creation_thread(PipelineTool):
-    default_checkpoint = r"c:\Users\didri\Desktop\LLM-models\Audio-Models\faster-whisper-large-v3-turbo-int8float16"
+    default_checkpoint = r"c:\Users\didri\Desktop\AI-models\Audio-Models\faster-whisper-large-v3-turbo-int8float16"
     description = "Fast tool that transcribes audio into text using faster-whisper. It returns the matched words with timestamps."
     name = "transcriber"
     def __init__(self, device="cuda"):
@@ -1334,16 +1337,15 @@ class SpeechToText_short_creation_thread(PipelineTool):
                 word_timestamps=True,
                 temperature=0.0,
                 beam_size=10,
-                patience=1.5,
-                vad_filter=True,
-                vad_parameters={
-                    "threshold": 0.6,
-                    "min_silence_duration_ms": 400,
-                    "min_speech_duration_ms": 250,
-                    "speech_pad_ms": 100,
-                    },
-                no_speech_threshold=0.6,
-                initial_prompt=subtitle_text
+                patience=1,
+                vad_filter=False,
+            #     vad_parameters={
+            #         "threshold": 0.6,
+            #         "min_silence_duration_ms": 400,
+            #         "min_speech_duration_ms": 250,
+            #         "speech_pad_ms": 100,
+            #         },
+            #    no_speech_threshold=0.6
             )
 
             log(f"[INFO] Audio Duration: {info.duration:.2f} seconds Detected Language: {info.language} (confidence: {info.language_probability:.2f})")
@@ -1362,7 +1364,7 @@ class SpeechToText_short_creation_thread(PipelineTool):
             log(f"start_phrase subtitletokens: {start_phrase}\n end_phrase subtitletokens: {end_phrase}")
 
 
-            match_start = -1
+            match_start = -4
             for i in range(len(transcribed_tokens) - len(start_phrase) + 1):
                 if transcribed_tokens[i:i+len(start_phrase)] == start_phrase:
                     match_start = i
@@ -1401,7 +1403,7 @@ class SpeechToText_short_creation_thread(PipelineTool):
 
             log(f"[MATCH] Found exact match: {[w['word'] for w in matched_words]}")
 
-            final_start_time = original_start_time + float(all_words[match_start].start) - 0.1
+            final_start_time = float(all_words[match_start].start) + original_start_time
             log(f"final_start_time: {final_start_time}")
 
 
@@ -1433,8 +1435,11 @@ class SpeechToText_short_creation_thread(PipelineTool):
     def decode(self, outputs):
         return outputs
 
+
+
+
 class SpeechToTextToolCUDA(PipelineTool):
-    default_checkpoint = r"c:\Users\didri\Desktop\LLM-models\Audio-Models\faster-whisper-large-v3-turbo-int8float16"
+    default_checkpoint = r"c:\Users\didri\Desktop\AI-models\Audio-Models\faster-whisper-large-v3-turbo-int8float16"
     description = "Fast tool that transcribes audio into text using faster-whisper. It returns the path to the transcript file"
     name = "transcriber"
     inputs = {
@@ -1482,7 +1487,8 @@ class SpeechToTextToolCUDA(PipelineTool):
 
                 try:
                     for segment in segments:
-                         f.write(f"[{segment.start:.2f}s - {segment.end:.2f}s] {segment.text.strip()}\n")
+                         f.write(f"{segment.text.strip()}\n")
+                    f.write("\n\n")
                 except Exception as e:
                     print(f"error during segments: {str(e)}")
 
@@ -1506,7 +1512,7 @@ class SpeechToTextToolCUDA(PipelineTool):
 
 
 class SpeechToTextToolTEST(PipelineTool):
-    default_checkpoint = r"c:\Users\didri\Desktop\LLM-models\Audio-Models\faster-whisper-large-v3-turbo-int8float16"
+    default_checkpoint = r"c:\Users\didri\Desktop\AI-models\Audio-Models\faster-whisper-large-v3-turbo-int8float16"
     description = "Fast tool that transcribes audio into text using faster-whisper. It returns the path to the transcript file"
     name = "transcriber"
     inputs = {
@@ -1601,7 +1607,7 @@ def predict_emotion(audio_path):
     import librosa
     import torch
     from transformers import Wav2Vec2FeatureExtractor,Wav2Vec2ForSequenceClassification
-    model_path = r"C:\Users\didri\Desktop\LLM-models\LLM-Models\Audio models\FadQ\results"
+    model_path = r"C:\Users\didri\Desktop\AI-models\LLM-Models\Audio models\FadQ\results"
     feature_extractor = Wav2Vec2FeatureExtractor.from_pretrained(model_path)
     model = Wav2Vec2ForSequenceClassification.from_pretrained(model_path)
 
@@ -1631,18 +1637,8 @@ def predict_emotion(audio_path):
 
 
 
-def Background_Audio_Decision_Model(audio_file: str, video_path: str,already_uploaded_videos: str,start_time: float,end_time: float):
+def Background_Audio_Decision_Model(audio_file: str, video_subtitles: str, video_path: str,already_uploaded_videos: str,start_time: float,end_time: float):
     from utility.Global_state import Music_list
-    from App import Reload_and_change_model
-
-    try:
-        tool = SpeechToTextToolTEST()
-        tool.setup()
-        Transcript = tool.forward({"audio": audio_file})
-        del tool
-        log(f"Transcript: {Transcript}")
-    except Exception as e:
-        log(f"Error during SpeechToTextTool {str(e)}")
 
     try:
         emotion = predict_emotion(audio_file)
@@ -1656,7 +1652,6 @@ def Background_Audio_Decision_Model(audio_file: str, video_path: str,already_upl
                 formatted += f"Track {i}:\n"
                 formatted += f"song name: {track['song_name']}\n"
                 formatted += f"  Path: {track['path']}\n"
-                formatted += f"  lut_path: {track['lut_path']}\n"
                 formatted += f"  Description: {track['description']}\n"
                 formatted += f"  Mood: {', '.join([f'{k}: {v}' for k, v in track['mood'].items()])}\n"
                 formatted += f"  Tempo: {track['tempo']}\n"
@@ -1668,19 +1663,17 @@ def Background_Audio_Decision_Model(audio_file: str, video_path: str,already_upl
     _videolist = format_videolist(Music_list)
 
     content = {
-        "Transcript": Transcript,
+        "Transcript": video_subtitles,
         "emotion": emotion,
         "videolist": _videolist
     }
     response = {}
     try:
-         Global_model = Reload_and_change_model(model_name="gpt-5-minimal",message="Loading model: gpt-5-minimal from [Background_Audio_Decision_Model]")
          log("Starting [run_multi_Vision_model_conclusion]")
          from Agents.Vision_agent import run_multi_Vision_model_agent
          response = run_multi_Vision_model_agent(
             video_path=video_path,
             Additional_content=content,
-            Global_model=Global_model,
              already_uploaded_videos=already_uploaded_videos,
              start_time=start_time,
              end_time=end_time
@@ -1690,10 +1683,6 @@ def Background_Audio_Decision_Model(audio_file: str, video_path: str,already_upl
         log(f"[Background_Audio_Decision_Model] Error during run_multi_Vision_model_agent: {str(e)}")
     from utility.clean_memory import clean_get_gpu_memory
     clean_get_gpu_memory(threshold=0.1)
-    if 'Global_model' in locals():
-        del Global_model
-
-
     log(f"Finished [Background_Audio_Decision_Model] with response: {response}")
 
 

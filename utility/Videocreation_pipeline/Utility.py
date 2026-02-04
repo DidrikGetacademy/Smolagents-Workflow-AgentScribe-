@@ -4,8 +4,8 @@ from moviepy.audio.fx import MultiplyVolume
 from ultralytics.utils.ops import non_max_suppression
 import numpy as np
 from tqdm import tqdm
-import onnxruntime as ort
 import torch
+import onnxruntime as ort
 from utility.clean_memory import clean_get_gpu_memory
 from ..log import log
 def change_brightness(frame, amount=0.2):
@@ -57,17 +57,85 @@ def _resize_smart(img, target_w: int, target_h: int):
         interp = cv2.INTER_CUBIC
     return cv2.resize(img, (target_w, target_h), interpolation=interp)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def mix_audio(original_audio, background_music_path, bg_music_volume=0.25):
+        log("Starter mix audio")
+
         bg_music = AudioFileClip(background_music_path)
+        log(f"bg_music raw duration: {bg_music.duration}")
+
+        target_duration = original_audio.duration
+        log(f"target duration: {target_duration}")
+
         if bg_music.duration < original_audio.duration:
-            bg_music = bg_music.with_effects([afx.AudioLoop(duration=original_audio.duration)])
+            log("Looper bakgrunnsmusikk")
+            bg_music = bg_music.with_effects([afx.AudioLoop(duration=target_duration)])
+            log(f"bg_music duration after looping: {bg_music.duration}")
         else:
-            bg_music = bg_music.subclipped(0, original_audio.duration)
+            log("Cropper bakgrunnsmusikk")
+            bg_music = bg_music.subclipped(0, target_duration)
+            log(f"bg_music duration after cropping: {bg_music.duration}")
+
         bg_music = bg_music.with_effects([MultiplyVolume(bg_music_volume)])
         original_audio = original_audio.with_effects([MultiplyVolume(1.0)])
         mixed_audio = CompositeAudioClip([original_audio, bg_music])
+        mixed_audio.duration = original_audio.duration
+
         log(f"[mix_audio] --> (original_audio.duration): {original_audio.duration}, (bg_music.duration): {bg_music.duration}, (mixed_audio.duration): {mixed_audio.duration}")
         return mixed_audio
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 def parse_editing_notes(notes):
         fade_in_duration = 0
@@ -141,7 +209,7 @@ def detect_and_crop_frames_batch(frames, batch_size=8):
         alpha = 0.1
         prev_cx, prev_cy = None, None
         cropped_frames = []
-        onnx_path_gpu = r"c:\Users\didri\Desktop\LLM-models\Face-Detection-Models\yolov8x-face-lindevs_cuda.onnx"
+        onnx_path_gpu = r"c:\Users\didri\Desktop\AI-models\Face-Detection-Models\yolov8x-face-lindevs_cuda.onnx"
         providers = ['CUDAExecutionProvider']
         sess_options = ort.SessionOptions()
         sess_options.log_severity_level = 0
@@ -163,7 +231,7 @@ def detect_and_crop_frames_batch(frames, batch_size=8):
                 processed_batch = []
                 for frame in batch:
 
-                    img = cv2.resize(frame, (928, 928), interpolation=cv2.INTER_AREA)
+                    img = cv2.resize(frame, (640, 640), interpolation=cv2.INTER_AREA)
                     img = img.astype(np.float32) / 255.0
                     processed_batch.append(img.transpose(2, 0, 1))
                     progress_bar.set_postfix({
@@ -173,7 +241,7 @@ def detect_and_crop_frames_batch(frames, batch_size=8):
                     progress_bar.update(1)
 
                 if len(processed_batch) < batch_size:
-                    processed_batch += [np.zeros((3, 928, 928), dtype=np.float32)] * (batch_size - len(processed_batch))
+                    processed_batch += [np.zeros((3, 640, 640), dtype=np.float32)] * (batch_size - len(processed_batch))
 
                 input_tensor = np.stack(processed_batch).astype(np.float32)
 
@@ -195,10 +263,10 @@ def detect_and_crop_frames_batch(frames, batch_size=8):
                         x1, y1, x2, y2 = det[max_idx, :4].cpu().numpy().astype(int)
 
 
-                        x1 = int(x1 * w / 928)
-                        y1 = int(y1 * h / 928)
-                        x2 = int(x2 * w / 928)
-                        y2 = int(y2 * h / 928)
+                        x1 = int(x1 * w / 640)
+                        y1 = int(y1 * h / 640)
+                        x2 = int(x2 * w / 640)
+                        y2 = int(y2 * h / 640)
                         cx, cy = (x1 + x2) // 2, (y1 + y2) // 2
                     else:
                         cx, cy = w // 2, h // 2
@@ -395,7 +463,7 @@ def compose_montage_clips(input_paths, output_path, YT_channel, audio_path, vide
         # If background music is requested, mix it before writing to avoid a second pass
         if selected_bg:
             try:
-                from App import mix_audio
+
                 if final.audio is None:
                     # No original audio: just use bg music, trimmed/looped to duration
                     bg = AudioFileClip(background_audio_path)
