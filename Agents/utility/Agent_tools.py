@@ -928,7 +928,7 @@ def montage_short_creation_tool(montage_list: List[Dict[str,str]]) -> str:
 
 
 class SpeechToTextTool_viral_agent(PipelineTool):
-    default_checkpoint = r"c:\Users\didri\Desktop\LLM-models\Audio-Models\faster-whisper-large-int8-ct2"
+    default_checkpoint = r"C:\Users\didri\Desktop\AI-models\Audio-Models\faster-whisper-large-int8-ct2"
     description = "Fast tool that transcribes audio into text using faster-whisper. It returns transcript text of the audio"
     name = "transcriber"
     inputs = {

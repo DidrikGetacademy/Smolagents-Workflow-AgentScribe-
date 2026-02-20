@@ -87,9 +87,9 @@ def Populate_Already_Uploaded(title, description, tags, categoryId, publishAt, Y
         except Exception as e:
             log(f"Failed to load existing upload history: {str(e)}")
 
-    subtitle_text_list = []
+    subtitle_str = " "
     for text in subtitle_text:
-        subtitle_text_list.append(text)
+        subtitle_str += text.get("text", "") + " "
 
     entry = {
         "title": title,
@@ -99,7 +99,7 @@ def Populate_Already_Uploaded(title, description, tags, categoryId, publishAt, Y
         "publishAt": publishAt,
         "youtube_channel": YT_channel,
         "current_video_name": video_url,
-        "subtitle_text": subtitle_text_list,
+        "subtitle_text": subtitle_str,
         "video_duration": video_duration,
         "background_audio": background_audio_,
         "song_name": song_name,
@@ -405,7 +405,7 @@ def upload_MontageClip(model,file_path,YT_channel,subtitle_text=None,background_
             ).execute()
             log(f"Video added to playlist {playlist_id}: {playlist_response['id']}")
 
-            Populate_Already_Uploaded(title,_description,tags,categoryId,publishAt,YT_channel,video_url,subtitle_text,error,background_audio_)
+            Populate_Already_Uploaded(title,_description,tags,categoryId,publishAt,YT_channel,video_url,subtitle_text,error,background_audio_,song_name=None,video_duration=None)
         except Exception as e:
             error = True
         # try:
@@ -428,4 +428,4 @@ if __name__ == "__main__":
      Global_state.set_current_videourl(r"c:\Users\didri\Documents\Is Being Smart Worth the Depression？ - Alex O’Connor & Joe Folley (4K).mp4")
      Global_model = LiteLLMModel(model_id="gpt-5", reasoning_effort="minimal" ,api_key=OPENAI_APIKEY,max_tokens=20000)
      Global_state.set_current_yt_channel("LM_Youtube")
-     upload_video(model=Global_model,file_path=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\Youtube_Upload_folder\MA_Youtube\short16.mp4",subtitle_text="",YT_channel="MR_Youtube",background_audio_="lofi")
+     upload_video(model=Global_model,file_path=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\Youtube_Upload_folder\MR_Youtube\short_2_rife.mp4",subtitle_text="",YT_channel="MR_Youtube",background_audio_="lofi")

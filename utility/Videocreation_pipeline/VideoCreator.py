@@ -11,7 +11,6 @@ import utility.Global_state as Global_state
 from Agents.utility.Agent_tools import Background_Audio_Decision_Model
 from .Utility import detect_and_crop_frames_batch,mix_audio
 from utility.reload_model import Reload_and_change_model
-from .blender  import enhance_frames_bpy
 from moviepy import AudioArrayClip
 import cv2
 import torch
@@ -112,7 +111,7 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
             txt_clip = TextClip(
                 text=_text,
                 font=r"C:\WINDOWS\FONTS\COPPERPLATECC-BOLD.TTF",
-                font_size=38,
+                font_size=39,
                 margin=(10, 10),
                 text_align="center",
                 vertical_align="center",
@@ -123,7 +122,7 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
                 size=(1200, 400),
                 method="caption",
                 duration=c['duration']
-            ).with_start(c['start']).with_position(('center', 0.52), relative=True).with_effects([CrossFadeIn(0.10), CrossFadeOut(0.10)])
+            ).with_start(c['start']).with_position(('center', 0.54), relative=True).with_effects([CrossFadeIn(0.10), CrossFadeOut(0.10)])
 
 
 
@@ -138,10 +137,13 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
     #------------------------------------------------------------------------#
     # CREATES THE (START & END) OF the currentclip from FULL ORIGINAL VIDEO
     #------------------------------------------------------------------------#
-    full_video = VideoFileClip(video_path)
-    clip = full_video.subclipped(start_time, end_time)
+    clip = VideoFileClip(video_path).subclipped(start_time, end_time)
     log(f"clip duration: {clip.duration}, clip fps: {clip.fps}, clip width: {clip.w}, clip height: {clip.h}, start_time: {start_time}, end_time: {end_time}, video_path: {video_path}")
     log(f"Clip fps: {clip.fps}")
+
+
+    clip_fps = float(clip.fps)
+    clip_duration = float(clip.duration)
 
 
 
@@ -150,36 +152,39 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
 # Extrcting frames from original video to a LIST
 #--------------------------------------------------#
     frames = []
-    for  frame in clip.iter_frames():
+    for frame in clip.iter_frames():
         frames.append(frame)
         frame_height, frame_width = frame.shape[:2]
-    print(f"Extracted frame {len(frames)}: Height={frame_height}, Width={frame_width}")
+    log(f"Extracted frame {len(frames)}:")
 
 
+    audio_sr = 44100
+    original_audio_np = None
+    try:
+        if clip.audio is not None:
+            original_audio_np = clip.audio.to_soundarray(fps=audio_sr)
+            if original_audio_np.size == 0:
+                raise ValueError("Empty audio from clip")
+    except Exception as e:
+        log(f"[audio cache] Failed to extract audio early: {str(e)}")
+    try:
+        clip.close()
+    except Exception:
+        pass
+    del clip
 
 
 
 # --------------------------------#
 # Yolo8/facedetection + Cropping
 # --------------------------------#
-    cropped_frames = detect_and_crop_frames_batch(frames=frames,batch_size=8)
+    cropped_frames = detect_and_crop_frames_batch(frames=frames,batch_size=25)
     clean_get_gpu_memory(threshold=0.1)
     del frames
     frame_height, frame_width = cropped_frames[0].shape[:2]
     log(f"[cropped_frames]  1. frames: {len(cropped_frames)} frames.\n Height: {frame_height}, Width: {frame_width}")
 
 
-
-
-# --------------------------------------#
-#  Blender version 5.0.0 detail enahcement
-# ----------------------------------------#
-    log(f"blender frames proccessing now.")
-    gc.collect()
-    gc.collect()
-    blender_frames = enhance_frames_bpy(cropped_frames, batch_size=10,use_skin_mask=True)
-    del cropped_frames
-    clean_get_gpu_memory(threshold=0.1)
 
 
 
@@ -197,7 +202,7 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
             out_size = 0
             channel_multiplier = 2
             narrow = 1
-            alpha = 0.5
+            alpha = 0.4
             use_sr = True
             use_cuda = True
             save_face = False
@@ -216,16 +221,19 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
     )
     FaceEnhancement_frames = []
     try:
-         for f_frame in tqdm(blender_frames, desc="[FaceEnhancement]  proccessing frames", unit="frame"):
+        for f_frame in tqdm(cropped_frames, desc="[FaceEnhancement]  proccessing frames", unit="frame"):
               frame_height, frame_width = f_frame.shape[:2]
               bgr_frame = cv2.cvtColor(f_frame, cv2.COLOR_RGB2BGR)
               enchanced_frame_bgr, _, _ = Skin_texture_enchancement.process(bgr_frame)
+              del bgr_frame, f_frame
+
               RGB_face_enchanced_frame = cv2.cvtColor(enchanced_frame_bgr, cv2.COLOR_BGR2RGB)
               FaceEnhancement_frames.append(RGB_face_enchanced_frame)
-              del enchanced_frame_bgr,RGB_face_enchanced_frame
-         del  Skin_texture_enchancement, bgr_frame,  #blender_frames
-         frame_height, frame_width = FaceEnhancement_frames[0].shape[:2]
-         log(f"[FaceEnhancement]  1. frames: {len(FaceEnhancement_frames)} frames.\n Height: {frame_height}, Width: {frame_width}")
+
+              del enchanced_frame_bgr
+        del  Skin_texture_enchancement, face_args
+        frame_height, frame_width = FaceEnhancement_frames[0].shape[:2]
+        log(f"[FaceEnhancement]  frames: {len(FaceEnhancement_frames)} frames.\n Height: {frame_height}, Width: {frame_width}")
     except Exception as e:
             log(f"[FaceEnhancement] Error: {str(e)}")
 
@@ -240,7 +248,7 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
 # Creating videoclip from frames
 #-------------------------------#
     try:
-       processed_clip = ImageSequenceClip(cropped_frames, fps=clip.fps).with_duration(clip.duration)
+       processed_clip = ImageSequenceClip(FaceEnhancement_frames, fps=clip_fps).with_duration(clip_duration)
        del FaceEnhancement_frames
        clean_get_gpu_memory(threshold=0.1)
        gc.collect()
@@ -272,7 +280,7 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
                 raise ValueError(f"Error No {YT_channel} exists.")
 
 
-        overlay_clip = overlay_clip.subclipped(0, clip.duration)
+        overlay_clip = overlay_clip.subclipped(0, clip_duration)
         logo_mask = overlay_clip.to_mask()
         logo_with_mask = overlay_clip.with_mask(logo_mask)
     else:
@@ -309,7 +317,7 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
             with open(r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\Youtube_Upload_folder\latest_uploaded.txt","w", encoding="UTF-8") as w:
                 w.write(YT_channel)
 
-            overlay_clip = overlay_clip.subclipped(0, clip.duration)
+            overlay_clip = overlay_clip.subclipped(0, clip_duration)
             logo_mask = overlay_clip.to_mask()
             logo_with_mask = overlay_clip.with_mask(logo_mask)
 
@@ -321,11 +329,9 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
 
 
 
-
-
-
     try:
         subtitle_clips = create_subtitles_from_triplets(triplets)
+        del triplets
     except Exception as e:
             log(f"error during [create_subtitles_from_triplets]: {str(e)}")
 
@@ -339,12 +345,9 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
                 size=processed_clip.size
                 )
 
-    del logo_with_mask, subtitle_clips, processed_clip
+    del logo_with_mask, subtitle_clips, processed_clip, overlay_clip
     clean_get_gpu_memory(threshold=0.1)
 
-
-    fade = CrossFadeIn(1.3)
-    final_clip = fade.apply(final_clip)
 
 # -------------------------------#
 # Adds Background Music to video
@@ -365,10 +368,13 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
         background_music_path = background_audio
 
         try:
-            log(f"Original clip duration: {clip.duration:.2f}s")
-            log(f"Original audio duration: {clip.audio.duration:.2f}s")
+            log(f"Original clip duration: {clip_duration:.2f}s")
+            if original_audio_np is not None:
+                _orig_audio_dur = original_audio_np.shape[0] / float(audio_sr)
+                log(f"Original audio duration (cached): {_orig_audio_dur:.2f}s")
             from df import enhance, init_df
-            original_audio_np = clip.audio.to_soundarray(fps=44100) #Converts Moviepy Audioclip to a Numpy Array. The array represent raw audio sample (Time samples, channels eg. mono,stereo)
+            if original_audio_np is None:
+                raise ValueError("Cached original audio is unavailable")
             log(f"original_audio_np shape: {original_audio_np.shape}")
             log(f"original_audio_np max abs: {np.abs(original_audio_np).max():.6f}")
             log(f"original_audio_np min abs: {np.abs(original_audio_np).min():.6f}")
@@ -406,13 +412,13 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
 
             enhanced_audio_clip = AudioArrayClip( # converts NumPy array back into moviePy AudioArrayClip
                 enhanced_np,
-                fps=44100
+                fps=audio_sr
             )
             log(f"enhanced_audio_clip duration: {enhanced_audio_clip.duration:.2f}s")
             log(f"enhanced_audio_clip nchannels: {enhanced_audio_clip.nchannels}")
 
-            final_clip.audio = mix_audio(enhanced_audio_clip, background_music_path, bg_music_volume=0.28) #mixes the enhanced audio and background music. with background music at background volume 0.33
-
+            final_clip.audio = mix_audio(enhanced_audio_clip, background_music_path, bg_music_volume=0.39) #mixes the enhanced audio and background music. with background music at background volume 0.33
+            del audio_torch, enhanced_torch, enhanced_np, original_audio_np, enhanced_audio_clip
 
         except Exception as e:
             log(f"Error during audio mixing/enhancing : {str(e)}")
@@ -421,21 +427,34 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
 
 
     else:
-        final_clip.audio = clip.audio
-        log(f"keeping original audio")
+        try:
+            if original_audio_np is not None:
+                final_clip.audio = AudioArrayClip(original_audio_np, fps=audio_sr)
+                log(f"keeping original audio (cached)")
+            else:
+                _tmp_aclip = AudioFileClip(video_path).subclipped(start_time, end_time)
+                _tmp_np = _tmp_aclip.to_soundarray(fps=audio_sr)
+                try:
+                    _tmp_aclip.close()
+                except Exception:
+                    pass
+                final_clip.audio = AudioArrayClip(_tmp_np, fps=audio_sr)
+                log(f"keeping original audio (fallback)")
+        except Exception as _e:
+            log(f"[audio fallback] ERROR setting original audio: {_e}")
         Background_Audio_Reason = "original audio only"
 
-    log(f"(AUDIO DURATION): {final_clip.audio.duration}")
-    clean_get_gpu_memory(threshold=0.1)
+        log(f"(AUDIO DURATION): {final_clip.audio.duration}")
+        clean_get_gpu_memory(threshold=0.1)
 
 
 
 #-----------------------------------------------------#
 #    Adds fade in/out to the video and sets the FPS
 #------------------------------------------------------#
-    # final_clip = FadeIn(duration=0.1).apply(final_clip)
-    # final_clip = FadeOut(duration=0.1).apply(final_clip)
-    final_clip.fps = clip.fps
+    final_clip = FadeIn(duration=0.1).apply(final_clip)
+    final_clip = FadeOut(duration=0.1).apply(final_clip)
+    final_clip.fps = clip_fps
 
 
 
@@ -449,7 +468,29 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
     if Video_output_path:
          out_path = Video_output_path
     else:
-        out_path = os.path.join(output_dir, f"{video_name}.mp4")
+        prefix = f"{video_name}"
+        try:
+            import re
+            pattern = re.compile(rf'^{re.escape(prefix)}(\d+)_rife\.mp4$') # Builds a regex that matches exactly <prefix><number>_rife.mp4
+            existing_nums = [] #Initializes a list to collect all detected numbers from matching files.
+            for fname in os.listdir(output_dir): # Iterates over every file in the target output directory.
+                m = pattern.match(fname) #Tries to match the filename to the pattern (only full matches count).
+                if m: #Proceeds only for files that match the expected naming pattern.
+                    existing_nums.append(int(m.group(1))) #Extracts the captured number group and stores it as an integer.
+
+
+            next_num = (max(existing_nums) + 1) if existing_nums else 1  #Chooses the next number by incrementing the current max; defaults to 1 if there are no matches.
+            log(f"[naming] Found existing: {sorted(existing_nums)} -> next: {next_num}")
+        except Exception as _e:
+            log(f"[naming] Error while scanning for latest number: {_e}")
+            next_num = 1
+        out_path = os.path.join(output_dir, f"{prefix}{next_num}.mp4")  # working file; final RIFE file becomes "..._rife.mp4"
+
+
+
+
+
+
 
 
     _finalclipduration = final_clip.duration
@@ -472,9 +513,9 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
     out_path,
     logger='bar',
     codec="libx264",
-    preset="fast",
+    preset="slow",
     audio_codec="aac",
-    threads=8,
+    threads=12,
     ffmpeg_params=[
         "-crf", "12",
         "-pix_fmt", "yuv420p",
@@ -492,8 +533,6 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
 
 
     gc.collect()
-    full_video.close()
-    clip.close()
     clean_get_gpu_memory(threshold=0.1)
 
 
@@ -503,9 +542,9 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
 # ------------------------------------------------------#
     from utility.RIFE_FPS import run_rife
     try:
-      output_video = run_rife(out_path)
-      log(f"video is completed: output path : {out_path}, video name: {video_name} video_fps: {clip.fps}, codec: {video_codec}, bitrate: {bitrate}, audio_codec: {audio_codec}, subtitles: {subtitle_text} \n Final video resolution (width x height): {final_clip.size[0]} x {final_clip.size[1]}")
-      log(f"Interpolated video saved to: {output_video}")
+        output_video = run_rife(out_path)
+        log(f"video is completed: output path : {out_path}, video name: {video_name} video_fps: {clip_fps}, codec: {video_codec}, bitrate: {bitrate}, audio_codec: {audio_codec}, subtitles: {subtitle_text} \n Final video resolution (width x height): {final_clip.size[0]} x {final_clip.size[1]}")
+        log(f"Interpolated video saved to: {output_video}")
     except Exception as e:
          log(f"[run_rife] ERROR: {str(e)}")
     finally:
@@ -523,7 +562,7 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
                         log(f"[rename] Normalized RIFE output to expected name: {output_video}")
                     except Exception as _e:
                         log(f"[rename] Could not rename RIFE output: {_e}")
-            log(f"video is completed: output path : {Video_output_path}, video name: {video_name} video_fps: {clip.fps}, codec: {video_codec}, bitrate: {bitrate}, audio_codec: {audio_codec}, subtitles: {subtitle_text} \n Final video resolution (width x height): {final_clip.size[0]} x {final_clip.size[1]}")
+            log(f"video is completed: output path : {Video_output_path}, video name: {video_name} video_fps: {clip_fps}, codec: {video_codec}, bitrate: {bitrate}, audio_codec: {audio_codec}, subtitles: {subtitle_text} \n Final video resolution (width x height): {final_clip.size[0]} x {final_clip.size[1]}")
             clean_get_gpu_memory(threshold=0.2)
             log(f"Interpolated video saved to: {output_video}")
         except Exception as e:
@@ -557,7 +596,7 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
 
             if Global_model is None:
                 try:
-                    Global_model = Reload_and_change_model(model_name="gpt-5-minimal", message="Reloading model to -> gpt-5-minimal before running [upload_video]")
+                    Global_model = Reload_and_change_model(model_name="gpt-5-high", message="Reloading model to -> gpt-5-minimal before running [upload_video]")
                 except Exception as e:
                     log(f"Error reloading and changing model to gpt-5: {str(e)}")
 

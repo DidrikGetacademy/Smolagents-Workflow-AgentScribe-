@@ -54,10 +54,7 @@ model_path_Swin_BSRGAN_X4_onnx = r"c:\Users\didri\Desktop\LLM-models\Video-upsca
 model_path_realesgran_x2_pth = r"c:\Users\didri\Desktop\LLM-models\Video-upscale-models\RealESRGAN_x2plus.pth"
 
 
-
-
 count = 0
-Video_count = 0
 Global_model = None
 gpu_thread_offline = False
 
@@ -146,10 +143,6 @@ def truncate_audio(audio_path, start_time, end_time, output_path, padding=4.0):
 # Verifies subtitles & video start time/video end time
 #-----------------------------------------------------#
 def run_video_short_creation_thread(video_url,audio_path,start_time,end_time,subtitle_text,Video_Title_name=None,Video_output_path=None):
-        global Video_count
-        Video_count += 1
-        current_count = Video_count
-
         try:
             log(f"RUNNING --> [run_video_short_creation_thead]: video_url: {video_url}, start_time: {start_time}, end_time: {end_time}")
             text_video_path = video_url
@@ -171,7 +164,7 @@ def run_video_short_creation_thread(video_url,audio_path,start_time,end_time,sub
                  raise ValueError("Invalid time range for audio")
 
             audio_dir = os.path.dirname(audio_path)
-            padded_truncated_audio_path = os.path.join(audio_dir, f"padded_truncated{current_count}.wav")
+            padded_truncated_audio_path = os.path.join(audio_dir, f"padded_truncated.wav")
 
 
             log(f" padded Truncated audio path: {padded_truncated_audio_path}\n original_truncated audio path: {audio_path}")
@@ -201,7 +194,7 @@ def run_video_short_creation_thread(video_url,audio_path,start_time,end_time,sub
             log(f"[run_video_short_creation_thread] creating video now... \n start_time: {new_video_start_time} \n end_time: {new_video_end_time},  \n subtitle_text: {crafted_Subtitle_text}")
 
             if Video_Title_name is None:
-                Video_title = "short1" + str(current_count)
+                Video_title = "short_"
             else:
                  Video_title = Video_Title_name
 
@@ -278,7 +271,6 @@ def wait_for_proccessed_video_complete(queue: Queue, check_interval=60):
     """
     log(f"\n\n\n\n\n\n[wait_for_proccessed_video_complete]")
     while not queue.empty():
-          log(f"[wait_for_proccessed_video_complete]  waiting for video_task_que to be empty: items remaining: {queue.qsize()}")
           time.sleep(check_interval)
     log("[wait_for_proccessed_video_complete]✅ video_task_que is now empty!!!")
 
@@ -684,39 +676,19 @@ if __name__ == "__main__":
 
 
     log(f"Video_paths: {len(video_paths)}")
-
-
-    devices = ["cuda"]
-    video_device_pairs = [(video_paths[i], devices[i % len(devices)]) for i in range(len(video_paths))]
-    max_threads = 1
-    start_time = time.time()
-
-
-    with ThreadPoolExecutor(max_workers=max_threads) as executor:
-        futures = []
-        start_time = time.time()
-        for video_path, device in video_device_pairs:
-            futures.append(executor.submit(transcribe_single_video, video_path, device))
-
-        for future in futures:
-            future.result()
-            end_time = time.time()
-        total_time = end_time - start_time
-        log(f"start_time of threadpool: {start_time} & endtime of threadpool = {end_time}, total: {total_time}")
-
+    for video_path in video_paths:
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        log(f"Enqueuing video for transcription: {video_path} on device: {device}")
+        transcribe_single_video(video_path, device=device)
     Global_state.transcript_queue.put(None)
-    gpu_thread = threading.Thread(target=gpu_worker, name="GPU_Worker - (THREAD)")
-    gpu_thread.start()
+    gpu_worker()
     Global_state.transcript_queue.join()
-    gpu_thread.join()
     Global_state.video_task_que.put(None)
     gpu_thread_offline = True
     worker_thread.join()
     log("Program completed successfully!")
-    Montage_short_worker_thread = threading.Thread(target=Montage_short_worker,name="Montage_VideoCreation_worker")
-    Montage_short_worker_thread.start()
+    Montage_short_worker()
     from Agents.Montage_agent import Run_short_montage_agent
     Run_short_montage_agent()
     Global_state.Montage_clip_task_Que.put(None)
-    Montage_short_worker_thread.join()
 

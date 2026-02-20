@@ -1,0 +1,33 @@
+- endre youtube agent uploader til og bruke openai api direkte for å få tilgang til gpt 5.2/skrive om system prompt på youtube-agenten til og bli mer direkte, klar og tydelig.
+
+
+- fikse montage_short_creation_worker til og kjøre riktig. vet det er noe feil der som har oppstått etter flytting av funksjoner etc. noe import feil noe sted der kanskje...
+
+
+- Sjekke om background music agent velger varierte music tracks for diverse shorts videoer.
+
+
+- Hver gang en video fra videos_downloaded er helt ferdig og brukt opp. og agenten har lastet opp alle mulige shorts, så skal den legges til i videosources_completed.json
+
+
+- En Agent som skal laste ned motivational podcast videoer fra youtube ved og søke og finne selv.
+
+
+- Sette opp en agent som kan kommentere på kommentarer som folk har skrevet på videoene som er lagt ut.
+
+
+- Gjøre ferdig neon subtitles til og fungere som ønsket på en video med forskjellige animation som passer inn for antall ord som blir sagt før pause etc.
+
+
+- fikse subtitles grouping, de blir ikke gruppert ordentlig på pauser.
+
+
+- Sette opp start-slutt tid  for hver video som blir laget, sånn at det blir logget tid det tar å lage en video.
+
+
+- analysere motiverende tekst lagring agent og forbedre system prompt.
+
+
+- fikse subtitle text på moviepy/video laging.
+
+
