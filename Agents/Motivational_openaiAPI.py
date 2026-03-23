@@ -18,7 +18,7 @@ def Motivational_analytic_agent_openai(transcript_path,agent_txt_saving_path):
     chunk_limiter = ChunkLimiterTool()
 
     while True:
-        chunk = chunk_limiter.forward(file_path=transcript_path, max_chars=7000)
+        chunk = chunk_limiter.forward(file_path=transcript_path, max_chars=6500)
         if not chunk.strip():
                 log(f"\nTranscript Path is (EMPTY)\n -{transcript_path}")
                 log(f"done with work. exiting transcript reasoning agent to retrieve the next items from the queue.")
@@ -134,6 +134,7 @@ def Motivational_analytic_agent_openai(transcript_path,agent_txt_saving_path):
 
         """
         task_prompt = f"""
+        Default to rejecting this chunk; call `create_motivationalshort` only if you find any powerful, fully self-contained motivational passage/passages that passes all gates with ≥99% confidence and is 10–60s long—otherwise reject and explain why:
         [chunk start]
         {chunk}
         [chunk end]
@@ -178,8 +179,8 @@ def Motivational_analytic_agent_openai(transcript_path,agent_txt_saving_path):
              tools=tools_schema,
              tool_choice="auto",
              #temperature=0,
-             reasoning_effort="high  ",
-             prompt_cache_key="motivational-transcript-agent-v1",
+             reasoning_effort="xhigh",
+             prompt_cache_key="motivational-transcript-agent-v2",
              prompt_cache_retention="24h",
         )
 

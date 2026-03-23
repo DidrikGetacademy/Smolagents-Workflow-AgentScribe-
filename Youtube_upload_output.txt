@@ -1,0 +1,632 @@
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── New run ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│                                                                                                                                                                                                                                                                                                                                                                                            │
+│ Your task/goal is to generate a complete, viral-optimzized YouTube metadata package for the following `input_video`:                                                                                                                                                                                                                                                                       │
+│     Niche/genre: Motivational                                                                                                                                                                                                                                                                                                                                                              │
+│     Transcript: You don't need to change everything.                                                                                                                                                                                                                                                                                                                                       │
+│  You just need to stop living by default.                                                                                                                                                                                                                                                                                                                                                  │
+│  Because one day you'll look back                                                                                                                                                                                                                                                                                                                                                          │
+│  and the question won't be, did I succeed?                                                                                                                                                                                                                                                                                                                                                 │
+│  It will be, did I choose my life?                                                                                                                                                                                                                                                                                                                                                         │
+│  Or did I just react to it?                                                                                                                                                                                                                                                                                                                                                                │
+│  Don't waste your life waiting for clarity.                                                                                                                                                                                                                                                                                                                                                │
+│  Clarity comes from movement.                                                                                                                                                                                                                                                                                                                                                              │
+│  Choose what matters, repeat it, protect it.                                                                                                                                                                                                                                                                                                                                               │
+│  That's how lives are created and built.                                                                                                                                                                                                                                                                                                                                                   │
+│                                                                                                                                                                                                                                                                                                                                                                                            │
+│                                                                                                                                                                                                                                                                                                                                                                                            │
+│     Respond with ONLY a valid JSON object via the `final_answer` tool containing the keys: `title`, `description`, `tags`, `hashtags`, `categoryId`, `publishAt`.                                                                                                                                                                                                                          │
+│     All keys must be tightly aligned with the input video's niche and intent inferred from the transcript and research and optimized for maximum reach and virality.                                                                                                                                                                                                                       │
+│                                                                                                                                                                                                                                                                                                                                                                                            │
+│ You have been provided with these additional arguments, that you can access directly using the keys as variables:                                                                                                                                                                                                                                                                          │
+│ {'emojies': '⚡🧠', 'previous_publishAt': ['2026-03-14T15:59:00Z', '2026-03-13T16:00:00Z'\], 'Already_uploaded_path': 'Video_clips/Youtube_Upload_folder/LM_Youtube/already_uploaded.json', 'current_video_name': 'c:\\Users\\didri\\Documents\\Is Being Smart Worth the Depression？ - Alex O’Connor & Joe Folley (4K).mp4', 'present_datetime': '2026-03-14T16:45:48Z'}.                 │
+│                                                                                                                                                                                                                                                                                                                                                                                            │
+╰─ LiteLLMModel - gpt-5.2 ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Output message of the LLM: ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Thought:
+[Bulletproof plan]
+1. Task understanding: Create a viral, SEO-optimized YouTube Shorts metadata package for the given motivational transcript. Output must be a single JSON object with title, description, tags, hashtags, categoryId, publishAt. Everything must align tightly to the transcript’s message: stop living by default, choose intentionally, clarity comes from movement, protect what matters,
+repetition builds a life. Avoid forbidden characters in title/description: no angle brackets and no parentheses. Enforce tag length ≤ 470 chars including commas.
+2. Research strategy:
+- First, deeply parse the transcript to extract distinctive phrases for search.
+- Run `Fetch_top_trending_youtube_videos` twice:
+  a) Similarity query, max_results=1, using the most distinctive line from the transcript plus “motivational short(s)” to find the same or very similar clip already viral.
+  b) Broad-category query, max_results=4, using higher-level niche keywords: intentional living, clarity from action, stop living by default, choose your life, self improvement, mindset, discipline, habits, motivational shorts.
+- After each fetch: discard any results under 100k views; if all under 100k, explicitly re-query with broader terms (up to 2 retries).
+- From high-signal results: extract patterns for (1) publish time window, (2) title hook structures, (3) recurring tags/keywords, (4) common hashtags, (5) category.
+- Use `get_upload_counts_by_date` to apply the scheduling rules: choose the best publish HH:MM from trending, ensure future-only relative to present_datetime, obey max 2 uploads/day, and consider previous_publishAt.
+3. Final answer strategy:
+- Craft a title that directly mirrors the transcript’s unique tension: “stop living by default” + “clarity comes from movement” + “choose your life” (specific, not generic). Add the provided emojis and 1–2 inline hashtags if it stays aligned.
+- Description: first 2 lines restate the core message and include keywords like intentional living, clarity, action, choose what matters, habits, protect your time. End with a short CTA.
+- Hashtags: 3–5 max, directly relevant to intentional living/action/clarity/self-improvement; include #Shorts. Optionally include speaker name only if it doesn’t distract.
+- Tags: prioritize overlaps from high-performing videos plus transcript keywords; enforce ≤470 chars.
+- CategoryId: lock based on trending consensus.
+- publishAt: schedule at the proven time window, future-only, respecting daily cap.
+
+[Deep understanding of the transcript before tools]
+1. Core message: You don’t need a total overhaul—stop living on autopilot and start choosing intentionally; clarity comes from taking action.
+2. Emotional tone and intent: Calm but urgent, reflective and empowering; aims to provoke responsibility and decisive movement.
+3. Target audience: Self-improvement viewers, young professionals/students/creators who feel stuck, indecisive, or reactive.
+4. Theme/category: Intentional living, agency, habits, clarity through action; motivational mindset.
+
+Key phrases for queries: “stop living by default”, “clarity comes from movement”, “did I choose my life”, “choose what matters, protect it”.
+
+Next step: run the two required trending searches plus upload count lookup.
+<code>
+similarity_query = "stop living by default clarity comes from movement motivational short"
+broad_query = "intentional living choose your life clarity comes from action motivational shorts"
+
+yt_similar = Fetch_top_trending_youtube_videos(Search_Query=similarity_query, max_results=1)
+yt_broad = Fetch_top_trending_youtube_videos(Search_Query=broad_query, max_results=4)
+upload_counts = get_upload_counts_by_date(already_uploaded_json=Already_uploaded_path)
+
+print("SIMILARITY_QUERY:", similarity_query)
+print("SIMILAR_RESULTS:", yt_similar)
+print("BROAD_QUERY:", broad_query)
+print("BROAD_RESULTS:", yt_broad)
+print("UPLOAD_COUNTS:", upload_counts)
+
+ ─ Executing parsed code: ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  similarity_query = "stop living by default clarity comes from movement motivational short"
+  broad_query = "intentional living choose your life clarity comes from action motivational shorts"
+
+  yt_similar = Fetch_top_trending_youtube_videos(Search_Query=similarity_query, max_results=1)
+  yt_broad = Fetch_top_trending_youtube_videos(Search_Query=broad_query, max_results=4)
+  upload_counts = get_upload_counts_by_date(already_uploaded_json=Already_uploaded_path)
+
+  print("SIMILARITY_QUERY:", similarity_query)
+  print("SIMILAR_RESULTS:", yt_similar)
+  print("BROAD_QUERY:", broad_query)
+  print("BROAD_RESULTS:", yt_broad)
+  print("UPLOAD_COUNTS:", upload_counts)
+ ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+[2026-03-14 17:48:24][ThreadPoolExecutor-2_0] Processing video: _c8jcLf6MLg - How to Become More Intentional #bornforimpact #motivation #morningmotivation #quotes #shorts
+[2026-03-14 17:48:25][ThreadPoolExecutor-2_0] ✅Transcript found for _c8jcLf6MLg via YouTubeTranscriptApi✅
+[2026-03-14 17:48:25][ThreadPoolExecutor-2_0]   Snippet: Living with intention means choosing your actions with purpose. Not reacting to life, but shaping it...
+[2026-03-14 17:48:25][ThreadPoolExecutor-2_0] Processing video: VFVxIDDSY8w - Decisive Action Shapes Your Future Today #shorts #youtubefeeds #trending #viral #motivation #life
+[2026-03-14 17:48:26][ThreadPoolExecutor-2_0] ✅Transcript found for VFVxIDDSY8w via YouTubeTranscriptApi✅
+[2026-03-14 17:48:26][ThreadPoolExecutor-2_0]   Snippet: Life life rarely rewards hesitation. Progress is built through small consistent actions taken with c...
+[2026-03-14 17:48:26][ThreadPoolExecutor-2_0] Processing video: 0q70xI9Iif4 - Stop Living By Default: Choose Your Life's Purpose #shorts
+[2026-03-14 17:48:27][ThreadPoolExecutor-2_0] ✅Transcript found for 0q70xI9Iif4 via YouTubeTranscriptApi✅
+[2026-03-14 17:48:27][ThreadPoolExecutor-2_0]   Snippet: Meaning doesn't come from just doing more. It comes from doing things on purpose. Let me leave you w...
+Execution logs:
+SIMILARITY_QUERY: stop living by default clarity comes from movement motivational short
+SIMILAR_RESULTS: {'items': [], 'message': "No videos found for query: 'stop living by default clarity comes from movement motivational short'", 'debug': {'totalResults_from_YouTube_API': 148, 'resultsPerPage': 0, 'query_length': 69, 'tip': 'Query is probably invalid or to long, try shorter keywords. YouTube returned 0 total results.'}}
+BROAD_QUERY: intentional living choose your life clarity comes from action motivational shorts
+BROAD_RESULTS: {'items': [{'videoId': '_c8jcLf6MLg', 'title': 'How to Become More Intentional #bornforimpact #motivation #morningmotivation #quotes #shorts', 'description': '@bornforimpact \n\nBecoming intentional isn’t about being perfect—it’s about choosing to live each day with clarity, focus, and purpose. This video breaks down how to align your actions with your values so
+you can build a more meaningful life.\n\n\n---\n\n#IntentionalLiving #PersonalGrowth #LiveWithPurpose #Clarity #MindfulLiving #GrowthJourney #SelfDevelopment #PurposeDrivenLife\n#MorningMotivation #StartYourDayWithPurpose #dailyinspiration  #FaithAndPurpose #MotivationForSuccess #BornForImpact #PositiveVibes #PurposeDrivenLife #MorningAffirmations #RiseAndShine #StayFocused
+#mindsetmatters  #PurposeOverPressure #DailyEncouragement #FaithFueled #MotivationalVideo #GrowthMindset #believeinyourself\n#ChristianMotivation #FaithBasedMotivation #BecomeWhoYouAre #PurposeDrivenLife #BornForImpact #MotivationWithGod #ChristianEncouragement #GodsPlan #SpiritualGrowth #FaithOverFear #YouAreChosen #IdentityInChrist #DailyDevotional #MorningMotivation
+#ChristCentered', 'tags': ['how to become intentional', 'intentional living tips', 'live with purpose short video', 'personal growth habits', 'build focus and clarity', 'purpose driven life guide', 'mindful choices short', 'personal development shorts', 'motivational short intentional living', 'become intentional with your life', 'growth mindset daily', 'living with direction',
+'practical life improvement tips'], 'channelTitle': 'Born for Impact', 'subscriberCount': '958', 'category': 'People & Blogs', 'publishedAt': '2025-05-10T05:00:39Z', 'duration': 'PT1M1S', 'viewCount': '80', 'likeCount': '0', 'commentCount': '0', 'Video Transcript': "Living with intention means choosing your actions with purpose. Not reacting to life, but shaping it. Let's talk
+about how to become more intentional. Start with clarity. What matters most to you? Write it down. Then align your daily actions with those priorities. Be mindful of your time, energy, and focus. Intentional living is about cutting out what doesn't serve you so you can pour more into what does. Say no to distractions. Say yes to growth. Be present. Every choice becomes powerful
+when it flows from purpose. You don't need to control everything. Just commit to living with direction. You won't drift into your best life. You'll decide your way there. Stay grounded in your values. Live on purpose. Be intentional. And watch your life transform."}, {'videoId': 'VFVxIDDSY8w', 'title': 'Decisive Action Shapes Your Future Today #shorts #youtubefeeds #trending
+#viral #motivation #life', 'description': 'Life rarely rewards hesitation.\nProgress is built through small, consistent actions taken with clarity and courage.\nEvery decision you make today quietly shapes the direction of your future.\nMove forward with intention.\nMomentum begins the moment you choose action.\n\n\ndecisive action, take action now, build your future, success
+mindset, consistency mindset, daily discipline, personal growth, mindset shift, motivation to act, stop overthinking, action over fear, self improvement, productivity mindset, success habits, life motivation, motivational shorts, clarity and focus, long term success, powerful mindset, growth mindset, discipline equals freedom, intentional living, future building, action based
+motivation, high performance mindset\n\n\naction mindset, decisive action, success mindset, consistency, discipline, productivity, personal growth, mindset shift, stop procrastinating, take action, self improvement, life motivation, motivational shorts, success habits, clarity, focus, intentional living, future goals, high performance, english motivation\n\n\n#Action
+#SuccessMindset #Consistency\n#TakeAction #PersonalGrowth #Discipline\n#Motivation #MindsetShift #Focus\n#LifeGoals #SelfImprovement #Productivity\n#FutureSuccess #DailyMotivation #YouTubeShorts\n\n\n DISCLAIMER\nThis content is for motivational and educational purposes only. It is not intended as professional advice. Viewer discretion advised.', 'tags': ['action mindset,
+decisive action, success mindset, consistency, discipline, productivity, personal growth, mindset shift, stop procrastinating, take action, self improvement, life motivation, motivational shorts, success habits, clarity, focus, intentional living, future goals, high performance, english motivation'], 'channelTitle': 'DhanikaVibes ', 'subscriberCount': '46', 'category':
+'Education', 'publishedAt': '2025-12-20T14:44:40Z', 'duration': 'PT34S', 'viewCount': '62', 'likeCount': '4', 'commentCount': '0', 'Video Transcript': 'Life life rarely rewards hesitation. Progress is built through small consistent actions taken with clarity and courage. Every decision you make today quietly shapes the direction of your future. Move forward with intention.
+Momentum begins the moment you choose action. Like, share and subscribe to my channel, Danica Vibes. [bell]'}, {'videoId': '0q70xI9Iif4', 'title': "Stop Living By Default: Choose Your Life's Purpose #shorts", 'description': "Meaning isn't found in doing more, but in intentional action. You don't need to change everything, just stop living by default. Clarity comes from movement,
+not waiting. #IntentionalLiving #LifeChoices #PurposeDriven #SelfImprovement", 'tags': [], 'channelTitle': 'Mind Fuel', 'subscriberCount': '634', 'category': 'People & Blogs', 'publishedAt': '2026-03-02T09:11:26Z', 'duration': 'PT43S', 'viewCount': '1', 'likeCount': '0', 'commentCount': '0', 'Video Transcript': "Meaning doesn't come from just doing more. It comes from doing
+things on purpose. Let me leave you with this. You don't need to change everything. You just need to stop living by default. Because one day you'll look back and the question won't be, did I succeed? It will be, did I choose my life or did I just react to it? Don't waste your life waiting for clarity. Clarity comes from movement. Choose what matters. Repeat it. Protect it. That's
+how lives are created and built. As the famous saying goes, the hardest thing is not failing after trying. It's never trying in the first"}]}
+UPLOAD_COUNTS: {'2026-03-06': 2, '2026-03-09': 1, '2026-03-10': 2, '2026-03-11': 1, '2026-03-12': 1, '2026-03-13': 1, '2026-03-14': 1}
+
+Out: None
+[Step 1: Duration 135.06 seconds| Input tokens: 9,983 | Output tokens: 7,446]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 2 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Output message of the LLM: ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Thought:
+All results from the similarity query are empty — discarding entirely and re-querying with a shorter, less fragile phrase while keeping “motivational short” to match format.
+
+All results from the broad query are under 100k views — discarding entirely and re-querying. The returned videos have viewCounts of 80, 62, 1, 1, which are unusable for pattern extraction. I’ll broaden toward high-signal motivational Shorts phrases around intentional living and taking action for clarity, which should surface larger channels and higher view counts.
+
+Re-query 1 plan:
+- Similarity: "stop living by default motivational short" max_results=1
+- Broad: "action creates clarity motivational shorts" max_results=5
+Then I’ll apply the ≥100k rule again; if still all under 100k, I’ll re-query one more time with an even more generic but still aligned search like "choose your life motivation shorts" or "intentional living motivation shorts".
+<code>
+similarity_query_v2 = "stop living by default motivational short"
+broad_query_v2 = "action creates clarity motivational shorts"
+
+yt_similar_v2 = Fetch_top_trending_youtube_videos(Search_Query=similarity_query_v2, max_results=1)
+yt_broad_v2 = Fetch_top_trending_youtube_videos(Search_Query=broad_query_v2, max_results=5)
+
+print("SIMILARITY_QUERY_V2:", similarity_query_v2)
+print("SIMILAR_RESULTS_V2:", yt_similar_v2)
+print("BROAD_QUERY_V2:", broad_query_v2)
+print("BROAD_RESULTS_V2:", yt_broad_v2)
+
+ ─ Executing parsed code: ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  similarity_query_v2 = "stop living by default motivational short"
+  broad_query_v2 = "action creates clarity motivational shorts"
+
+  yt_similar_v2 = Fetch_top_trending_youtube_videos(Search_Query=similarity_query_v2, max_results=1)
+  yt_broad_v2 = Fetch_top_trending_youtube_videos(Search_Query=broad_query_v2, max_results=5)
+
+  print("SIMILARITY_QUERY_V2:", similarity_query_v2)
+  print("SIMILAR_RESULTS_V2:", yt_similar_v2)
+  print("BROAD_QUERY_V2:", broad_query_v2)
+  print("BROAD_RESULTS_V2:", yt_broad_v2)
+ ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+[2026-03-14 17:48:41][ThreadPoolExecutor-3_0] Processing video: lHZ54TBXbiI - Achieve Any Goal With These 7 Simple Steps • Brian Tracy
+[2026-03-14 17:48:42][ThreadPoolExecutor-3_0] ✅Transcript found for lHZ54TBXbiI via YouTubeTranscriptApi✅
+[2026-03-14 17:48:42][ThreadPoolExecutor-3_0]   Snippet: from now on whenever you bring on a new person put them through this exercise if they will not go th...
+[2026-03-14 17:48:42][ThreadPoolExecutor-3_0] Processing video: gxEHvKiwcAM - “Master your mind, find peace.” #motivation
+[2026-03-14 17:48:43][ThreadPoolExecutor-3_0] ✅Transcript found for gxEHvKiwcAM via YouTubeTranscriptApi✅
+[2026-03-14 17:48:43][ThreadPoolExecutor-3_0]   Snippet: discipline your thoughts stop thinking too much don't go into the past don't go into the future be i...
+[2026-03-14 17:48:43][ThreadPoolExecutor-3_0] Processing video: AJpErm8H2aU - Mel Robbins Message Will Change Your LIFE | Motivational Video
+[2026-03-14 17:48:44][ThreadPoolExecutor-3_0] ✅Transcript found for AJpErm8H2aU via YouTubeTranscriptApi✅
+[2026-03-14 17:48:44][ThreadPoolExecutor-3_0]   Snippet: the bottom line is no one's coming no one no one's coming to push you no one's coming to tell you to...
+[2026-03-14 17:48:44][ThreadPoolExecutor-3_0] Processing video: 0ydMzTMoC2k - Happy independence day. Messy Action  Perfection Stop Waiting, Start Now #animation #motivation
+[2026-03-14 17:48:45][ThreadPoolExecutor-3_0] ✗ No transcript available for 0ydMzTMoC2k via YouTubeTranscriptApi (TranscriptsDisabled), falling back to Whisper.
+WARNING: [youtube] [jsc:node] Challenge solver lib script version 0.3.1 is not supported (source: python package, variant: ScriptVariant.MINIFIED, supported version: 0.5.0)
+WARNING: [youtube] [jsc:node] Challenge solver core script version 0.3.1 is not supported (source: python package, variant: ScriptVariant.MINIFIED, supported version: 0.5.0)
+WARNING: [youtube] [jsc] JS Challenge Provider "node" returned an invalid response:         response = JsChallengeProviderResponse(request=JsChallengeRequest(type=<JsChallengeType.N: 'n'>, input=NChallengeInput(player_url='https://www.youtube.com/s/player/74edf1a3/tv-player-ias.vflset/tv-player-ias.js', challenges=['bw9mkrsxT0eGDzLU06e', 'rjzYU8FTRQ_Vobgsbl_', 'YZuF7vozYkXQnDMuN61']), video_id='0ydMzTMoC2k'), response=None, error='no solutions')
+         Please report this issue on  https://github.com/yt-dlp/yt-dlp/issues?q= , filling out the appropriate issue template. Confirm you are on the latest version using  yt-dlp -U
+WARNING: [youtube] [jsc] JS Challenge Provider "node" returned an invalid response:         response = JsChallengeProviderResponse(request=JsChallengeRequest(type=<JsChallengeType.SIG: 'sig'>, input=SigChallengeInput(player_url='https://www.youtube.com/s/player/74edf1a3/tv-player-ias.vflset/tv-player-ias.js', challenges=['\x00\x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0b\x0c\r\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefg']), video_id='0ydMzTMoC2k'), response=None, error='no solutions')
+         Please report this issue on  https://github.com/yt-dlp/yt-dlp/issues?q= , filling out the appropriate issue template. Confirm you are on the latest version using  yt-dlp -U
+WARNING: [youtube] 0ydMzTMoC2k: Signature solving failed: Some formats may be missing. Ensure you have a supported JavaScript runtime and challenge solver script distribution installed. Review any warnings presented before this message. For more details, refer to  https://github.com/yt-dlp/yt-dlp/wiki/EJS
+WARNING: [youtube] 0ydMzTMoC2k: n challenge solving failed: Some formats may be missing. Ensure you have a supported JavaScript runtime and challenge solver script distribution installed. Review any warnings presented before this message. For more details, refer to  https://github.com/yt-dlp/yt-dlp/wiki/EJS
+[2026-03-14 17:48:54][ThreadPoolExecutor-3_0] Audio file duration: 8.64 seconds
+Audio_path speech to text tool: C:\Users\didri\AppData\Local\Temp\tmp908_sset\0ydMzTMoC2k.mp3
+[2026-03-14 17:48:58][ThreadPoolExecutor-3_0] [INFO] Detected Language: en (confidence: 0.62)
+[2026-03-14 17:48:58][ThreadPoolExecutor-3_0] transcription complete
+[2026-03-14 17:48:58][ThreadPoolExecutor-3_0] ✅ Transcript generated for 0ydMzTMoC2k via Whisper: ✅
+[2026-03-14 17:48:58][ThreadPoolExecutor-3_0]   Transcript: ...
+Temp audio deleted for 0ydMzTMoC2k
+[2026-03-14 17:48:58][ThreadPoolExecutor-3_0] Processing video: z5bJySwEzOc - How to Actually Build Self-Confidence.
+[2026-03-14 17:48:59][ThreadPoolExecutor-3_0] ✅Transcript found for z5bJySwEzOc via YouTubeTranscriptApi✅
+[2026-03-14 17:48:59][ThreadPoolExecutor-3_0]   Snippet: someone can tell your whole life you're a piece of crap but you can say screw you read between the l...
+Execution logs:
+SIMILARITY_QUERY_V2: stop living by default motivational short
+SIMILAR_RESULTS_V2: {'items': [], 'message': "No videos found for query: 'stop living by default motivational short'", 'debug': {'totalResults_from_YouTube_API': 499066, 'resultsPerPage': 0, 'query_length': 41, 'tip': 'Query is probably invalid or to long, try shorter keywords. YouTube returned 0 total results.'}}
+BROAD_QUERY_V2: action creates clarity motivational shorts
+BROAD_RESULTS_V2: {'items': [{'videoId': 'lHZ54TBXbiI', 'title': 'Achieve Any Goal With These 7 Simple Steps • Brian Tracy', 'description': 'Speaker: @BrianTracyOfficial \n\nJOIN THE MISSION: Empower every person on the planet to discover and unlock more of the potential within themselves.', 'tags': ['Brian Tracy', 'Personal development', 'Goal setting', 'Success', 'Seminar',
+'Speech', 'Simple'], 'channelTitle': 'GrindBuddy', 'subscriberCount': '844000', 'category': 'Education', 'publishedAt': '2024-02-03T12:45:02Z', 'duration': 'PT1M', 'viewCount': '31490661', 'likeCount': '1461371', 'commentCount': '9616', 'Video Transcript': "from now on whenever you bring on a new person put them through this exercise if they will not go through this exercise do
+not waste a minute of your time with them because they will never be successful if they won't follow your guidance here's the exercise take a clean sheet of paper and write down goals in today's State and then write down 10 goals that you would like to accomplish in the next 12 months and write them in the present tense I earn I achieve I weigh I drive such and such a car I own
+and then you take this list of 10 and you say if I had a magic wand and I could wave this magic wand and I could have any one goal on my list within 24 hours which one goal would have the greatest positive impact on my life and usually this will jump out at you put a circle around that goal and that's a goal you transfer to a clean sheet of paper and then you follow the seven
+steps write it down set a deadline make a list of everything you have to do to accomplish it organize the list into a checklist take action and then do something every day if you'll just do this nothing can stop you but yourself"}, {'videoId': 'gxEHvKiwcAM', 'title': '“Master your mind, find peace.” #motivation', 'description': '“Do your thoughts control you, or do you control
+them?”\n\nOverthinking can drain your energy and keep you stuck. \n\nPractice focusing on what you can control, and let go of unnecessary worries. \n\nWith disciplined thoughts, you’ll find clarity and move forward with confidence.\n\nSpeaker ( Shi Heng Yi )\n\nFootage Credits YT ( @MulliganBrothersInterviews\u2060\u200b\u2060\u200b\u2060  )\n\nMusic Credits - my head is empty (i
+was only temporary)\n\nThis content doesn’t belong to Novus, it is edited and shared only for the purpose of awareness, and if the content OWNER (visual/audio) of this content has any issue, we request you to directly mail us at novus.motiv@gmail.com, thus we sort out the outcome.\u2063\u2063\u2063\u2063\u2063\u2063\u2063\u2063\u2063\n\n#shihengyi #motivation #mindfulness
+#mindset #discipline #monk #selfhelp #success #millionairemindset #selfimprovement #davidgoggins', 'tags': [], 'channelTitle': 'Satori', 'subscriberCount': '221000', 'category': 'People & Blogs', 'publishedAt': '2024-11-05T17:37:44Z', 'duration': 'PT26S', 'viewCount': '5020674', 'likeCount': '414752', 'commentCount': '1770', 'Video Transcript': "discipline your thoughts stop
+thinking too much don't go into the past don't go into the future be in the present why because only then it's possible that the mind is free the capacity is free and now you can completely immerse into whatever you are doing and this means you have arrived [Music]"}, {'videoId': 'AJpErm8H2aU', 'title': 'Mel Robbins Message Will Change Your LIFE | Motivational Video',
+'description': 'In this video, Mel Robbins talks about how no one is coming to save you or make your dreams come true except yourself\n------------------------------------------------------------------------------------\nVideo title: The hard truth about making your dreams come true | Mel Robbins Live\n\nVideo link:
+https://youtu.be/JoQEY2sIMTg\n------------------------------------------------------------------------------------\n#shorts #motivation #melrobbins', 'tags': ['motivational resource', 'motivational resources', 'motivational speaker', 'motivation', 'motivational speech', 'inspirational speaker', 'inspirational speech', 'business speech', 'motivation video', 'inspiration',
+'motivational video', 'inspirational video', 'inspiration speech', 'mel robbins motivation', 'mel robbins inspiration', 'mel robbins inspirational', 'mel robbins motivational', "mel robbins no one's coming", 'mel robbins live', 'mel robbins the hard truth about making your dreams come true', 'mel robbins'], 'channelTitle': 'Motivational Resource', 'subscriberCount': '61300',
+'category': 'Education', 'publishedAt': '2022-10-30T16:00:10Z', 'duration': 'PT22S', 'viewCount': '2833869', 'likeCount': '112474', 'commentCount': '1314', 'Video Transcript': "the bottom line is no one's coming no one no one's coming to push you no one's coming to tell you to turn the TV off no one's coming to tell you to get out the door and exercise nobody's coming to tell you
+to apply for that job that you've always dreamt about nobody's coming to write the business plan for you it's up to you"}, {'videoId': '0ydMzTMoC2k', 'title': 'Happy independence day. Messy Action  Perfection Stop Waiting, Start Now #animation #motivation', 'description': 'Messy action will always beat waiting for perfection. Perfection keeps you stuck, overthinking, and afraid
+to begin. But action—even imperfect action—creates momentum, clarity, and progress.\nmessy action, perfection trap, motivation shorts, life motivation, success mindset, overthinking motivation, start now, daily motivation, self improvement, growth mindset, motivational shorts, hindi motivation, english motivation, mindset shift, productivity tips, discipline motivation, action
+over perfection, inspirational shorts, youtube shorts motivation\nShorts\n#Motivation\n#MessyAction\n#Perfection\n#StartNow\n#SuccessMindset\n#Overthinking\n#GrowthMindset\n#LifeMotivation\n#HindiMotivation\n#EnglishMotivation\n#Mindset\n#SelfImprovement', 'tags': [], 'channelTitle': 'Mr.Documentry', 'subscriberCount': '459', 'category': 'People & Blogs', 'publishedAt':
+'2026-01-16T09:45:00Z', 'duration': 'PT9S', 'viewCount': '565764', 'likeCount': '3801', 'commentCount': '247', 'Video Transcript': ''}, {'videoId': 'z5bJySwEzOc', 'title': 'How to Actually Build Self-Confidence.', 'description': 'Subscribe to fuel your personal growth! #shorts\n\n(this video is about: how to gain self-confidence,how to build self-esteem,tony robbins incredible
+advice,how to be self-confident)\n\n(this channel is about: philosophy,personal growth,powerful ideas,inspirational speeches,growth mindset,achieving goals,motivation videos,how to improve your life,life lessons,wise words,empowerment, growth mindset,success,mindfulness,confidence,selfcare,insightful,wisdom,selfcare,life advice,positivity,mentalhealth,inspirational quotes,life
+advice,self help,self love,personal development,knowledge and perspective)', 'tags': [], 'channelTitle': 'GROWTH™', 'subscriberCount': '1240000', 'category': 'Entertainment', 'publishedAt': '2022-06-07T18:00:49Z', 'duration': 'PT24S', 'viewCount': '339665', 'likeCount': '12355', 'commentCount': '89', 'Video Transcript': "someone can tell your whole life you're a piece of crap but
+you can say screw you read between the lines and make your life work someone tell your whole life you're beautiful you're intelligent you're the smartest person in the world and you don't believe it because self-esteem doesn't come from what people say about you self-esteem is earned within yourself it's esteem for yourself which only comes by doing things that are incredibly
+difficult and then your brain goes this is who i am"}]}
+
+Out: None
+[Step 2: Duration 31.98 seconds| Input tokens: 22,675 | Output tokens: 8,204]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 3 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Output message of the LLM: ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Thought:
+The similarity query is still returning zero items — I have one remaining allowed re-query attempt for the similarity search. I’ll broaden the similarity query to the transcript’s most distinctive rhetorical question while keeping it short and including “short” and “motivation” to match Shorts intent: “did I choose my life or react to it short motivation”. Then I’ll perform the
+required structured, field-by-field analysis across all high-signal videos above 100k views, extract publish-time clustering, category consensus, title hook patterns, tag/hashtag overlap, and then craft tightly aligned metadata.
+<code>
+similarity_query_v3 = "did I choose my life or react to it short motivation"
+yt_similar_v3 = Fetch_top_trending_youtube_videos(Search_Query=similarity_query_v3, max_results=1)
+print("SIMILARITY_QUERY_V3:", similarity_query_v3)
+print("SIMILAR_RESULTS_V3:", yt_similar_v3)
+
+ ─ Executing parsed code: ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  similarity_query_v3 = "did I choose my life or react to it short motivation"
+  yt_similar_v3 = Fetch_top_trending_youtube_videos(Search_Query=similarity_query_v3, max_results=1)
+  print("SIMILARITY_QUERY_V3:", similarity_query_v3)
+  print("SIMILAR_RESULTS_V3:", yt_similar_v3)
+ ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Execution logs:
+SIMILARITY_QUERY_V3: did I choose my life or react to it short motivation
+SIMILAR_RESULTS_V3: {'items': [], 'message': "No videos found for query: 'did I choose my life or react to it short motivation'", 'debug': {'totalResults_from_YouTube_API': 937221, 'resultsPerPage': 0, 'query_length': 52, 'tip': 'Query is probably invalid or to long, try shorter keywords. YouTube returned 0 total results.'}}
+
+Out: None
+[Step 3: Duration 33.46 seconds| Input tokens: 37,893 | Output tokens: 9,872]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 4 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Output message of the LLM: ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Thought:
+I will now perform the required structured analysis of the high-signal results from the broad query, extract publish-time and metadata patterns, then craft an aligned Shorts metadata package. I will also compute tag-string length to ensure it stays at or under 470 characters, and then schedule publishAt using the confirmed publish-time window, the present UTC datetime, and the
+daily upload cap rules.
+<code>
+from datetime import datetime, timezone
+
+# High-signal videos from BROAD_RESULTS_V2 observation (all >= 100k views)
+videos = [
+    {"videoId":"lHZ54TBXbiI","title":"Achieve Any Goal With These 7 Simple Steps • Brian Tracy",
+     "category":"Education","publishedAt":"2024-02-03T12:45:02Z","duration":"PT1M","viewCount":31490661,
+     "tags":["Brian Tracy","Personal development","Goal setting","Success","Seminar","Speech","Simple"]},
+    {"videoId":"gxEHvKiwcAM","title":"“Master your mind, find peace.” #motivation",
+     "category":"People & Blogs","publishedAt":"2024-11-05T17:37:44Z","duration":"PT26S","viewCount":5020674,
+     "tags":[]},
+    {"videoId":"AJpErm8H2aU","title":"Mel Robbins Message Will Change Your LIFE | Motivational Video",
+     "category":"Education","publishedAt":"2022-10-30T16:00:10Z","duration":"PT22S","viewCount":2833869,
+     "tags":["motivational resource","motivational resources","motivational speaker","motivation",
+             "motivational speech","inspirational speaker","inspirational speech","business speech",
+             "motivation video","inspiration","motivational video","inspirational video","inspiration speech",
+             "mel robbins motivation","mel robbins inspiration","mel robbins inspirational","mel robbins motivational",
+             "mel robbins no one's coming","mel robbins live",
+             "mel robbins the hard truth about making your dreams come true","mel robbins"]},
+    {"videoId":"0ydMzTMoC2k","title":"Happy independence day. Messy Action  Perfection Stop Waiting, Start Now #animation #motivation",
+     "category":"People & Blogs","publishedAt":"2026-01-16T09:45:00Z","duration":"PT9S","viewCount":565764,
+     "tags":[]},
+    {"videoId":"z5bJySwEzOc","title":"How to Actually Build Self-Confidence.",
+     "category":"Entertainment","publishedAt":"2022-06-07T18:00:49Z","duration":"PT24S","viewCount":339665,
+     "tags":[]},
+]
+
+publish_times = [v["publishedAt"][11:16] for v in videos]
+print("Publish times HH:MM UTC:", publish_times)
+
+# We'll choose 16:00 UTC as the target time: it appears exactly in a high-view Education video
+target_time_hhmm = "16:00"
+print("Chosen target publish time HH:MM UTC:", target_time_hhmm)
+
+# Build metadata aligned to the input transcript
+title = f"Stop Living By Default, Choose Your Life {emojies} #Shorts"
+
+description = (
+    "You don’t need to change everything. You just need to stop living by default.\n"
+    "One day you won’t ask did I succeed. You’ll ask did I choose my life or react to it.\n"
+    "Don’t wait for clarity. Clarity comes from movement.\n"
+    "Choose what matters, repeat it, protect it. That’s how lives are built.\n\n"
+    "Share this with someone who’s stuck, and subscribe for more mindset Shorts."
+)
+
+hashtags = ["#IntentionalLiving", "#TakeAction", "#Mindset", "#SelfImprovement", "#Shorts"]
+
+tags = [
+    "stop living by default",
+    "choose your life",
+    "clarity comes from movement",
+    "clarity comes from action",
+    "intentional living",
+    "action creates clarity",
+    "take action now",
+    "stop reacting",
+    "mindset shift",
+    "self improvement",
+    "personal growth",
+    "discipline",
+    "habits",
+    "protect your time",
+    "focus",
+    "purpose",
+    "consistency",
+    "motivational shorts",
+    "motivation short",
+    "life choices"
+]
+
+tag_len = sum(len(t) for t in tags) + (len(tags) - 1)
+print("Tag count:", len(tags))
+print("Combined tag length with commas:", tag_len)
+
+# Category decision: Education best matches advice/lesson format and is used by the highest-view video.
+categoryId = "27"
+
+# Scheduling
+present_dt = datetime.strptime(present_datetime, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+print("present_datetime UTC:", present_dt.isoformat())
+
+# Compute candidate date: today if 16:00 is still future, else tomorrow
+candidate_date = present_dt.date()
+target_dt_today = datetime(candidate_date.year, candidate_date.month, candidate_date.day, 16, 0, 0, tzinfo=timezone.utc)
+
+print("Target datetime today UTC:", target_dt_today.isoformat())
+
+# Determine next day because present time is after 16:00
+scheduled_date = (candidate_date if target_dt_today > present_dt else (candidate_date.replace(day=candidate_date.day) ))  # placeholder to show today vs next day in prints
+print("Note: will schedule tomorrow at 16:00 because 16:00 already passed today.")
+
+# Find actual tomorrow date without loops for logic print
+tomorrow_date = (present_dt + __import__("datetime").timedelta(days=1)).date()
+publishAt = f"{tomorrow_date.isoformat()}T16:00:00Z"
+print("Proposed publishAt:", publishAt)
+
+# Check daily cap using upload_counts map (missing date implies 0)
+tomorrow_count = upload_counts.get(tomorrow_date.isoformat(), 0)
+print("Uploads on proposed date:", tomorrow_date.isoformat(), "count:", tomorrow_count)
+
+ ─ Executing parsed code: ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  from datetime import datetime, timezone
+
+  # High-signal videos from BROAD_RESULTS_V2 observation (all >= 100k views)
+  videos = [
+      {"videoId":"lHZ54TBXbiI","title":"Achieve Any Goal With These 7 Simple Steps • Brian Tracy",
+       "category":"Education","publishedAt":"2024-02-03T12:45:02Z","duration":"PT1M","viewCount":31490661,
+       "tags":["Brian Tracy","Personal development","Goal setting","Success","Seminar","Speech","Simple"]},
+      {"videoId":"gxEHvKiwcAM","title":"“Master your mind, find peace.” #motivation",
+       "category":"People & Blogs","publishedAt":"2024-11-05T17:37:44Z","duration":"PT26S","viewCount":5020674,
+       "tags":[]},
+      {"videoId":"AJpErm8H2aU","title":"Mel Robbins Message Will Change Your LIFE | Motivational Video",
+       "category":"Education","publishedAt":"2022-10-30T16:00:10Z","duration":"PT22S","viewCount":2833869,
+       "tags":["motivational resource","motivational resources","motivational speaker","motivation",
+               "motivational speech","inspirational speaker","inspirational speech","business speech",
+               "motivation video","inspiration","motivational video","inspirational video","inspiration speech",
+               "mel robbins motivation","mel robbins inspiration","mel robbins inspirational","mel robbins motivational",
+               "mel robbins no one's coming","mel robbins live",
+               "mel robbins the hard truth about making your dreams come true","mel robbins"]},
+      {"videoId":"0ydMzTMoC2k","title":"Happy independence day. Messy Action  Perfection Stop Waiting, Start Now #animation #motivation",
+       "category":"People & Blogs","publishedAt":"2026-01-16T09:45:00Z","duration":"PT9S","viewCount":565764,
+       "tags":[]},
+      {"videoId":"z5bJySwEzOc","title":"How to Actually Build Self-Confidence.",
+       "category":"Entertainment","publishedAt":"2022-06-07T18:00:49Z","duration":"PT24S","viewCount":339665,
+       "tags":[]},
+  ]
+
+  publish_times = [v["publishedAt"][11:16] for v in videos]
+  print("Publish times HH:MM UTC:", publish_times)
+
+  # We'll choose 16:00 UTC as the target time: it appears exactly in a high-view Education video
+  target_time_hhmm = "16:00"
+  print("Chosen target publish time HH:MM UTC:", target_time_hhmm)
+
+  # Build metadata aligned to the input transcript
+  title = f"Stop Living By Default, Choose Your Life {emojies} #Shorts"
+
+  description = (
+      "You don’t need to change everything. You just need to stop living by default.\n"
+      "One day you won’t ask did I succeed. You’ll ask did I choose my life or react to it.\n"
+      "Don’t wait for clarity. Clarity comes from movement.\n"
+      "Choose what matters, repeat it, protect it. That’s how lives are built.\n\n"
+      "Share this with someone who’s stuck, and subscribe for more mindset Shorts."
+  )
+
+  hashtags = ["#IntentionalLiving", "#TakeAction", "#Mindset", "#SelfImprovement", "#Shorts"]
+
+  tags = [
+      "stop living by default",
+      "choose your life",
+      "clarity comes from movement",
+      "clarity comes from action",
+      "intentional living",
+      "action creates clarity",
+      "take action now",
+      "stop reacting",
+      "mindset shift",
+      "self improvement",
+      "personal growth",
+      "discipline",
+      "habits",
+      "protect your time",
+      "focus",
+      "purpose",
+      "consistency",
+      "motivational shorts",
+      "motivation short",
+      "life choices"
+  ]
+
+  tag_len = sum(len(t) for t in tags) + (len(tags) - 1)
+  print("Tag count:", len(tags))
+  print("Combined tag length with commas:", tag_len)
+
+  # Category decision: Education best matches advice/lesson format and is used by the highest-view video.
+  categoryId = "27"
+
+  # Scheduling
+  present_dt = datetime.strptime(present_datetime, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+  print("present_datetime UTC:", present_dt.isoformat())
+
+  # Compute candidate date: today if 16:00 is still future, else tomorrow
+  candidate_date = present_dt.date()
+  target_dt_today = datetime(candidate_date.year, candidate_date.month, candidate_date.day, 16, 0, 0, tzinfo=timezone.utc)
+
+  print("Target datetime today UTC:", target_dt_today.isoformat())
+
+  # Determine next day because present time is after 16:00
+  scheduled_date = (candidate_date if target_dt_today > present_dt else (candidate_date.replace(day=candidate_date.day) ))  # placeholder to show today vs next day in prints
+  print("Note: will schedule tomorrow at 16:00 because 16:00 already passed today.")
+
+  # Find actual tomorrow date without loops for logic print
+  tomorrow_date = (present_dt + __import__("datetime").timedelta(days=1)).date()
+  publishAt = f"{tomorrow_date.isoformat()}T16:00:00Z"
+  print("Proposed publishAt:", publishAt)
+
+  # Check daily cap using upload_counts map (missing date implies 0)
+  tomorrow_count = upload_counts.get(tomorrow_date.isoformat(), 0)
+  print("Uploads on proposed date:", tomorrow_date.isoformat(), "count:", tomorrow_count)
+ ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Execution logs:
+Publish times HH:MM UTC: ['12:45', '17:37', '16:00', '09:45', '18:00']
+Chosen target publish time HH:MM UTC: 16:00
+Tag count: 20
+Combined tag length with commas: 324
+present_datetime UTC: 2026-03-14T16:45:48+00:00
+Target datetime today UTC: 2026-03-14T16:00:00+00:00
+Note: will schedule tomorrow at 16:00 because 16:00 already passed today.
+
+Code execution failed at line 'tomorrow_date = (present_dt + __import__("datetime").timedelta(days=1)).date()' due to: InterpreterError: Forbidden function evaluation: '__import__' is not among the explicitly allowed tools or defined/imported in the preceding code
+[Step 4: Duration 46.45 seconds| Input tokens: 53,561 | Output tokens: 12,665]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 5 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Output message of the LLM: ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Thought:
+I have enough high-signal trending data from the broad query to extract patterns, while the similarity query yielded no usable results. I will now complete the mandatory structured analysis and then finalize metadata tightly aligned to the input transcript.
+
+1. Parse each high-signal video object fields:
+- Video lHZ54TBXbiI: Title "Achieve Any Goal With These 7 Simple Steps • Brian Tracy". Category Education. PublishedAt 2024-02-03T12:45:02Z. Duration PT1M. ViewCount 31,490,661. Tags include Brian Tracy, personal development, goal setting, success.
+- Video gxEHvKiwcAM: Title "Master your mind, find peace. #motivation". Category People & Blogs. PublishedAt 2024-11-05T17:37:44Z. Duration PT26S. ViewCount 5,020,674. Description hashtags include #motivation #mindfulness #mindset #discipline #selfimprovement.
+- Video AJpErm8H2aU: Title "Mel Robbins Message Will Change Your LIFE | Motivational Video". Category Education. PublishedAt 2022-10-30T16:00:10Z. Duration PT22S. ViewCount 2,833,869. Tags heavily target motivation and the speaker name. Description includes #shorts #motivation.
+- Video 0ydMzTMoC2k: Title emphasizes messy action over perfection and “Stop Waiting, Start Now”. Category People & Blogs. PublishedAt 2026-01-16T09:45:00Z. Duration PT9S. ViewCount 565,764. Description emphasizes action creates momentum and clarity; hashtags include #Motivation and action-related terms.
+- Video z5bJySwEzOc: Title "How to Actually Build Self-Confidence." Category Entertainment. PublishedAt 2022-06-07T18:00:49Z. Duration PT24S. ViewCount 339,665. Description includes #shorts and personal growth targeting.
+
+2. Publish time signals: HH:MM UTC = 12:45, 17:37, 16:00, 09:45, 18:00. There’s a noticeable late-afternoon cluster among large-view motivational clips (16:00, 17:37, 18:00). I will target 16:00 UTC because it is an exact timestamp on a multi-million-view motivational Short and sits in the late-day cluster.
+
+3. Title hook patterns:
+- “Achieve Any Goal…” = step-based promise.
+- “Master your mind, find peace.” = outcome/benefit promise.
+- “Message will change your LIFE” = transformation claim.
+- “Stop waiting, start now” = imperative urgency.
+- “How to actually…” = contrarian how-to.
+For our transcript, the strongest unique hook is the specific phrase “Stop living by default” plus “Clarity comes from movement”. I will use a declarative, identity/agency challenge hook.
+
+4. Tag overlap analysis: Tags are sparse across several videos, but consistent niche keywords across titles/descriptions are: motivation, mindset, discipline, personal growth/self improvement, take action. I’ll incorporate these only where grounded in our transcript (action, clarity, intentional living, choose your life, habits, discipline/consistency implied by “repeat it,
+protect it”).
+
+5. Hashtag pattern: Common high-level hashtags used: #shorts/#Shorts, #motivation, #mindset, #selfimprovement, #discipline. I will use 3–5 hashtags, keeping them tightly aligned to intentional living and action.
+
+6. CategoryId confirmation: High-signal set spans Education and People & Blogs. Our content is advice/lesson style with self-improvement framing, best fit = Education. So categoryId = 27.
+
+7. Scheduling derivation:
+- present_datetime = 2026-03-14T16:45:48Z.
+- Target time = 16:00 UTC. Today at 16:00 is already in the past relative to present time, so schedule next day.
+- Upload cap: upload_counts shows 2026-03-14 has 1 upload; 2026-03-15 is not listed, so treat as 0 uploads, which is < 2.
+- Final publishAt = 2026-03-15T16:00:00Z, future-only and within the proven window.
+
+8. Transcript ↔ metadata alignment:
+Core transcript phrases that must appear in our metadata: “stop living by default”, “clarity comes from movement”, “did I choose my life or did I just react”, “choose what matters, repeat it, protect it”. I will embed these verbatim in the title/description/tags to maximize semantic match and reduce mismatch-driven swipe-away.
+
+Now I’ll finalize a cohesive metadata package, ensure no forbidden characters, and enforce tags length ≤ 470 chars.
+<code>
+from datetime import datetime, timezone, timedelta
+
+# Build final metadata (aligned to transcript)
+title = f"Stop Living By Default, Clarity Comes From Movement {emojies} #Shorts"
+
+description = (
+    "You don't need to change everything. You just need to stop living by default.\n"
+    "One day you'll look back and ask: did I choose my life, or did I just react to it?\n"
+    "Don't wait for clarity. Clarity comes from movement.\n"
+    "Choose what matters, repeat it, protect it. That's how lives are created and built.\n\n"
+    "Subscribe for more motivational mindset Shorts."
+)
+
+hashtags = ["#IntentionalLiving", "#ChooseYourLife", "#TakeAction", "#Mindset", "#Shorts"]
+
+tags = [
+    "stop living by default",
+    "clarity comes from movement",
+    "choose your life",
+    "did I choose my life",
+    "reacting to life",
+    "intentional living",
+    "choose what matters",
+    "repeat it protect it",
+    "clarity comes from action",
+    "take action",
+    "stop waiting",
+    "action creates clarity",
+    "mindset shift",
+    "self improvement",
+    "personal growth",
+    "discipline",
+    "habits",
+    "protect your time",
+    "purpose",
+    "motivational shorts"
+]
+
+# Enforce tag length <= 470 chars including commas
+tag_len = sum(len(t) for t in tags) + (len(tags) - 1)
+print("Tag length:", tag_len)
+
+categoryId = "27"
+
+# Scheduling at 16:00 UTC next day because present time already passed 16:00 today
+present_dt = datetime.strptime(present_datetime, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+tomorrow_date = (present_dt + timedelta(days=1)).date()
+publishAt = f"{tomorrow_date.isoformat()}T16:00:00Z"
+print("publishAt:", publishAt)
+
+final_answer({
+    "title": title,
+    "description": description,
+    "tags": tags,
+    "hashtags": hashtags,
+    "categoryId": categoryId,
+    "publishAt": publishAt
+})
+
+ ─ Executing parsed code: ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  from datetime import datetime, timezone, timedelta
+
+  # Build final metadata (aligned to transcript)
+  title = f"Stop Living By Default, Clarity Comes From Movement {emojies} #Shorts"
+
+  description = (
+      "You don't need to change everything. You just need to stop living by default.\n"
+      "One day you'll look back and ask: did I choose my life, or did I just react to it?\n"
+      "Don't wait for clarity. Clarity comes from movement.\n"
+      "Choose what matters, repeat it, protect it. That's how lives are created and built.\n\n"
+      "Subscribe for more motivational mindset Shorts."
+  )
+
+  hashtags = ["#IntentionalLiving", "#ChooseYourLife", "#TakeAction", "#Mindset", "#Shorts"]
+
+  tags = [
+      "stop living by default",
+      "clarity comes from movement",
+      "choose your life",
+      "did I choose my life",
+      "reacting to life",
+      "intentional living",
+      "choose what matters",
+      "repeat it protect it",
+      "clarity comes from action",
+      "take action",
+      "stop waiting",
+      "action creates clarity",
+      "mindset shift",
+      "self improvement",
+      "personal growth",
+      "discipline",
+      "habits",
+      "protect your time",
+      "purpose",
+      "motivational shorts"
+  ]
+
+  # Enforce tag length <= 470 chars including commas
+  tag_len = sum(len(t) for t in tags) + (len(tags) - 1)
+  print("Tag length:", tag_len)
+
+  categoryId = "27"
+
+  # Scheduling at 16:00 UTC next day because present time already passed 16:00 today
+  present_dt = datetime.strptime(present_datetime, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+  tomorrow_date = (present_dt + timedelta(days=1)).date()
+  publishAt = f"{tomorrow_date.isoformat()}T16:00:00Z"
+  print("publishAt:", publishAt)
+
+  final_answer({
+      "title": title,
+      "description": description,
+      "tags": tags,
+      "hashtags": hashtags,
+      "categoryId": categoryId,
+      "publishAt": publishAt
+  })
+ ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Execution logs:
+Tag length: 350
+publishAt: 2026-03-15T16:00:00Z
+
+Final answer: {'title': 'Stop Living By Default, Clarity Comes From Movement ⚡🧠 #Shorts', 'description': "You don't need to change everything. You just need to stop living by default.\nOne day you'll look back and ask: did I choose my life, or did I just react to it?\nDon't wait for clarity. Clarity comes from movement.\nChoose what matters, repeat it, protect it. That's how
+lives are created and built.\n\nSubscribe for more motivational mindset Shorts.", 'tags': ['stop living by default', 'clarity comes from movement', 'choose your life', 'did I choose my life', 'reacting to life', 'intentional living', 'choose what matters', 'repeat it protect it', 'clarity comes from action', 'take action', 'stop waiting', 'action creates clarity', 'mindset
+shift', 'self improvement', 'personal growth', 'discipline', 'habits', 'protect your time', 'purpose', 'motivational shorts'], 'hashtags': ['#IntentionalLiving', '#ChooseYourLife', '#TakeAction', '#Mindset', '#Shorts'], 'categoryId': '27', 'publishAt': '2026-03-15T16:00:00Z'}
+[Step 5: Duration 40.94 seconds| Input tokens: 72,203 | Output tokens: 15,321]
+{'title': 'Stop Living By Default, Clarity Comes From Movement ⚡🧠 #Shorts', 'description': "You don't need to change everything. You just need to stop living by default.\nOne day you'll look back and ask: did I choose my life, or did I just react to it?\nDon't wait for clarity. Clarity comes from movement.\nChoose what matters, repeat it, protect it. That's how lives are created and built.\n\nSubscribe for more motivational mindset Shorts.", 'tags': ['stop living by default', 'clarity comes from movement', 'choose your life', 'did I choose my life', 'reacting to life', 'intentional living', 'choose what matters', 'repeat it protect it', 'clarity comes from action', 'take action', 'stop waiting', 'action creates clarity', 'mindset shift', 'self improvement', 'personal growth', 'discipline', 'habits', 'protect your time', 'purpose', 'motivational shorts'], 'hashtags': ['#IntentionalLiving', '#ChooseYourLife', '#TakeAction', '#Mindset', '#Shorts'], 'categoryId': '27', 'publishAt': '2026-03-15T16:00:00Z'}
+[2026-03-14 17:51:00][MainThread] [get_authenticated_service]: title: Stop Living By Default, Clarity Comes From Movement ⚡🧠 #Shorts,
+ description: You don't need to change everything. You just need to stop living by default.
+One day you'll look back and ask: did I choose my life, or did I just react to it?
+Don't wait for clarity. Clarity comes from movement.
+Choose what matters, repeat it, protect it. That's how lives are created and built.
+
+Subscribe for more motivational mindset Shorts.,
+  hashtags: ['#IntentionalLiving', '#ChooseYourLife', '#TakeAction', '#Mindset', '#Shorts'],
+ tags: ['stop living by default', 'clarity comes from movement', 'choose your life', 'did I choose my life', 'reacting to life', 'intentional living', 'choose what matters', 'repeat it protect it', 'clarity comes from action', 'take action', 'stop waiting', 'action creates clarity', 'mindset shift', 'self improvement', 'personal growth', 'discipline', 'habits', 'protect your time', 'purpose', 'motivational shorts'],
+ categoryId: 27,
+ publishAt: 2026-03-15T16:00:00Z
+
+[2026-03-14 17:52:02][MainThread] Upload complete! Video ID: K_hxsNAJ3Jg
+[2026-03-14 17:52:03][MainThread] response from (get_single_playlist_id): [{'kind': 'youtube#playlist', 'etag': 'XHc6UpIhl6jwZmcsASYHQZ4Wkgs', 'id': 'PLKlb-oexra2fH04_CcByIQ10_QEP2cI34'}]
+[2026-03-14 17:52:03][MainThread] returned playlist_id: PLKlb-oexra2fH04_CcByIQ10_QEP2cI34
+[2026-03-14 17:52:03][MainThread] Video added to playlist PLKlb-oexra2fH04_CcByIQ10_QEP2cI34: UExLbGItb2V4cmEyZkgwNF9DY0J5SVExMF9RRVAyY0kzNC5ENUI5OTFCQkYxNDUxQjQ3
+PS C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing>

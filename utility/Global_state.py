@@ -144,7 +144,7 @@ Music_list = [
         },
 
         {
-            "path": r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\way down we go (instrumental) - kaleo [edit audio] [mp3].WAV",
+            "path": r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\Way own we go instrumental - kaleo [edit audio] [mp3].WAV",
             "song_name": "Way Down We Go Instrumental",
             "description": "This instrumental edit of Kaleo's iconic \"Way Down We Go\" distills the track's haunting essence into a concise 34-second atmospheric piece, stripping away the powerful vocals to emphasize brooding piano openings, resonant slow-building drums, and ambient layers that evoke a sense of deep introspection and inevitable descent. The slow tempo and moderate energy (low valence with subtle arousal) create a dark, dreamy soundscape infused with dramatic tension, emotional weight, and faint romantic undertones—perfect for underscoring moments of struggle, obsession, resilience, and hard-won triumph. With its contemporary pop-ambient fusion and tags highlighting slow pacing, prominent drums, and ethereal ambiance, it delivers an inspiring yet shadowy vibe that amplifies themes of pushing through doubt, hardship, and setbacks toward victory, making it an ideal backdrop for motivational montages, dramatic reflections, advertising spots, or introspective edits paired with quotes about relentless drive and the brutal reality of chasing greatness.",
             "pairs_well_with_quotes": [
@@ -272,8 +272,8 @@ Music_list = [
             "Tags": ["guitar", "slow", "piano"]
         },
         {
-            "path": r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\onerepublic I aint worried tiktok whistle loop - slowed reverb [mp3].mp3",
-            "song_name": "Ain't Worried Whistle Loop",
+            "path": r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\onerepublic I aint worried tiktok whistle loop - slowed reverb.mp3",
+            "song_name": "Ain't Worried Whistle",
             "description": "Dreamy slowed + reverb loop of the iconic whistling melody with ambient echoes and soft nature-inspired layers, evoking carefree nonchalance, gentle release of worries, and quiet inner confidence. Valence (💖) 3.53 → slightly melancholic yet nostalgic mood with subtle positivity. Arousal (⚡) 2.97 → very calm, gentle, and meditative energy. Ideal for reflective motivational scenes about taking action despite setbacks, disappearing to build in private, letting go of overthinking and opinions, or embracing big goals with relaxed determination and freedom from anxiety.",
             "pairs_well_with_quotes": [
                 "My brain can feel a certain way, but it's not going to choose how I behave all the time. I just can't let it do it anymore. I'm going to have setbacks, I know. But if I'm feeling bad, that doesn't mean I'm doing bad. That doesn't mean I am bad. That doesn't mean that I can't still take some action. Because yeah, nothing changes and nothing changes, man.",
@@ -332,7 +332,7 @@ Music_list = [
             "Tags": ["techno", "electronic", "drums"]
         },
         {
-            "path": r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\Lukas Graham - 7 Years (Instrumental) [mp3].mp3",
+            "path": r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\Lukas Graham 7 Years (instrumental).mp3",
             "song_name": "7 Years Piano Cover",
             "description": "Heartfelt, slow melodic piano instrumental evoking profound nostalgia, life's reflective journey through ages, and bittersweet memories with subtle hopeful uplift. Valence (💖) 3.94 → neutral-to-bittersweet mood blending melancholy and optimism. Arousal (⚡) 3.22 → low-to-moderate, calm introspective energy. Ideal for motivational scenes about never giving up to keep possibilities alive, measuring success as progress from your starting point, life's milestones, personal growth through reflection, or embracing change with strong why-driven empowerment.",            "pairs_well_with_quotes": [
                 "Everybody has a turn back moment. You have a moment where you can go forward or you can give up. But the thing you have to keep in mind before you give up is that if you give up, the guarantee is it will never happen. That's the guarantee of quitting, that it will never happen no way under the sun. The only way the possibility remains that it can happen is if you never give up no matter what.",

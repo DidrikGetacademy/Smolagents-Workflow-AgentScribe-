@@ -10,9 +10,9 @@ from utility.log import log
 
 
 ###hva faen tenker jeg her..
-class OpenAi_model():
-    def __init__(self):
-        self.model_id = model_id
+# class OpenAi_model():
+#     def __init__(self):
+#         self.model_id = model_id
 
 
 
@@ -27,30 +27,35 @@ def Reload_and_change_model(model_name, message):
         clean_get_gpu_memory(threshold=0.6)
 
     log(message)
-
     if model_name == "gpt-4o":
         utility.Global_state.set_current_global_model("gpt-4o")
         Global_model = LiteLLMModel(model_id="gpt-4o", api_key=OPENAI_APIKEY, temperature=0.0, max_tokens=16000)
         return Global_model
 
-    elif model_name == "gpt-4-finetuned":
-        utility.Global_state.set_current_global_model("gpt-4-finetuned")
+
+    elif model_name == "gpt-5.2-xhigh":
+        utility.Global_state.set_current_global_model("gpt-5.2-xhigh")
         Global_model = LiteLLMModel(
-            model_id="ft:gpt-4.1-2025-04-14:personal-learnreflects:motivational-short-extractor:CHeRJbsB",
+            model_id="gpt-5.2",
+            reasoning_effort="xhigh",
             api_key=OPENAI_APIKEY,
-            max_tokens=16384
+            max_tokens=16000
         )
         return Global_model
 
-    elif model_name == "gpt-5-medium":
-        utility.Global_state.set_current_global_model("gpt-5")
+
+    elif model_name == "gpt-5.2-medium":
+        utility.Global_state.set_current_global_model("gpt-5.2-medium")
         Global_model = LiteLLMModel(
-            model_id="gpt-5",
+            model_id="gpt-5.2",
             reasoning_effort="medium",
             api_key=OPENAI_APIKEY,
-            max_tokens=20000
+            max_tokens=16000
         )
         return Global_model
+
+
+
     elif model_name == "gpt-5-high":
         utility.Global_state.set_current_global_model("gpt-5-high")
         Global_model = LiteLLMModel(
@@ -60,6 +65,19 @@ def Reload_and_change_model(model_name, message):
             max_tokens=20000
         )
         return Global_model
+
+    elif model_name == "gpt-5-medium":
+        utility.Global_state.set_current_global_model("gpt-5-medium")
+        Global_model = LiteLLMModel(
+            model_id="gpt-5",
+            reasoning_effort="medium",
+            api_key=OPENAI_APIKEY,
+            max_tokens=20000
+        )
+        return Global_model
+
+
+
     elif model_name == "gpt-5-minimal":
         utility.Global_state.set_current_global_model("gpt-5-minimal")
         Global_model = LiteLLMModel(
@@ -69,24 +87,8 @@ def Reload_and_change_model(model_name, message):
             max_tokens=16000
         )
         return Global_model
-    elif model_name == "gpt-5.1":
-        utility.Global_state.set_current_global_model("gpt-5.1")
-        Global_model = LiteLLMModel(
-            model_id="gpt-5.1",
-            reasoning_effort="medium",
-            api_key=OPENAI_APIKEY,
-            max_tokens=16000
-        )
-        return Global_model
-    elif model_name == "gpt-5.2":
-        utility.Global_state.set_current_global_model("gpt-5.2")
-        Global_model = LiteLLMModel(
-            model_id="gpt-5.2",
-            reasoning_effort="xhigh",
-            api_key=OPENAI_APIKEY,
-            max_tokens=16000
-        )
-        return Global_model
+
+    
     elif model_name == "gpt-5-mini":
         utility.Global_state.set_current_global_model("gpt-5.2-mini")
         Global_model = LiteLLMModel(
@@ -97,7 +99,14 @@ def Reload_and_change_model(model_name, message):
         )
         return Global_model
 
-
+    elif model_name == "gpt-4-finetuned":
+        utility.Global_state.set_current_global_model("gpt-4-finetuned")
+        Global_model = LiteLLMModel(
+            model_id="ft:gpt-4.1-2025-04-14:personal-learnreflects:motivational-short-extractor:CHeRJbsB",
+            api_key=OPENAI_APIKEY,
+            max_tokens=16384
+        )
+        return Global_model
     else:
         log(f"Unknown model name: {model_name}. Available models: gpt-4o, gpt-4-finetuned, gpt-5")
         raise ValueError(f"Unsupported model name: {model_name}")

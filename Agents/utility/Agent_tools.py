@@ -28,6 +28,229 @@ from typing import List ,Dict, Optional
 cookie_file_path = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Secrets\youtube.com_cookies.txt"
 load_dotenv()
 
+
+
+@tool
+def Fetch_top_trending_youtube_videos(Search_Query: str, max_results:int) -> dict:
+    """
+    Fetches enriched metadata for trending YouTube videos ordered by view count. Uses YouTube captions
+    or Whisper transcription for transcripts. Follow `fetch_top_trending_youtube_videos` tool usage in system prompt for query strategy (dual-query approach).
+
+    Args:
+        Search_Query (str): Keywords or phrases to search.
+        max_results (int): Maximum number of videos to fetch (recommended between 1-5).
+
+    Returns:
+        dict: Contains "items" key with a list of video objects. Each object includes:
+            - videoId: YouTube video ID
+            - title: Video title
+            - description: Video description
+            - tags: List of video tags
+            - channelTitle: Creator's channel name
+            - subscriberCount: Channel subscriber count
+            - category: YouTube category name
+            - publishedAt: ISO 8601 publish timestamp
+            - duration: ISO 8601 duration format
+            - viewCount: Total view count (string)
+            - likeCount: Total like count (string)
+            - commentCount: Total comment count (string)
+            - Video Transcript: Full transcript text (from YouTube captions or Whisper transcription; may contain background music if video lacks speech)
+
+              commentCount, and Video Transcript. Returns empty list with "message" key if no videos found.
+    """
+    import os
+    import tempfile
+    from googleapiclient.discovery import build
+    import yt_dlp
+    from youtube_transcript_api import YouTubeTranscriptApi, NoTranscriptFound, TranscriptsDisabled, IpBlocked
+    import moviepy as  mp
+
+    Api_key = os.getenv("YOUTUBE_API_KEY")
+    youtube = build("youtube", "v3", developerKey=Api_key)
+    if not Api_key:
+        raise ValueError("Error: API key is not in environment variables")
+
+    # Searches for videos...
+    try:
+        search_resp = youtube.search().list(
+            part="snippet",
+            q=Search_Query,
+            type="video",
+            order="viewCount",
+            videoDuration="short",
+            maxResults=max_results
+        ).execute()
+
+    except Exception as api_error:  # This catches quota errors, invalid key, bad request, etc.
+        error_msg = str(api_error)
+        if hasattr(api_error, 'resp'):
+            error_msg += f" | Status: {api_error.resp.status} | Reason: {api_error.resp.reason}"
+        return {
+            "items": [],
+            "message": f"YouTube API ERROR: {error_msg}",
+            "debug": {"query": Search_Query, "error_type": type(api_error).__name__}
+        }
+
+    items = search_resp.get("items", [])
+    video_ids = [item["id"]["videoId"] for item in items]
+
+
+    page_info = search_resp.get("pageInfo", {})
+    total_results = page_info.get("totalResults", 0)
+
+    if not video_ids:
+        return {
+            "items": [],
+            "message": f"No videos found for query: '{Search_Query}'",
+            "debug": {
+                "totalResults_from_YouTube_API": total_results,   # ← This is what you wanted!
+                "resultsPerPage": page_info.get("resultsPerPage", 0),
+                "query_length": len(Search_Query),
+                "tip": "Query is probably invalid or to long, try shorter keywords. YouTube returned 0 total results."
+            }
+        }
+    # Fetch metadata...
+    stats_resp = youtube.videos().list(
+        part="snippet,statistics,contentDetails",
+        id=",".join(video_ids)
+    ).execute()
+
+    # Category mapping...
+    category_ids = list({item["snippet"]["categoryId"] for item in stats_resp.get("items", [])})
+    fetch_category_names = youtube.videoCategories().list(
+        part="snippet",
+        id=",".join(category_ids),
+    ).execute()
+
+    category_map = {
+        item["id"]: item["snippet"]["title"]
+        for item in fetch_category_names.get("items", [])
+    }
+
+    # Channel subscriber mapping...
+    channel_ids = list({item["snippet"]["channelId"] for item in stats_resp.get("items", [])})
+    channel_response = youtube.channels().list(
+        part="statistics",
+        id=",".join(channel_ids)
+    ).execute()
+
+    channel_map = {
+        item["id"]: item["statistics"]["subscriberCount"]
+        for item in channel_response.get("items", [])
+    }
+
+    # ← Whisper model is loaded ONLY once (outside the loop) for speed
+    whisper_model = None
+
+    # Track transcription methods
+    youtube_transcript_videos = []
+    whisper_transcript_videos = []
+    failed_transcript_videos = []
+
+    enriched = []
+    for vid in stats_resp.get("items", []):
+        snippet = vid["snippet"]
+        statistics = vid.get("statistics", {})
+        content = vid.get("contentDetails", {})
+
+        transcript_text = None
+        video_id = vid["id"]
+        log(f"Processing video: {video_id} - {snippet.get('title', 'Unknown Title')}")
+
+        # 1. Try official/auto-generated subtitles (fastest, no download)
+        try:
+            yt_api = YouTubeTranscriptApi()
+            fetched = yt_api.fetch(video_id, languages=['en', 'en-US'])
+            raw_data = fetched.to_raw_data()
+            transcript_text = ' '.join([entry.get('text', '') for entry in raw_data])
+            log(f"✅Transcript found for {video_id} via YouTubeTranscriptApi✅")
+            log(f"  Snippet: {transcript_text[:100]}...")  # Print first 100 chars
+            youtube_transcript_videos.append(video_id)
+        except (NoTranscriptFound, TranscriptsDisabled, IpBlocked) as transcript_err:
+            log(f"✗ No transcript available for {video_id} via YouTubeTranscriptApi ({type(transcript_err).__name__}), falling back to Whisper.")            # 2. Fallback: download audio → transcribe → auto-delete
+            try:
+                with tempfile.TemporaryDirectory() as temp_dir:
+                    # yt-dlp will write audio here → guaranteed cleanup
+                    audio_path = os.path.join(temp_dir, f"{video_id}.%(ext)s")
+
+                    ydl_opts = {
+                        'format': 'bestaudio/best',
+                        'outtmpl': audio_path,
+                        'postprocessors': [{
+                            'key': 'FFmpegExtractAudio',
+                            'preferredcodec': 'mp3',
+                            'preferredquality': '192',
+                        }],
+                        'nocheckcertificate': True,
+                        'quiet': True,  # Temporarily disable quiet for debugging
+                        'nocheckcertificate': True,
+                        'cookiesfrombrowser': None,
+                        'js_runtimes': {'node': {}},
+                        'extractor_args': {'youtube': {'remote_components': 'ejs:github'}},
+                        'remote_components': ['ejs:github']
+                    }
+
+                    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                        ydl.download([f"https://www.youtube.com/watch?v={video_id}"])
+
+                    # After post-processor the file is always .mp3
+                    audio_file = os.path.join(temp_dir, f"{video_id}.mp3")
+
+                    if not os.path.exists(audio_file):
+                        raise FileNotFoundError("Downloaded audio file not found")
+
+                    # Get and print audio duration
+                    clip = mp.AudioFileClip(audio_file)
+                    log(f"Audio file duration: {clip.duration:.2f} seconds")
+                    clip.close()  # Close the clip to release the file lock
+
+                    # Load model only on first fallback (cached for rest of the 4 videos)
+                    if whisper_model is None:
+                        whisper_model = SpeechToTextTool_Text()  # change to "large" if you have GPU/RAM
+                        whisper_model.setup()
+
+                    # Transcribe and ensure temporary audio file deletion
+                    try:
+                        result = whisper_model.forward({"audio": audio_file})
+                        transcript_text = " ".join(result)
+                        log(f"✅ Transcript generated for {video_id} via Whisper: ✅")
+                        log(f"  Transcript: {transcript_text}...")  # Print first 100 chars
+                        whisper_transcript_videos.append(video_id)
+                    finally:
+                        try:
+                            if os.path.exists(audio_file):
+                                os.remove(audio_file)
+                                print(f"Temp audio deleted for {video_id}")
+                        except Exception as remove_err:
+                            log(f"Warning: could not delete temp audio for {video_id}: {remove_err}")
+
+
+
+            except Exception as e:
+                log(f"✗ Error transcribing {video_id}: {e}")
+                transcript_text = None   # keep it None on failure
+                failed_transcript_videos.append(video_id)
+
+        enriched.append({
+            "videoId": video_id,
+            "title": snippet.get("title"),
+            "description": snippet.get("description"),
+            "tags": snippet.get("tags", []),
+            "channelTitle": snippet.get("channelTitle"),
+            "subscriberCount": channel_map.get(snippet.get("channelId")),
+            "category": category_map.get(snippet.get("categoryId")),
+            "publishedAt": snippet.get("publishedAt"),
+            "duration": content.get("duration"),
+            "viewCount": statistics.get("viewCount"),
+            "likeCount": statistics.get("likeCount"),
+            "commentCount": statistics.get("commentCount"),
+            "Video Transcript": transcript_text
+        })
+
+    return {"items": enriched}
+
+
+
 @tool
 def read_file(text_file: str) -> str:
     """
@@ -42,100 +265,8 @@ def read_file(text_file: str) -> str:
     return content
 
 
-@tool
-def get_recent_background_music(already_uploaded_json: str, limit: int = 3) -> list:
-    """
-    Return the most recent background music selections from the upload history JSON.
-
-    Args:
-        already_uploaded_json: Path to the channel-specific upload history JSON file.
-        limit: Number of latest entries to return (default 3).
-
-    Returns:
-        List of dicts containing song_name, background_audio, publishAt, title, and current_video_name.
-    """
-    if not os.path.exists(already_uploaded_json):
-        return []
-
-    try:
-        with open(already_uploaded_json, "r", encoding="utf-8") as r:
-            history = json.load(r)
-    except Exception:
-        return []
-
-    if not isinstance(history, list):
-        return []
-
-    recent = history[-limit:]
-    result = []
-    for entry in recent:
-        result.append(
-            {
-                "song_name": entry.get("song_name"),
-                "background_audio": entry.get("background_audio"),
-                "publishAt": entry.get("publishAt"),
-                "title": entry.get("title"),
-                "current_video_name": entry.get("current_video_name"),
-            }
-        )
-    return result
 
 
-@tool
-def get_recent_background_music_summary(already_uploaded_json: str, limit: int = 3) -> str:
-    """
-    Return a compact summary string of the latest background tracks from upload history.
-
-    Args:
-        already_uploaded_json: Path to the upload history JSON file.
-        limit: Number of latest entries to include (default 3).
-
-    Returns:
-        A newline-separated summary of recent background tracks.
-    """
-    recent = get_recent_background_music(already_uploaded_json, limit=limit)
-    if not recent:
-        return "No previous background tracks recorded."
-
-    lines = []
-    for idx, item in enumerate(recent, start=1):
-        lines.append(
-            f"{idx}. song_name={item.get('song_name')}, background_audio={item.get('background_audio')}, publishAt={item.get('publishAt')}, title={item.get('title')}, source_video={item.get('current_video_name')}"
-        )
-    return "\n".join(lines)
-
-
-@tool
-def get_video_publish_at(already_uploaded_json: str, current_video_name: str) -> str:
-    """
-    Look up the publishAt value for a given source video name in the JSON upload history.
-
-    Args:
-        already_uploaded_json: Path to the upload history JSON file.
-        current_video_name: The source video name to search for (string containment match).
-
-    Returns:
-        The publishAt string if found, else an empty string.
-    """
-    if not os.path.exists(already_uploaded_json):
-        return ""
-
-    try:
-        with open(already_uploaded_json, "r", encoding="utf-8") as r:
-            history = json.load(r)
-    except Exception:
-        return ""
-
-    if not isinstance(history, list):
-        return ""
-
-    current_video_name_lower = (current_video_name or "").lower()
-    for entry in reversed(history):
-        name = str(entry.get("current_video_name", "")).lower()
-        if current_video_name_lower and current_video_name_lower in name:
-            return entry.get("publishAt", "")
-
-    return ""
 
 
 @tool
@@ -169,207 +300,6 @@ def get_upload_counts_by_date(already_uploaded_json: str) -> dict:
         date_part = publish_at.split("T")[0]
         counts[date_part] = counts.get(date_part, 0) + 1
     return counts
-
-
-@tool
-def get_latest_publish_entries(already_uploaded_json: str, limit: int = 5) -> list:
-    """
-    Return the latest publish entries sorted by publishAt descending.
-
-    Args:
-        already_uploaded_json: Path to the upload history JSON file.
-        limit: Maximum number of entries to return (default 5).
-
-    Returns:
-        List of dicts with publishAt, title, current_video_name.
-    """
-    if not os.path.exists(already_uploaded_json):
-        return []
-
-    try:
-        with open(already_uploaded_json, "r", encoding="utf-8") as r:
-            history = json.load(r)
-    except Exception:
-        return []
-
-    if not isinstance(history, list):
-        return []
-
-    def _key(entry):
-        return entry.get("publishAt") or ""
-
-    sorted_history = sorted(history, key=_key, reverse=True)
-    trimmed = sorted_history[:limit]
-
-    result = []
-    for entry in trimmed:
-        result.append(
-            {
-                "publishAt": entry.get("publishAt"),
-                "title": entry.get("title"),
-                "current_video_name": entry.get("current_video_name"),
-            }
-        )
-    return result
-
-
-@tool
-def get_nearest_previous_publish(already_uploaded_json: str, present_date: str) -> str:
-    """
-    Return the latest publishAt that is <= present_date (UTC date string YYYY-MM-DD).
-
-    Args:
-        already_uploaded_json: Path to the upload history JSON file.
-        present_date: Current date in YYYY-MM-DD (UTC).
-
-    Returns:
-        publishAt string if found, else empty string.
-    """
-    if not os.path.exists(already_uploaded_json):
-        return ""
-
-    try:
-        with open(already_uploaded_json, "r", encoding="utf-8") as r:
-            history = json.load(r)
-    except Exception:
-        return ""
-
-    if not isinstance(history, list):
-        return ""
-
-    present_dt = present_date
-    candidates = []
-    for entry in history:
-        publish_at = entry.get("publishAt") or ""
-        if not publish_at:
-            continue
-        date_part = publish_at.split("T")[0]
-        if date_part <= present_dt:
-            candidates.append(publish_at)
-
-    if not candidates:
-        return ""
-
-    return sorted(candidates, reverse=True)[0]
-
-
-
-
-
-####FETCH MORE DETAILS TOO PROVIDE AGENT WITH MORE INFORMATION####
-@tool
-def Fetch_top_trending_youtube_videos(Search_Query: str) -> dict:
-    """
-        A tool for Fetching enriched metadata + stats for the top trending YouTube videos for a query, including category names, tags, duration, views, likes, comments, and channel stats.
-        IMPORTANT: Avoid overly specific or long queries with many distinct concepts.
-        If the search returns no results, it means the query was too specific.
-        The tool will return a message indicating this, and you should retry with a broader, simpler query.
-
-        BEST PRACTICES FOR QUERY:
-        - Keep it short (1-3 keywords).
-        - Focus on the core topic from the intent of the transcript (e.g.,"Motivation", "Discipline").
-        - Avoid combining unrelated concepts (e.g., "motivation proof over validation discipline action bias").
-        - Broad queries yield the best trending results.
-
-        Args:
-        Search_Query (str): Topic or keywords to search (e.g. “Motivational”, “Tech Reviews”).
-
-        Returns:
-        dict: A YouTube API response containing for each video:
-        - snippet: title, description, channelTitle, publishTime, thumbnails
-        - statistics: viewCount, likeCount, commentCount
-    """
-
-    Api_key = os.getenv("YOUTUBE_API_KEY")
-    youtube = build("youtube", "v3", developerKey=Api_key)
-    if not Api_key:
-        raise ValueError(f"error api key is not in enviorment variables")
-
-    #Searches for videos related too the (search query) retrieves basic info of each video. (20 results)
-    search_resp = youtube.search().list(
-            part="snippet",
-            q=Search_Query,
-            type="video",
-            regionCode="US",
-            order="viewCount",
-            maxResults=6
-        ).execute()
-
-    items = search_resp.get("items", [])
-
-
-    #Extracts the videoId of each video in items
-    video_ids = [item["id"]["videoId"] for item in items]
-
-    #Early exit if no videos is found!
-    if not video_ids:
-        return {"items": [], "message": f"No videos found for query: '{Search_Query}'. The query may be too specific. Try call the tool again but  reduce the number of keywords."}
-
-
-    #Fetches snippet + statistics + contentdetails --> fetches mote stats and details --> (title, stats,duration) using the video id's
-    stats_resp = youtube.videos().list(
-        part="snippet,statistics,contentDetails",
-        id=",".join(video_ids)
-    ).execute()
-
-    # Extracts all unique categoryID from videos
-    category_ids = list({item["snippet"]["categoryId"] for item in stats_resp.get("items", [])})
-    fetch_category_names = youtube.videoCategories().list(
-        part="snippet",
-        id=",".join(category_ids),
-    ).execute()
-
-
-    #Looksup human redable category names (music, motivation, education) for each categoryId
-    category_map = {
-        item["id"]: item["snippet"]["title"]
-        for item in fetch_category_names.get("items",[])
-        }
-
-
-
-
-    #Retrieve statistics for each youtube channel too the video vi have found.
-    channel_ids = list({item["snippet"]["channelId"] for item in stats_resp.get("items",[])})
-
-    #We use the list of channel-ids to retrieve channel statistics like (subscriber count)
-    channel_response = youtube.channels().list(
-        part="statistics",
-        id=",".join(channel_ids)
-    ).execute()
-
-
-    #we map the channel_ids  -  amount of subscribers.
-    channel_map = {
-        item["id"]: item["statistics"]["subscriberCount"]
-        for item in channel_response.get("items",[])
-        }
-
-
-
-    enriched = []
-    count = 0
-    for vid in stats_resp.get("items",[]):
-        snippet = vid["snippet"]
-        statistics = vid.get("statistics", {})
-        content = vid.get("contentDetails", {})
-        enriched.append({
-            "videoId": vid["id"],
-            "title": snippet.get("title"),
-            "description": snippet.get("description"),
-            "tags": snippet.get("tags", []),
-            "channelTitle": snippet.get("channelTitle"),
-            "subscriberCount": channel_map.get(snippet.get("channelId")),
-            "category": category_map.get(snippet.get("categoryId")),
-            "publishedAt": snippet.get("publishedAt"),
-            "duration": content.get("duration"),
-            "viewCount": statistics.get("viewCount"),
-            "likeCount": statistics.get("likeCount"),
-            "commentCount": statistics.get("commentCount"),
-           })
-
-    return {"items": enriched}
-
 
 
 
@@ -504,7 +434,7 @@ def ExtractAudioFromVideo(video_path: str) -> str:
         Returns:
             str: the path to the extracted audio file.
     """
-    audio_path = os.path.join(os.path.dirname(video_path), "temp_audio.wav")
+    audio_path = os.path.join(os.path.dirname(video_path), "temp_audi1.wav")
 
     command = [
         "ffmpeg",
@@ -926,6 +856,467 @@ def montage_short_creation_tool(montage_list: List[Dict[str,str]]) -> str:
 
 
 
+def extract_window_frames(video_path: str, start_time: float, end_time: float, max_frames: int = 5):
+    import cv2
+    from PIL import Image
+    import numpy as np
+    cap = cv2.VideoCapture(video_path)
+    fps = cap.get(cv2.CAP_PROP_FPS) or 30
+    start_f = int(start_time * fps)
+    end_f = int(end_time * fps)
+    if end_f <= start_f:
+        cap.release()
+        return []
+    indices = np.linspace(start_f, end_f - 1, num=max_frames, dtype=int)
+    frames = []
+    for idx in indices:
+        cap.set(cv2.CAP_PROP_POS_FRAMES, int(idx))
+        ok, frame = cap.read()
+        if not ok:
+            break
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        frames.append(Image.fromarray(frame))
+    cap.release()
+    log(f"Extracted {len(frames)} frames in window [{start_time:.2f}s - {end_time:.2f}s].")
+    return frames
+
+
+
+
+def predict_emotion(audio_path):
+    import librosa
+    import torch
+    from transformers import Wav2Vec2FeatureExtractor,Wav2Vec2ForSequenceClassification
+    model_path = r"C:\Users\didri\Desktop\AI-models\LLM-Models\Audio models\FadQ\results"
+    feature_extractor = Wav2Vec2FeatureExtractor.from_pretrained(model_path)
+    model = Wav2Vec2ForSequenceClassification.from_pretrained(model_path)
+
+    try:
+        audio, rate = librosa.load(audio_path, sr=16000)
+        inputs = feature_extractor(
+            audio,
+            sampling_rate=rate,
+            return_tensors="pt",
+            padding=True,
+            truncation=True,
+            max_length=16000 * 25
+        )
+        with torch.no_grad():
+            outputs = model(**inputs)
+            logits = outputs.logits
+
+            predictions = torch.nn.functional.softmax(logits, dim=-1)
+            predicted_label = torch.argmax(predictions, dim=-1).item()
+            emotion = model.config.id2label[predicted_label]
+        return emotion
+
+    except Exception as e:
+        log(f"Error processing audio: {str(e)}")
+        return None
+
+
+
+
+def Background_Audio_Decision_Model(audio_file: str, video_subtitles: str, video_path: str,already_uploaded_videos: str,start_time: float,end_time: float):
+    from utility.Global_state import Music_list
+
+    try:
+        emotion = predict_emotion(audio_file)
+        log(f"Emotion recieved from [predict_emotion] --> {emotion}")
+    except Exception as e:
+        log(f"Error during prediction of emotion: {str(e)}")
+
+    def format_videolist(Music_list):
+        formatted = "Candidate Background Tracks: \n"
+        for i, track in enumerate(Music_list):
+                formatted += f"Track {i}:\n"
+                formatted += f"song name: {track['song_name']}\n"
+                formatted += f"  Path: {track['path']}\n"
+                formatted += f"  Description: {track['description']}\n"
+                formatted += f"  Mood: {', '.join([f'{k}: {v}' for k, v in track['mood'].items()])}\n"
+                formatted += f"  Tempo: {track['tempo']}\n"
+                formatted += f"  Energy: Valence={track['energy']['💖Valence']}, Arousal={track['energy']['⚡Arousal']}\n"
+                formatted += f"  Genre: {track['genre']}\n"
+                formatted += f"  Tags: {', '.join(track['Tags'])}\n\n"
+        return formatted
+
+    _videolist = format_videolist(Music_list)
+
+    content = {
+        "Transcript": video_subtitles,
+        "emotion": emotion,
+        "videolist": _videolist
+    }
+    response = {}
+    try:
+         log("Starting [run_multi_Vision_model_conclusion]")
+         from Agents.Vision_agent import run_multi_Vision_model_agent
+         response = run_multi_Vision_model_agent(
+            video_path=video_path,
+            Additional_content=content,
+             already_uploaded_videos=already_uploaded_videos,
+             start_time=start_time,
+             end_time=end_time
+             )
+         log(f"Response from [run_multi_Vision_model_conclusion]: {response}")
+    except Exception as e:
+        log(f"[Background_Audio_Decision_Model] Error during run_multi_Vision_model_agent: {str(e)}")
+    from utility.clean_memory import clean_get_gpu_memory
+    clean_get_gpu_memory(threshold=0.1)
+    log(f"Finished [Background_Audio_Decision_Model] with response: {response}")
+
+
+    return response
+
+
+
+@tool
+def get_recent_background_music(already_uploaded_json: str, limit: int = 3) -> list:
+    """
+    Return the most recent background music selections from the upload history JSON.
+
+    Args:
+        already_uploaded_json: Path to the channel-specific upload history JSON file.
+        limit: Number of latest entries to return (default 3).
+
+    Returns:
+        List of dicts containing song_name, background_audio, publishAt, title, and current_video_name.
+    """
+    if not os.path.exists(already_uploaded_json):
+        return []
+
+    try:
+        with open(already_uploaded_json, "r", encoding="utf-8") as r:
+            history = json.load(r)
+    except Exception:
+        return []
+
+    if not isinstance(history, list):
+        return []
+
+    recent = history[-limit:]
+    result = []
+    for entry in recent:
+        result.append(
+            {
+                "song_name": entry.get("song_name"),
+                "background_audio": entry.get("background_audio"),
+                "publishAt": entry.get("publishAt"),
+                "title": entry.get("title"),
+                "current_video_name": entry.get("current_video_name"),
+            }
+        )
+    return result
+
+
+@tool
+def get_recent_background_music_summary(already_uploaded_json: str, limit: int = 3) -> str:
+    """
+    Return a compact summary string of the latest background tracks from upload history.
+
+    Args:
+        already_uploaded_json: Path to the upload history JSON file.
+        limit: Number of latest entries to include (default 3).
+
+    Returns:
+        A newline-separated summary of recent background tracks.
+    """
+    recent = get_recent_background_music(already_uploaded_json, limit=limit)
+    if not recent:
+        return "No previous background tracks recorded."
+
+    lines = []
+    for idx, item in enumerate(recent, start=1):
+        lines.append(
+            f"{idx}. song_name={item.get('song_name')}, background_audio={item.get('background_audio')}, publishAt={item.get('publishAt')}, title={item.get('title')}, source_video={item.get('current_video_name')}"
+        )
+    return "\n".join(lines)
+
+
+
+
+
+
+async def detect_music_in_video(audio_file: str):
+    from shazamio import Shazam
+    shazam = Shazam()
+    try:
+        result = await shazam.recognize(audio_file)
+        track = result.get('track')
+
+        if track:
+            title = track.get("title", "Unknown")
+            artist = track.get("artist", "Unknown")
+            log(f"shazam: Title: {title} \n Artist: {artist}")
+            return title, artist
+
+        elif track is None or track.get("title") is None:
+            log("SHAZAM failed, falling back to YouTube search using video title")
+            music_title = "Unknown"
+            music_artist = "Unknown"
+            return music_title, music_artist
+    except Exception as e:
+        log(f"Error inside: [detect_music_in_video] -> {str(e)}")
+
+
+
+
+
+def isolate_audiofile(audio_file: str, save_folder: str = None):
+    """
+    Demucs model that seperate the vocals and music, and returns the music
+    """
+    from demucs.pretrained import get_model
+    from demucs.audio import AudioFile
+    from demucs.separate import apply_model
+    import soundfile as sf
+    import numpy as np
+    model = get_model('mdx')
+    model.cpu()
+    model.eval()
+    try:
+        wav = AudioFile(audio_file).read(streams=0, samplerate=model.samplerate)
+        wav = torch.tensor(wav, dtype=torch.float32).unsqueeze(0)
+
+        with torch.no_grad():
+            sources = apply_model(model, wav, device='cpu')
+
+        accompaniment = sources[0, [0, 1, 2]].sum(dim=0).cpu().numpy()
+        output_file = os.path.join(save_folder,"accompaniment.wav")
+        sf.write(output_file, accompaniment.T, model.samplerate)
+    except Exception as e:
+        log(f"Error inside [isolate_audiofile] -> {str(e)}")
+    return output_file
+
+
+
+
+
+def Download_Music_from_youtube(music_info: dict):
+    if isinstance(music_info, tuple):
+        title, artist = music_info
+    else:
+        title = music_info.get("title")
+        artist = music_info.get("artist")
+
+    if title == "Unknown":
+        print("Shazam failed, skipping YouTube music download")
+        return None
+
+    query = title
+    if artist:
+        query += f" {artist}"
+
+    output_path = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio"
+    ytdl =  {
+            "outtmpl": f'{output_path}/%(title)s.%(ext)s',
+            "cookiefile": cookie_file_path,
+            'format': f"bestaudio/best",
+            'nocheckcertificate': True,
+            "restrictfilenames": True,
+            'quiet': False,
+            '--no-playlist': True,
+            "default_search": "ytsearch1",
+            'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'wav',
+            'preferredquality': '0',
+        }]
+        }
+    try:
+        with yt_dlp.YoutubeDL(ytdl) as ydl:
+            info = ydl.extract_info(query, download=True)
+            if 'requested_downloads' in info:
+
+                 file_path = info['requested_downloads'][0]['filepath']
+            elif 'entries' in info and len(info['entries']) > 0:
+                file_path = info['entries'][0]['requested_downloads'][0]['filepath']
+
+            else:
+                raise ValueError("Could not find downloaded file path ")
+            log(f"Music downloaded from YouTube to: {file_path}")
+            return file_path
+    except yt_dlp.utils.DownloadError as e:
+            log(f"[YT_dlp] ERROR: {str(e)}")
+            return None
+
+
+def detect_Music_with_Audd(audio_file: str,original_url = None, verbose: bool = True):
+    api_key = os.getenv("AAUDD_APIKEY")
+    if not api_key:
+        raise ValueError("Api key is missing!")
+
+    url = "https://api.audd.io/"
+
+    data = {
+        'api_token': api_key,
+        'return': 'apple_music,spotify,is_instrumental'
+    }
+
+    files = None
+    if audio_file:
+        files = {'file': open(audio_file, 'rb')}
+    if original_url:
+        data['url'] = original_url
+
+    response = requests.post(url, data=data, files=files)
+    result = response.json()
+
+    if verbose:
+        log("=== AUD raw response===")
+        log(json.dumps(result, indent=2))
+
+    if result['status'] == 'success' and result.get('result'):
+        data = result['result']
+        title = data.get('title', 'Unknown')
+        artist = data.get('artist', 'Unknown')
+        instrumental = data.get('is_instrumental', False)
+        spotify_link = data.get('spotify', {}).get('external_urls', {}).get('spotify')
+        apple_link = data.get('apple_music', {}).get('url')
+
+        if verbose:
+            log("=== AudD Parsed Result ===")
+            log(f"Title: {title}")
+            log(f"Artist: {artist}")
+            log(f"Is instrumental? {instrumental}")
+            log(f"Spotify: {spotify_link}")
+            log(f"Apple Music: {apple_link}")
+        return data
+    else:
+        if verbose:
+           log("Song not found or recognition failed")
+        return None
+
+
+
+
+
+def download_youtube_Music_Audio(Youtube_url: str,save_folder: str):
+    """Downloads the Audio file from a youtube video and detects the music name. Downloads the music and returns it
+        Args:
+            Youtube_url (str): Path to the youtube video
+
+    """
+    ytdl =  {
+            "outtmpl": os.path.join(save_folder, "%(title)s.%(ext)s"),
+            "cookiefile": cookie_file_path,
+            'format': f"bestaudio/best",
+            "restrictfilenames": True,
+            'nocheckcertificate': True,
+            'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'wav',
+            'preferredquality': '0',
+        }]
+        }
+    try:
+        with yt_dlp.YoutubeDL(ytdl) as ydl:
+               info = ydl.extract_info(Youtube_url,download=True)
+               audio_file_path = info['requested_downloads'][0]['filepath']
+               print(f"Video audio downloaded to: {audio_file_path}")
+    except yt_dlp.utils.DownloadError as e:
+            log(f"[YT_dlp] ERROR: {str(e)}")
+            return None
+
+    try:
+        accompaniment_path = isolate_audiofile(audio_file_path, save_folder)
+        log(f"only music/intstrumental path: {accompaniment_path}")
+    except Exception as e:
+        log(f"Error during: [isolate_audiofile]: {str(e)}")
+
+
+    import asyncio
+    log("Trying to detect music with Shazam.")
+    try:
+        music_title, music_artist = asyncio.run(detect_music_in_video(accompaniment_path))
+    except Exception as e:
+        log(f"Error during [detect_music_in_video]: {str(e)}")
+
+    if not music_title:
+        log("Shazam could not detect music. Skipping music download.")
+        return audio_file_path, accompaniment_path, None
+    else:
+        music_info_dict = { "title": music_title, "music_artist": music_artist }
+
+
+    try:
+       music_file_path  = Download_Music_from_youtube(music_info_dict)
+    except Exception as e:
+        log(f"Error during [Download_Music_from_youtube]: {str(e)}")
+
+    if music_file_path  is None:
+        log("Trying to detect with (AUUD) now...")
+        try:
+            Auud_music = detect_Music_with_Audd(accompaniment_path,Youtube_url)
+            if Auud_music is None:
+                music_file_path  = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\way down we go (instrumental) - kaleo [edit audio] [mp3].mp3"
+        except Exception as e:
+            log(f"Error during [detect_Music_with_Audd]: {str(e)}")
+            music_file_path  = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\way down we go (instrumental) - kaleo [edit audio] [mp3].mp3"
+
+
+    log(f"Final Music path: {music_file_path}")
+
+    return  music_file_path
+
+
+
+@tool
+def Read_already_uploaded_video_publishedat(file_path: str) -> str:
+    """A tool that returns information about all videos that are published already. data like (title, description, tags, PublishedAt).
+        This tool is useful too gather information about future video PublishedAt/Time scheduling .
+        Args:
+        file_path (str): The path to already_uploaded file
+        Returns: str "string"
+    """
+    try:
+
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read()
+        return content
+    except FileNotFoundError as e:
+        return "No uploaded video data found."
+    except Exception as e:
+            return f"Error reading uploaded video data: {str(e)}"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class SpeechToTextTool_viral_agent(PipelineTool):
     default_checkpoint = r"C:\Users\didri\Desktop\AI-models\Audio-Models\faster-whisper-large-int8-ct2"
@@ -952,6 +1343,7 @@ class SpeechToTextTool_viral_agent(PipelineTool):
         segments,_ = self.model.transcribe(
             audio_path_viral_agent,
             vad_filter=True,
+            language="en",
             vad_parameters={"min_silence_duration_ms": 500}
         )
 
@@ -985,141 +1377,6 @@ class SpeechToTextTool_viral_agent(PipelineTool):
 
 
 
-
-class SpeechToTextToolCPU_Custom(PipelineTool):
-    default_checkpoint = r"c:\Users\didri\Desktop\AI-models\Audio-Models\faster-whisper-large-v3-turbo-int8float16"
-    description = "Fast tool that transcribes audio into text using faster-whisper. It returns the path to the transcript file"
-    name = "transcriber"
-    inputs = {
-        "audio": {
-            "type": "audio",
-            "description": "The audio to transcribe. Can be a local path, a URL, or a tensor.",
-        },
-
-    }
-    output_type = "string"
-    def setup(self):
-        self.model = WhisperModel(
-                model_size_or_path=self.default_checkpoint,
-                device="auto",
-                compute_type="int8_float16",
-
-                    )
-
-
-
-    def forward(self, inputs):
-        audio_path = inputs["audio"]
-        segments = self.model.transcribe(
-            audio_path,
-            vad_filter=True,
-            vad_parameters={"min_silence_duration_ms": 500},
-            word_timestamps=True
-        )
-
-
-        try:
-            words = []
-            for segment in segments:
-                    for word in segment.words:
-                        words.append({
-                            "word": word.word.strip(),
-                            "start": word.start,
-                            "end": word.end
-                        })
-            return words
-        except Exception as e:
-            log(f"error during transcribing {str(e)}")
-            return []
-
-
-
-        finally:
-            del self.model
-            if self.device == "cuda":
-                torch.cuda.empty_cache()
-
-
-    def encode(self, audio):
-        return {"audio": audio}
-
-    def decode(self, outputs):
-        return outputs
-
-
-
-
-
-
-
-
-
-class SpeechToTextToolCPU(PipelineTool):
-    default_checkpoint = r"c:\Users\didri\Desktop\AI-models\Audio-Models\faster-whisper-large-int8-ct2"
-    description = "Fast tool that transcribes audio into text using faster-whisper. It returns the path to the transcript file"
-    name = "transcriber"
-    inputs = {
-        "audio": {
-            "type": "audio",
-            "description": "The audio to transcribe. Can be a local path, a URL, or a tensor.",
-        },
-        "text_path": {
-            "type": "string",
-             "description": "The path to save the transcript to.",
-        },
-        "video_path": {
-            "type": "string",
-            "description": "The path to the video to transcribe. only for info logging",
-        }
-    }
-    output_type = "string"
-    def setup(self):
-        self.model = WhisperModel(
-                model_size_or_path=self.default_checkpoint,
-                device="cpu",
-                compute_type="int8",
-                cpu_threads=6
-                    )
-
-    def forward(self, inputs):
-        audio_path = inputs["audio"]
-        text_path = inputs["text_path"]
-        video_path = inputs["video_path"]
-        segments, info = self.model.transcribe(
-            audio_path,
-            vad_filter=True,
-            vad_parameters={"min_silence_duration_ms": 500}
-        )
-        log(f"\n🔊 Using Whisper on device: {self.device}, \ntranscribing video: {video_path} \n   with inputs: {self.inputs}")
-        log(f"[INFO] Detected Language: {info.language} (confidence: {info.language_probability:.2f})")
-        log(f"[INFO] Audio Duration: {info.duration:.2f} seconds")
-
-        try:
-            with open(text_path, "w", encoding="utf-8") as f:
-                log(f"opening txt_path on: {text_path} device: {self.device}")
-                start_write_time = time.time()
-                for segment in segments:
-                        f.write(f"[{segment.start:.2f}s - {segment.end:.2f}s] {segment.text.strip()}\n")
-                end_write_time = time.time()
-        finally:
-            total_write_time = end_write_time - start_write_time
-            num_segments = len(segments)
-            avg_segment_write_time = total_write_time / num_segments if num_segments > 0 else 0
-            log(f"Finished writing {num_segments} segments.")
-            log(f"Total write time: {total_write_time:.4f} seconds")
-            log(f"Average write time per segment: {avg_segment_write_time:.6f} seconds")
-            log(f"transcription complete ! device  {self.device}")
-            del self.model
-            if self.device == "cuda":
-                torch.cuda.empty_cache()
-
-        return text_path
-
-    def encode(self, audio):
-        return {"audio": audio}
-
-    def decode(self, outputs):
-        return outputs
 
 
 
@@ -1483,14 +1740,10 @@ class SpeechToTextToolCUDA(PipelineTool):
 
         try:
             with open(text_path, "a", encoding="utf-8") as f:
-                print(f"opening txt_path on: {text_path} device: {self.device}")
+                log(f"opening txt_path on: {text_path} device: {self.device}")
+                for segment in segments:
+                        f.write(f"[{segment.start:.2f}s - {segment.end:.2f}s] {segment.text.strip()}\n")
 
-                try:
-                    for segment in segments:
-                         f.write(f"{segment.text.strip()}\n")
-                    f.write("\n\n")
-                except Exception as e:
-                    print(f"error during segments: {str(e)}")
 
         finally:
             print(f"transcription complete ! device  {self.device}")
@@ -1511,7 +1764,85 @@ class SpeechToTextToolCUDA(PipelineTool):
 
 
 
-class SpeechToTextToolTEST(PipelineTool):
+
+
+
+
+
+
+
+
+
+class SpeechToTextToolCPU(PipelineTool):
+    default_checkpoint = r"c:\Users\didri\Desktop\AI-models\Audio-Models\faster-whisper-large-int8-ct2"
+    description = "Fast tool that transcribes audio into text using faster-whisper. It returns the path to the transcript file"
+    name = "transcriber"
+    inputs = {
+        "audio": {
+            "type": "audio",
+            "description": "The audio to transcribe. Can be a local path, a URL, or a tensor.",
+        },
+        "text_path": {
+            "type": "string",
+             "description": "The path to save the transcript to.",
+        },
+        "video_path": {
+            "type": "string",
+            "description": "The path to the video to transcribe. only for info logging",
+        }
+    }
+    output_type = "string"
+    def setup(self):
+        self.model = WhisperModel(
+                model_size_or_path=self.default_checkpoint,
+                device="cpu",
+                compute_type="int8",
+                cpu_threads=8
+                    )
+
+    def forward(self, inputs):
+        audio_path = inputs["audio"]
+        text_path = inputs["text_path"]
+        video_path = inputs["video_path"]
+        segments, info = self.model.transcribe(
+            audio_path,
+            vad_filter=True,
+            vad_parameters={"min_silence_duration_ms": 500}
+        )
+        log(f"\n🔊 Using Whisper on device: {self.device}, \ntranscribing video: {video_path} \n   with inputs: {self.inputs}")
+        log(f"[INFO] Detected Language: {info.language} (confidence: {info.language_probability:.2f})")
+        log(f"[INFO] Audio Duration: {info.duration:.2f} seconds")
+
+        try:
+            with open(text_path, "w", encoding="utf-8") as f:
+                log(f"opening txt_path on: {text_path} device: {self.device}")
+                start_write_time = time.time()
+                for segment in segments:
+                        f.write(f"[{segment.start:.2f}s - {segment.end:.2f}s] {segment.text.strip()}\n")
+                end_write_time = time.time()
+        finally:
+            total_write_time = end_write_time - start_write_time
+            num_segments = len(segments)
+            avg_segment_write_time = total_write_time / num_segments if num_segments > 0 else 0
+            log(f"Finished writing {num_segments} segments.")
+            log(f"Total write time: {total_write_time:.4f} seconds")
+            log(f"Average write time per segment: {avg_segment_write_time:.6f} seconds")
+            log(f"transcription complete ! device  {self.device}")
+            del self.model
+            if self.device == "cuda":
+                torch.cuda.empty_cache()
+
+        return text_path
+
+    def encode(self, audio):
+        return {"audio": audio}
+
+    def decode(self, outputs):
+        return outputs
+
+
+
+class SpeechToTextTool_Text(PipelineTool):
     default_checkpoint = r"c:\Users\didri\Desktop\AI-models\Audio-Models\faster-whisper-large-v3-turbo-int8float16"
     description = "Fast tool that transcribes audio into text using faster-whisper. It returns the path to the transcript file"
     name = "transcriber"
@@ -1524,11 +1855,10 @@ class SpeechToTextToolTEST(PipelineTool):
 
     }
     output_type = "string"
-
     def setup(self):
         self.model = WhisperModel(
             model_size_or_path=self.default_checkpoint,
-            device="auto",
+            device="cuda",
             compute_type="int8_float16"
             )
 
@@ -1538,31 +1868,29 @@ class SpeechToTextToolTEST(PipelineTool):
         print(f"Audio_path speech to text tool: {audio_path}")
 
         try:
-            segments, _= self.model.transcribe(
+            segments, info = self.model.transcribe(
                 audio_path,
                 initial_prompt="Motivational podcast",
-                language="en",
+                task="translate",
                 temperature=0.0,
                 vad_filter=True,
             )
 
+            log(f"[INFO] Detected Language: {info.language} (confidence: {info.language_probability:.2f})")
 
-            Transcript = ""
+            Transcript = []
             for segment in segments:
-                log(f" text: {segment.text.strip()}")
-                if hasattr(segment, "text"):
-                    Transcript += segment.text + " "
-                else:
-                    print(f"Segment missing text attribute: {segment}")
+
+                Transcript.append(segment.text)
+
         except Exception as e:
              log(f"Error during transcription: {str(e)}")
 
         finally:
             log(f"transcription complete")
-            log(f"Transcript: {Transcript}")
-            del self.model
 
-        return Transcript.strip()
+
+        return Transcript
 
     def encode(self, audio):
         return {"audio": audio}
@@ -1570,371 +1898,4 @@ class SpeechToTextToolTEST(PipelineTool):
     def decode(self, outputs):
         return outputs
 
-
-
-
-
-
-
-def extract_window_frames(video_path: str, start_time: float, end_time: float, max_frames: int = 5):
-    import cv2
-    from PIL import Image
-    import numpy as np
-    cap = cv2.VideoCapture(video_path)
-    fps = cap.get(cv2.CAP_PROP_FPS) or 30
-    start_f = int(start_time * fps)
-    end_f = int(end_time * fps)
-    if end_f <= start_f:
-        cap.release()
-        return []
-    indices = np.linspace(start_f, end_f - 1, num=max_frames, dtype=int)
-    frames = []
-    for idx in indices:
-        cap.set(cv2.CAP_PROP_POS_FRAMES, int(idx))
-        ok, frame = cap.read()
-        if not ok:
-            break
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        frames.append(Image.fromarray(frame))
-    cap.release()
-    log(f"Extracted {len(frames)} frames in window [{start_time:.2f}s - {end_time:.2f}s].")
-    return frames
-
-
-
-
-def predict_emotion(audio_path):
-    import librosa
-    import torch
-    from transformers import Wav2Vec2FeatureExtractor,Wav2Vec2ForSequenceClassification
-    model_path = r"C:\Users\didri\Desktop\AI-models\LLM-Models\Audio models\FadQ\results"
-    feature_extractor = Wav2Vec2FeatureExtractor.from_pretrained(model_path)
-    model = Wav2Vec2ForSequenceClassification.from_pretrained(model_path)
-
-    try:
-        audio, rate = librosa.load(audio_path, sr=16000)
-        inputs = feature_extractor(
-            audio,
-            sampling_rate=rate,
-            return_tensors="pt",
-            padding=True,
-            truncation=True,
-            max_length=16000 * 25
-        )
-        with torch.no_grad():
-            outputs = model(**inputs)
-            logits = outputs.logits
-
-            predictions = torch.nn.functional.softmax(logits, dim=-1)
-            predicted_label = torch.argmax(predictions, dim=-1).item()
-            emotion = model.config.id2label[predicted_label]
-        return emotion
-
-    except Exception as e:
-        log(f"Error processing audio: {str(e)}")
-        return None
-
-
-
-
-def Background_Audio_Decision_Model(audio_file: str, video_subtitles: str, video_path: str,already_uploaded_videos: str,start_time: float,end_time: float):
-    from utility.Global_state import Music_list
-
-    try:
-        emotion = predict_emotion(audio_file)
-        log(f"Emotion recieved from [predict_emotion] --> {emotion}")
-    except Exception as e:
-        log(f"Error during prediction of emotion: {str(e)}")
-
-    def format_videolist(Music_list):
-        formatted = "Candidate Background Tracks: \n"
-        for i, track in enumerate(Music_list):
-                formatted += f"Track {i}:\n"
-                formatted += f"song name: {track['song_name']}\n"
-                formatted += f"  Path: {track['path']}\n"
-                formatted += f"  Description: {track['description']}\n"
-                formatted += f"  Mood: {', '.join([f'{k}: {v}' for k, v in track['mood'].items()])}\n"
-                formatted += f"  Tempo: {track['tempo']}\n"
-                formatted += f"  Energy: Valence={track['energy']['💖Valence']}, Arousal={track['energy']['⚡Arousal']}\n"
-                formatted += f"  Genre: {track['genre']}\n"
-                formatted += f"  Tags: {', '.join(track['Tags'])}\n\n"
-        return formatted
-
-    _videolist = format_videolist(Music_list)
-
-    content = {
-        "Transcript": video_subtitles,
-        "emotion": emotion,
-        "videolist": _videolist
-    }
-    response = {}
-    try:
-         log("Starting [run_multi_Vision_model_conclusion]")
-         from Agents.Vision_agent import run_multi_Vision_model_agent
-         response = run_multi_Vision_model_agent(
-            video_path=video_path,
-            Additional_content=content,
-             already_uploaded_videos=already_uploaded_videos,
-             start_time=start_time,
-             end_time=end_time
-             )
-         log(f"Response from [run_multi_Vision_model_conclusion]: {response}")
-    except Exception as e:
-        log(f"[Background_Audio_Decision_Model] Error during run_multi_Vision_model_agent: {str(e)}")
-    from utility.clean_memory import clean_get_gpu_memory
-    clean_get_gpu_memory(threshold=0.1)
-    log(f"Finished [Background_Audio_Decision_Model] with response: {response}")
-
-
-    return response
-
-
-
-
-
-
-
-
-async def detect_music_in_video(audio_file: str):
-    from shazamio import Shazam
-    shazam = Shazam()
-    try:
-        result = await shazam.recognize(audio_file)
-        track = result.get('track')
-
-        if track:
-            title = track.get("title", "Unknown")
-            artist = track.get("artist", "Unknown")
-            log(f"shazam: Title: {title} \n Artist: {artist}")
-            return title, artist
-
-        elif track is None or track.get("title") is None:
-            log("SHAZAM failed, falling back to YouTube search using video title")
-            music_title = "Unknown"
-            music_artist = "Unknown"
-            return music_title, music_artist
-    except Exception as e:
-        log(f"Error inside: [detect_music_in_video] -> {str(e)}")
-
-
-
-
-
-def isolate_audiofile(audio_file: str, save_folder: str = None):
-    """
-    Demucs model that seperate the vocals and music, and returns the music
-    """
-    from demucs.pretrained import get_model
-    from demucs.audio import AudioFile
-    from demucs.separate import apply_model
-    import soundfile as sf
-    import numpy as np
-    model = get_model('mdx')
-    model.cpu()
-    model.eval()
-    try:
-        wav = AudioFile(audio_file).read(streams=0, samplerate=model.samplerate)
-        wav = torch.tensor(wav, dtype=torch.float32).unsqueeze(0)
-
-        with torch.no_grad():
-            sources = apply_model(model, wav, device='cpu')
-
-        accompaniment = sources[0, [0, 1, 2]].sum(dim=0).cpu().numpy()
-        output_file = os.path.join(save_folder,"accompaniment.wav")
-        sf.write(output_file, accompaniment.T, model.samplerate)
-    except Exception as e:
-        log(f"Error inside [isolate_audiofile] -> {str(e)}")
-    return output_file
-
-
-
-
-
-def Download_Music_from_youtube(music_info: dict):
-    if isinstance(music_info, tuple):
-        title, artist = music_info
-    else:
-        title = music_info.get("title")
-        artist = music_info.get("artist")
-
-    if title == "Unknown":
-        print("Shazam failed, skipping YouTube music download")
-        return None
-
-    query = title
-    if artist:
-        query += f" {artist}"
-
-    output_path = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio"
-    ytdl =  {
-            "outtmpl": f'{output_path}/%(title)s.%(ext)s',
-            "cookiefile": cookie_file_path,
-            'format': f"bestaudio/best",
-            'nocheckcertificate': True,
-            "restrictfilenames": True,
-            'quiet': False,
-            '--no-playlist': True,
-            "default_search": "ytsearch1",
-            'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'wav',
-            'preferredquality': '0',
-        }]
-        }
-    try:
-        with yt_dlp.YoutubeDL(ytdl) as ydl:
-            info = ydl.extract_info(query, download=True)
-            if 'requested_downloads' in info:
-
-                 file_path = info['requested_downloads'][0]['filepath']
-            elif 'entries' in info and len(info['entries']) > 0:
-                file_path = info['entries'][0]['requested_downloads'][0]['filepath']
-
-            else:
-                raise ValueError("Could not find downloaded file path ")
-            log(f"Music downloaded from YouTube to: {file_path}")
-            return file_path
-    except yt_dlp.utils.DownloadError as e:
-            log(f"[YT_dlp] ERROR: {str(e)}")
-            return None
-
-
-def detect_Music_with_Audd(audio_file: str,original_url = None, verbose: bool = True):
-    load_dotenv()
-    api_key = os.getenv("AAUDD_APIKEY")
-    if not api_key:
-        raise ValueError("Api key is missing!")
-
-    url = "https://api.audd.io/"
-
-    data = {
-        'api_token': api_key,
-        'return': 'apple_music,spotify,is_instrumental'
-    }
-
-    files = None
-    if audio_file:
-        files = {'file': open(audio_file, 'rb')}
-    if original_url:
-        data['url'] = original_url
-
-    response = requests.post(url, data=data, files=files)
-    result = response.json()
-
-    if verbose:
-        log("=== AUD raw response===")
-        log(json.dumps(result, indent=2))
-
-    if result['status'] == 'success' and result.get('result'):
-        data = result['result']
-        title = data.get('title', 'Unknown')
-        artist = data.get('artist', 'Unknown')
-        instrumental = data.get('is_instrumental', False)
-        spotify_link = data.get('spotify', {}).get('external_urls', {}).get('spotify')
-        apple_link = data.get('apple_music', {}).get('url')
-
-        if verbose:
-            log("=== AudD Parsed Result ===")
-            log(f"Title: {title}")
-            log(f"Artist: {artist}")
-            log(f"Is instrumental? {instrumental}")
-            log(f"Spotify: {spotify_link}")
-            log(f"Apple Music: {apple_link}")
-        return data
-    else:
-        if verbose:
-           log("Song not found or recognition failed")
-        return None
-
-
-
-
-
-def download_youtube_Music_Audio(Youtube_url: str,save_folder: str):
-    """Downloads the Audio file from a youtube video and detects the music name. Downloads the music and returns it
-        Args:
-            Youtube_url (str): Path to the youtube video
-
-    """
-    ytdl =  {
-            "outtmpl": os.path.join(save_folder, "%(title)s.%(ext)s"),
-            "cookiefile": cookie_file_path,
-            'format': f"bestaudio/best",
-            "restrictfilenames": True,
-            'nocheckcertificate': True,
-            'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'wav',
-            'preferredquality': '0',
-        }]
-        }
-    try:
-        with yt_dlp.YoutubeDL(ytdl) as ydl:
-               info = ydl.extract_info(Youtube_url,download=True)
-               audio_file_path = info['requested_downloads'][0]['filepath']
-               print(f"Video audio downloaded to: {audio_file_path}")
-    except yt_dlp.utils.DownloadError as e:
-            log(f"[YT_dlp] ERROR: {str(e)}")
-            return None
-
-    try:
-        accompaniment_path = isolate_audiofile(audio_file_path, save_folder)
-        log(f"only music/intstrumental path: {accompaniment_path}")
-    except Exception as e:
-        log(f"Error during: [isolate_audiofile]: {str(e)}")
-
-
-    import asyncio
-    log("Trying to detect music with Shazam.")
-    try:
-        music_title, music_artist = asyncio.run(detect_music_in_video(accompaniment_path))
-    except Exception as e:
-        log(f"Error during [detect_music_in_video]: {str(e)}")
-
-    if not music_title:
-        log("Shazam could not detect music. Skipping music download.")
-        return audio_file_path, accompaniment_path, None
-    else:
-        music_info_dict = { "title": music_title, "music_artist": music_artist }
-
-
-    try:
-       music_file_path  = Download_Music_from_youtube(music_info_dict)
-    except Exception as e:
-        log(f"Error during [Download_Music_from_youtube]: {str(e)}")
-
-    if music_file_path  is None:
-        log("Trying to detect with (AUUD) now...")
-        try:
-            Auud_music = detect_Music_with_Audd(accompaniment_path,Youtube_url)
-            if Auud_music is None:
-                music_file_path  = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\way down we go (instrumental) - kaleo [edit audio] [mp3].mp3"
-        except Exception as e:
-            log(f"Error during [detect_Music_with_Audd]: {str(e)}")
-            music_file_path  = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\audio\way down we go (instrumental) - kaleo [edit audio] [mp3].mp3"
-
-
-    log(f"Final Music path: {music_file_path}")
-
-    return  music_file_path
-
-
-
-@tool
-def Read_already_uploaded_video_publishedat(file_path: str) -> str:
-    """A tool that returns information about all videos that are published already. data like (title, description, tags, PublishedAt).
-        This tool is useful too gather information about future video PublishedAt/Time scheduling .
-        Args:
-        file_path (str): The path to already_uploaded file
-        Returns: str "string"
-    """
-    try:
-
-        with open(file_path, "r", encoding="utf-8") as f:
-            content = f.read()
-        return content
-    except FileNotFoundError as e:
-        return "No uploaded video data found."
-    except Exception as e:
-            return f"Error reading uploaded video data: {str(e)}"
 

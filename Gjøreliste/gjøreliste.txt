@@ -1,7 +1,6 @@
-- endre youtube agent uploader til og bruke openai api direkte for å få tilgang til gpt 5.2/skrive om system prompt på youtube-agenten til og bli mer direkte, klar og tydelig.
 
 
-- fikse montage_short_creation_worker til og kjøre riktig. vet det er noe feil der som har oppstått etter flytting av funksjoner etc. noe import feil noe sted der kanskje...
+- fikse montage_short_creation_worker til og kjøre riktig. vet det er noe feil der som har oppstått etter flytting av funksjoner etc. noe import feil noe sted der og agent_saving_path innholder for mye som går utover kontekst vindu til modell, hva kan jeg gjøre der ?
 
 
 - Sjekke om background music agent velger varierte music tracks for diverse shorts videoer.

@@ -14,7 +14,6 @@ sys.modules['torchvision.transforms.functional_tensor'] = F
 import torch.nn.functional as F
 import subprocess
 import ffmpeg
-from concurrent.futures import ThreadPoolExecutor
 import pynvml
 import time
 from utility.clean_memory import clean_get_gpu_memory
@@ -231,6 +230,11 @@ def video_creation_worker():
                 log(f"[video_creation_worker] Received sentinel, exiting.")
                 Global_state.video_task_que.task_done(task_id)
                 break
+            # Validate task structure before unpacking
+            if not isinstance(item, (list, tuple)) or len(item) != 5:
+                log(f"[video_creation_worker][WARN] Skipping invalid task: {item}")
+                Global_state.video_task_que.task_done(task_id)
+                continue
 
             video_url, audio_path, final_start_time, final_end_time, subtitle_text = item
             log(f"current work being proccessed/Retrieved WORK: {video_url}\naudio_path:{audio_path}\n {final_start_time}\n {final_end_time}\n {subtitle_text}\n")
@@ -247,6 +251,7 @@ def video_creation_worker():
             Success = True
             clean_get_gpu_memory(threshold=0.3)
         except Exception as e:
+            Success = False
             log(f"Error during [run_video_short_creation_thread]: {str(e)}")
             continue
         finally:

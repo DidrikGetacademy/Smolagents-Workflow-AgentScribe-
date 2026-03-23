@@ -111,18 +111,18 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
             txt_clip = TextClip(
                 text=_text,
                 font=r"C:\WINDOWS\FONTS\COPPERPLATECC-BOLD.TTF",
-                font_size=39,
+                font_size=43,
                 margin=(10, 10),
                 text_align="center",
                 vertical_align="center",
                 horizontal_align="center",
                 color='white',
                 stroke_color="black",
-                stroke_width=2,
-                size=(1200, 400),
+                stroke_width=4,
+                size=(1300, 500),
                 method="caption",
                 duration=c['duration']
-            ).with_start(c['start']).with_position(('center', 0.54), relative=True).with_effects([CrossFadeIn(0.10), CrossFadeOut(0.10)])
+            ).with_start(c['start']).with_position(('center', 0.55), relative=True).with_effects([CrossFadeIn(0.10), CrossFadeOut(0.10)])
 
 
 
@@ -167,6 +167,24 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
                 raise ValueError("Empty audio from clip")
     except Exception as e:
         log(f"[audio cache] Failed to extract audio early: {str(e)}")
+
+    if original_audio_np is None or (hasattr(original_audio_np, "size") and original_audio_np.size == 0):
+        try:
+            _aclip = AudioFileClip(video_path).subclipped(start_time, end_time)
+            if _aclip.duration is not None and _aclip.duration <= (1.0 / audio_sr):
+                raise ValueError("Audio subclip too short after fallback")
+            _np = _aclip.to_soundarray(fps=audio_sr)
+            if _np.size == 0:
+                raise ValueError("Empty audio from AudioFileClip fallback")
+            original_audio_np = _np
+            log(f"[audio cache] Fallback extract ok, duration: {_aclip.duration:.3f}s, shape: {original_audio_np.shape}")
+        except Exception as e:
+            log(f"[audio cache] Fallback extract failed: {str(e)}")
+        finally:
+            try:
+                _aclip.close()
+            except Exception:
+                pass
     try:
         clip.close()
     except Exception:
@@ -178,7 +196,7 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
 # --------------------------------#
 # Yolo8/facedetection + Cropping
 # --------------------------------#
-    cropped_frames = detect_and_crop_frames_batch(frames=frames,batch_size=25)
+    cropped_frames = detect_and_crop_frames_batch(frames=frames,batch_size=20)
     clean_get_gpu_memory(threshold=0.1)
     del frames
     frame_height, frame_width = cropped_frames[0].shape[:2]
@@ -231,7 +249,7 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
               FaceEnhancement_frames.append(RGB_face_enchanced_frame)
 
               del enchanced_frame_bgr
-        del  Skin_texture_enchancement, face_args
+        del  Skin_texture_enchancement, face_args, cropped_frames
         frame_height, frame_width = FaceEnhancement_frames[0].shape[:2]
         log(f"[FaceEnhancement]  frames: {len(FaceEnhancement_frames)} frames.\n Height: {frame_height}, Width: {frame_width}")
     except Exception as e:
@@ -340,32 +358,33 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
 #-----------------------------------------------#
 # Adds Subtitles + Logo to the video
 #-----------------------------------------------#
+
     final_clip = CompositeVideoClip(
-                [processed_clip.with_position('center')]  + subtitle_clips +  [logo_with_mask.with_position('center',0.50)] ,
+                [processed_clip.with_position('center')]   + subtitle_clips + [logo_with_mask.with_position('center',0.50)] ,
                 size=processed_clip.size
                 )
-
-    del logo_with_mask, subtitle_clips, processed_clip, overlay_clip
+    final_clip.duration = clip_duration
+    del logo_with_mask, processed_clip, overlay_clip, subtitle_clips
     clean_get_gpu_memory(threshold=0.1)
 
 
-# -------------------------------#
-# Adds Background Music to video
+#-------------------------------#
+#Adds Background Music to video
 # -------------------------------#
     log("choosing Background Audio\n")
     try:
         already_uploaded_videos = f"Video_clips/Youtube_Upload_folder/{YT_channel}/already_uploaded.json"
         log(f"already_uploaded_videos: {already_uploaded_videos}")
-        background_audio,song_name,Background_Audio_Reason = Background_Audio_Decision_Model(audio_file=audio_path, video_subtitles=raw_subtitles,video_path=video_path,already_uploaded_videos=already_uploaded_videos,start_time=start_time,end_time=end_time)
-        log(f"Background Audio : {background_audio},\n song_name: {song_name}, Background_Audio_Reason: {Background_Audio_Reason}")
+        background_audio_path,song_name,Background_Audio_Reason = Background_Audio_Decision_Model(audio_file=audio_path, video_subtitles=raw_subtitles,video_path=video_path,already_uploaded_videos=already_uploaded_videos,start_time=start_time,end_time=end_time)
+        log(f"Background Audio : {background_audio_path},\n song_name: {song_name}, Background_Audio_Reason: {Background_Audio_Reason}")
     except Exception as e:
          log(f"error during: [Background_Audio_Decision_Model]: {str(e)}")
 
 
-    log(f"Background audio path: {background_audio} \n Reason: {Background_Audio_Reason}\n")
+    log(f"Background audio path: {background_audio_path} \n Reason: {Background_Audio_Reason}\n")
 
-    if background_audio:
-        background_music_path = background_audio
+    if background_audio_path:
+        background_music_path = background_audio_path
 
         try:
             log(f"Original clip duration: {clip_duration:.2f}s")
@@ -398,6 +417,12 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
 
             log("Kjører enhance() ...")
             enhanced_torch = enhance(model, df_state, audio_torch, pad=True) #denoising / enhancing
+            target_dbfs = -20
+            current_max = enhanced_torch.abs().max()
+            current_dbfs = 20 * torch.log10(current_max + 1e-9)
+            gain_db = target_dbfs - current_dbfs
+            gain_linear = 10 ** (gain_db / 20.0)
+            enhanced_torch = enhanced_torch * gain_linear
             log(f"enhanced_torch shape: {enhanced_torch.shape}")
             log(f"enhanced_torch max abs: {enhanced_torch.abs().max():.6f}")
             log(f"enhanced_torch min abs: {enhanced_torch.abs().min():.6f}")
@@ -417,8 +442,8 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
             log(f"enhanced_audio_clip duration: {enhanced_audio_clip.duration:.2f}s")
             log(f"enhanced_audio_clip nchannels: {enhanced_audio_clip.nchannels}")
 
-            final_clip.audio = mix_audio(enhanced_audio_clip, background_music_path, bg_music_volume=0.39) #mixes the enhanced audio and background music. with background music at background volume 0.33
-            del audio_torch, enhanced_torch, enhanced_np, original_audio_np, enhanced_audio_clip
+            final_clip.audio = mix_audio(enhanced_audio_clip, background_music_path, bg_music_volume=0.23) #mixes the enhanced audio and background music. with background music at background volume 0.33
+            del audio_torch, enhanced_torch, enhanced_np,  enhanced_audio_clip
 
         except Exception as e:
             log(f"Error during audio mixing/enhancing : {str(e)}")
@@ -448,13 +473,6 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
         clean_get_gpu_memory(threshold=0.1)
 
 
-
-#-----------------------------------------------------#
-#    Adds fade in/out to the video and sets the FPS
-#------------------------------------------------------#
-    final_clip = FadeIn(duration=0.1).apply(final_clip)
-    final_clip = FadeOut(duration=0.1).apply(final_clip)
-    final_clip.fps = clip_fps
 
 
 
@@ -490,15 +508,8 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
 
 
 
-
-
-
-    _finalclipduration = final_clip.duration
-    log(f"FINAL CLIP DURATION: {_finalclipduration}")
-
     lut_cube_path = "./Video_clips/Utils-Video_creation/LUT/black/RMP_BW709_1.cube"
     vf_filters = []
-    apply_lut = False
     if os.path.isfile(lut_cube_path):
         apply_lut = random.choice([True, False])
         if apply_lut:
@@ -509,15 +520,77 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
     vf_chain = ",".join(vf_filters)
     log(f"[ffmpeg] LUT applied: {apply_lut} path: {lut_cube_path if apply_lut else 'none'}")
 
+    if apply_lut:
+        try:
+            vignette_path = r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\alpha_mask\Overlay_Effects\Vingette.mp4"
+            if os.path.exists(vignette_path):
+                try:
+
+                    vignette_clip = VideoFileClip(vignette_path, has_mask=True)
+                except Exception:
+                    vignette_clip = VideoFileClip(vignette_path)
+
+                vignette_clip = vignette_clip.subclipped(0, final_clip.duration)
+
+                try:
+                    vignette_clip = vfx.resize(vignette_clip, newsize=final_clip.size)
+                except Exception:
+                    pass
+
+                vignette_clip = vignette_clip.with_duration(final_clip.duration)
+                try:
+                    vignette_clip = vignette_clip.with_position("center")
+                except Exception:
+                    vignette_clip = vignette_clip.set_position("center")
+
+                if vignette_clip.mask is None:
+                    try:
+                        vignette_clip = vignette_clip.with_mask(vignette_clip.to_mask())
+                    except Exception:
+                        pass
+
+                try:
+                    vignette_clip = vignette_clip.with_opacity(0.24)
+                except Exception:
+                    try:
+                        vignette_clip = vignette_clip.set_opacity(0.24)
+                    except Exception:
+                        pass
+
+                final_clip = CompositeVideoClip([final_clip, vignette_clip], size=final_clip.size)
+                try:
+                    final_clip = final_clip.with_duration(clip_duration)
+                except Exception:
+                    try:
+                        final_clip.duration = clip_duration
+                    except Exception:
+                        pass
+                log("[overlay] Vignette overlay applied (Vingette_2.mp4)")
+                del vignette_clip
+            else:
+                log(f"[overlay] Vignette file not found, skipping: {vignette_path}")
+        except Exception as _e:
+            log(f"[overlay] Failed to apply vignette overlay: {_e}")
+
+
+#-----------------------------------------------------#
+#    Adds fade in/out to the video and sets the FPS
+#------------------------------------------------------#
+    final_clip = FadeIn(duration=0.3).apply(final_clip)
+    final_clip = FadeOut(duration=0.3).apply(final_clip)
+    final_clip.fps = clip_fps
+
+
+
     final_clip.write_videofile(
     out_path,
     logger='bar',
     codec="libx264",
     preset="slow",
     audio_codec="aac",
-    threads=12,
+    threads=11,
     ffmpeg_params=[
-        "-crf", "12",
+        "-crf", "13",
         "-pix_fmt", "yuv420p",
         "-profile:v", "high",
         "-ar", "48000",
@@ -529,12 +602,11 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
     ],
     audio_bitrate="384k",
     remove_temp=True
-        )
+    )
 
 
     gc.collect()
     clean_get_gpu_memory(threshold=0.1)
-
 
 
 # -----------------------------------------------------#
@@ -596,7 +668,7 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
 
             if Global_model is None:
                 try:
-                    Global_model = Reload_and_change_model(model_name="gpt-5-high", message="Reloading model to -> gpt-5-minimal before running [upload_video]")
+                    Global_model = Reload_and_change_model(model_name="gpt-5.2-xhigh", message="Reloading model to -> gpt-5.2-xhigh before running [upload_video]")
                 except Exception as e:
                     log(f"Error reloading and changing model to gpt-5: {str(e)}")
 
@@ -606,7 +678,7 @@ def create_short_video(video_path, audio_path, raw_subtitles, start_time, end_ti
             YT_channel = Global_state.get_current_yt_channel()
 
             try:
-                social_media = upload_video(model=Global_model,file_path=output_video,subtitle_text=subtitle_text,YT_channel=YT_channel,background_audio_=Background_Audio_Reason,song_name=song_name,video_duration=_finalclipduration)
+                social_media = upload_video(model=Global_model, file_path=output_video, YT_channel=YT_channel, subtitle_text=subtitle_text, background_audio_= background_audio, song_name=song_name, video_duration=clip_duration)
             except Exception as e:
                 log(f"error during upload_video: {str(e)}")
             log(f"Done with uploading to {social_media}")

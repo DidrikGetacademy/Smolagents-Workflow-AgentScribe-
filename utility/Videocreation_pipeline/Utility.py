@@ -113,30 +113,6 @@ def mix_audio(original_audio, background_music_path, bg_music_volume=0.25):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def parse_editing_notes(notes):
         fade_in_duration = 0
         volume_reduction = 1.0
@@ -215,7 +191,18 @@ def detect_and_crop_frames_batch(frames, batch_size=8):
         sess_options.log_severity_level = 0
         session = ort.InferenceSession(onnx_path_gpu, sess_options, providers=providers)
         input_name = session.get_inputs()[0].name
-        print("ONNX input shape:", session.get_inputs()[0].shape)
+        log(f"ONNX input shape: {session.get_inputs()[0].shape}")
+        # Concise check: are we actually using CUDA or did we fall back to CPU?
+        try:
+            active_providers = session.get_providers()
+            available_providers = ort.get_available_providers()
+            device = ort.get_device()
+            using_cuda = 'CUDAExecutionProvider' in active_providers
+            status = "USING CUDA" if using_cuda else "CPU FALLBACK"
+            log(f"[ORT] device={device}, active={active_providers}, available={available_providers} -> {status}")
+        except Exception as e:
+            log(f"[ORT] provider status check failed: {e}")
+        log(f"providers: {session._providers}")
         progress_bar = tqdm(total=len(frames), desc="[detect_and_crop_frames_batch]Processing frames", unit="frame", dynamic_ncols=True)
         try:
             for i in range(0, len(frames), batch_size):

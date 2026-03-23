@@ -75,7 +75,7 @@ def upload_tiktok_Instagram_API(hashtags,description,title,video_path,YT_channel
         log(f"Failed to upload video. Status code: {response.status_code}, Response: {response.text}")
 
 
-def Populate_Already_Uploaded(title, description, tags, categoryId, publishAt, YT_channel, video_url,subtitle_text,error,background_audio_,song_name,video_duration=None):
+def Populate_Already_Uploaded(title, description, tags, categoryId, publishAt, YT_channel, video_url, subtitle_text, error, background_audio_, song_name,video_duration=None):
     history_path = os.path.join("Video_clips", "Youtube_Upload_folder", YT_channel, "already_uploaded.json")
     os.makedirs(os.path.dirname(history_path), exist_ok=True)
 
@@ -86,11 +86,17 @@ def Populate_Already_Uploaded(title, description, tags, categoryId, publishAt, Y
                 history = json.load(r)
         except Exception as e:
             log(f"Failed to load existing upload history: {str(e)}")
+            try:
+                os.makedirs(os.path.dirname(history_path), exist_ok=True)
+                with open(history_path, "w", encoding="utf-8") as w:
+                    json.dump([], w)
+                history = []
+            except Exception:
+                history = []
 
     subtitle_str = " "
-    for text in subtitle_text:
-        subtitle_str += text.get("text", "") + " "
-
+    for text in subtitle_text["word"]:
+        subtitle_str += text
     entry = {
         "title": title,
         "description": description,
@@ -262,7 +268,7 @@ def upload_video(model,file_path,YT_channel,subtitle_text=None,background_audio_
 
 
     for tag in hashtags:
-         _description += f"{tag} "
+         _description += f" {tag} "
 
     import utility.Global_state as Global_state
     video_url = Global_state.get_current_videourl()
@@ -315,7 +321,7 @@ def upload_video(model,file_path,YT_channel,subtitle_text=None,background_audio_
             ).execute()
             log(f"Video added to playlist {playlist_id}: {playlist_response['id']}")
             try:
-                Populate_Already_Uploaded(title,_description,tags,categoryId,publishAt,YT_channel,video_url,subtitle_text,error,background_audio_,song_name=song_name,video_duration=video_duration)
+                Populate_Already_Uploaded(title, _description, tags, categoryId, publishAt, YT_channel, video_url, subtitle_text, error, background_audio_, song_name=song_name, video_duration=video_duration)
             except Exception as e:
                     log(f"error writing to populate already uploaded: {str(e)}")
             truncated_audio_path = Global_state.get_current_truncated_audio_path()
@@ -426,6 +432,6 @@ if __name__ == "__main__":
      gc.collect()
      torch.cuda.empty_cache()
      Global_state.set_current_videourl(r"c:\Users\didri\Documents\Is Being Smart Worth the Depression？ - Alex O’Connor & Joe Folley (4K).mp4")
-     Global_model = LiteLLMModel(model_id="gpt-5", reasoning_effort="minimal" ,api_key=OPENAI_APIKEY,max_tokens=20000)
+     Global_model = LiteLLMModel(model_id="gpt-5.2", reasoning_effort="medium" ,api_key=OPENAI_APIKEY)
      Global_state.set_current_yt_channel("LM_Youtube")
-     upload_video(model=Global_model,file_path=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\Youtube_Upload_folder\MR_Youtube\short_2_rife.mp4",subtitle_text="",YT_channel="MR_Youtube",background_audio_="lofi")
+     upload_video(model=Global_model,file_path=r"C:\Users\didri\Desktop\Full-Agent-Flow_VideoEditing\Video_clips\Youtube_Upload_folder\LM_Youtube\short_11_rife.mp4",subtitle_text="",YT_channel="LM_Youtube",background_audio_="lofi")
